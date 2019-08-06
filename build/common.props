@@ -1,0 +1,26 @@
+<Project>
+  <Import Project="version.props" />
+
+  <PropertyGroup Label="Source Link">
+    <ProjectParentDirectory>$([System.IO.Path]::GetDirectoryName('$(MSBuildProjectDirectory)'))</ProjectParentDirectory>
+    <ProjectParentDirectoryName>$([System.IO.Path]::GetFileName('$(ProjectParentDirectory)'))</ProjectParentDirectoryName>
+  </PropertyGroup>
+
+  <Import Project="sourcelink.props" Condition="'$(ProjectParentDirectoryName)' == 'src'" />
+
+  <PropertyGroup Label="Package">
+    <Product>Blazor.AutoComplete</Product>
+    <Title>Blazor.AutoComplete</Title>
+    <Description>Blazor AutoComplete Control</Description>
+    <Copyright>Copyright © 2019 LoreSoft</Copyright>
+    <Authors>LoreSoft</Authors>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <PackageTags>Blazor;Typeahead;AutoComplete;Razor Components;Controls</PackageTags>
+    <PackageOutputPath>$(SolutionDir)artifacts</PackageOutputPath>
+    <PackageProjectUrl>https://github.com/loresoft/Blazor.AutoComplete</PackageProjectUrl>
+    <PackageLicenseUrl>https://raw.githubusercontent.com/loresoft/Blazor.AutoComplete/master/LICENSE</PackageLicenseUrl>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/loresoft/Blazor.AutoComplete</RepositoryUrl>
+    <NoWarn>1591</NoWarn>
+  </PropertyGroup>
+</Project>

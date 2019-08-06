@@ -13,6 +13,14 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sample.ServerSide", "sample
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sample.ClientSide", "samples\Sample.ClientSide\Sample.ClientSide.csproj", "{9C2DCB8C-9CE1-444F-82DA-C972EEC05F6C}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{3E5818B3-6609-4EC5-AFA1-849C4E5080D1}"
+	ProjectSection(SolutionItems) = preProject
+		appveyor.yml = appveyor.yml
+		build\common.props = build\common.props
+		build\sourcelink.props = build\sourcelink.props
+		build\version.props = build\version.props
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
