@@ -13,6 +13,29 @@
     opacity: .5;
 }
 
+.autocomplete-clear {
+    -moz-appearance: none;
+    -webkit-appearance: none;
+    appearance: none;
+    background-color: transparent;
+    border: 0;
+    color: #000;
+    float: right;
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 1;
+    margin-right: 25px;
+    opacity: .5;
+    padding: 0;
+    text-shadow: 0 1px 0 #fff;
+}
+
+    .autocomplete-clear:hover {
+        color: #000;
+        opacity: 1;
+        text-decoration: none;
+    }
+
 .autocomplete-search-container {
     background-color: white;
     box-shadow: 0 5px 10px rgba(0,0,0,.2);
@@ -49,6 +72,11 @@
         color: white;
         cursor: pointer;
     }
+
+.autocomplete-result > a {
+    display: block;
+    width: 100%;
+}
 
 .autocomplete-result-selected {
     background-color: #5897fb;

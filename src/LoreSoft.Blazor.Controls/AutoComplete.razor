@@ -13,6 +13,12 @@
         {
             @SelectedTemplate(Value)
         }
+        @if (Value != null && AllowClear)
+        {
+            <button type="button" class="autocomplete-clear" @onclick="@(async () => await Clear())">
+                <span aria-hidden="true">×</span>
+            </button>
+        }
     </div>
     @if (SearchMode)
     {

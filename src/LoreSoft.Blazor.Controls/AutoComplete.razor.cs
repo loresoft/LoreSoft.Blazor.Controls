@@ -50,6 +50,9 @@ namespace LoreSoft.Blazor.Controls
         [Parameter]
         protected int Debounce { get; set; } = 300;
 
+        [Parameter]
+        protected bool AllowClear { get; set; } = true;
+
 
         protected bool Searching { get; set; } = false;
 
@@ -125,6 +128,10 @@ namespace LoreSoft.Blazor.Controls
             SearchMode = false;
         }
 
+        protected async Task Clear()
+        {
+            await ValueChanged.InvokeAsync(default(TItem));
+        }
 
         protected async Task HandleFocus(UIFocusEventArgs args)
         {
@@ -151,42 +158,26 @@ namespace LoreSoft.Blazor.Controls
                 return;
             }
 
-            switch (args.Key)
-            {
-                case "ArrowDown":
-                    var down = SelectedIndex + 1;
-                    if (down >= SearchResults.Count)
-                        down = 0;
-
-                    if (down < 0)
-                        down = 0;
-
-                    SelectedIndex = down;
-                    break;
-
-                case "ArrowUp":
-                    var up = SelectedIndex - 1;
-
-                    if (up >= SearchResults.Count)
-                        up = 0;
-
-                    if (up < 0)
-                        up = SearchResults.Count - 1;
-
-                    SelectedIndex = up;
-                    break;
-                case "Enter":
-                    if (SelectedIndex >= 0 && SelectedIndex < SearchResults.Count)
-                    {
-                        var item = SearchResults[SelectedIndex];
-                        await SelectResult(item);
-                    }
-
-                    break;
-            }
-
+            if (args.Key == "ArrowDown")
+                MoveSelection(1);
+            else if (args.Key == "ArrowUp")
+                MoveSelection(-1);
+            else if (args.Key == "Enter" && SelectedIndex >= 0 && SelectedIndex < SearchResults.Count)
+                await SelectResult(SearchResults[SelectedIndex]);
         }
 
+        private void MoveSelection(int count)
+        {
+            var index = SelectedIndex + count;
+
+            if (index >= SearchResults.Count)
+                index = 0;
+
+            if (index < 0)
+                index = SearchResults.Count - 1;
+
+            SelectedIndex = index;
+        }
 
         protected string ArrowClass()
         {
