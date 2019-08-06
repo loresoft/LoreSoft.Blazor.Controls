@@ -1,4 +1,4 @@
-var AutoComplete = {
+var BlazorControls = {
     SetFocus: function (element) {
         element.focus();
     }

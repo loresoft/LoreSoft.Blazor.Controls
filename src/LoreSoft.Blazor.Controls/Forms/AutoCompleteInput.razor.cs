@@ -7,21 +7,15 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.JSInterop;
 
-namespace Blazor.AutoComplete
+namespace LoreSoft.Blazor.Controls.Forms
 {
-    public class AutoCompleteBase<TItem> : ComponentBase, IDisposable
+    public class AutoCompleteInputBase<TItem> : InputBase<TItem>, IDisposable
     {
         private Timer _debounceTimer;
 
         [Inject]
         private IJSRuntime JSRuntime { get; set; }
 
-
-        [Parameter]
-        protected TItem Value { get; set; }
-
-        [Parameter]
-        protected EventCallback<TItem> ValueChanged { get; set; }
 
         [Parameter]
         protected string Placeholder { get; set; }
@@ -132,7 +126,7 @@ namespace Blazor.AutoComplete
             SearchMode = true;
             await Task.Delay(250);
 
-            await JSRuntime.InvokeAsync<object>("AutoComplete.SetFocus", SearchInput);
+            await JSRuntime.InvokeAsync<object>("BlazorControls.SetFocus", SearchInput);
         }
 
         protected async Task HandleBlur()
@@ -207,9 +201,19 @@ namespace Blazor.AutoComplete
                 : "";
         }
 
+
         public void Dispose()
         {
             _debounceTimer.Dispose();
+        }
+
+
+        protected override bool TryParseValueFromString(string value, out TItem result, out string validationErrorMessage)
+        {
+            result = (TItem)(object)value;
+            validationErrorMessage = null;
+
+            return true;
         }
     }
 }

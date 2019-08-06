@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29123.89
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Blazor.AutoComplete", "src\Blazor.AutoComplete\Blazor.AutoComplete.csproj", "{F9459EF7-3E4F-4C94-B2A0-680D8C437FB4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LoreSoft.Blazor.Controls", "src\LoreSoft.Blazor.Controls\LoreSoft.Blazor.Controls.csproj", "{F9459EF7-3E4F-4C94-B2A0-680D8C437FB4}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{6E4E9AFA-897C-4625-9ED0-13563405290B}"
 EndProject

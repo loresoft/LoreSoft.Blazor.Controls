@@ -1,2 +1,5 @@
-# Blazor.AutoComplete
-Blazor AutoComplete Control
+# Blazor Controls
+
+* AutoComplete
+* Multiselect
+* DatePicker

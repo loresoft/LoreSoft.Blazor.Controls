@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Blazor.AutoComplete\Blazor.AutoComplete.csproj" />
+    <ProjectReference Include="..\..\src\LoreSoft.Blazor.Controls\LoreSoft.Blazor.Controls.csproj" />
     <ProjectReference Include="..\Sample.Shared\Sample.Shared.csproj" />
   </ItemGroup>
 

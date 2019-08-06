@@ -1,0 +1,76 @@
+﻿@typeparam TItem
+@inherits AutoCompleteInputBase<TItem>
+
+<div class="autocomplete">
+    <div class="autocomplete-selection @ArrowClass()"
+         tabindex="0"
+         @onfocus="HandleFocus">
+        @if (Value == null)
+        {
+            <span class="autocomplete-placeholder">@Placeholder</span>
+        }
+        else
+        {
+            @SelectedTemplate(Value)
+        }
+    </div>
+    @if (SearchMode)
+    {
+        <div class="autocomplete-search-container">
+            <input @ref="SearchInput"
+                   @bind-value="SearchText"
+                   @bind-value:event="oninput"
+                   @onblur="HandleBlur"
+                   @onkeydown="HandleKey"
+                   class="autocomplete-search-input"
+                   type="text"
+                   autocomplete="off" />
+            <div class="autocomplete-results">
+                @if (Searching)
+                {
+                    <div class="autocomplete-result-searching">
+                        Searching ...
+                    </div>
+                }
+
+                @for (var index = 0; index < SearchResults.Count; index++)
+                {
+                    var item = SearchResults[index];
+                    <div class="autocomplete-result @ResultClass(item, index)">
+                        <a @onclick="@(async () => await SelectResult(item))">
+                            @if (ResultTemplate != null)
+                            {
+                                @ResultTemplate(item)
+                            }
+                            else
+                            {
+                                <span>@item.ToString()</span>
+                            }
+                        </a>
+                    </div>
+                }
+
+                @if (ShowNoRecords())
+                {
+                    <div class="autocomplete-result-no-records">
+                        @if (NoRecordsTemplate != null)
+                        {
+                            @NoRecordsTemplate
+                        }
+                        else
+                        {
+                            <span>No Records Found</span>
+                        }
+                    </div>
+                }
+
+                @if (FooterTemplate != null)
+                {
+                    <div class="autocomplete-result-footer">
+                        @FooterTemplate
+                    </div>
+                }
+            </div>
+        </div>
+    }
+</div>
