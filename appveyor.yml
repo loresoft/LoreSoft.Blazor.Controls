@@ -9,6 +9,9 @@ environment:
 init:
   - git config --global core.autocrlf input
 
+install: 
+  - cmd: choco install dotnetcore-sdk --pre
+
 dotnet_csproj:
   patch: true
   file: 'build\version.props'
