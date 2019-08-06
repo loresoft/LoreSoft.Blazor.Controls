@@ -150,7 +150,7 @@ namespace LoreSoft.Blazor.Controls
             SearchMode = false;
         }
 
-        protected async Task HandleKey(UIKeyboardEventArgs args)
+        protected async Task HandleKeydown(UIKeyboardEventArgs args)
         {
             if (SearchResults.Count == 0)
             {
@@ -193,7 +193,7 @@ namespace LoreSoft.Blazor.Controls
 
         protected string ResultClass(TItem item, int index)
         {
-            return index == SelectedIndex
+            return index == SelectedIndex || Equals(item, Value)
                 ? "autocomplete-result-selected"
                 : "";
         }
