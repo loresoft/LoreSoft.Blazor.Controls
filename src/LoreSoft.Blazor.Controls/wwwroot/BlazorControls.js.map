@@ -1,1 +1,1 @@
-{"version":3,"file":"BlazorControls.js","sourceRoot":"","sources":["BlazorControls.ts"],"names":[],"mappings":"AAAA,IAAI,cAAc,GAAG;IACjB,QAAQ,EAAE,UAAC,OAAoB;QAC3B,OAAO,CAAC,KAAK,EAAE,CAAC;IACpB,CAAC;CACJ,CAAC"}
+{"version":3,"file":"BlazorControls.js","sourceRoot":"","sources":["BlazorControls.ts"],"names":[],"mappings":"AAAA,IAAI,cAAc,GAAG;IACjB,QAAQ,EAAE,UAAC,OAAoB;QAC3B,IAAI,OAAO;YAAE,OAAO,CAAC,KAAK,EAAE,CAAC;IACjC,CAAC;CACJ,CAAC"}

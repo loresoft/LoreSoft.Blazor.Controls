@@ -48,7 +48,7 @@ namespace LoreSoft.Blazor.Controls
         protected int MinimumLength { get; set; } = 1;
 
         [Parameter]
-        protected int Debounce { get; set; } = 300;
+        protected int Debounce { get; set; } = 800;
 
         [Parameter]
         protected bool AllowClear { get; set; } = true;
@@ -74,6 +74,7 @@ namespace LoreSoft.Blazor.Controls
                 {
                     _debounceTimer.Stop();
                     SearchResults.Clear();
+                    SelectedIndex = -1;
                 }
                 else if (value.Length >= MinimumLength)
                 {
@@ -152,12 +153,6 @@ namespace LoreSoft.Blazor.Controls
 
         protected async Task HandleKeydown(UIKeyboardEventArgs args)
         {
-            if (SearchResults.Count == 0)
-            {
-                SelectedIndex = -1;
-                return;
-            }
-
             if (args.Key == "ArrowDown")
                 MoveSelection(1);
             else if (args.Key == "ArrowUp")
