@@ -13,31 +13,36 @@
     opacity: .5;
 }
 
-.autocomplete-clear {
+.autocomplete-button {
     -moz-appearance: none;
     -webkit-appearance: none;
     appearance: none;
     background-color: transparent;
-    border: 0;
     color: #000;
     float: right;
-    font-size: 1.5rem;
+    border: 0;
+    padding: 0;
     font-weight: 700;
     line-height: 1;
-    margin-right: 25px;
+    width: 20px;
+    height: 20px;
     opacity: .5;
-    padding: 0;
+    outline: none;
+}
+
+    .autocomplete-button:hover {
+        opacity: 1;
+    }
+
+.autocomplete-clear {
+    font-size: 16px;
+    font-weight: 700;
+    line-height: 1;
     text-shadow: 0 1px 0 #fff;
 }
 
-    .autocomplete-clear:hover {
-        color: #000;
-        opacity: 1;
-        text-decoration: none;
-    }
-
 .autocomplete-search-container {
-    background-color: white;
+    background-color: #fff;
     box-shadow: 0 5px 10px rgba(0,0,0,.2);
     border-radius: 5px;
     border: 1px solid #bfbfbf;
@@ -64,24 +69,30 @@
 }
 
 .autocomplete-result {
-    padding: .5rem;
-}
-
-    .autocomplete-result:hover {
-        background-color: #5897fb;
-        color: white;
-        cursor: pointer;
-    }
-
-.autocomplete-result > a {
-    display: block;
+    padding: 0;
+    margin: 0;
     width: 100%;
 }
 
-.autocomplete-result-selected {
-    background-color: #5897fb;
-    color: white;
+.autocomplete-result > a,
+.autocomplete-result > a:active,
+.autocomplete-result > a:visited {
+    display: block;
+    padding: .5rem;
+    text-decoration: none;
+    color: #000;
 }
+
+    .autocomplete-result > a:hover,
+    .autocomplete-result-selected > a,
+    .autocomplete-result-selected > a:active,
+    .autocomplete-result-selected > a:visited,
+    .autocomplete-result-selected > a:hover {
+        background-color: #5897fb;
+        color: #fff;
+        text-decoration: none;
+        cursor: pointer;
+    }
 
 .autocomplete-result-no-records,
 .autocomplete-result-searching {
@@ -93,17 +104,18 @@
     padding: .5rem;
 }
 
-.dropdown-arrow-close {
-    background-image: linear-gradient(45deg, transparent 50%, gray 50%), linear-gradient(135deg, gray 50%, transparent 50%);
-    background-position: calc(100% - 20px) calc(1em + 2px), calc(100% - 15px) calc(1em + 2px), calc(100% - 2.5em) 0.5em;
-    background-size: 5px 5px, 5px 5px, 1px 1.5em;
-    background-repeat: no-repeat;
+.arrow-up {
+    width: 0;
+    height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-bottom: 5px solid #000;
 }
 
-.dropdown-arrow-open {
-    background-image: linear-gradient(45deg, gray 50%, transparent 50%), linear-gradient(135deg, transparent 50%, gray 50%);
-    background-position: calc(100% - 15px) 1em, calc(100% - 20px) 1em, calc(100% - 2.5em) 0.5em;
-    background-size: 5px 5px, 5px 5px, 1px 1.5em;
-    background-repeat: no-repeat;
-    outline: 0;
+.arrow-down {
+    width: 0;
+    height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 5px solid #000;
 }

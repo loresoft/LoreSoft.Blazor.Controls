@@ -114,7 +114,16 @@ namespace LoreSoft.Blazor.Controls
             Searching = true;
             await Invoke(StateHasChanged);
 
-            var result = await SearchMethod?.Invoke(_searchText);
+            List<TItem> result = null;
+
+            try
+            {
+                result = await SearchMethod?.Invoke(_searchText);
+            }
+            catch (Exception ex)
+            {
+                // log error
+            }
 
             SearchResults = result ?? new List<TItem>();
 
@@ -149,6 +158,7 @@ namespace LoreSoft.Blazor.Controls
             await Task.Delay(250);
 
             SearchMode = false;
+            Searching = false;
         }
 
         protected async Task HandleKeydown(UIKeyboardEventArgs args)
@@ -172,11 +182,6 @@ namespace LoreSoft.Blazor.Controls
                 index = SearchResults.Count - 1;
 
             SelectedIndex = index;
-        }
-
-        protected string ArrowClass()
-        {
-            return SearchMode ? "dropdown-arrow-open" : "dropdown-arrow-close";
         }
 
         protected bool ShowNoRecords()
