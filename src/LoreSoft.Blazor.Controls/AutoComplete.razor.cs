@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Timers;
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.JSInterop;
 
 namespace LoreSoft.Blazor.Controls
@@ -12,6 +11,15 @@ namespace LoreSoft.Blazor.Controls
     public class AutoCompleteBase<TItem> : ComponentBase, IDisposable
     {
         private Timer _debounceTimer;
+
+        public AutoCompleteBase()
+        {
+            Items = new List<TItem>();
+            AllowClear = true;
+            Searching = false;
+            SearchMode = false;
+            SelectedIndex = 0;
+        }
 
         [Inject]
         private IJSRuntime JSRuntime { get; set; }
@@ -26,6 +34,8 @@ namespace LoreSoft.Blazor.Controls
         [Parameter]
         protected string Placeholder { get; set; }
 
+        [Parameter]
+        protected List<TItem> Items { get; set; }
 
         [Parameter]
         protected Func<string, Task<List<TItem>>> SearchMethod { get; set; }
@@ -51,16 +61,17 @@ namespace LoreSoft.Blazor.Controls
         protected int Debounce { get; set; } = 800;
 
         [Parameter]
-        protected bool AllowClear { get; set; } = true;
+        protected bool AllowClear { get; set; }
 
 
-        protected bool Searching { get; set; } = false;
+        protected bool Searching { get; set; }
 
-        protected bool SearchMode { get; set; } = false;
+        protected bool SearchMode { get; set; }
 
         protected List<TItem> SearchResults { get; set; } = new List<TItem>();
 
         protected ElementRef SearchInput { get; set; }
+
 
         private string _searchText;
         protected string SearchText
@@ -75,6 +86,8 @@ namespace LoreSoft.Blazor.Controls
                     _debounceTimer.Stop();
                     SearchResults.Clear();
                     SelectedIndex = -1;
+
+                    ShowItems();
                 }
                 else if (value.Length >= MinimumLength)
                 {
@@ -84,24 +97,19 @@ namespace LoreSoft.Blazor.Controls
             }
         }
 
-        protected int SelectedIndex { get; set; } = 0;
+        protected int SelectedIndex { get; set; }
+
 
         protected override void OnInit()
         {
             if (SearchMethod == null)
-            {
                 throw new InvalidOperationException($"{GetType()} requires a {nameof(SearchMethod)} parameter.");
-            }
 
             if (SelectedTemplate == null)
-            {
                 throw new InvalidOperationException($"{GetType()} requires a {nameof(SelectedTemplate)} parameter.");
-            }
 
             if (ResultTemplate == null)
-            {
                 throw new InvalidOperationException($"{GetType()} requires a {nameof(ResultTemplate)} parameter.");
-            }
 
             _debounceTimer = new Timer();
             _debounceTimer.Interval = Debounce;
@@ -171,19 +179,6 @@ namespace LoreSoft.Blazor.Controls
                 await SelectResult(SearchResults[SelectedIndex]);
         }
 
-        private void MoveSelection(int count)
-        {
-            var index = SelectedIndex + count;
-
-            if (index >= SearchResults.Count)
-                index = 0;
-
-            if (index < 0)
-                index = SearchResults.Count - 1;
-
-            SelectedIndex = index;
-        }
-
         protected bool ShowNoRecords()
         {
             return SearchMode
@@ -198,9 +193,32 @@ namespace LoreSoft.Blazor.Controls
                 : "";
         }
 
+
         public void Dispose()
         {
             _debounceTimer.Dispose();
+        }
+
+
+        private void MoveSelection(int count)
+        {
+            var index = SelectedIndex + count;
+
+            if (index >= SearchResults.Count)
+                index = 0;
+
+            if (index < 0)
+                index = SearchResults.Count - 1;
+
+            SelectedIndex = index;
+        }
+
+        private void ShowItems()
+        {
+            if (Items == null || Items.Count <= 0 || SearchResults.Count != 0)
+                return;
+
+            SearchResults = new List<TItem>(Items);
         }
     }
 }

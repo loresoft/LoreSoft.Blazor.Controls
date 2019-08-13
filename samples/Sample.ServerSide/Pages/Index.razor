@@ -5,6 +5,7 @@
 Welcome to your new app.
 
 <AutoComplete SearchMethod="@GetPeopleLocal"
+              Items="People"
               @bind-Value="@SelectedPerson"
               Placeholder="Search by first name...">
     <SelectedTemplate Context="person">

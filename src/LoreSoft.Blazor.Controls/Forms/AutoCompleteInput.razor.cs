@@ -13,6 +13,15 @@ namespace LoreSoft.Blazor.Controls.Forms
     {
         private Timer _debounceTimer;
 
+        public AutoCompleteInputBase()
+        {
+            Items = new List<TItem>();
+            AllowClear = true;
+            Searching = false;
+            SearchMode = false;
+            SelectedIndex = 0;
+        }
+
         [Inject]
         private IJSRuntime JSRuntime { get; set; }
 
@@ -20,6 +29,8 @@ namespace LoreSoft.Blazor.Controls.Forms
         [Parameter]
         protected string Placeholder { get; set; }
 
+        [Parameter]
+        protected List<TItem> Items { get; set; }
 
         [Parameter]
         protected Func<string, Task<List<TItem>>> SearchMethod { get; set; }
@@ -42,16 +53,20 @@ namespace LoreSoft.Blazor.Controls.Forms
         protected int MinimumLength { get; set; } = 1;
 
         [Parameter]
-        protected int Debounce { get; set; } = 300;
+        protected int Debounce { get; set; } = 800;
+
+        [Parameter]
+        protected bool AllowClear { get; set; }
 
 
-        protected bool Searching { get; set; } = false;
+        protected bool Searching { get; set; }
 
-        protected bool SearchMode { get; set; } = false;
+        protected bool SearchMode { get; set; }
 
         protected List<TItem> SearchResults { get; set; } = new List<TItem>();
 
         protected ElementRef SearchInput { get; set; }
+
 
         private string _searchText;
         protected string SearchText
@@ -65,6 +80,9 @@ namespace LoreSoft.Blazor.Controls.Forms
                 {
                     _debounceTimer.Stop();
                     SearchResults.Clear();
+                    SelectedIndex = -1;
+
+                    ShowItems();
                 }
                 else if (value.Length >= MinimumLength)
                 {
@@ -74,24 +92,19 @@ namespace LoreSoft.Blazor.Controls.Forms
             }
         }
 
-        protected int SelectedIndex { get; set; } = 0;
+        protected int SelectedIndex { get; set; }
+
 
         protected override void OnInit()
         {
             if (SearchMethod == null)
-            {
                 throw new InvalidOperationException($"{GetType()} requires a {nameof(SearchMethod)} parameter.");
-            }
 
             if (SelectedTemplate == null)
-            {
                 throw new InvalidOperationException($"{GetType()} requires a {nameof(SelectedTemplate)} parameter.");
-            }
 
             if (ResultTemplate == null)
-            {
                 throw new InvalidOperationException($"{GetType()} requires a {nameof(ResultTemplate)} parameter.");
-            }
 
             _debounceTimer = new Timer();
             _debounceTimer.Interval = Debounce;
@@ -104,7 +117,16 @@ namespace LoreSoft.Blazor.Controls.Forms
             Searching = true;
             await Invoke(StateHasChanged);
 
-            var result = await SearchMethod?.Invoke(_searchText);
+            List<TItem> result = null;
+
+            try
+            {
+                result = await SearchMethod?.Invoke(_searchText);
+            }
+            catch (Exception ex)
+            {
+                // log error
+            }
 
             SearchResults = result ?? new List<TItem>();
 
@@ -119,6 +141,10 @@ namespace LoreSoft.Blazor.Controls.Forms
             SearchMode = false;
         }
 
+        protected async Task Clear()
+        {
+            await ValueChanged.InvokeAsync(default(TItem));
+        }
 
         protected async Task HandleFocus(UIFocusEventArgs args)
         {
@@ -135,56 +161,17 @@ namespace LoreSoft.Blazor.Controls.Forms
             await Task.Delay(250);
 
             SearchMode = false;
+            Searching = false;
         }
 
-        protected async Task HandleKey(UIKeyboardEventArgs args)
+        protected async Task HandleKeydown(UIKeyboardEventArgs args)
         {
-            if (SearchResults.Count == 0)
-            {
-                SelectedIndex = -1;
-                return;
-            }
-
-            switch (args.Key)
-            {
-                case "ArrowDown":
-                    var down = SelectedIndex + 1;
-                    if (down >= SearchResults.Count)
-                        down = 0;
-
-                    if (down < 0)
-                        down = 0;
-
-                    SelectedIndex = down;
-                    break;
-
-                case "ArrowUp":
-                    var up = SelectedIndex - 1;
-
-                    if (up >= SearchResults.Count)
-                        up = 0;
-
-                    if (up < 0)
-                        up = SearchResults.Count - 1;
-
-                    SelectedIndex = up;
-                    break;
-                case "Enter":
-                    if (SelectedIndex >= 0 && SelectedIndex < SearchResults.Count)
-                    {
-                        var item = SearchResults[SelectedIndex];
-                        await SelectResult(item);
-                    }
-
-                    break;
-            }
-
-        }
-
-
-        protected string ArrowClass()
-        {
-            return SearchMode ? "dropdown-arrow-open" : "dropdown-arrow-close";
+            if (args.Key == "ArrowDown")
+                MoveSelection(1);
+            else if (args.Key == "ArrowUp")
+                MoveSelection(-1);
+            else if (args.Key == "Enter" && SelectedIndex >= 0 && SelectedIndex < SearchResults.Count)
+                await SelectResult(SearchResults[SelectedIndex]);
         }
 
         protected bool ShowNoRecords()
@@ -196,9 +183,17 @@ namespace LoreSoft.Blazor.Controls.Forms
 
         protected string ResultClass(TItem item, int index)
         {
-            return index == SelectedIndex
+            return index == SelectedIndex || Equals(item, Value)
                 ? "autocomplete-result-selected"
                 : "";
+        }
+
+        protected override bool TryParseValueFromString(string value, out TItem result, out string validationErrorMessage)
+        {
+            result = (TItem)(object)value;
+            validationErrorMessage = null;
+
+            return true;
         }
 
 
@@ -208,12 +203,25 @@ namespace LoreSoft.Blazor.Controls.Forms
         }
 
 
-        protected override bool TryParseValueFromString(string value, out TItem result, out string validationErrorMessage)
+        private void MoveSelection(int count)
         {
-            result = (TItem)(object)value;
-            validationErrorMessage = null;
+            var index = SelectedIndex + count;
 
-            return true;
+            if (index >= SearchResults.Count)
+                index = 0;
+
+            if (index < 0)
+                index = SearchResults.Count - 1;
+
+            SelectedIndex = index;
+        }
+
+        private void ShowItems()
+        {
+            if (Items == null || Items.Count <= 0 || SearchResults.Count != 0)
+                return;
+
+            SearchResults = new List<TItem>(Items);
         }
     }
 }

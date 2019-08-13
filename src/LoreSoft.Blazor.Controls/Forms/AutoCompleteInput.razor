@@ -2,7 +2,7 @@
 @inherits AutoCompleteInputBase<TItem>
 
 <div class="autocomplete">
-    <div class="autocomplete-selection @ArrowClass()"
+    <div class="autocomplete-selection"
          tabindex="0"
          @onfocus="HandleFocus">
         @if (Value == null)
@@ -13,6 +13,22 @@
         {
             @SelectedTemplate(Value)
         }
+        <button type="button" class="autocomplete-button">
+            @if (SearchMode)
+            {
+                <div class="arrow-up"></div>
+            }
+            else
+            {
+                <div class="arrow-down"></div>
+            }
+        </button>
+        @if (Value != null && AllowClear)
+        {
+            <button type="button" class="autocomplete-button autocomplete-clear" @onclick="@(async () => await Clear())">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        }
     </div>
     @if (SearchMode)
     {
@@ -21,7 +37,7 @@
                    @bind-value="SearchText"
                    @bind-value:event="oninput"
                    @onblur="HandleBlur"
-                   @onkeydown="HandleKey"
+                   @onkeydown="HandleKeydown"
                    class="autocomplete-search-input"
                    type="text"
                    autocomplete="off" />
@@ -37,7 +53,7 @@
                 {
                     var item = SearchResults[index];
                     <div class="autocomplete-result @ResultClass(item, index)">
-                        <a @onclick="@(async () => await SelectResult(item))">
+                        <a href="#" @onclick="@(async () => await SelectResult(item))">
                             @if (ResultTemplate != null)
                             {
                                 @ResultTemplate(item)
