@@ -26,7 +26,7 @@
     padding: 0;
     font-weight: 700;
     line-height: 1;
-    width: 20px;
+    width: 25px;
     height: 20px;
     opacity: .5;
     outline: none;
@@ -37,7 +37,7 @@
     }
 
 .autocomplete-clear {
-    font-size: 16px;
+    font-size: 20px;
     font-weight: 700;
     line-height: 1;
     text-shadow: 0 1px 0 #fff;
@@ -109,17 +109,17 @@
 .arrow-up {
     width: 0;
     height: 0;
-    border-left: 5px solid transparent;
-    border-right: 5px solid transparent;
-    border-bottom: 5px solid #000;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-bottom: 6px solid #000;
 }
 
 .arrow-down {
     width: 0;
     height: 0;
-    border-left: 5px solid transparent;
-    border-right: 5px solid transparent;
-    border-top: 5px solid #000;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-top: 6px solid #000;
 }
 
 .close-overlay {

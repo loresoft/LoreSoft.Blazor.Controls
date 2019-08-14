@@ -26,55 +26,55 @@ namespace LoreSoft.Blazor.Controls
 
 
         [Parameter]
-        protected TItem Value { get; set; }
+        public TItem Value { get; set; }
 
         [Parameter]
-        protected EventCallback<TItem> ValueChanged { get; set; }
+        public EventCallback<TItem> ValueChanged { get; set; }
 
         [Parameter]
-        protected string Placeholder { get; set; }
+        public string Placeholder { get; set; }
 
         [Parameter]
-        protected List<TItem> Items { get; set; }
+        public List<TItem> Items { get; set; }
 
         [Parameter]
-        protected Func<string, Task<List<TItem>>> SearchMethod { get; set; }
-
-
-        [Parameter]
-        protected RenderFragment NoRecordsTemplate { get; set; }
-
-        [Parameter]
-        protected RenderFragment<TItem> ResultTemplate { get; set; }
-
-        [Parameter]
-        protected RenderFragment<TItem> SelectedTemplate { get; set; }
-
-        [Parameter]
-        protected RenderFragment FooterTemplate { get; set; }
+        public Func<string, Task<List<TItem>>> SearchMethod { get; set; }
 
 
         [Parameter]
-        protected int MinimumLength { get; set; } = 1;
+        public RenderFragment NoRecordsTemplate { get; set; }
 
         [Parameter]
-        protected int Debounce { get; set; } = 800;
+        public RenderFragment<TItem> ResultTemplate { get; set; }
 
         [Parameter]
-        protected bool AllowClear { get; set; }
+        public RenderFragment<TItem> SelectedTemplate { get; set; }
+
+        [Parameter]
+        public RenderFragment FooterTemplate { get; set; }
 
 
-        protected bool Searching { get; set; }
+        [Parameter]
+        public int MinimumLength { get; set; } = 1;
 
-        protected bool SearchMode { get; set; }
+        [Parameter]
+        public int Debounce { get; set; } = 800;
 
-        protected List<TItem> SearchResults { get; set; } = new List<TItem>();
+        [Parameter]
+        public bool AllowClear { get; set; }
 
-        protected ElementRef SearchInput { get; set; }
+
+        public bool Searching { get; set; }
+
+        public bool SearchMode { get; set; }
+
+        public List<TItem> SearchResults { get; set; } = new List<TItem>();
+
+        public ElementReference SearchInput { get; set; }
 
 
         private string _searchText;
-        protected string SearchText
+        public string SearchText
         {
             get => _searchText;
             set
@@ -97,10 +97,10 @@ namespace LoreSoft.Blazor.Controls
             }
         }
 
-        protected int SelectedIndex { get; set; }
+        public int SelectedIndex { get; set; }
 
 
-        protected override void OnInit()
+        protected override void OnInitialized()
         {
             if (SearchMethod == null)
                 throw new InvalidOperationException($"{GetType()} requires a {nameof(SearchMethod)} parameter.");
@@ -117,10 +117,10 @@ namespace LoreSoft.Blazor.Controls
             _debounceTimer.Elapsed += Search;
         }
 
-        protected async void Search(object source, ElapsedEventArgs e)
+        public async void Search(object source, ElapsedEventArgs e)
         {
             Searching = true;
-            await Invoke(StateHasChanged);
+            await InvokeAsync(StateHasChanged);
 
             List<TItem> result = null;
 
@@ -136,22 +136,22 @@ namespace LoreSoft.Blazor.Controls
             SearchResults = result ?? new List<TItem>();
 
             Searching = false;
-            await Invoke(StateHasChanged);
+            await InvokeAsync(StateHasChanged);
         }
 
-        protected async Task SelectResult(TItem item)
+        public async Task SelectResult(TItem item)
         {
             await ValueChanged.InvokeAsync(item);
 
             SearchMode = false;
         }
 
-        protected async Task Clear()
+        public async Task Clear()
         {
             await ValueChanged.InvokeAsync(default(TItem));
         }
 
-        protected async Task HandleFocus(UIFocusEventArgs args)
+        public async Task HandleFocus()
         {
             SearchText = "";
             SearchMode = true;
@@ -160,7 +160,7 @@ namespace LoreSoft.Blazor.Controls
             await JSRuntime.InvokeAsync<object>("BlazorControls.SetFocus", SearchInput);
         }
 
-        protected async Task HandleBlur()
+        public async Task HandleBlur()
         {
             // delay close to allow other events to finish
             await Task.Delay(250);
@@ -169,7 +169,7 @@ namespace LoreSoft.Blazor.Controls
             Searching = false;
         }
 
-        protected async Task HandleKeydown(UIKeyboardEventArgs args)
+        public async Task HandleKeydown(UIKeyboardEventArgs args)
         {
             if (args.Key == "ArrowDown")
                 MoveSelection(1);
@@ -179,14 +179,14 @@ namespace LoreSoft.Blazor.Controls
                 await SelectResult(SearchResults[SelectedIndex]);
         }
 
-        protected bool ShowNoRecords()
+        public bool ShowNoRecords()
         {
             return SearchMode
                 && !Searching
                 && !SearchResults.Any();
         }
 
-        protected string ResultClass(TItem item, int index)
+        public string ResultClass(TItem item, int index)
         {
             return index == SelectedIndex || Equals(item, Value)
                 ? "autocomplete-result-selected"

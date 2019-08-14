@@ -34,6 +34,7 @@
     {
         <div class="autocomplete-search-container">
             <input @ref="SearchInput"
+                   @ref:suppressField
                    @bind-value="SearchText"
                    @bind-value:event="oninput"
                    @onblur="HandleBlur"
