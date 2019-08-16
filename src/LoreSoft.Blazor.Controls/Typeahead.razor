@@ -1,0 +1,127 @@
+﻿@typeparam TItem
+@inherits TypeaheadBase<TItem>
+
+<div class="typeahead-container @ValidationClass()">
+    <div class="typeahead-control"
+         tabindex="0"
+         @onfocus="HandleFocus">
+        <div class="typeahead-value-container">
+            @if (IsMultiselect() && Values != null && Values.Count > 0)
+            {
+                foreach (var value in Values)
+                {
+                    <div class="typeahead-multi-value">
+                        <div class="typeahead-multi-value-label">
+                            @SelectedTemplate(value)
+                        </div>
+                        <button type="button"
+                                class="typeahead-multi-value-clear"
+                                title="Remove Item"
+                                @onclick="@(async () => await RemoveValue(value))">
+                            <svg height="14" width="14" viewBox="0 0 20 20" aria-hidden="true" focusable="false" class="typeahead-svg">
+                                <path d="M14.348 14.849c-0.469 0.469-1.229 0.469-1.697 0l-2.651-3.030-2.651 3.029c-0.469 0.469-1.229 0.469-1.697 0-0.469-0.469-0.469-1.229 0-1.697l2.758-3.15-2.759-3.152c-0.469-0.469-0.469-1.228 0-1.697s1.228-0.469 1.697 0l2.652 3.031 2.651-3.031c0.469-0.469 1.228-0.469 1.697 0s0.469 1.229 0 1.697l-2.758 3.152 2.758 3.15c0.469 0.469 0.469 1.229 0 1.698z" />
+                            </svg>
+                        </button>
+                    </div>
+                }
+            }
+            else if (!IsMultiselect() && Value != null)
+            {
+                <div class="typeahead-single-value">
+                    @SelectedTemplate(Value)
+                </div>
+            }
+            else
+            {
+                <span class="typeahead-value-placeholder">@Placeholder</span>
+            }
+        </div>
+        <div class="typeahead-indicators">
+            @if (Loading)
+            {
+                <div aria-hidden="true" class="typeahead-loading-indicator typeahead-indicator">
+                    <span class="typeahead-loading-dot-1"></span>
+                    <span class="typeahead-loading-dot-2"></span>
+                    <span class="typeahead-loading-dot-3"></span>
+                </div>
+            }
+            else if (HasValue() && AllowClear)
+            {
+                <button type="button"
+                        class="typeahead-clear-indicator typeahead-indicator"
+                        title="Clear Selection"
+                        @onclick="Clear">
+                    <svg height="20" width="20" viewBox="0 0 20 20" aria-hidden="true" focusable="false" class="typeahead-svg">
+                        <path d="M14.348 14.849c-0.469 0.469-1.229 0.469-1.697 0l-2.651-3.030-2.651 3.029c-0.469 0.469-1.229 0.469-1.697 0-0.469-0.469-0.469-1.229 0-1.697l2.758-3.15-2.759-3.152c-0.469-0.469-0.469-1.228 0-1.697s1.228-0.469 1.697 0l2.652 3.031 2.651-3.031c0.469-0.469 1.228-0.469 1.697 0s0.469 1.229 0 1.697l-2.758 3.152 2.758 3.15c0.469 0.469 0.469 1.229 0 1.698z" />
+                    </svg>
+                </button>
+            }
+            <span class="typeahead-indicator-separator"></span>
+            <button type="button"
+                    aria-hidden="true"
+                    class="typeahead-chevron-indicator typeahead-indicator"
+                    @onclick="HandleFocus">
+                <svg height="20" width="20" viewBox="0 0 20 20" aria-hidden="true" focusable="false" class="typeahead-svg">
+                    @if (SearchMode)
+                    {
+                        <path d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z" transform="matrix(-1 0 0 -1 19.998 21.2)" />
+                    }
+                    else
+                    {
+                        <path d="M4.516 7.548c0.436-0.446 1.043-0.481 1.576 0l3.908 3.747 3.908-3.747c0.533-0.481 1.141-0.446 1.574 0 0.436 0.445 0.408 1.197 0 1.615-0.406 0.418-4.695 4.502-4.695 4.502-0.217 0.223-0.502 0.335-0.787 0.335s-0.57-0.112-0.789-0.335c0 0-4.287-4.084-4.695-4.502s-0.436-1.17 0-1.615z" />
+                    }
+                </svg>
+            </button>
+        </div>
+    </div>
+    @if (SearchMode)
+    {
+
+        <div class="typeahead-menu">
+            <div class="typeahead-search-container">
+                <input @ref="SearchInput"
+                       @ref:suppressField
+                       @bind-value="SearchText"
+                       @bind-value:event="oninput"
+                       @onblur="HandleBlur"
+                       @onkeydown="HandleKeydown"
+                       class="typeahead-search-input"
+                       type="text"
+                       placeholder="Search ..."
+                       autocomplete="off" />
+            </div>
+            <div class="typeahead-menu-list">
+                @if (Loading)
+                {
+                    <div class="typeahead-option-loading">
+                        @LoadingTemplate
+                    </div>
+                }
+                else if (!HasSearchResult())
+                {
+                    <div class="typeahead-option-no-records">
+                        @NoRecordsTemplate
+                    </div>
+                }
+                else
+                {
+                    for (var index = 0; index < SearchResults.Count; index++)
+                    {
+                        var item = SearchResults[index];
+                        <div class="typeahead-option @OptionClass(item, index)"
+                             @onclick="@(async () => await SelectResult(item))">
+                            @ResultTemplate(item)
+                        </div>
+                    }
+                }
+
+                @if (!Loading && FooterTemplate != null)
+                {
+                    <div class="typeahead-option-footer">
+                        @FooterTemplate
+                    </div>
+                }
+            </div>
+        </div>
+    }
+</div>

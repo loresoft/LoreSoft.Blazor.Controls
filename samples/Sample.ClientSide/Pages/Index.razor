@@ -4,17 +4,19 @@
 
 Welcome to your new app.
 
-<AutoComplete SearchMethod="@GetPeopleLocal"
-              Items="People"
-              @bind-Value="@SelectedPerson"
-              Placeholder="Search by first name...">
+
+<Typeahead SearchMethod="@SearchPeople"
+           Items="People"
+           @bind-Value="@SelectedPerson"
+           Placeholder="Search by first name...">
     <SelectedTemplate Context="person">
         @person.FullName
     </SelectedTemplate>
     <ResultTemplate Context="person">
         @person.Firstname @person.Lastname
     </ResultTemplate>
-</AutoComplete>
+</Typeahead>
+
 
 <hr />
 
@@ -23,12 +25,97 @@ Welcome to your new app.
     <p>Selected: @SelectedPerson.Firstname @SelectedPerson.Lastname</p>
 }
 
+<hr />
+
+<Typeahead SearchMethod="@SearchPeople"
+           @bind-Values="@SelectedPeople"
+           Placeholder="Search by first name...">
+    <SelectedTemplate Context="person">
+        @person.FullName
+    </SelectedTemplate>
+    <ResultTemplate Context="person">
+        @person.Firstname @person.Lastname
+    </ResultTemplate>
+</Typeahead>
+
+<hr />
+
+@if (SelectedPeople != null)
+{
+    <ul>
+        @foreach (var person in SelectedPeople)
+        {
+            <li>@person.Firstname @person.Lastname</li>
+        }
+    </ul>
+}
+
+<hr />
+
+<EditForm Model="@starship" OnValidSubmit="@HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <p>
+        <label for="identifier">Identifier: </label>
+        <InputText id="identifier" @bind-Value="starship.Identifier" />
+    </p>
+    <p>
+        <label for="description">Description (optional): </label>
+        <InputTextArea id="description" @bind-Value="starship.Description" />
+    </p>
+    <p>
+        <label for="classification">Primary Classification: </label>
+        <InputSelect id="classification" @bind-Value="starship.Classification">
+            <option value="">Select classification ...</option>
+            <option value="Exploration">Exploration</option>
+            <option value="Diplomacy">Diplomacy</option>
+            <option value="Defense">Defense</option>
+        </InputSelect>
+    </p>
+    <p>
+        <label for="accommodation">Maximum Accommodation: </label>
+        <InputNumber id="accommodation"
+                     @bind-Value="starship.MaximumAccommodation" />
+    </p>
+    <p>
+        <label for="valid">Engineering Approval: </label>
+        <InputCheckbox id="valid" @bind-Value="starship.IsValidatedDesign" />
+    </p>
+    <p>
+        <label for="productionDate">Production Date: </label>
+        <InputDate id="productionDate" @bind-Value="starship.ProductionDate" />
+    </p>
+    <p>
+        <label for="productionDate">Captain: </label>
+        <Typeahead SearchMethod="@SearchPeople"
+                   @bind-Value="starship.Captain"
+                   Placeholder="Captain">
+            <SelectedTemplate Context="person">
+                @person.FullName
+            </SelectedTemplate>
+            <ResultTemplate Context="person">
+                @person.Firstname @person.Lastname
+            </ResultTemplate>
+        </Typeahead>    </p>
+
+    <button type="submit">Submit</button>
+</EditForm>
 
 @code {
 
-    private List<Person> People = new List<Person>();
+    protected List<Person> People = new List<Person>();
 
-    private Person SelectedPerson;
+    protected Person SelectedPerson;
+
+    protected IList<Person> SelectedPeople;
+
+    protected Starship starship = new Starship();
+
+    private void HandleValidSubmit()
+    {
+        Console.WriteLine("OnValidSubmit");
+    }
 
     protected override void OnInitialized()
     {
@@ -47,9 +134,9 @@ Welcome to your new app.
         People.Add(person6);
     }
 
-    private async Task<List<Person>> GetPeopleLocal(string searchText)
+    public async Task<IList<Person>> SearchPeople(string searchText)
     {
-        //await Task.Delay(800);
+        await Task.Delay(800); // simulate delay
         return await Task.FromResult(People.Where(x => x.Firstname.ToLower().Contains(searchText.ToLower())).ToList());
     }
 

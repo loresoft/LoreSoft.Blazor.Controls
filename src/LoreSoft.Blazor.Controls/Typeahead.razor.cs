@@ -1,43 +1,71 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
+using System.Text;
 using System.Threading.Tasks;
 using System.Timers;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.JSInterop;
 
-namespace LoreSoft.Blazor.Controls.Forms
+namespace LoreSoft.Blazor.Controls
 {
-    public class AutoCompleteInputBase<TItem> : InputBase<TItem>, IDisposable
+    public class TypeaheadBase<TItem> : ComponentBase, IDisposable
     {
         private Timer _debounceTimer;
 
-        public AutoCompleteInputBase()
+        public TypeaheadBase()
         {
             Items = new List<TItem>();
             AllowClear = true;
-            Searching = false;
+            Loading = false;
             SearchMode = false;
             SelectedIndex = 0;
+            SearchResults = new List<TItem>();
         }
 
         [Inject]
         private IJSRuntime JSRuntime { get; set; }
+
+        [CascadingParameter] 
+        private EditContext CascadedEditContext { get; set; }
+
+        [Parameter]
+        public TItem Value { get; set; }
+
+        [Parameter]
+        public EventCallback<TItem> ValueChanged { get; set; }
+
+        [Parameter] 
+        public Expression<Func<TItem>> ValueExpression { get; set; }
+
+
+        [Parameter]
+        public IList<TItem> Values { get; set; }
+
+        [Parameter]
+        public EventCallback<IList<TItem>> ValuesChanged { get; set; }
+
+        [Parameter]
+        public Expression<Func<IList<TItem>>> ValuesExpression { get; set; }
 
 
         [Parameter]
         public string Placeholder { get; set; }
 
         [Parameter]
-        public List<TItem> Items { get; set; }
+        public IReadOnlyCollection<TItem> Items { get; set; }
 
         [Parameter]
-        public Func<string, Task<List<TItem>>> SearchMethod { get; set; }
+        public Func<string, Task<IList<TItem>>> SearchMethod { get; set; }
 
 
         [Parameter]
         public RenderFragment NoRecordsTemplate { get; set; }
+
+        [Parameter]
+        public RenderFragment LoadingTemplate { get; set; }
 
         [Parameter]
         public RenderFragment<TItem> ResultTemplate { get; set; }
@@ -59,15 +87,18 @@ namespace LoreSoft.Blazor.Controls.Forms
         public bool AllowClear { get; set; }
 
 
-        public bool Searching { get; set; }
+        public bool Loading { get; set; }
 
         public bool SearchMode { get; set; }
 
-        public List<TItem> SearchResults { get; set; } = new List<TItem>();
+        public IList<TItem> SearchResults { get; set; }
 
         public ElementReference SearchInput { get; set; }
 
+        public EditContext EditContext { get; set; }
 
+        public FieldIdentifier FieldIdentifier { get; set; }
+        
         private string _searchText;
         public string SearchText
         {
@@ -101,10 +132,23 @@ namespace LoreSoft.Blazor.Controls.Forms
                 throw new InvalidOperationException($"{GetType()} requires a {nameof(SearchMethod)} parameter.");
 
             if (SelectedTemplate == null)
-                throw new InvalidOperationException($"{GetType()} requires a {nameof(SelectedTemplate)} parameter.");
+                SelectedTemplate = item => builder => builder.AddContent(0, item?.ToString());
 
             if (ResultTemplate == null)
-                throw new InvalidOperationException($"{GetType()} requires a {nameof(ResultTemplate)} parameter.");
+                SelectedTemplate = item => builder => builder.AddContent(0, item?.ToString());
+
+            if (NoRecordsTemplate == null)
+                NoRecordsTemplate = builder => builder.AddContent(0, "No Records Found");
+
+            if (LoadingTemplate == null)
+                LoadingTemplate = builder => builder.AddContent(0, "Loading ...");
+            
+
+            EditContext = CascadedEditContext;
+
+            FieldIdentifier = IsMultiselect()
+                ? FieldIdentifier.Create(ValuesExpression)
+                : FieldIdentifier.Create(ValueExpression);
 
             _debounceTimer = new Timer();
             _debounceTimer.Interval = Debounce;
@@ -112,16 +156,18 @@ namespace LoreSoft.Blazor.Controls.Forms
             _debounceTimer.Elapsed += Search;
         }
 
+
         public async void Search(object source, ElapsedEventArgs e)
         {
-            Searching = true;
+            Loading = true;
             await InvokeAsync(StateHasChanged);
 
-            List<TItem> result = null;
+            IList<TItem> result = null;
 
             try
             {
-                result = await SearchMethod?.Invoke(_searchText);
+                if (SearchMethod != null)
+                    result = await SearchMethod(_searchText);
             }
             catch (Exception ex)
             {
@@ -130,23 +176,52 @@ namespace LoreSoft.Blazor.Controls.Forms
 
             SearchResults = result ?? new List<TItem>();
 
-            Searching = false;
+            Loading = false;
             await InvokeAsync(StateHasChanged);
         }
 
         public async Task SelectResult(TItem item)
         {
-            await ValueChanged.InvokeAsync(item);
+            if (IsMultiselect())
+            {
+                var valueList = Values ?? new List<TItem>();
+                if (valueList.Contains(item))
+                    valueList.Remove(item);
+                else
+                    valueList.Add(item);
 
+                await ValuesChanged.InvokeAsync(valueList);
+            }
+            else
+            {
+                await ValueChanged.InvokeAsync(item);
+            }
+
+            EditContext?.NotifyFieldChanged(FieldIdentifier);
             SearchMode = false;
+        }
+
+        public async Task RemoveValue(TItem item)
+        {
+            var valueList = Values ?? new List<TItem>();
+            if (valueList.Contains(item))
+                valueList.Remove(item);
+
+            await ValuesChanged.InvokeAsync(valueList);
+            EditContext?.NotifyFieldChanged(FieldIdentifier);
         }
 
         public async Task Clear()
         {
-            await ValueChanged.InvokeAsync(default(TItem));
+            if (IsMultiselect())
+                await ValuesChanged.InvokeAsync(new List<TItem>());
+            else
+                await ValueChanged.InvokeAsync(default);
+
+            EditContext?.NotifyFieldChanged(FieldIdentifier);
         }
 
-        public async Task HandleFocus(UIFocusEventArgs args)
+        public async Task HandleFocus()
         {
             SearchText = "";
             SearchMode = true;
@@ -161,7 +236,7 @@ namespace LoreSoft.Blazor.Controls.Forms
             await Task.Delay(250);
 
             SearchMode = false;
-            Searching = false;
+            Loading = false;
         }
 
         public async Task HandleKeydown(UIKeyboardEventArgs args)
@@ -174,32 +249,55 @@ namespace LoreSoft.Blazor.Controls.Forms
                 await SelectResult(SearchResults[SelectedIndex]);
         }
 
-        public bool ShowNoRecords()
+
+        public bool IsMultiselect()
+        {
+            return ValuesExpression != null;
+        }
+
+        public bool HasSearchResult()
         {
             return SearchMode
-                && !Searching
-                && !SearchResults.Any();
+                && !Loading
+                && SearchResults.Any();
         }
 
-        public string ResultClass(TItem item, int index)
+        public bool HasValue()
         {
-            return index == SelectedIndex || Equals(item, Value)
-                ? "autocomplete-result-selected"
-                : "";
+            return Value != null || (Values != null && Values.Count > 0);
         }
 
-        protected override bool TryParseValueFromString(string value, out TItem result, out string validationErrorMessage)
+        public string OptionClass(TItem item, int index)
         {
-            result = (TItem)(object)value;
-            validationErrorMessage = null;
+            const string resultClass = "typeahead-option-selected";
 
-            return true;
+            if (index == SelectedIndex)
+                return resultClass;
+
+            if (!IsMultiselect())
+                return Equals(item, Value)
+                    ? resultClass
+                    : string.Empty;
+
+            if (Values == null || Values.Count == 0)
+                return string.Empty;
+
+            return Values.Contains(item)
+                ? resultClass
+                : string.Empty;
+        }
+
+        public string ValidationClass()
+        {
+            return EditContext != null 
+                ? EditContext.FieldClass(FieldIdentifier)
+                : string.Empty;
         }
 
 
         public void Dispose()
         {
-            _debounceTimer.Dispose();
+            _debounceTimer?.Dispose();
         }
 
 
@@ -223,5 +321,6 @@ namespace LoreSoft.Blazor.Controls.Forms
 
             SearchResults = new List<TItem>(Items);
         }
+
     }
 }
