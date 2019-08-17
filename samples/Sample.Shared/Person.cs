@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace Sample.Shared
@@ -16,9 +17,22 @@ namespace Sample.Shared
 
         public string Firstname { get; set; }
         public string Lastname { get; set; }
-        public string FullName { get => Firstname + " " + Lastname; }
+        public string FullName => Firstname + " " + Lastname;
         public int Age { get; set; }
         public string Location { get; set; }
+    }
+
+    public static class Data
+    {
+        public static IReadOnlyCollection<Person> PersonList { get; } = new List<Person>
+        {
+            new Person {Firstname = "John", Lastname = "Smith"},
+            new Person {Firstname = "Jane", Lastname = "Doe"},
+            new Person {Firstname = "Tom", Lastname = "Jones"},
+            new Person {Firstname = "Fred", Lastname = "Gouch"},
+            new Person {Firstname = "John", Lastname = "Philips"},
+            new Person {Firstname = "Jon", Lastname = "Thomas"}
+        };
     }
 
     public class Starship

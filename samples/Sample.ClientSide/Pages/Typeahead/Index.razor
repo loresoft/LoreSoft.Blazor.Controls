@@ -1,0 +1,63 @@
+﻿@page "/typeahead/index"
+
+<h1>Typeahead</h1>
+
+<p>Blazor Typeahead Control</p>
+
+<h2>Installing</h2>
+
+<p>You can install from NuGet using the following command:</p>
+
+<pre>
+<code>Install-Package Blazored.Typeahead</code>
+</pre>
+
+<p>Or via the Visual Studio package manger.</p>
+
+<h2>Setup</h2>
+
+<p>To use, you will need to include the following CSS and JS files in your <code>index.html</code> (Blazor WebAssembly) or <code>_Host.cshtml</code> (Blazor Server).</p>
+
+<p>In the head tag add the following CSS.</p>
+
+<pre>
+<code>&lt;link rel=&quot;stylesheet&quot; href=&quot;_content/LoreSoft.Blazor.Controls/BlazorControls.css&quot; /&gt;</code>
+</pre>
+
+<p>
+    Then add the JS script at the bottom of the page using the following script tag.
+</p>
+
+<pre>
+<code>&lt;script src=&quot;_content/LoreSoft.Blazor.Controls/BlazorControls.js&quot;&gt;&lt;/script&gt;</code>
+</pre>
+
+<h2>Basic Example</h2>
+
+<Typeahead SearchMethod="@SearchPeople"
+           Items="Data.PersonList"
+           @bind-Value="@SelectedPerson"
+           Placeholder="Search by first name...">
+    <SelectedTemplate Context="person">
+        @person.FullName
+    </SelectedTemplate>
+    <ResultTemplate Context="person">
+        @person.Firstname @person.Lastname
+    </ResultTemplate>
+</Typeahead>
+
+
+
+
+@code {
+    protected Person SelectedPerson { get; set; }
+
+    public async Task<IList<Person>> SearchPeople(string searchText)
+    {
+        var result = Data.PersonList
+            .Where(x => x.FullName.ToLower().Contains(searchText.ToLower()))
+            .ToList();
+
+        return await Task.FromResult(result);
+    }
+}
