@@ -11,7 +11,7 @@ using Microsoft.JSInterop;
 
 namespace LoreSoft.Blazor.Controls
 {
-    public class TypeaheadBase<TItem> : ComponentBase, IDisposable
+    public class TypeaheadBase<TItem, TValue> : ComponentBase, IDisposable
     {
         private Timer _debounceTimer;
 
@@ -32,23 +32,23 @@ namespace LoreSoft.Blazor.Controls
         private EditContext CascadedEditContext { get; set; }
 
         [Parameter]
-        public TItem Value { get; set; }
+        public TValue Value { get; set; }
 
         [Parameter]
-        public EventCallback<TItem> ValueChanged { get; set; }
+        public EventCallback<TValue> ValueChanged { get; set; }
 
         [Parameter] 
-        public Expression<Func<TItem>> ValueExpression { get; set; }
+        public Expression<Func<TValue>> ValueExpression { get; set; }
 
 
         [Parameter]
-        public IList<TItem> Values { get; set; }
+        public IList<TValue> Values { get; set; }
 
         [Parameter]
-        public EventCallback<IList<TItem>> ValuesChanged { get; set; }
+        public EventCallback<IList<TValue>> ValuesChanged { get; set; }
 
         [Parameter]
-        public Expression<Func<IList<TItem>>> ValuesExpression { get; set; }
+        public Expression<Func<IList<TValue>>> ValuesExpression { get; set; }
 
 
         [Parameter]
@@ -59,6 +59,9 @@ namespace LoreSoft.Blazor.Controls
 
         [Parameter]
         public Func<string, Task<IList<TItem>>> SearchMethod { get; set; }
+
+        [Parameter]
+        public Func<TItem, TValue> ConvertMethod { get; set; }
 
 
         [Parameter]
@@ -71,7 +74,7 @@ namespace LoreSoft.Blazor.Controls
         public RenderFragment<TItem> ResultTemplate { get; set; }
 
         [Parameter]
-        public RenderFragment<TItem> SelectedTemplate { get; set; }
+        public RenderFragment<TValue> SelectedTemplate { get; set; }
 
         [Parameter]
         public RenderFragment FooterTemplate { get; set; }
@@ -131,6 +134,14 @@ namespace LoreSoft.Blazor.Controls
             if (SearchMethod == null)
                 throw new InvalidOperationException($"{GetType()} requires a {nameof(SearchMethod)} parameter.");
 
+            if (ConvertMethod == null)
+            {
+                if (typeof(TItem) != typeof(TValue)) 
+                    throw new InvalidOperationException($"{GetType()} requires a {nameof(ConvertMethod)} parameter.");
+
+                ConvertMethod = item => item is TValue value ? value : default;
+            }
+
             if (SelectedTemplate == null)
                 SelectedTemplate = item => builder => builder.AddContent(0, item?.ToString());
 
@@ -182,28 +193,30 @@ namespace LoreSoft.Blazor.Controls
 
         public async Task SelectResult(TItem item)
         {
+            TValue value = ConvertMethod(item);
+
             if (IsMultiselect())
             {
-                var valueList = Values ?? new List<TItem>();
-                if (valueList.Contains(item))
-                    valueList.Remove(item);
+                var valueList = Values ?? new List<TValue>();
+                if (valueList.Contains(value))
+                    valueList.Remove(value);
                 else
-                    valueList.Add(item);
+                    valueList.Add(value);
 
                 await ValuesChanged.InvokeAsync(valueList);
             }
             else
             {
-                await ValueChanged.InvokeAsync(item);
+                await ValueChanged.InvokeAsync(value);
             }
 
             EditContext?.NotifyFieldChanged(FieldIdentifier);
             SearchMode = false;
         }
 
-        public async Task RemoveValue(TItem item)
+        public async Task RemoveValue(TValue item)
         {
-            var valueList = Values ?? new List<TItem>();
+            var valueList = Values ?? new List<TValue>();
             if (valueList.Contains(item))
                 valueList.Remove(item);
 
@@ -214,7 +227,7 @@ namespace LoreSoft.Blazor.Controls
         public async Task Clear()
         {
             if (IsMultiselect())
-                await ValuesChanged.InvokeAsync(new List<TItem>());
+                await ValuesChanged.InvokeAsync(new List<TValue>());
             else
                 await ValueChanged.InvokeAsync(default);
 
@@ -270,19 +283,20 @@ namespace LoreSoft.Blazor.Controls
         public string OptionClass(TItem item, int index)
         {
             const string resultClass = "typeahead-option-selected";
+            TValue value = ConvertMethod(item);
 
             if (index == SelectedIndex)
                 return resultClass;
 
             if (!IsMultiselect())
-                return Equals(item, Value)
+                return Equals(value, Value)
                     ? resultClass
                     : string.Empty;
 
             if (Values == null || Values.Count == 0)
                 return string.Empty;
 
-            return Values.Contains(item)
+            return Values.Contains(value)
                 ? resultClass
                 : string.Empty;
         }
