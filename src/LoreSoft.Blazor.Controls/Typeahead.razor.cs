@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
 using System.Threading.Tasks;
 using System.Timers;
 using Microsoft.AspNetCore.Components;
@@ -28,8 +27,11 @@ namespace LoreSoft.Blazor.Controls
         [Inject]
         private IJSRuntime JSRuntime { get; set; }
 
-        [CascadingParameter] 
+        [CascadingParameter]
         private EditContext CascadedEditContext { get; set; }
+
+        [Parameter(CaptureUnmatchedValues = true)]
+        public IReadOnlyDictionary<string, object> AdditionalAttributes { get; set; }
 
         [Parameter]
         public TValue Value { get; set; }
@@ -37,7 +39,7 @@ namespace LoreSoft.Blazor.Controls
         [Parameter]
         public EventCallback<TValue> ValueChanged { get; set; }
 
-        [Parameter] 
+        [Parameter]
         public Expression<Func<TValue>> ValueExpression { get; set; }
 
 
@@ -58,7 +60,7 @@ namespace LoreSoft.Blazor.Controls
         public IReadOnlyCollection<TItem> Items { get; set; }
 
         [Parameter]
-        public Func<string, Task<IList<TItem>>> SearchMethod { get; set; }
+        public Func<string, Task<IEnumerable<TItem>>> SearchMethod { get; set; }
 
         [Parameter]
         public Func<TItem, TValue> ConvertMethod { get; set; }
@@ -101,7 +103,7 @@ namespace LoreSoft.Blazor.Controls
         public EditContext EditContext { get; set; }
 
         public FieldIdentifier FieldIdentifier { get; set; }
-        
+
         private string _searchText;
         public string SearchText
         {
@@ -136,7 +138,7 @@ namespace LoreSoft.Blazor.Controls
 
             if (ConvertMethod == null)
             {
-                if (typeof(TItem) != typeof(TValue)) 
+                if (typeof(TItem) != typeof(TValue))
                     throw new InvalidOperationException($"{GetType()} requires a {nameof(ConvertMethod)} parameter.");
 
                 ConvertMethod = item => item is TValue value ? value : default;
@@ -153,7 +155,7 @@ namespace LoreSoft.Blazor.Controls
 
             if (LoadingTemplate == null)
                 LoadingTemplate = builder => builder.AddContent(0, "Loading ...");
-            
+
 
             EditContext = CascadedEditContext;
 
@@ -173,7 +175,7 @@ namespace LoreSoft.Blazor.Controls
             Loading = true;
             await InvokeAsync(StateHasChanged);
 
-            IList<TItem> result = null;
+            IEnumerable<TItem> result = null;
 
             try
             {
@@ -185,7 +187,9 @@ namespace LoreSoft.Blazor.Controls
                 // log error
             }
 
-            SearchResults = result ?? new List<TItem>();
+            SearchResults = result != null
+                ? result.ToList()
+                : new List<TItem>();
 
             Loading = false;
             await InvokeAsync(StateHasChanged);
@@ -303,7 +307,7 @@ namespace LoreSoft.Blazor.Controls
 
         public string ValidationClass()
         {
-            return EditContext != null 
+            return EditContext != null
                 ? EditContext.FieldClass(FieldIdentifier)
                 : string.Empty;
         }

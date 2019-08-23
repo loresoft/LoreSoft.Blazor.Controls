@@ -75,6 +75,13 @@ Welcome to your new app.
 
 <hr />
 
+Checked: 
+<ToggleSwitch @bind-Value="IsChecked"></ToggleSwitch>
+
+<p>Value: @IsChecked</p>
+
+<hr />
+
 <EditForm Model="@starship" OnValidSubmit="@HandleValidSubmit">
     <DataAnnotationsValidator />
     <ValidationSummary />
@@ -128,6 +135,8 @@ Welcome to your new app.
 
 @code {
 
+    protected bool IsChecked = false;
+
     protected List<Person> People = new List<Person>();
 
     protected Person SelectedPerson;
@@ -160,7 +169,7 @@ Welcome to your new app.
         People.Add(person6);
     }
 
-    public async Task<IList<Person>> SearchPeople(string searchText)
+    public async Task<IEnumerable<Person>> SearchPeople(string searchText)
     {
         await Task.Delay(800); // simulate delay
         return await Task.FromResult(People.Where(x => x.Firstname.ToLower().Contains(searchText.ToLower())).ToList());

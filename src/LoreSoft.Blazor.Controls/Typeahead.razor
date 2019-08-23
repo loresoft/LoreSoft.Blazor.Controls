@@ -2,7 +2,8 @@
 @typeparam TValue
 @inherits TypeaheadBase<TItem, TValue>
 
-<div class="typeahead-container @ValidationClass()">
+<div class="typeahead-container @ValidationClass()" 
+     @attributes="AdditionalAttributes">
     <div class="typeahead-control"
          tabindex="0"
          @onfocus="HandleFocus">

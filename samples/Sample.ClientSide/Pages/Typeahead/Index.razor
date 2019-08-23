@@ -65,7 +65,7 @@
 @@code {
     public StateLocation SelectedState { get; set; }
 
-    public async Task&lt;IList&lt;StateLocation&gt;&gt; SearchState(string searchText)
+    public async Task&lt;IEnumerable&lt;StateLocation&gt;&gt; SearchState(string searchText)
     {
         var result = Data.StateList
             .Where(x =&gt; x.Name.ToLower().Contains(searchText.ToLower()))
@@ -108,7 +108,7 @@
 @@code {
     public IList&lt;Person&gt; SelectedPeople;
 
-    public async Task&lt;IList&lt;Person&gt;&gt; SearchPeople(string searchText)
+    public async Task&lt;IEnumerable&lt;Person&gt;&gt; SearchPeople(string searchText)
     {
         var result = Data.PersonList
             .Where(x =&gt; x.FullName.ToLower().Contains(searchText.ToLower()))
@@ -122,7 +122,7 @@
 @code {
     public StateLocation SelectedState { get; set; }
 
-    public async Task<IList<StateLocation>> SearchState(string searchText)
+    public async Task<IEnumerable<StateLocation>> SearchState(string searchText)
     {
         var result = Data.StateList
             .Where(x => x.Name.ToLower().Contains(searchText.ToLower()))
@@ -133,7 +133,7 @@
 
     public IList<Person> SelectedPeople;
 
-    public async Task<IList<Person>> SearchPeople(string searchText)
+    public async Task<IEnumerable<Person>> SearchPeople(string searchText)
     {
         var result = Data.PersonList
             .Where(x => x.FullName.ToLower().Contains(searchText.ToLower()))
