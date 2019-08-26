@@ -1,0 +1,72 @@
+﻿<h3>Register Form</h3>
+
+<EditForm Model="Register" OnValidSubmit="@HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="form-group">
+        <label for="DisplayName">Display Name *</label>
+        <InputText id="DisplayName"
+                   name="DisplayName"
+                   @bind-Value="Register.DisplayName"
+                   class="form-control"
+                   placeholder="Display Name" />
+        <ValidationMessage For="@(() => Register.DisplayName)" />
+    </div>
+    <div class="form-group">
+        <label for="EmailAddress">EmailAddress *</label>
+        <InputText id="EmailAddress"
+                   name="EmailAddress"
+                   type="email"
+                   @bind-Value="Register.EmailAddress"
+                   class="form-control"
+                   placeholder="Email Address" />
+        <ValidationMessage For="@(() => Register.EmailAddress)" />
+    </div>
+    <div class="form-group">
+        <label for="Manager">Manager *</label>
+        <Typeahead SearchMethod="@SearchPeople"
+                   Items="Data.PersonList"
+                   @bind-Value="@Register.Manager"
+                   Placeholder="Manager">
+            <SelectedTemplate Context="user">
+                @user.FullName
+            </SelectedTemplate>
+            <ResultTemplate Context="user">
+                @user.FullName
+            </ResultTemplate>
+        </Typeahead>
+        <ValidationMessage For="@(() => Register.Manager)" />
+    </div>
+    <div class="form-group">
+        <label for="Agree">Agree to terms *</label>
+        <ToggleSwitch @bind-Value="Register.Agree"></ToggleSwitch>
+        <ValidationMessage For="@(() => Register.Agree)" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">
+        Submit
+    </button>
+
+</EditForm>
+
+<p><br/></p>
+
+@code {
+    public Register Register { get; set; } = new Register();
+    
+    public async Task<IEnumerable<Person>> SearchPeople(string searchText)
+    {
+        var result = Data.PersonList
+            .Where(x => x.FullName.ToLower().Contains(searchText.ToLower()))
+            .ToList();
+
+        return await Task.FromResult(result);
+    }
+
+    private void HandleValidSubmit()
+    {
+        Console.WriteLine("Form Submitted Successfully!");
+    }
+
+}

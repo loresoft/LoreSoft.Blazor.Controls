@@ -6,12 +6,12 @@ namespace Sample.Shared
     {
         public static IReadOnlyCollection<Person> PersonList { get; } = new List<Person>
         {
-            new Person {Firstname = "John", Lastname = "Smith"},
-            new Person {Firstname = "Jane", Lastname = "Doe"},
-            new Person {Firstname = "Tom", Lastname = "Jones"},
-            new Person {Firstname = "Fred", Lastname = "Gouch"},
-            new Person {Firstname = "John", Lastname = "Philips"},
-            new Person {Firstname = "Jon", Lastname = "Thomas"}
+            new Person {Id = 1, Firstname = "John", Lastname = "Smith"},
+            new Person {Id = 2, Firstname = "Jane", Lastname = "Doe"},
+            new Person {Id = 3, Firstname = "Tom", Lastname = "Jones"},
+            new Person {Id = 4, Firstname = "Fred", Lastname = "Gouch"},
+            new Person {Id = 5, Firstname = "John", Lastname = "Philips"},
+            new Person {Id = 6, Firstname = "Jon", Lastname = "Thomas"}
         };
 
         public static IReadOnlyCollection<StateLocation> StateList { get; } = new List<StateLocation>

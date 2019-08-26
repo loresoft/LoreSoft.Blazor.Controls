@@ -1,4 +1,56 @@
 ﻿@page "/"
+@using Octokit
+@inject IGitHubClient GitHubClient;
+
+<style type="text/css">
+    .github-repository {
+        padding-top: 4px;
+        padding-bottom: 3px;
+    }
+
+    .github-avatar {
+        float: left;
+        width: 60px;
+        margin-right: 10px;
+    }
+    
+    .github-avatar img {
+        width: 100%;
+        height: auto;
+        border-radius: 2px;
+    }
+
+    .github-meta {
+        margin-left: 70px;
+    }
+
+    .github-title {
+        color: black;
+        font-weight: 700;
+        word-wrap: break-word;
+        line-height: 1.1;
+        margin-bottom: 4px;
+    }
+
+    .github-description {
+        font-size: 13px;
+        color: #777;
+        margin-top: 4px;
+    }
+
+    .github-forks,
+    .github-stargazers,
+    .github-watchers {
+        display: inline-block;
+        color: #aaa;
+        font-size: 11px;
+    }
+
+    .github-forks,
+    .github-stargazers {
+        margin-right: 1em;
+    }
+</style>
 
 <h1>Hello, world!</h1>
 
@@ -35,7 +87,7 @@ Welcome to your new app.
     <SelectedTemplate Context="personId">
         @LookupPerson(personId)?.FullName
     </SelectedTemplate>
-    <ResultTemplate Context="person" >
+    <ResultTemplate Context="person">
         @person.Firstname @person.Lastname
     </ResultTemplate>
 </Typeahead>
@@ -75,10 +127,35 @@ Welcome to your new app.
 
 <hr />
 
-Checked: 
+Checked:
 <ToggleSwitch @bind-Value="IsChecked"></ToggleSwitch>
 
 <p>Value: @IsChecked</p>
+
+<hr />
+
+<Typeahead SearchMethod="@SearchGithub"
+           @bind-Value="@SelectedRepository"
+           Placeholder="Repository"
+           MinimumLength="3">
+    <SelectedTemplate Context="repo">
+        @repo.FullName
+    </SelectedTemplate>
+    <ResultTemplate Context="repo">
+        <div class="github-repository clearfix">
+            <div class="github-avatar"><img src="@repo.Owner.AvatarUrl"></div>
+            <div class="github-meta">
+                <div class="github-title">@repo.FullName</div>
+                <div class="github-description">@repo.Description</div>
+                <div class="github-statistics">
+                    <div class="github-forks"><i class="fa fa-flash"></i> @repo.ForksCount Forks</div>
+                    <div class="github-stargazers"><i class="fa fa-star"></i> @repo.StargazersCount Stars</div>
+                    <div class="github-watchers"><i class="fa fa-eye"></i> @repo.SubscribersCount Watchers</div>
+                </div>
+            </div>
+        </div>
+    </ResultTemplate>
+</Typeahead>
 
 <hr />
 
@@ -189,4 +266,17 @@ Checked:
     {
         Console.WriteLine("Form Submitted Successfully!");
     }
+
+
+    public Repository SelectedRepository { get; set; }
+
+    public async Task<IEnumerable<Repository>> SearchGithub(string searchText)
+    {
+        var request = new SearchRepositoriesRequest(searchText);
+        var result = await GitHubClient.Search.SearchRepo(request);
+
+        return result.Items;
+    }
+
+
 }

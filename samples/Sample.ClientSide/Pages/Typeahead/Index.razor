@@ -1,151 +1,46 @@
 ﻿@page "/typeahead/index"
+@using Sample.ClientSide.Pages.Typeahead.Examples
+
+@using Octokit
 @inject IJSRuntime JsRuntime;
+@inject IGitHubClient GitHubClient;
+
+
 
 <h1>Typeahead</h1>
 
 <p>Blazor Typeahead Control</p>
 
-<h2>Installing</h2>
+<Instructions></Instructions>
 
-<p>You can install from NuGet using the following command:</p>
+<h2 class="mb-3">Examples</h2>
 
-<pre>
-<code>Install-Package LoreSoft.Blazor.Controls</code>
-</pre>
+<SingleValue></SingleValue>
 
-<p>Or via the Visual Studio package manger.</p>
+<br />
 
-<h2>Setup</h2>
+<MultipleValues></MultipleValues>
 
-<p>To use, you will need to include the following CSS and JS files in your <code>index.html</code> (Blazor WebAssembly) or <code>_Host.cshtml</code> (Blazor Server).</p>
+<br />
 
-<p>In the head tag add the following CSS.</p>
+<GitHubSearch></GitHubSearch>
 
-<pre class="language-markup">
-<code class="language-markup">&lt;link rel=&quot;stylesheet&quot; href=&quot;_content/LoreSoft.Blazor.Controls/BlazorControls.css&quot; /&gt;</code>
-</pre>
+<br />
 
-<p>
-    Then add the JS script at the bottom of the page using the following script tag.
-</p>
+<ValueBind></ValueBind>
 
-<pre class="language-markup">
-<code class="language-markup">&lt;script src=&quot;_content/LoreSoft.Blazor.Controls/BlazorControls.js&quot;&gt;&lt;/script&gt;</code>
-</pre>
+<br />
 
-<h2>Basic Example</h2>
+<RegisterForm></RegisterForm>
 
-<Typeahead SearchMethod="@SearchState"
-           Items="Data.StateList"
-           @bind-Value="@SelectedState"
-           Placeholder="State">
-    <SelectedTemplate Context="state">
-        @state.Name
-    </SelectedTemplate>
-    <ResultTemplate Context="state">
-        @state.Name
-    </ResultTemplate>
-</Typeahead>
+<br />
 
-<pre class="language-markup"><code class="language-markup">
-&lt;Typeahead SearchMethod=&quot;@@SearchState&quot;
-           Items=&quot;Data.StateList&quot;
-           @@bind-Value=&quot;@@SelectedState&quot;
-           Placeholder=&quot;State&quot;&gt;
-    &lt;SelectedTemplate Context=&quot;state&quot;&gt;
-        @@state.Name
-    &lt;/SelectedTemplate&gt;
-    &lt;ResultTemplate Context=&quot;state&quot;&gt;
-        @@state.Name
-    &lt;/ResultTemplate&gt;
-&lt;/Typeahead&gt;
-</code></pre>
-
-<pre class="language-csharp"><code class="language-csharp">
-@@code {
-    public StateLocation SelectedState { get; set; }
-
-    public async Task&lt;IEnumerable&lt;StateLocation&gt;&gt; SearchState(string searchText)
-    {
-        var result = Data.StateList
-            .Where(x =&gt; x.Name.ToLower().Contains(searchText.ToLower()))
-            .ToList();
-
-        return await Task.FromResult(result);
-    }
-}
-</code></pre>
-
-<h2>Multiselect Example</h2>
-
-<Typeahead SearchMethod="@SearchPeople"
-           Items="Data.PersonList"
-           @bind-Values="@SelectedPeople"
-           Placeholder="Owners">
-    <SelectedTemplate Context="person">
-        @person.FullName
-    </SelectedTemplate>
-    <ResultTemplate Context="person">
-        @person.FullName
-    </ResultTemplate>
-</Typeahead>
-
-<pre class="language-markup"><code class="language-markup">
-&lt;Typeahead SearchMethod=&quot;@@SearchPeople&quot;
-           Items=&quot;Data.PersonList&quot;
-           @@bind-Values=&quot;@@SelectedPeople&quot;
-           Placeholder=&quot;Owners&quot;&gt;
-    &lt;SelectedTemplate Context=&quot;person&quot;&gt;
-        @@person.FullName
-    &lt;/SelectedTemplate&gt;
-    &lt;ResultTemplate Context=&quot;person&quot;&gt;
-        @@person.FullName
-    &lt;/ResultTemplate&gt;
-&lt;/Typeahead&gt;
-</code></pre>
-
-<pre class="language-csharp"><code class="language-csharp">
-@@code {
-    public IList&lt;Person&gt; SelectedPeople;
-
-    public async Task&lt;IEnumerable&lt;Person&gt;&gt; SearchPeople(string searchText)
-    {
-        var result = Data.PersonList
-            .Where(x =&gt; x.FullName.ToLower().Contains(searchText.ToLower()))
-            .ToList();
-
-        return await Task.FromResult(result);
-    }
- }
-</code></pre>
+<p class="mb-5"> <br /></p>
 
 @code {
-    public StateLocation SelectedState { get; set; }
-
-    public async Task<IEnumerable<StateLocation>> SearchState(string searchText)
-    {
-        var result = Data.StateList
-            .Where(x => x.Name.ToLower().Contains(searchText.ToLower()))
-            .ToList();
-
-        return await Task.FromResult(result);
-    }
-
-    public IList<Person> SelectedPeople;
-
-    public async Task<IEnumerable<Person>> SearchPeople(string searchText)
-    {
-        var result = Data.PersonList
-            .Where(x => x.FullName.ToLower().Contains(searchText.ToLower()))
-            .ToList();
-
-        return await Task.FromResult(result);
-    }
-
     protected override async Task OnAfterRenderAsync()
     {
         base.OnAfterRender();
         await JsRuntime.InvokeAsync<object>("Prism.highlightAll");
     }
-
 }
