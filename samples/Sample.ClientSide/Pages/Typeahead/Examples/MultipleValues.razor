@@ -14,7 +14,7 @@
     </ResultTemplate>
 </Typeahead>
 
-<p>Bound Values: @SelectedPeople?.Select(s => s.FullName).Aggregate((i, j) => i + ", " + j)</p>
+<p>Bound Values: @BoundValues()</p>
 
 <pre><code class="language-markup">
 &lt;Typeahead SearchMethod=&quot;@@SearchPeople&quot;
@@ -55,5 +55,14 @@
             .ToList();
 
         return Task.FromResult<IEnumerable<Person>>(result);
+    }
+
+    public string BoundValues()
+    {
+        if (SelectedPeople == null || SelectedPeople.Count == 0)
+            return String.Empty;
+
+        var items = SelectedPeople.Select(p => p.FullName);
+        return string.Join(", ", items);
     }
 }
