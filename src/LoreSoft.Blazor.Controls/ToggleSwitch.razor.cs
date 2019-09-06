@@ -46,7 +46,7 @@ namespace LoreSoft.Blazor.Controls
             get
             {
                 var fieldClass = EditContext != null
-                    ? EditContext.FieldClass(FieldIdentifier)
+                    ? EditContext.FieldCssClass(FieldIdentifier)
                     : string.Empty;
 
                 if (AdditionalAttributes != null &&

@@ -38,9 +38,9 @@
 <p class="mb-5"> <br /></p>
 
 @code {
-    protected override async Task OnAfterRenderAsync()
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        base.OnAfterRender();
+        base.OnAfterRender(firstRender);
         await JsRuntime.InvokeAsync<object>("Prism.highlightAll");
     }
 }

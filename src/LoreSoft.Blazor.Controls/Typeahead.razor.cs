@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Timers;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
+using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
 
 namespace LoreSoft.Blazor.Controls
@@ -256,7 +257,7 @@ namespace LoreSoft.Blazor.Controls
             Loading = false;
         }
 
-        public async Task HandleKeydown(UIKeyboardEventArgs args)
+        public async Task HandleKeydown(KeyboardEventArgs args)
         {
             if (args.Key == "ArrowDown")
                 MoveSelection(1);
@@ -308,7 +309,7 @@ namespace LoreSoft.Blazor.Controls
         public string ValidationClass()
         {
             return EditContext != null
-                ? EditContext.FieldClass(FieldIdentifier)
+                ? EditContext.FieldCssClass(FieldIdentifier)
                 : string.Empty;
         }
 
