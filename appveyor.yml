@@ -3,6 +3,12 @@ os: Visual Studio 2019
 
 environment:
   ASPNETCORE_ENVIRONMENT: appveyor
+  github_token:
+    secure: KUc3pG9peYx1YIVf3w2GZsHzryQ1vrWcSQJBf0F4renkeMcjj+sK9w3rCoVieaOk
+
+skip_commits:
+  files:
+    - docs/*
 
 init:
   - git config --global core.autocrlf input
@@ -21,6 +27,7 @@ dotnet_csproj:
 
 build_script:
   - dotnet pack LoreSoft.Blazor.Controls.sln --configuration Release --include-symbols --include-source
+  - dotnet publish ".\samples\Sample.ClientSide\Sample.ClientSide.csproj" --configuration Release
 
 test_script:
   - dotnet test LoreSoft.Blazor.Controls.sln --configuration Release /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:Exclude="[xunit*]*"
@@ -32,3 +39,14 @@ artifacts:
 deploy:
 - provider: Environment
   name: MyGet
+
+on_success:
+  - ps: Copy-Item -Path ".\samples\Sample.ClientSide\bin\Release\netstandard2.0\publish\Sample.ClientSide\dist\*" -Destination ".\docs\" -recurse -Force
+  - ps: Copy-Item -Path ".\samples\Sample.ClientSide\bin\Release\netstandard2.0\publish\wwwroot\_content\*" -Destination ".\docs\_content" -recurse -Force
+  - git config --global credential.helper store
+  - ps: Add-Content "$HOME\.git-credentials" "https://$($env:github_token):x-oauth-basic@github.com`n"
+  - git config --global user.email "appveyor@loresoft.com"
+  - git config --global user.name "appveyor"
+  - git add ".\docs\"
+  - git commit -m "update documentation sample"
+  - git push
