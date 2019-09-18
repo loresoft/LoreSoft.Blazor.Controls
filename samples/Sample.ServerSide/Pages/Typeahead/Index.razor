@@ -1,0 +1,46 @@
+﻿@page "/typeahead/index"
+@using Sample.ServerSide.Pages.Typeahead.Examples
+
+@using Octokit
+@inject IJSRuntime JsRuntime;
+@inject IGitHubClient GitHubClient;
+
+
+
+<h1>Typeahead</h1>
+
+<p>Blazor Typeahead Control</p>
+
+<Instructions></Instructions>
+
+<h2 class="mb-3">Examples</h2>
+
+<SingleValue></SingleValue>
+
+<br />
+
+<MultipleValues></MultipleValues>
+
+<br />
+
+<GitHubSearch></GitHubSearch>
+
+<br />
+
+<ValueBind></ValueBind>
+
+<br />
+
+<RegisterForm></RegisterForm>
+
+<br />
+
+<p class="mb-5"> <br /></p>
+
+@code {
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        base.OnAfterRender(firstRender);
+        await JsRuntime.InvokeAsync<object>("Prism.highlightAll");
+    }
+}

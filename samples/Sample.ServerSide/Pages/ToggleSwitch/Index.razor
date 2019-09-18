@@ -1,0 +1,28 @@
+﻿@page "/toggleSwitch/index"
+@using Sample.ServerSide.Pages.ToggleSwitch.Examples
+
+@inject IJSRuntime JsRuntime;
+
+<h1>Toggle Switch</h1>
+
+<p>Blazor Toggle Switch Control</p>
+
+<Instructions></Instructions>
+
+<h2 class="mb-3">Examples</h2>
+
+<Basic></Basic>
+
+<br />
+
+<RegisterForm></RegisterForm>
+
+<br />
+
+@code {
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        base.OnAfterRender(firstRender);
+        await JsRuntime.InvokeAsync<object>("Prism.highlightAll");
+    }
+}

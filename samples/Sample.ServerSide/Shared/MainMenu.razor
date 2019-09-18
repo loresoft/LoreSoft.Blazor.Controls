@@ -1,0 +1,37 @@
+﻿<nav class="navbar navbar-expand-md navbar-light bg-light fixed-top">
+    <a class="navbar-brand" href="/">
+        <img src="logo.png"
+             alt="LoreSoft"
+             height="30" />
+        Blazor Controls
+    </a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarCollapse">
+        <ul class="navbar-nav mr-auto">
+            <li class="nav-item">
+                <NavLink class="nav-link" href="/" Match="NavLinkMatch.All">Home</NavLink>
+            </li>
+            <li class="nav-item">
+                <NavLink class="nav-link" href="/typeahead/index" Match="NavLinkMatch.Prefix">Typeahead</NavLink>
+            </li>
+            <li class="nav-item">
+                <NavLink class="nav-link" href="/toggleSwitch/index" Match="NavLinkMatch.Prefix">ToggleSwitch</NavLink>
+            </li>
+        </ul>
+
+        <ul class="navbar-nav">
+            <li class="nav-item">
+                <a class="nav-link" title="GitHub Repository" href="https://github.com/loresoft/LoreSoft.Blazor.Controls">
+                    <i class="fab fa-github"></i> GitHub Repository
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" title="Nuget Package" href="https://www.nuget.org/packages/LoreSoft.Blazor.Controls/">
+                    <img aria-hidden="true" alt="" src="https://www.nuget.org/Content/gallery/img/default-package-icon.svg" height="16" style="margin-top: -6px;" /> Nuget Package
+                </a>
+            </li>
+        </ul>
+    </div>
+</nav>
