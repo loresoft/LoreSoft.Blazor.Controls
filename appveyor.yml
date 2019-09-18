@@ -47,6 +47,7 @@ on_success:
   - ps: Add-Content "$HOME\.git-credentials" "https://$($env:github_token):x-oauth-basic@github.com`n"
   - git config --global user.email "appveyor@loresoft.com"
   - git config --global user.name "appveyor"
+  - git checkout master
   - git add docs
   - git commit -m "update documentation sample"
   - git push
