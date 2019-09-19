@@ -26,10 +26,10 @@ namespace LoreSoft.Blazor.Controls
         }
 
         [Inject]
-        private IJSRuntime JSRuntime { get; set; }
+        protected IJSRuntime JSRuntime { get; set; }
 
         [CascadingParameter]
-        private EditContext CascadedEditContext { get; set; }
+        protected EditContext EditContext { get; set; }
 
         [Parameter(CaptureUnmatchedValues = true)]
         public IReadOnlyDictionary<string, object> AdditionalAttributes { get; set; }
@@ -101,8 +101,6 @@ namespace LoreSoft.Blazor.Controls
 
         public ElementReference SearchInput { get; set; }
 
-        public EditContext EditContext { get; set; }
-
         public FieldIdentifier FieldIdentifier { get; set; }
 
         private string _searchText;
@@ -149,7 +147,7 @@ namespace LoreSoft.Blazor.Controls
                 SelectedTemplate = item => builder => builder.AddContent(0, item?.ToString());
 
             if (ResultTemplate == null)
-                SelectedTemplate = item => builder => builder.AddContent(0, item?.ToString());
+                ResultTemplate = item => builder => builder.AddContent(0, item?.ToString());
 
             if (NoRecordsTemplate == null)
                 NoRecordsTemplate = builder => builder.AddContent(0, "No Records Found");
@@ -157,8 +155,6 @@ namespace LoreSoft.Blazor.Controls
             if (LoadingTemplate == null)
                 LoadingTemplate = builder => builder.AddContent(0, "Loading ...");
 
-
-            EditContext = CascadedEditContext;
 
             FieldIdentifier = IsMultiselect()
                 ? FieldIdentifier.Create(ValuesExpression)
@@ -176,17 +172,7 @@ namespace LoreSoft.Blazor.Controls
             Loading = true;
             await InvokeAsync(StateHasChanged);
 
-            IEnumerable<TItem> result = null;
-
-            try
-            {
-                if (SearchMethod != null)
-                    result = await SearchMethod(_searchText);
-            }
-            catch (Exception ex)
-            {
-                // log error
-            }
+            var result = await SearchMethod(_searchText);
 
             SearchResults = result != null
                 ? result.ToList()
@@ -198,7 +184,7 @@ namespace LoreSoft.Blazor.Controls
 
         public async Task SelectResult(TItem item)
         {
-            TValue value = ConvertMethod(item);
+            var value = ConvertMethod(item);
 
             if (IsMultiselect())
             {
@@ -288,10 +274,11 @@ namespace LoreSoft.Blazor.Controls
         public string OptionClass(TItem item, int index)
         {
             const string resultClass = "typeahead-option-selected";
-            TValue value = ConvertMethod(item);
 
             if (index == SelectedIndex)
                 return resultClass;
+
+            TValue value = ConvertMethod(item);
 
             if (!IsMultiselect())
                 return Equals(value, Value)
