@@ -7,8 +7,7 @@ environment:
     secure: KUc3pG9peYx1YIVf3w2GZsHzryQ1vrWcSQJBf0F4renkeMcjj+sK9w3rCoVieaOk
 
 skip_commits:
-  files:
-    - docs/*
+  author: appveyor
 
 init:
   - git config --global core.autocrlf input
