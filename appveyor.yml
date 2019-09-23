@@ -13,7 +13,7 @@ init:
   - git config --global core.autocrlf input
 
 install: 
-  - cmd: choco install dotnetcore-sdk --pre
+  - choco install dotnetcore-sdk
 
 dotnet_csproj:
   patch: true
