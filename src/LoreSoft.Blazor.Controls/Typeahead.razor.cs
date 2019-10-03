@@ -23,6 +23,7 @@ namespace LoreSoft.Blazor.Controls
             SearchMode = false;
             SelectedIndex = 0;
             SearchResults = new List<TItem>();
+            SearchPlaceholder = "Search ...";
         }
 
         [Inject]
@@ -56,6 +57,9 @@ namespace LoreSoft.Blazor.Controls
 
         [Parameter]
         public string Placeholder { get; set; }
+
+        [Parameter]
+        public string SearchPlaceholder { get; set; }
 
         [Parameter]
         public IReadOnlyCollection<TItem> Items { get; set; }
@@ -92,7 +96,10 @@ namespace LoreSoft.Blazor.Controls
         [Parameter]
         public bool AllowClear { get; set; }
 
+        [Parameter]
+        public FieldIdentifier FieldIdentifier { get; set; }
 
+        
         public bool Loading { get; set; }
 
         public bool SearchMode { get; set; }
@@ -101,7 +108,6 @@ namespace LoreSoft.Blazor.Controls
 
         public ElementReference SearchInput { get; set; }
 
-        public FieldIdentifier FieldIdentifier { get; set; }
 
         private string _searchText;
         public string SearchText
@@ -156,9 +162,10 @@ namespace LoreSoft.Blazor.Controls
                 LoadingTemplate = builder => builder.AddContent(0, "Loading ...");
 
 
-            FieldIdentifier = IsMultiselect()
-                ? FieldIdentifier.Create(ValuesExpression)
-                : FieldIdentifier.Create(ValueExpression);
+            if (FieldIdentifier.Equals(default))
+                FieldIdentifier = IsMultiselect()
+                    ? FieldIdentifier.Create(ValuesExpression)
+                    : FieldIdentifier.Create(ValueExpression);
 
             _debounceTimer = new Timer();
             _debounceTimer.Interval = Debounce;
