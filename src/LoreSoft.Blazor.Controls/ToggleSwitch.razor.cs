@@ -8,9 +8,6 @@ namespace LoreSoft.Blazor.Controls
 {
     public class ToggleSwitchBase : ComponentBase
     {
-        [CascadingParameter]
-        private EditContext CascadedEditContext { get; set; }
-
         [Parameter(CaptureUnmatchedValues = true)]
         public IReadOnlyDictionary<string, object> AdditionalAttributes { get; set; }
 
@@ -23,8 +20,10 @@ namespace LoreSoft.Blazor.Controls
         [Parameter]
         public Expression<Func<bool>> ValueExpression { get; set; }
 
+        [CascadingParameter]
         public EditContext EditContext { get; set; }
 
+        [Parameter]
         public FieldIdentifier FieldIdentifier { get; set; }
 
         public bool CurrentValue
@@ -62,8 +61,8 @@ namespace LoreSoft.Blazor.Controls
 
         protected override void OnInitialized()
         {
-            EditContext = CascadedEditContext;
-            FieldIdentifier = FieldIdentifier.Create(ValueExpression);
+            if (FieldIdentifier.Equals(default))
+                FieldIdentifier = FieldIdentifier.Create(ValueExpression);
         }
     }
 }
