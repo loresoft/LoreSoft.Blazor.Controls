@@ -97,9 +97,12 @@ namespace LoreSoft.Blazor.Controls
         public bool AllowClear { get; set; }
 
         [Parameter]
+        public bool Disabled { get; set; } = false;
+
+        [Parameter]
         public FieldIdentifier FieldIdentifier { get; set; }
 
-        
+
         public bool Loading { get; set; }
 
         public bool SearchMode { get; set; }
@@ -110,6 +113,7 @@ namespace LoreSoft.Blazor.Controls
 
 
         private string _searchText;
+
         public string SearchText
         {
             get => _searchText;
@@ -181,9 +185,9 @@ namespace LoreSoft.Blazor.Controls
 
             var result = await SearchMethod(_searchText);
 
-            SearchResults = result != null
-                ? result.ToList()
-                : new List<TItem>();
+            SearchResults = result == null 
+                ? new List<TItem>() 
+                : result.ToList();
 
             Loading = false;
             await InvokeAsync(StateHasChanged);
@@ -234,11 +238,15 @@ namespace LoreSoft.Blazor.Controls
 
         public async Task HandleFocus()
         {
+            if (Disabled)
+                return;
+
             SearchText = "";
             SearchMode = true;
             await Task.Delay(250);
 
-            await JSRuntime.InvokeAsync<object>("BlazorControls.SetFocus", SearchInput);
+            await JSRuntime.InvokeAsync<object>("BlazorControls.setFocus", SearchInput);
+            await JSRuntime.InvokeAsync<object>("BlazorControls.preventEnter", SearchInput, true);
         }
 
         public async Task HandleBlur()
@@ -248,6 +256,9 @@ namespace LoreSoft.Blazor.Controls
 
             SearchMode = false;
             Loading = false;
+
+            // cleanup event handler
+            await JSRuntime.InvokeAsync<object>("BlazorControls.preventEnter", SearchInput, false);
         }
 
         public async Task HandleKeydown(KeyboardEventArgs args)
@@ -256,7 +267,7 @@ namespace LoreSoft.Blazor.Controls
                 MoveSelection(1);
             else if (args.Key == "ArrowUp")
                 MoveSelection(-1);
-            else if (args.Key == "Enter" && SelectedIndex >= 0 && SelectedIndex < SearchResults.Count)
+            else if ((args.Key == "Enter" || args.Key == "Tab") && SelectedIndex >= 0 && SelectedIndex < SearchResults.Count)
                 await SelectResult(SearchResults[SelectedIndex]);
         }
 
@@ -278,7 +289,7 @@ namespace LoreSoft.Blazor.Controls
             return Value != null || (Values != null && Values.Count > 0);
         }
 
-        public string OptionClass(TItem item, int index)
+        public string ResultClass(TItem item, int index)
         {
             const string resultClass = "typeahead-option-selected";
 
