@@ -1,0 +1,22 @@
+﻿<h3>Nullable</h3>
+
+<p>Example of binding to a nullable boolean property.</p>
+
+<ToggleSwitch @bind-Value="IsChecked"></ToggleSwitch>
+
+<p>Bound Value: @(IsChecked.HasValue ? IsChecked.Value.ToString() : "null")</p>
+
+<pre><code class="language-markup">
+&lt;ToggleSwitch @@bind-Value="IsChecked"&gt;&lt;/ToggleSwitch&gt;
+</code></pre>
+
+<pre><code class="language-csharp">
+@@code {
+    public bool? IsChecked { get; set; }
+}
+</code></pre>
+
+
+@code {
+    public bool? IsChecked { get; set; }
+}

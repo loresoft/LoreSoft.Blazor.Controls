@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace Sample.Shared
 {
@@ -22,5 +23,8 @@ namespace Sample.Shared
             ErrorMessage = "Must agree to terms to register.")]
         [Display(Name = "Agree to Terms")]
         public bool Agree { get; set; }
+
+        [Required]
+        public DateTime? Birthday { get; set; }
     }
 }

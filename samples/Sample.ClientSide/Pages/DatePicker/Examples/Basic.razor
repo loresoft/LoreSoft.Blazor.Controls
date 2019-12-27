@@ -1,0 +1,22 @@
+﻿<h3>Basic</h3>
+
+<p>Basic example of binding to a DateTime property.</p>
+
+<DatePicker @bind-Value="SelectedDate"></DatePicker>
+
+<p>Bound Value: @SelectedDate</p>
+
+<pre><code class="language-markup">
+ &lt;DatePicker @@bind-Value="SelectedDate"&gt;&lt;/DatePicker&gt;
+</code></pre>
+
+<pre><code class="language-csharp">
+@@code {
+    public DateTime SelectedDate { get; set; }
+}
+</code></pre>
+
+
+@code {
+    public DateTime SelectedDate { get; set; }
+}

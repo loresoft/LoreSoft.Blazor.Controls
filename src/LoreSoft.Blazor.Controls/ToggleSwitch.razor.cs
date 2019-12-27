@@ -1,24 +1,32 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq.Expressions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 
 namespace LoreSoft.Blazor.Controls
 {
-    public class ToggleSwitchBase : ComponentBase
+    public class ToggleSwitchBase<TValue> : ComponentBase
     {
+        static ToggleSwitchBase()
+        {
+            var targetType = Nullable.GetUnderlyingType(typeof(TValue)) ?? typeof(TValue);
+            if (targetType != typeof(bool))
+                throw new InvalidOperationException($"The type '{targetType}' is not supported by ToggleSwitch.");
+        }
+
         [Parameter(CaptureUnmatchedValues = true)]
         public IReadOnlyDictionary<string, object> AdditionalAttributes { get; set; }
 
         [Parameter]
-        public bool Value { get; set; }
+        public TValue Value { get; set; }
 
         [Parameter]
-        public EventCallback<bool> ValueChanged { get; set; }
+        public EventCallback<TValue> ValueChanged { get; set; }
 
         [Parameter]
-        public Expression<Func<bool>> ValueExpression { get; set; }
+        public Expression<Func<TValue>> ValueExpression { get; set; }
 
         [CascadingParameter]
         public EditContext EditContext { get; set; }
@@ -26,16 +34,20 @@ namespace LoreSoft.Blazor.Controls
         [Parameter]
         public FieldIdentifier FieldIdentifier { get; set; }
 
+
         public bool CurrentValue
         {
-            get => Value;
+            get => ConvertToBoolean(Value);
             set
             {
-                if (value == Value) 
+                TValue current = ConvertFromBoolean(value);
+                var isEqual = EqualityComparer<TValue>.Default.Equals(current, Value);
+
+                if (isEqual) 
                     return;
 
-                Value = value;
-                ValueChanged.InvokeAsync(value);
+                Value = current;
+                ValueChanged.InvokeAsync(current);
                 EditContext?.NotifyFieldChanged(FieldIdentifier);
             }
         }
@@ -59,10 +71,32 @@ namespace LoreSoft.Blazor.Controls
             }
         }
 
+
         protected override void OnInitialized()
         {
             if (FieldIdentifier.Equals(default))
                 FieldIdentifier = FieldIdentifier.Create(ValueExpression);
         }
+
+
+        private bool ConvertToBoolean(TValue value)
+        {
+            if (value is bool boolValue)
+                return boolValue;
+
+            return false;
+        }
+
+        private TValue ConvertFromBoolean(bool value)
+        {
+            var targetType = Nullable.GetUnderlyingType(typeof(TValue)) ?? typeof(TValue);
+
+            if (targetType == typeof(bool))
+                return (TValue)(object)value;
+
+            return default;
+        }
+
     }
+
 }

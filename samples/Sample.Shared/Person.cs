@@ -1,4 +1,6 @@
-﻿namespace Sample.Shared
+﻿using System;
+
+namespace Sample.Shared
 {
     public class Person
     {
@@ -17,5 +19,6 @@
         public string FullName => Firstname + " " + Lastname;
         public int Age { get; set; }
         public string Location { get; set; }
+        public DateTime? Birthday { get; set; }
     }
 }
