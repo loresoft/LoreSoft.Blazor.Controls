@@ -1,4 +1,6 @@
-using Microsoft.AspNetCore.Blazor.Http;
+using System;
+using System.Net.Http;
+using System.Reflection;
 using Microsoft.AspNetCore.Components.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Octokit;
@@ -11,12 +13,14 @@ namespace Sample.ClientSide
     {
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddSingleton<WebAssemblyHttpMessageHandler>();
             services.AddScoped<IGitHubClient>(s =>
             {
+                var wasmHttpMessageHandlerType = Assembly.Load("WebAssembly.Net.Http").GetType("WebAssembly.Net.Http.HttpClient.WasmHttpMessageHandler");
+                var wasmHttpMessageHandler = (HttpMessageHandler)Activator.CreateInstance(wasmHttpMessageHandlerType);
+
                 var connection = new Connection(
                     new ProductHeaderValue("BlazorControls"),
-                    new HttpClientAdapter(s.GetRequiredService<WebAssemblyHttpMessageHandler>)
+                    new HttpClientAdapter(() => wasmHttpMessageHandler)
                 );
 
                 var client = new GitHubClient(connection);
