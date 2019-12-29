@@ -35,7 +35,6 @@ deploy:
 
 on_success:
   - ps: Copy-Item -Path ".\samples\Sample.ClientSide\bin\Release\netstandard2.1\publish\Sample.ClientSide\dist\*" -Destination ".\docs\" -recurse -Force
-  - ps: Copy-Item -Path ".\samples\Sample.ClientSide\bin\Release\netstandard2.1\publish\wwwroot\_content\*" -Destination ".\docs\_content" -recurse -Force
   - git config --global credential.helper store
   - ps: Add-Content "$HOME\.git-credentials" "https://$($env:github_token):x-oauth-basic@github.com`n"
   - git config --global user.email "appveyor@loresoft.com"
