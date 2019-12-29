@@ -1,0 +1,22 @@
+﻿<h3>Time</h3>
+
+<p>Example of binding to a TimeSpan property.</p>
+
+<DateTimePicker @bind-Value="SelectedTime" 
+                Mode="DateTimePickerMode.Time" 
+                TimeScale="15"></DateTimePicker>
+
+<p>Bound Value: @SelectedTime</p>
+
+<pre><code class="language-markup">&lt;DateTimePicker @@bind-Value="SelectedTime" Mode="DateTimePickerMode.Time" TimeScale="15"&gt;&lt;/DateTimePicker&gt;</code></pre>
+
+<pre><code class="language-csharp">
+@@code {
+    public TimeSpan SelectedTime { get; set; }
+}
+</code></pre>
+
+
+@code {
+    public TimeSpan SelectedTime { get; set; }
+}
