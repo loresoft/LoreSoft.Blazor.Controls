@@ -6,11 +6,13 @@ window.BlazorControls = {
 
         element.focus();
     },
-    preventEnter: (element, allow) => {
-        if (!element)
+    preventEnter: (element, disabled) => {
+        if (!element) {
+            console.log("Error: preventEnter() element not found");
             return;
+        }
 
-        if (allow)
+        if (disabled)
             element.addEventListener('keydown', BlazorControls.preventEnterHandler);
         else
             element.removeEventListener('keydown', BlazorControls.preventEnterHandler);
