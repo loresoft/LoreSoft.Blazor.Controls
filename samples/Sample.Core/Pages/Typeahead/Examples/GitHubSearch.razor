@@ -1,0 +1,132 @@
+﻿@using Octokit
+@inject IGitHubClient GitHubClient;
+
+<style type="text/css">
+    .github-repository {
+        padding-top: 4px;
+        padding-bottom: 3px;
+    }
+
+    .github-avatar {
+        float: left;
+        width: 60px;
+        margin-right: 10px;
+    }
+
+        .github-avatar img {
+            width: 100%;
+            height: auto;
+            border-radius: 2px;
+        }
+
+    .github-meta {
+        margin-left: 70px;
+    }
+
+    .github-title {
+        color: black;
+        font-weight: 700;
+        word-wrap: break-word;
+        line-height: 1.1;
+        margin-bottom: 4px;
+    }
+
+    .github-description {
+        font-size: 13px;
+        color: #777;
+        margin-top: 4px;
+    }
+
+    .github-forks,
+    .github-stargazers,
+    .github-watchers {
+        display: inline-block;
+        color: #aaa;
+        font-size: 11px;
+    }
+
+    .github-forks,
+    .github-stargazers {
+        margin-right: 1em;
+    }
+</style>
+
+<h3>Github repository Search</h3>
+
+<p>Use Octokit to search for a github repository.</p>
+
+<Typeahead SearchMethod="@SearchGithub"
+           @bind-Value="@SelectedRepository"
+           Placeholder="Repository"
+           MinimumLength="3">
+    <SelectedTemplate Context="repo">
+        @repo.FullName
+    </SelectedTemplate>
+    <ResultTemplate Context="repo">
+        <div class="github-repository clearfix">
+            <div class="github-avatar"><img src="@repo.Owner.AvatarUrl"></div>
+            <div class="github-meta">
+                <div class="github-title">@repo.FullName</div>
+                <div class="github-description">@repo.Description</div>
+                <div class="github-statistics">
+                    <div class="github-forks"><i class="fas fa-bolt"></i> @repo.ForksCount Forks</div>
+                    <div class="github-stargazers"><i class="fas fa-star"></i> @repo.StargazersCount Stars</div>
+                    <div class="github-watchers"><i class="fas fa-eye"></i> @repo.SubscribersCount Watchers</div>
+                </div>
+            </div>
+        </div>
+    </ResultTemplate>
+</Typeahead>
+
+<p>Bound Value: @SelectedRepository?.FullName</p>
+
+
+<pre><code class="language-markup">&lt;Typeahead SearchMethod="@@SearchGithub"
+           @@bind-Value="@@SelectedRepository"
+           Placeholder="Repository"
+           MinimumLength="3"&gt;
+    &lt;SelectedTemplate Context="repo"&gt;
+        @@repo.FullName
+    &lt;/SelectedTemplate&gt;
+    &lt;ResultTemplate Context="repo"&gt;
+        &lt;div class="github-repository clearfix"&gt;
+            &lt;div class="github-avatar"&gt;&lt;img src="@@repo.Owner.AvatarUrl"&gt;&lt;/div&gt;
+            &lt;div class="github-meta"&gt;
+                &lt;div class="github-title"&gt;@@repo.FullName&lt;/div&gt;
+                &lt;div class="github-description"&gt;@@repo.Description&lt;/div&gt;
+                &lt;div class="github-statistics"&gt;
+                    &lt;div class="github-forks"&gt;&lt;i class="fa fa-flash"&gt;&lt;/i&gt; @@repo.ForksCount Forks&lt;/div&gt;
+                    &lt;div class="github-stargazers"&gt;&lt;i class="fa fa-star"&gt;&lt;/i&gt; @@repo.StargazersCount Stars&lt;/div&gt;
+                    &lt;div class="github-watchers"&gt;&lt;i class="fa fa-eye"&gt;&lt;/i&gt; @@repo.SubscribersCount Watchers&lt;/div&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+    &lt;/ResultTemplate&gt;
+&lt;/Typeahead&gt;</code></pre>
+
+<pre><code class="language-csharp">@@inject IGitHubClient GitHubClient;
+
+@@code {
+    public Repository SelectedRepository { get; set; }
+
+    public async Task&lt;IEnumerable&lt;Repository&gt;&gt; SearchGithub(string searchText)
+    {
+        var request = new SearchRepositoriesRequest(searchText);
+        var result = await GitHubClient.Search.SearchRepo(request);
+
+        return result.Items;
+    }
+}</code></pre>
+
+
+@code {
+    public Repository SelectedRepository { get; set; }
+
+    public async Task<IEnumerable<Repository>> SearchGithub(string searchText)
+    {
+        var request = new SearchRepositoriesRequest(searchText);
+        var result = await GitHubClient.Search.SearchRepo(request);
+
+        return result.Items;
+    }
+}

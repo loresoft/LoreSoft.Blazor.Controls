@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Components.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Octokit;
 using Octokit.Internal;
+using Sample.Core;
 
 namespace Sample.ClientSide
 {

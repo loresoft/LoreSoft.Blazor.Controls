@@ -12,9 +12,6 @@ skip_commits:
 init:
   - git config --global core.autocrlf input
 
-install: 
-  - choco install dotnetcore-sdk
-
 dotnet_csproj:
   patch: true
   file: 'build\version.props'
@@ -27,9 +24,6 @@ dotnet_csproj:
 build_script:
   - dotnet pack LoreSoft.Blazor.Controls.sln --configuration Release --include-symbols --include-source
   - dotnet publish ".\samples\Sample.ClientSide\Sample.ClientSide.csproj" --configuration Release
-
-test_script:
-  - dotnet test LoreSoft.Blazor.Controls.sln --configuration Release /p:CollectCoverage=true /p:CoverletOutputFormat=opencover /p:Exclude="[xunit*]*"
 
 artifacts:
 - path: artifacts\*.nupkg

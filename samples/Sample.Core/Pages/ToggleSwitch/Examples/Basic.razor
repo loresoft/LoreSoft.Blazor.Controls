@@ -1,0 +1,18 @@
+﻿<h3>Basic</h3>
+
+<p>Basic example of binding to a boolean property.</p>
+
+<ToggleSwitch @bind-Value="IsChecked"></ToggleSwitch>
+
+<p>Bound Value: @IsChecked</p>
+
+<pre><code class="language-markup">&lt;ToggleSwitch @@bind-Value="IsChecked"&gt;&lt;/ToggleSwitch&gt;</code></pre>
+
+<pre><code class="language-csharp">@@code {
+    public bool IsChecked { get; set; }
+}</code></pre>
+
+
+@code {
+    public bool IsChecked { get; set; }
+}

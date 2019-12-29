@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LoreSoft.Blazor.Controls", 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{6E4E9AFA-897C-4625-9ED0-13563405290B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sample.Shared", "samples\Sample.Shared\Sample.Shared.csproj", "{AE677618-82A7-403B-BFF2-555AA17A2533}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sample.Core", "samples\Sample.Core\Sample.Core.csproj", "{AE677618-82A7-403B-BFF2-555AA17A2533}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sample.ServerSide", "samples\Sample.ServerSide\Sample.ServerSide.csproj", "{2B6E3DCB-39F7-4722-8749-DCC00F31A011}"
 EndProject

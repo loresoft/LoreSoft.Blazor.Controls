@@ -1,0 +1,57 @@
+﻿@using Sample.Core.Models
+@using Sample.Core.Services
+<h3>Basic Example</h3>
+
+<p>State selection dropdown.  Bind to <code>Value</code> property for single selection mode.</p>
+
+<Typeahead SearchMethod="@SearchState"
+           Items="Data.StateList"
+           @bind-Value="@SelectedState"
+           Placeholder="State">
+    <SelectedTemplate Context="state">
+        @state.Name
+    </SelectedTemplate>
+    <ResultTemplate Context="state">
+        @state.Name
+    </ResultTemplate>
+</Typeahead>
+
+<p>Bound Value: @SelectedState?.Value</p>
+
+<pre><code class="language-markup">&lt;Typeahead SearchMethod=&quot;@@SearchState&quot;
+           Items=&quot;Data.StateList&quot;
+           @@bind-Value=&quot;@@SelectedState&quot;
+           Placeholder=&quot;State&quot;&gt;
+    &lt;SelectedTemplate Context=&quot;state&quot;&gt;
+        @@state.Name
+    &lt;/SelectedTemplate&gt;
+    &lt;ResultTemplate Context=&quot;state&quot;&gt;
+        @@state.Name
+    &lt;/ResultTemplate&gt;
+&lt;/Typeahead&gt;</code></pre>
+
+<pre><code class="language-csharp">@@code {
+    public StateLocation SelectedState { get; set; }
+
+    public Task&lt;IEnumerable&lt;StateLocation&gt;&gt; SearchState(string searchText)
+    {
+        var result = Data.StateList
+            .Where(x =&gt; x.Name.Contains(searchText, StringComparison.OrdinalIgnoreCase))
+            .ToList();
+
+        return Task.FromResult&lt;IEnumerable&lt;StateLocation&gt;&gt;(result);
+    }
+}</code></pre>
+
+@code {
+    public StateLocation SelectedState { get; set; }
+
+    public Task<IEnumerable<StateLocation>> SearchState(string searchText)
+    {
+        var result = Data.StateList
+            .Where(x => x.Name.IndexOf(searchText, StringComparison.OrdinalIgnoreCase) >= 0)
+            .ToList();
+
+        return Task.FromResult<IEnumerable<StateLocation>>(result);
+    }
+}
