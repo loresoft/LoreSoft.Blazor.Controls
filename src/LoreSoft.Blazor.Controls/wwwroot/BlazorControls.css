@@ -336,9 +336,9 @@
     color: rgb(230, 230, 230);
 }
 
-/* DatePicker */
+/* DateTimePicker */
 
-.datepicker {
+.datetimepicker {
     font-size: .875rem;
     box-sizing: border-box;
     clear: both;
@@ -346,7 +346,7 @@
     text-align: left;
 }
 
-.datepicker-value-container {
+.datetimepicker-value-container {
     -webkit-box-align: center;
     align-items: center;
     display: flex;
@@ -359,8 +359,9 @@
     border-radius: .25rem;
 }
 
-.datepicker-clear-button,
-.datepicker-calendar-button {
+.datetimepicker-clear-button,
+.datetimepicker-calendar-button,
+.datetimepicker-time-button {
     color: rgb(204, 204, 204);
     display: flex;
     box-sizing: border-box;
@@ -371,24 +372,30 @@
     height: calc(1.5em + .75rem + 2px);
 }
 
-    .datepicker-clear-button:hover {
+    .datetimepicker-clear-button:hover {
         color: rgb(222, 53, 11);
     }
 
-    .datepicker-calendar-button:hover {
+    .datetimepicker-calendar-button:hover,
+    .datetimepicker-time-button:hover {
         color: rgb(130, 130, 130);
     }
 
-.datepicker-calendar-button {
+.datetimepicker-calendar-button,
+.datetimepicker-time-button {
     border-top-right-radius: .25rem;
     border-bottom-right-radius: .25rem;
 }
 
-.datepicker.is-open .datepicker-calendar-button {
+.datetimepicker.is-datepicker-open .datetimepicker-calendar-button {
     color: rgb(38, 132, 255);
 }
 
-.datepicker-input {
+.datetimepicker.is-timepicker-open .datetimepicker-time-button {
+    color: rgb(38, 132, 255);
+}
+
+.datetimepicker-input {
     display: block;
     width: 100%;
     height: calc(1.5em + .75rem + 2px);
@@ -405,7 +412,7 @@
     line-height: 1.5;
 }
 
-.datepicker-background {
+.datetimepicker-background {
     bottom: 0;
     left: 0;
     position: absolute;
@@ -417,7 +424,8 @@
     cursor: pointer;
 }
 
-.datepicker-modal {
+.datepicker-modal,
+.timepicker-modal {
     top: 100%;
     background-color: rgb(255, 255, 255);
     box-shadow: rgba(0, 0, 0, 0.1) 0px 0px 0px 1px, rgba(0, 0, 0, 0.1) 0px 4px 11px;
@@ -470,19 +478,6 @@
     font-weight: 600;
 }
 
-.datepicker-cell:not(.is-disabled) {
-    cursor: pointer;
-}
-
-.datepicker-cell:hover {
-    text-decoration: none;
-}
-
-    .datepicker-cell:hover:not(.is-selected) {
-        background-color: rgb(222, 235, 255);
-        color: rgb(10, 10, 10);
-    }
-
 .datepicker-body {
     display: table-row-group;
 }
@@ -491,16 +486,29 @@
     display: table-row;
 }
 
+.datepicker-cell:not(.is-disabled),
+.timepicker-cell:not(.is-disabled) {
+    cursor: pointer;
+}
+
+.datepicker-cell:hover:not(.is-selected),
+.timepicker-cell:hover:not(.is-selected) {
+    background-color: rgb(222, 235, 255);
+    color: rgb(10, 10, 10);
+}
+
 .datepicker-cell.is-today {
     border: 1px solid rgba(38, 132, 255, .5);
 }
 
 .datepicker-cell.is-secondary-month,
-.datepicker-cell.is-disabled {
+.datepicker-cell.is-disabled,
+.timepicker-cell.is-disabled {
     color: rgb(181, 181, 181) !important;
 }
 
-.datepicker-cell.is-selected {
+.datepicker-cell.is-selected,
+.timepicker-cell.is-selected {
     background-color: rgb(38, 132, 255);
     color: rgb(255, 255, 255) !important;
 }
@@ -565,3 +573,21 @@
         -webkit-appearance: none;
         margin: 0;
     }
+
+.timepicker-modal {
+    width: 150px;
+    height: 230px;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    padding: .4rem;
+}
+
+.timepicker-cell {
+    text-align: left;
+    vertical-align: middle;
+    padding: .15rem .6rem;
+    color: rgb(74, 74, 74);
+    text-decoration: none;
+    border: 0 none transparent;
+    background-color: transparent;
+}

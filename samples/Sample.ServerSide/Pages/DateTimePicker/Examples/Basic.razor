@@ -2,13 +2,11 @@
 
 <p>Basic example of binding to a DateTime property.</p>
 
-<DatePicker @bind-Value="SelectedDate"></DatePicker>
+<DateTimePicker @bind-Value="SelectedDate" Mode="DateTimePickerMode.DateTime"></DateTimePicker>
 
 <p>Bound Value: @SelectedDate</p>
 
-<pre><code class="language-markup">
- &lt;DatePicker @@bind-Value="SelectedDate"&gt;&lt;/DatePicker&gt;
-</code></pre>
+<pre><code class="language-markup">&lt;DateTimePicker @@bind-Value="SelectedDate" Mode="DateTimePickerMode.DateTime"&gt;&lt;/DateTimePicker&gt;</code></pre>
 
 <pre><code class="language-csharp">
 @@code {

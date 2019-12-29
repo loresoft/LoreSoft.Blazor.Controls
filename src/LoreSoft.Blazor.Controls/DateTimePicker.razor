@@ -1,21 +1,23 @@
 ﻿@typeparam TValue
-@inherits DatePickerBase<TValue>
+@inherits DateTimePickerBase<TValue>
 
 @using Microsoft.AspNetCore.Components.Forms
 @using Microsoft.AspNetCore.Components.Web
 
-<div class="datepicker @(IsModalOpen ? "is-open": string.Empty)">
-    <div class="datepicker-value-container">
+<div class="datetimepicker @(IsDatePickerOpen ? "is-datepicker-open": IsTimePickerOpen ? "is-timepicker-open" : string.Empty)">
+    <div class="datetimepicker-value-container">
         <input type="text"
                autocomplete="off"
-               class="datepicker-input"
+               class="datetimepicker-input @CssClass"
+               disabled="@Disabled"
+               @ref="DateTimeInput"
                @bind="CurrentValueString"
-               @onfocus="ShowPicker"
+               @onfocus="DateTimeFocus"
                @attributes="AdditionalAttributes" />
         @if (CanClear())
         {
             <button type="button"
-                    class="datepicker-clear-button"
+                    class="datetimepicker-clear-button"
                     title="Clear"
                     disabled="@Disabled"
                     @onclick="ClearValue">
@@ -30,27 +32,49 @@
                 </svg>
             </button>
         }
-        <button type="button"
-                aria-hidden="true"
-                class="datepicker-calendar-button"
-                disabled="@Disabled"
-                @onclick="ShowPicker">
-            <svg height="20"
-                 width="20"
-                 viewBox="0 0 448 512"
-                 aria-hidden="true"
-                 focusable="false"
-                 role="img">
-                <path fill="currentColor"
-                      d="M400 64h-48V8c0-4.4-3.6-8-8-8h-16c-4.4 0-8 3.6-8 8v56H128V8c0-4.4-3.6-8-8-8h-16c-4.4 0-8 3.6-8 8v56H48C21.5 64 0 85.5 0 112v352c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48V112c0-26.5-21.5-48-48-48zm16 400c0 8.8-7.2 16-16 16H48c-8.8 0-16-7.2-16-16V192h384v272zm0-304H32v-48c0-8.8 7.2-16 16-16h352c8.8 0 16 7.2 16 16v48zM112 384h96c8.8 0 16-7.2 16-16v-96c0-8.8-7.2-16-16-16h-96c-8.8 0-16 7.2-16 16v96c0 8.8 7.2 16 16 16zm16-96h64v64h-64v-64z"></path>
-            </svg>
-        </button>
+        @if (Mode == DateTimePickerMode.Date || Mode == DateTimePickerMode.DateTime)
+        {
+            <button type="button"
+                    aria-hidden="true"
+                    class="datetimepicker-calendar-button"
+                    disabled="@Disabled"
+                    @onclick="ToggleDatePicker">
+                <svg height="20"
+                     width="20"
+                     viewBox="0 0 448 512"
+                     aria-hidden="true"
+                     focusable="false"
+                     role="img">
+                    <path fill="currentColor"
+                          d="M400 64h-48V8c0-4.4-3.6-8-8-8h-16c-4.4 0-8 3.6-8 8v56H128V8c0-4.4-3.6-8-8-8h-16c-4.4 0-8 3.6-8 8v56H48C21.5 64 0 85.5 0 112v352c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48V112c0-26.5-21.5-48-48-48zm16 400c0 8.8-7.2 16-16 16H48c-8.8 0-16-7.2-16-16V192h384v272zm0-304H32v-48c0-8.8 7.2-16 16-16h352c8.8 0 16 7.2 16 16v48zM112 384h96c8.8 0 16-7.2 16-16v-96c0-8.8-7.2-16-16-16h-96c-8.8 0-16 7.2-16 16v96c0 8.8 7.2 16 16 16zm16-96h64v64h-64v-64z"></path>
+                </svg>
+            </button>
+        }
+        @if (Mode == DateTimePickerMode.Time || Mode == DateTimePickerMode.DateTime)
+        {
+            <button type="button"
+                    aria-hidden="true"
+                    class="datetimepicker-time-button"
+                    disabled="@Disabled"
+                    @onclick="ToggleTimePicker">
+                <svg width="20"
+                     height="20"
+                     viewBox="0 0 512 512"
+                     aria-hidden="true"
+                     focusable="false"
+                     role="img">
+                    <path fill="currentColor"
+                          d="M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8zm216 248c0 118.7-96.1 216-216 216-118.7 0-216-96.1-216-216 0-118.7 96.1-216 216-216 118.7 0 216 96.1 216 216zm-148.9 88.3l-81.2-59c-3.1-2.3-4.9-5.9-4.9-9.7V116c0-6.6 5.4-12 12-12h14c6.6 0 12 5.4 12 12v146.3l70.5 51.3c5.4 3.9 6.5 11.4 2.6 16.8l-8.2 11.3c-3.9 5.3-11.4 6.5-16.8 2.6z">
+                    </path>
+                </svg>
+            </button>
+        }
     </div>
 
-    @if (IsModalOpen)
+    @if (IsDatePickerOpen)
     {
-        <div class="datepicker-background"
-             @onclick="ClosePicker"></div>
+        <div class="datetimepicker-background"
+             @onclick="CloseDatePicker"></div>
 
         <div class="datepicker-modal">
             <div class="datepicker-navigation">
@@ -128,12 +152,31 @@
                                       disabled="@cell.IsDisabled"
                                       class="@cell.CssClass"
                                       @onclick="() => SelectDate(cell)"
-                                      @onkeydown="e => HandleKeyDown(e, cell)">@cell.Day</span>
+                                      @onkeydown="e => DateCellKeyDown(e, cell)">@cell.Day</span>
                                 }
                         </div>
                     }
                 </div>
             </section>
+        </div>
+    }
+    else if (IsTimePickerOpen)
+    {
+        <div class="datetimepicker-background"
+             @onclick="CloseTimePicker"></div>
+
+        <div class="timepicker-modal">
+            @foreach (var segment in Segments)
+            {
+                <div role="button"
+                     tabindex="0"
+                     disabled="@segment.IsDisabled"
+                     class="@segment.CssClass"
+                     @onclick="() => SelectTime(segment)"
+                     @onkeydown="e => TimeCellKeyDown(e, segment)">
+                    @segment.Text
+                </div>
+            }
         </div>
     }
 </div>

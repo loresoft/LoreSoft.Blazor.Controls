@@ -2,14 +2,15 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq.Expressions;
-using System.Text;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Components.Web;
+using Microsoft.JSInterop;
 
 namespace LoreSoft.Blazor.Controls
 {
-    public class DatePickerBase<TValue> : ComponentBase, IDisposable
+    public class DateTimePickerBase<TValue> : ComponentBase, IDisposable
     {
         private readonly EventHandler<ValidationStateChangedEventArgs> _validationStateChangedHandler;
         private bool _previousParsingAttemptFailed;
@@ -18,17 +19,23 @@ namespace LoreSoft.Blazor.Controls
         private int _month;
         private int _year;
 
-        public DatePickerBase()
+        public DateTimePickerBase()
         {
             DateTimeFormatInfo = DateTimeFormatInfo.CurrentInfo;
-            DateFormat = "MM/dd/yyyy";
+            DateFormat = "M/d/yyyy";
+            TimeFormat = "h:mm tt";
             Headers = new List<string>();
             Rows = new List<DatePickerRow>();
+            Segments = new List<TimePickerSegment>();
             AllowClear = true;
+            Mode = DateTimePickerMode.Date;
+            TimeScale = 30;
 
             _validationStateChangedHandler = (sender, eventArgs) => StateHasChanged();
         }
 
+        [Inject]
+        protected IJSRuntime JSRuntime { get; set; }
 
         [Parameter(CaptureUnmatchedValues = true)]
         public IReadOnlyDictionary<string, object> AdditionalAttributes { get; set; }
@@ -54,10 +61,19 @@ namespace LoreSoft.Blazor.Controls
         public string DateFormat { get; set; }
 
         [Parameter]
+        public string TimeFormat { get; set; }
+
+        [Parameter]
         public bool AllowClear { get; set; }
 
         [Parameter]
         public bool Disabled { get; set; } = false;
+
+        [Parameter]
+        public DateTimePickerMode Mode { get; set; }
+
+        [Parameter]
+        public int TimeScale { get; set; }
 
         [Parameter]
         public FieldIdentifier FieldIdentifier { get; set; }
@@ -65,29 +81,17 @@ namespace LoreSoft.Blazor.Controls
         [CascadingParameter]
         public EditContext EditContext { get; set; }
 
-        public List<string> Headers { get; set; }
 
-        public List<DatePickerRow> Rows { get; set; }
+        protected List<string> Headers { get; set; }
 
+        protected List<DatePickerRow> Rows { get; set; }
 
-        protected TValue CurrentValue
-        {
-            get => Value;
-            set
-            {
-                var isEqual = EqualityComparer<TValue>.Default.Equals(value, Value);
-                if (isEqual)
-                    return;
+        protected List<TimePickerSegment> Segments { get; set; }
 
-                Value = value;
-                ValueChanged.InvokeAsync(value);
-                EditContext?.NotifyFieldChanged(FieldIdentifier);
-            }
-        }
 
         protected string CurrentValueString
         {
-            get => FormatValueAsString(CurrentValue);
+            get => FormatValueAsString(Value);
             set
             {
                 _parsingValidationMessages?.Clear();
@@ -97,12 +101,12 @@ namespace LoreSoft.Blazor.Controls
                 if (_nullableUnderlyingType != null && string.IsNullOrEmpty(value))
                 {
                     parsingFailed = false;
-                    CurrentValue = default;
+                    SetValue(default);
                 }
                 else if (TryParseValueFromString(value, out var parsedValue, out var validationErrorMessage))
                 {
                     parsingFailed = false;
-                    CurrentValue = parsedValue;
+                    SetValue(parsedValue);
                 }
                 else if (EditContext != null)
                 {
@@ -120,7 +124,7 @@ namespace LoreSoft.Blazor.Controls
                     parsingFailed = true;
                 }
 
-                SyncDate(CurrentValue);
+                SyncDate(Value);
                 BuildGrid();
 
                 if (!parsingFailed && !_previousParsingAttemptFailed)
@@ -128,6 +132,26 @@ namespace LoreSoft.Blazor.Controls
 
                 EditContext?.NotifyValidationStateChanged();
                 _previousParsingAttemptFailed = parsingFailed;
+            }
+        }
+
+        protected ElementReference DateTimeInput { get; set; }
+
+        protected string ValidationClass
+            => EditContext?.FieldCssClass(FieldIdentifier) ?? string.Empty;
+
+        protected string CssClass
+        {
+            get
+            {
+                if (AdditionalAttributes != null &&
+                    AdditionalAttributes.TryGetValue("class", out var cssClss) &&
+                    !string.IsNullOrEmpty(Convert.ToString(cssClss)))
+                {
+                    return $"{cssClss} {ValidationClass}";
+                }
+
+                return ValidationClass; // Never null or empty
             }
         }
 
@@ -152,14 +176,60 @@ namespace LoreSoft.Blazor.Controls
             }
         }
 
-        public bool IsModalOpen { get; set; }
+        public bool IsDatePickerOpen { get; set; }
+
+        public bool IsTimePickerOpen { get; set; }
 
 
         protected override void OnInitialized()
         {
             if (FieldIdentifier.Equals(default))
                 FieldIdentifier = FieldIdentifier.Create(ValueExpression);
+
+            _nullableUnderlyingType = Nullable.GetUnderlyingType(typeof(TValue));
         }
+
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            if (firstRender)
+            {
+                await JSRuntime.InvokeAsync<object>("BlazorControls.preventEnter", DateTimeInput, true);
+            }
+
+            await base.OnAfterRenderAsync(firstRender);
+        }
+
+
+        protected void SetValue(TValue value)
+        {
+            var isEqual = EqualityComparer<TValue>.Default.Equals(value, Value);
+            if (isEqual)
+                return;
+
+            Value = value;
+            ValueChanged.InvokeAsync(value);
+            EditContext?.NotifyFieldChanged(FieldIdentifier);
+        }
+
+        protected TValue GetValueOrToday()
+        {
+            if (!EqualityComparer<TValue>.Default.Equals(Value, default))
+                return Value;
+
+            var targetType = Nullable.GetUnderlyingType(typeof(TValue)) ?? typeof(TValue);
+
+            if (targetType == typeof(DateTime))
+                return (TValue)(object)DateTime.Now.Date;
+
+            if (targetType == typeof(DateTimeOffset))
+                return (TValue)(object)DateTimeOffset.Now.Date;
+
+            if (targetType == typeof(TimeSpan))
+                return (TValue)(object)TimeSpan.Zero;
+
+            throw new InvalidOperationException($"The type '{targetType}' is not a supported date type.");
+        }
+
 
         protected void BuildGrid()
         {
@@ -232,43 +302,191 @@ namespace LoreSoft.Blazor.Controls
             AdjustMonth(1);
         }
 
-        protected void ShowPicker()
+        protected void ToggleDatePicker()
         {
-            SyncDate(CurrentValue);
-            BuildGrid();
-
-            IsModalOpen = true;
+            if (IsDatePickerOpen)
+                CloseDatePicker();
+            else
+                ShowDatePicker();
         }
 
-        protected void ClosePicker()
+        protected void ShowDatePicker()
         {
-            IsModalOpen = false;
+            SyncDate(Value);
+            BuildGrid();
+
+            IsDatePickerOpen = true;
+            IsTimePickerOpen = false;
+        }
+
+        protected void CloseDatePicker()
+        {
+            IsDatePickerOpen = false;
         }
 
         protected void SelectDate(DatePickerCell cell)
         {
-            // set Year, Month and 
-            var date = new DateTime(cell.Year, cell.Month, cell.Day);
-            CurrentValue = (TValue)(object)date;
+            TValue value = GetValueOrToday();
 
-            IsModalOpen = false;
+            switch (value)
+            {
+                case DateTime dateTimeValue:
+                    {
+                        var dateTime = new DateTime(
+                            cell.Year,
+                            cell.Month,
+                            cell.Day,
+                            dateTimeValue.Hour,
+                            dateTimeValue.Minute,
+                            0);
+
+                        SetValue((TValue)(object)dateTime);
+                        break;
+                    }
+                case DateTimeOffset dateTimeOffsetValue:
+                    {
+                        var dateTimeOffset = new DateTimeOffset(
+                            cell.Year,
+                            cell.Month,
+                            cell.Day,
+                            dateTimeOffsetValue.Hour,
+                            dateTimeOffsetValue.Minute,
+                            dateTimeOffsetValue.Second,
+                            dateTimeOffsetValue.Offset);
+
+                        SetValue((TValue)(object)dateTimeOffset);
+                        break;
+                    }
+                case TimeSpan timeSpanValue:
+                    break;
+            }
+
+            CloseDatePicker();
         }
 
-        protected void HandleKeyDown(KeyboardEventArgs args, DatePickerCell cell)
+        protected void DateCellKeyDown(KeyboardEventArgs args, DatePickerCell cell)
         {
             if ((args.Key == "Enter"))
                 SelectDate(cell);
         }
 
+
+        protected void BuildTimeSegments()
+        {
+            Segments.Clear();
+            var workingDate = new DateTime(2000, 1, 1);
+            var nextDate = new DateTime(2000, 1, 2);
+
+            while (workingDate < nextDate)
+            {
+                var segment = new TimePickerSegment
+                {
+                    Hour = workingDate.Hour,
+                    Minute = workingDate.Minute,
+                    Text = workingDate.ToString(TimeFormat),
+                    IsSelected = IsTimeSelected(workingDate),
+                    CssClass = "timepicker-cell"
+                };
+
+                if (segment.IsSelected)
+                    segment.CssClass += " is-selected";
+
+                if (segment.IsDisabled)
+                    segment.CssClass += " is-disabled";
+
+
+                Segments.Add(segment);
+
+                workingDate = workingDate.AddMinutes(TimeScale);
+            }
+        }
+
+        protected void ToggleTimePicker()
+        {
+            if (IsTimePickerOpen)
+                CloseTimePicker();
+            else
+                ShowTimePicker();
+        }
+
+        protected void ShowTimePicker()
+        {
+            BuildTimeSegments();
+
+            IsDatePickerOpen = false;
+            IsTimePickerOpen = true;
+        }
+
+        protected void CloseTimePicker()
+        {
+            IsTimePickerOpen = false;
+        }
+
+        protected void SelectTime(TimePickerSegment segment)
+        {
+            TValue value = GetValueOrToday();
+
+            switch (value)
+            {
+                case DateTime dateTimeValue:
+                    var dateTime = new DateTime(
+                        dateTimeValue.Year,
+                        dateTimeValue.Month,
+                        dateTimeValue.Day,
+                        segment.Hour,
+                        segment.Minute,
+                        0);
+
+                    SetValue((TValue)(object)dateTime);
+                    break;
+                case DateTimeOffset dateTimeOffsetValue:
+                    var dateTimeOffset = new DateTimeOffset(
+                        dateTimeOffsetValue.Year,
+                        dateTimeOffsetValue.Month,
+                        dateTimeOffsetValue.Day,
+                        segment.Hour,
+                        segment.Minute,
+                        0,
+                        dateTimeOffsetValue.Offset);
+
+                    SetValue((TValue)(object)dateTimeOffset);
+                    break;
+                case TimeSpan timeSpanValue:
+                    var timeSpan = new TimeSpan(segment.Hour, segment.Minute, 0);
+                    SetValue((TValue)(object)timeSpan);
+
+                    break;
+            }
+
+            CloseTimePicker();
+        }
+
+        protected void TimeCellKeyDown(KeyboardEventArgs args, TimePickerSegment segment)
+        {
+            if ((args.Key == "Enter"))
+                SelectTime(segment);
+
+        }
+
+
+        protected void DateTimeFocus()
+        {
+            if (Mode == DateTimePickerMode.Time)
+                ShowTimePicker();
+            else
+                ShowDatePicker();
+        }
+
         protected void ClearValue()
         {
-            CurrentValue = default;
+            SetValue(default);
         }
 
         protected bool CanClear()
         {
             return AllowClear && !EqualityComparer<TValue>.Default.Equals(default, Value);
         }
+
 
         private void SyncDate(TValue value)
         {
@@ -318,7 +536,7 @@ namespace LoreSoft.Blazor.Controls
                 IsToday = workingDate == DateTime.Today,
                 IsPrimaryMonth = workingDate.Month == Month,
                 IsSecondaryMonth = workingDate.Month != Month,
-                IsSelected = IsSelected(workingDate),
+                IsSelected = IsDateSelected(workingDate),
                 CssClass = "datepicker-cell"
             };
 
@@ -342,9 +560,9 @@ namespace LoreSoft.Blazor.Controls
             return cell;
         }
 
-        private bool IsSelected(DateTime workingDate)
+        private bool IsDateSelected(DateTime workingDate)
         {
-            TValue value = CurrentValue;
+            TValue value = Value;
 
             switch (value)
             {
@@ -357,19 +575,50 @@ namespace LoreSoft.Blazor.Controls
             }
         }
 
-
-        private string FormatValueAsString(TValue value)
+        private bool IsTimeSelected(DateTime workingDate)
         {
-            // show empty with default datetime
-            if (EqualityComparer<TValue>.Default.Equals(default, Value))
-                return string.Empty;
+            TValue value = Value;
 
             switch (value)
             {
                 case DateTime dateTimeValue:
-                    return BindConverter.FormatValue(dateTimeValue, DateFormat, CultureInfo.InvariantCulture);
+                    return workingDate.Hour == dateTimeValue.Hour
+                        && workingDate.Minute == dateTimeValue.Minute;
                 case DateTimeOffset dateTimeOffsetValue:
-                    return BindConverter.FormatValue(dateTimeOffsetValue, DateFormat, CultureInfo.InvariantCulture);
+                    return workingDate.Hour == dateTimeOffsetValue.Hour
+                           && workingDate.Minute == dateTimeOffsetValue.Minute;
+                case TimeSpan timeSpanValue:
+                    return workingDate.Hour == timeSpanValue.Hours
+                           && workingDate.Minute == timeSpanValue.Minutes;
+                default:
+                    return false;
+            }
+
+        }
+
+        private string FormatValueAsString(TValue value)
+        {
+            // show empty with default value
+            if (EqualityComparer<TValue>.Default.Equals(default, Value))
+                return string.Empty;
+
+            string format;
+            if (Mode == DateTimePickerMode.DateTime)
+                format = $"{DateFormat} {TimeFormat}";
+            else if (Mode == DateTimePickerMode.Time)
+                format = TimeFormat;
+            else
+                format = DateFormat;
+
+            switch (value)
+            {
+                case DateTime dateTime:
+                    return BindConverter.FormatValue(dateTime, format, CultureInfo.InvariantCulture);
+                case DateTimeOffset dateTimeOffset:
+                    return BindConverter.FormatValue(dateTimeOffset, format, CultureInfo.InvariantCulture);
+                case TimeSpan timeSpan:
+                    var date = new DateTime(2000, 1, 1, timeSpan.Hours, timeSpan.Minutes, 0);
+                    return BindConverter.FormatValue(date, format, CultureInfo.InvariantCulture);
                 default:
                     return string.Empty; // Handles null for Nullable<DateTime>, etc.
             }
@@ -387,6 +636,8 @@ namespace LoreSoft.Blazor.Controls
                 success = TryParseDateTime(value, out result);
             else if (targetType == typeof(DateTimeOffset))
                 success = TryParseDateTimeOffset(value, out result);
+            else if (targetType == typeof(TimeSpan))
+                success = TryParseTimeSpan(value, out result);
             else
                 throw new InvalidOperationException($"The type '{targetType}' is not a supported date type.");
 
@@ -415,12 +666,37 @@ namespace LoreSoft.Blazor.Controls
             return success;
         }
 
+        private bool TryParseTimeSpan(string value, out TValue result)
+        {
+            var success = TimeSpan.TryParse(value, out var parsedValue);
+            if (success)
+            {
+                result = (TValue)(object)parsedValue;
+                return true;
+            }
+
+            // try parsing as datetime
+            success = DateTime.TryParse(value, out var dateTime);
+            if (success)
+                parsedValue = new TimeSpan(dateTime.Hour, dateTime.Minute, 0);
+
+            result = success ? (TValue)(object)parsedValue : default;
+
+            return success;
+        }
 
         void IDisposable.Dispose()
         {
             if (EditContext != null)
                 EditContext.OnValidationStateChanged -= _validationStateChangedHandler;
         }
+    }
+
+    public enum DateTimePickerMode
+    {
+        Date,
+        DateTime,
+        Time
     }
 
     public class DatePickerRow
@@ -441,5 +717,18 @@ namespace LoreSoft.Blazor.Controls
         public bool IsToday { get; set; }
         public bool IsPrimaryMonth { get; set; }
         public bool IsSecondaryMonth { get; set; }
+    }
+
+    public class TimePickerSegment
+    {
+        public string CssClass { get; set; }
+
+        public int Hour { get; set; }
+        public int Minute { get; set; }
+
+        public string Text { get; set; }
+
+        public bool IsDisabled { get; set; }
+        public bool IsSelected { get; set; }
     }
 }
