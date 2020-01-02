@@ -367,6 +367,7 @@
     background-color: rgb(255, 255, 255);
     border: 0 none transparent;
     height: calc(1.5em + .75rem + 2px);
+    padding: 1px 4px;
 }
 
     .datetimepicker-clear-button:hover {
@@ -515,7 +516,7 @@
     display: flex;
     align-items: center;
     box-sizing: border-box;
-    padding: 5px;
+    padding: 1px 3px;
     border: 0 none transparent;
     margin: .2rem .15rem;
 }
@@ -529,7 +530,7 @@
     color: rgb(74, 74, 74);
     display: flex;
     box-sizing: border-box;
-    padding: 5px;
+    padding: 1px 3px;
     border: none;
     margin: .2rem .15rem;
     font-weight: 700;
