@@ -339,7 +339,6 @@
 /* DateTimePicker */
 
 .datetimepicker {
-    font-size: .875rem;
     box-sizing: border-box;
     clear: both;
     position: relative;
@@ -365,10 +364,8 @@
     color: rgb(204, 204, 204);
     display: flex;
     box-sizing: border-box;
-    padding: 8px;
     background-color: rgb(255, 255, 255);
     border: 0 none transparent;
-    outline: none;
     height: calc(1.5em + .75rem + 2px);
 }
 
@@ -409,7 +406,6 @@
     -ms-flex: 1 1 0%;
     flex: 1 1 0%;
     min-width: 0;
-    line-height: 1.5;
 }
 
 .datetimepicker-background {
@@ -438,12 +434,6 @@
     border-radius: 4px;
 }
 
-.datepicker-header {
-    padding-bottom: .875rem;
-    margin-bottom: .875rem;
-    border-bottom: 1px solid rgb(219, 219, 219);
-}
-
 .datepicker-table {
     display: table;
     margin: 0 auto;
@@ -453,20 +443,13 @@
     display: table-header-group;
 }
 
-.datepicker-header {
-    padding-bottom: .875rem;
-    margin-bottom: .875rem;
-    border-bottom: 1px solid rgb(219, 219, 219);
-}
-
-
 .datepicker-header-cell,
 .datepicker-cell {
     text-align: center;
     vertical-align: middle;
     display: table-cell;
     border-radius: 4px;
-    padding: .4rem .6rem;
+    padding: .45rem;
     color: rgb(74, 74, 74);
     text-decoration: none;
     border: 0 none transparent;
@@ -538,19 +521,18 @@
 }
 
 .datepicker-today-button {
-    color: #4a4a4a;
+    color: rgb(74, 74, 74);
 }
 
 .datepicker-select-month,
 .datepicker-input-year {
-    color: #4a4a4a;
+    color: rgb(74, 74, 74);
     display: flex;
     box-sizing: border-box;
     padding: 5px;
     border: none;
     margin: .2rem .15rem;
-    font-weight: 600;
-    font-size: 1rem;
+    font-weight: 700;
     cursor: pointer;
 }
 
