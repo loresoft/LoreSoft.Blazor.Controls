@@ -270,7 +270,7 @@ namespace LoreSoft.Blazor.Controls
                     if (Rows.Count == 0)
                     {
                         var dayOfWeek = workingDate.DayOfWeek;
-                        var header = DateTimeFormatInfo.GetShortestDayName(dayOfWeek);
+                        var header = GetShortestDayName(dayOfWeek);
 
                         Headers.Add(header);
                     }
@@ -683,6 +683,29 @@ namespace LoreSoft.Blazor.Controls
             result = success ? (TValue)(object)parsedValue : default;
 
             return success;
+        }
+
+        private string GetShortestDayName(DayOfWeek dayOfWeek)
+        {
+            switch (dayOfWeek)
+            {
+                case DayOfWeek.Sunday:
+                    return "Su";
+                case DayOfWeek.Monday:
+                    return "Mo";
+                case DayOfWeek.Tuesday:
+                    return "Tu";
+                case DayOfWeek.Wednesday:
+                    return "We";
+                case DayOfWeek.Thursday:
+                    return "Th";
+                case DayOfWeek.Friday:
+                    return "Fr";
+                case DayOfWeek.Saturday:
+                    return "Sa";
+            }
+
+            return string.Empty;
         }
 
         void IDisposable.Dispose()
