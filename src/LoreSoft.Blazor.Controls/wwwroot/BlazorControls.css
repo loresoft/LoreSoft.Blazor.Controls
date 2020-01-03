@@ -363,6 +363,7 @@
 .datetimepicker-time-button {
     color: rgb(204, 204, 204);
     display: flex;
+    align-items: center;
     box-sizing: border-box;
     background-color: rgb(255, 255, 255);
     border: 0 none transparent;
