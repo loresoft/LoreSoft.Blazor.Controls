@@ -1,17 +1,15 @@
 using System;
 using System.Net.Http;
 using System.Reflection;
-using Microsoft.AspNetCore.Components.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Octokit;
 using Octokit.Internal;
-using Sample.Core;
 
 namespace Sample.ClientSide
 {
-    public class Startup
+    public static class Startup
     {
-        public void ConfigureServices(IServiceCollection services)
+        public static IServiceCollection ConfigureServices(this IServiceCollection services)
         {
             services.AddScoped<IGitHubClient>(s =>
             {
@@ -27,11 +25,7 @@ namespace Sample.ClientSide
                 return client;
             });
 
-        }
-
-        public void Configure(IComponentsApplicationBuilder app)
-        {
-            app.AddComponent<App>("app");
+            return services;
         }
     }
 }

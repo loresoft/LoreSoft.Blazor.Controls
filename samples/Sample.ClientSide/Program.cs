@@ -1,21 +1,18 @@
-﻿using Microsoft.AspNetCore.Blazor.Hosting;
+﻿using System.Threading.Tasks;
+using Microsoft.AspNetCore.Blazor.Hosting;
+using Sample.Core;
 
 namespace Sample.ClientSide
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
-            CreateHostBuilder(args)
-                .Build()
-                .Run();
-        }
+            var builder = WebAssemblyHostBuilder.CreateDefault(args);
+            builder.Services.ConfigureServices();
+            builder.RootComponents.Add<App>("app");
 
-        public static IWebAssemblyHostBuilder CreateHostBuilder(string[] args)
-        {
-            return BlazorWebAssemblyHost
-                .CreateDefaultBuilder()
-                .UseBlazorStartup<Startup>();
+            await builder.Build().RunAsync();
         }
     }
 }
