@@ -11,7 +11,7 @@
     <PackageReference Include="System.ComponentModel.Annotations" Version="4.7.0" />
     <PackageReference Include="Microsoft.AspNetCore.Components" Version="3.1.1" />
     <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="3.1.1" />
-    <PackageReference Include="Octokit" Version="0.40.0" />
+    <PackageReference Include="Octokit" Version="0.43.0" />
   </ItemGroup>
 
   <ItemGroup>
