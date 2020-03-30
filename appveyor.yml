@@ -12,6 +12,9 @@ skip_commits:
 init:
   - git config --global core.autocrlf input
 
+install: 
+  - choco install dotnetcore-sdk
+
 dotnet_csproj:
   patch: true
   file: 'build\version.props'
