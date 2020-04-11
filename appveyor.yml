@@ -36,13 +36,3 @@ deploy:
 - provider: Environment
   name: MyGet
 
-on_success:
-  - ps: Copy-Item -Path ".\samples\Sample.ClientSide\bin\Release\netstandard2.1\publish\Sample.ClientSide\dist\*" -Destination ".\docs\" -recurse -Force
-  - git config --global credential.helper store
-  - ps: Add-Content "$HOME\.git-credentials" "https://$($env:github_token):x-oauth-basic@github.com`n"
-  - git config --global user.email "appveyor@loresoft.com"
-  - git config --global user.name "appveyor"
-  - git checkout master
-  - git add docs
-  - git commit -m "update documentation sample"
-  - git push
