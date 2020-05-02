@@ -1,5 +1,7 @@
-﻿@using Octokit
-@inject IGitHubClient GitHubClient;
+﻿@using Sample.Core.Models.GitHub
+@using Sample.Core.Services
+
+@inject GitHubClient GitHubClient
 
 <style type="text/css">
     .github-repository {
@@ -111,8 +113,7 @@
 
     public async Task&lt;IEnumerable&lt;Repository&gt;&gt; SearchGithub(string searchText)
     {
-        var request = new SearchRepositoriesRequest(searchText);
-        var result = await GitHubClient.Search.SearchRepo(request);
+        var result = await GitHubClient.SearchRepositories(searchText);
 
         return result.Items;
     }
@@ -124,8 +125,7 @@
 
     public async Task<IEnumerable<Repository>> SearchGithub(string searchText)
     {
-        var request = new SearchRepositoriesRequest(searchText);
-        var result = await GitHubClient.Search.SearchRepo(request);
+        var result = await GitHubClient.SearchRepositories(searchText);
 
         return result.Items;
     }
