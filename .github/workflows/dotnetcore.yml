@@ -13,6 +13,10 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 3.1.201
+    - name: Install
+      run: dotnet tool install -g dotnet-property
+    - name: Version
+      run: dotnet property "**/version.props" Version:"3.5.0.$GITHUB_RUN_NUMBER" PackageVersion:"3.5.0.$GITHUB_RUN_NUMBER" AssemblyVersion:"3.5.0.$GITHUB_RUN_NUMBER" FileVersion:"3.5.0.$GITHUB_RUN_NUMBER" InformationalVersion:"3.5.0.$GITHUB_RUN_NUMBER+GITHUB_SHA"
     - name: Build
       run: dotnet build --configuration Release
     - name: Package
