@@ -16,7 +16,7 @@ jobs:
     - name: Build
       run: dotnet build --configuration Release
     - name: Package
-      run: dotnet pack --configuration Release --include-symbols --include-source --no-build --no-restore
+      run: dotnet pack --configuration Release --include-symbols --include-source --no-restore
     - name: Publish
       if: success()
       run: dotnet publish --configuration Release --output publish
