@@ -1,6 +1,6 @@
 name: .NET Core
 
-on: [push]
+on: [push, pull_request]
 
 jobs:
   build:
@@ -13,23 +13,34 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 3.1.201
+    - name: Build Reason
+      run: "echo ref: ${{github.ref}} event: ${{github.event_name}}"
     - name: Install Tool
       run: dotnet tool install -g dotnet-property
     - name: Update Version
       run: dotnet property "**/version.props" Version:"3.5.0.$GITHUB_RUN_NUMBER" PackageVersion:"3.5.0.$GITHUB_RUN_NUMBER" AssemblyVersion:"3.5.0.$GITHUB_RUN_NUMBER" FileVersion:"3.5.0.$GITHUB_RUN_NUMBER" InformationalVersion:"3.5.0.$GITHUB_RUN_NUMBER+$GITHUB_SHA"
-    - name: Build
+    - name: Build Solution
       run: dotnet build --configuration Release
-    - name: Package
+    - name: Package Nuget
+      if: success() && github.event_name != 'pull_request'
       run: dotnet pack --configuration Release --include-symbols --include-source --no-restore
-    - name: Publish
-      if: success()
+    - name: Publish Samples
+      if: success() && github.event_name != 'pull_request'
       run: dotnet publish --configuration Release --output publish
-    - name: Deploy
-      if: success()
+    - name: Upload Artifacts
+      if: success() && github.event_name != 'pull_request'
+      uses: actions/upload-artifact@v1.0.0
+      with:
+        name: artifacts
+        path: artifacts
+    - name: Deploy Sample Website
+      if: success() && github.event_name != 'pull_request'
       uses: crazy-max/ghaction-github-pages@v1
       with:
         target_branch: gh-pages
+        keep_history: true
         build_dir: publish/wwwroot
+        fqdn: blazor.loresoft.com
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         GITHUB_PAT: ${{ secrets.CommitToken }}
