@@ -13,10 +13,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sample.ServerSide", "sample
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{3E5818B3-6609-4EC5-AFA1-849C4E5080D1}"
 	ProjectSection(SolutionItems) = preProject
-		appveyor.yml = appveyor.yml
 		build\common.props = build\common.props
 		.github\workflows\dotnetcore.yml = .github\workflows\dotnetcore.yml
-		publish.ps1 = publish.ps1
 		build\sourcelink.props = build\sourcelink.props
 		build\version.props = build\version.props
 	EndProjectSection
