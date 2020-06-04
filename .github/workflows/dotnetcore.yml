@@ -3,7 +3,7 @@ name: .NET Core
 on: [push, pull_request]
 
 env:
-    VERSION_NUMBER: 3.5.0.$GITHUB_RUN_NUMBER
+    VERSION_NUMBER: 3.5.0.${{github.run_number}}
 
 jobs:
   build:
