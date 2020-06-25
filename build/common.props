@@ -12,7 +12,7 @@
     <Product>LoreSoft.Blazor.Controls</Product>
     <Title>LoreSoft.Blazor.Controls</Title>
     <Description>Blazor Controls Library</Description>
-    <Copyright>Copyright © 2019 LoreSoft</Copyright>
+    <Copyright>Copyright © $([System.DateTime]::Now.ToString(yyyy)) LoreSoft</Copyright>
     <Authors>LoreSoft</Authors>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <PackageTags>Blazor;Typeahead;AutoComplete;Razor Components;Controls;Multiselect;DatePicker</PackageTags>
