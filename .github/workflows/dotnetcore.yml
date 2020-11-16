@@ -3,7 +3,7 @@ name: .NET Core
 on: [push, pull_request]
 
 env:
-    VERSION_NUMBER: 3.5.0.${{github.run_number}}
+    VERSION_NUMBER: 4.0.0.${{github.run_number}}
 
 jobs:
   build:
@@ -16,7 +16,7 @@ jobs:
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
       with:
-        dotnet-version: 3.1.300
+        dotnet-version: 5.0.x
 
     - name: Build Reason
       run: "echo ref: ${{github.ref}} event: ${{github.event_name}} version: $VERSION_NUMBER"
