@@ -6,7 +6,8 @@
 
 <div class="typeahead-container @ValidationClass()"
      @attributes="AdditionalAttributes">
-    <div class="typeahead-control"
+    <div @ref="TypeaheadControl" 
+        class="typeahead-control"
          tabindex="0"
          @onfocus="HandleFocus">
         <div class="typeahead-value-container">

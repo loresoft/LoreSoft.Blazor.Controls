@@ -111,6 +111,8 @@ namespace LoreSoft.Blazor.Controls
 
         public ElementReference SearchInput { get; set; }
 
+        public ElementReference TypeaheadControl;
+
 
         private string _searchText;
 
@@ -234,6 +236,14 @@ namespace LoreSoft.Blazor.Controls
                 await ValueChanged.InvokeAsync(default);
 
             EditContext?.NotifyFieldChanged(FieldIdentifier);
+        }
+
+        /// <summary>
+        /// This will set focus to typeahead and open the search dropdown
+        /// </summary>
+        public async Task FocusTypeahead()
+        {
+            await JSRuntime.InvokeAsync<object>("BlazorControls.setFocus", TypeaheadControl);
         }
 
         public async Task HandleFocus()
