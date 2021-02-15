@@ -18,9 +18,25 @@
     <PackageTags>Blazor;Typeahead;AutoComplete;Razor Components;Controls;Multiselect;DatePicker</PackageTags>
     <PackageOutputPath>$(SolutionDir)artifacts</PackageOutputPath>
     <PackageProjectUrl>https://github.com/loresoft/LoreSoft.Blazor.Controls</PackageProjectUrl>
-    <PackageLicenseUrl>https://raw.githubusercontent.com/loresoft/LoreSoft.Blazor.Controls/master/LICENSE</PackageLicenseUrl>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <PackageIcon>logo.png</PackageIcon>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/loresoft/LoreSoft.Blazor.Controls</RepositoryUrl>
     <NoWarn>1591</NoWarn>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include=".\..\..\LICENSE">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include=".\..\..\logo.png">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+  </ItemGroup>
+
 </Project>
