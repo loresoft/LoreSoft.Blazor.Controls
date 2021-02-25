@@ -14,6 +14,7 @@ namespace LoreSoft.Blazor.Controls
     public class TypeaheadBase<TItem, TValue> : ComponentBase, IDisposable
     {
         private Timer _debounceTimer;
+        private Queue<Func<Task>> _pending;
 
         public TypeaheadBase()
         {
@@ -24,10 +25,9 @@ namespace LoreSoft.Blazor.Controls
             SelectedIndex = 0;
             SearchResults = new List<TItem>();
             SearchPlaceholder = "Search ...";
-        }
 
-        [Inject]
-        protected IJSRuntime JSRuntime { get; set; }
+            _pending = new Queue<Func<Task>>();
+        }
 
         [CascadingParameter]
         protected EditContext EditContext { get; set; }
@@ -103,18 +103,18 @@ namespace LoreSoft.Blazor.Controls
         public FieldIdentifier FieldIdentifier { get; set; }
 
 
-        public bool Loading { get; set; }
+        protected bool Loading { get; set; }
 
-        public bool SearchMode { get; set; }
+        protected bool SearchMode { get; set; }
 
-        public IList<TItem> SearchResults { get; set; }
+        protected IList<TItem> SearchResults { get; set; }
 
-        public ElementReference SearchInput { get; set; }
+        protected ElementReference SearchInput { get; set; }
 
 
         private string _searchText;
 
-        public string SearchText
+        protected string SearchText
         {
             get => _searchText;
             set
@@ -137,8 +137,9 @@ namespace LoreSoft.Blazor.Controls
             }
         }
 
-        public int SelectedIndex { get; set; }
+        protected int SelectedIndex { get; set; }
 
+        protected bool PreventKey { get; set; }
 
         protected override void OnInitialized()
         {
@@ -177,6 +178,14 @@ namespace LoreSoft.Blazor.Controls
             _debounceTimer.Elapsed += Search;
         }
 
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            while (_pending.Count > 0)
+            {
+                var action = _pending.Dequeue();
+                await action();
+            }
+        }
 
         public async void Search(object source, ElapsedEventArgs e)
         {
@@ -185,8 +194,8 @@ namespace LoreSoft.Blazor.Controls
 
             var result = await SearchMethod(_searchText);
 
-            SearchResults = result == null 
-                ? new List<TItem>() 
+            SearchResults = result == null
+                ? new List<TItem>()
                 : result.ToList();
 
             Loading = false;
@@ -213,7 +222,7 @@ namespace LoreSoft.Blazor.Controls
             }
 
             EditContext?.NotifyFieldChanged(FieldIdentifier);
-            SearchMode = false;
+            CloseMenu();
         }
 
         public async Task RemoveValue(TValue item)
@@ -234,41 +243,52 @@ namespace LoreSoft.Blazor.Controls
                 await ValueChanged.InvokeAsync(default);
 
             EditContext?.NotifyFieldChanged(FieldIdentifier);
+            CloseMenu();
         }
 
-        public async Task HandleFocus()
+        public void ShowMenu()
         {
-            if (Disabled)
+            if (Disabled || SearchMode)
                 return;
 
             SearchText = "";
             SearchMode = true;
-            await Task.Delay(250);
 
-            await JSRuntime.InvokeAsync<object>("BlazorControls.setFocus", SearchInput);
-            await JSRuntime.InvokeAsync<object>("BlazorControls.preventEnter", SearchInput, true);
+            // need to wait for search input to render
+            _pending.Enqueue(() => SearchInput.FocusAsync().AsTask());
         }
 
-        public async Task HandleBlur()
+        public void CloseMenu()
         {
-            // delay close to allow other events to finish
-            await Task.Delay(250);
-
             SearchMode = false;
             Loading = false;
+        }
 
-            // cleanup event handler
-            await JSRuntime.InvokeAsync<object>("BlazorControls.preventEnter", SearchInput, false);
+        public void ToggleMenu()
+        {
+            if (SearchMode)
+                CloseMenu();
+            else
+                ShowMenu();
         }
 
         public async Task HandleKeydown(KeyboardEventArgs args)
         {
+            // prevent form submit on enter
+            PreventKey = (args.Key == "Enter");
+
             if (args.Key == "ArrowDown")
                 MoveSelection(1);
             else if (args.Key == "ArrowUp")
                 MoveSelection(-1);
             else if ((args.Key == "Enter" || args.Key == "Tab") && SelectedIndex >= 0 && SelectedIndex < SearchResults.Count)
                 await SelectResult(SearchResults[SelectedIndex]);
+            else if (args.Key == "Escape")
+                CloseMenu();
+
+            // close menu when tabbing out
+            if (args.Key == "Tab")
+                CloseMenu();
         }
 
 

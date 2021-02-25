@@ -13,6 +13,8 @@
                @ref="DateTimeInput"
                @bind="CurrentValueString"
                @onfocus="DateTimeFocus"
+               @onkeydown="HandleKeydown"
+               @onkeydown:preventDefault="PreventKey"
                @attributes="AdditionalAttributes" />
         @if (CanClear())
         {

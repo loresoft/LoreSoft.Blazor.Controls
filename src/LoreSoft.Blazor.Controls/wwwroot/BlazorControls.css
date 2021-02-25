@@ -3,6 +3,18 @@
     box-sizing: border-box;
 }
 
+.typeahead-background {
+    bottom: 0;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0;
+    position: fixed;
+    background-color: transparent;
+    z-index: 1040;
+    cursor: pointer;
+}
+
 .typeahead-control {
     -webkit-box-align: center;
     align-items: center;
@@ -21,6 +33,7 @@
     border-width: 1px;
     transition: all 100ms ease 0s;
     outline: 0px !important;
+    z-index: 1045;
 }
 
 .typeahead-value-container {
@@ -192,7 +205,7 @@
     margin-top: 2px;
     position: absolute;
     width: 100%;
-    z-index: 1;
+    z-index: 1050;
     box-sizing: border-box;
     border: 1px solid rgb(191, 191, 191);
     border-radius: 4px;
@@ -356,6 +369,7 @@
     width: 100%;
     border: 1px solid rgb(191, 191, 191);
     border-radius: .25rem;
+    z-index: 1045;
 }
 
 .datetimepicker-clear-button,

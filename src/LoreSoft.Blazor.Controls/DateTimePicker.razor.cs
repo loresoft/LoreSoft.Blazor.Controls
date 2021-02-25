@@ -34,8 +34,6 @@ namespace LoreSoft.Blazor.Controls
             _validationStateChangedHandler = (sender, eventArgs) => StateHasChanged();
         }
 
-        [Inject]
-        protected IJSRuntime JSRuntime { get; set; }
 
         [Parameter(CaptureUnmatchedValues = true)]
         public IReadOnlyDictionary<string, object> AdditionalAttributes { get; set; }
@@ -155,6 +153,8 @@ namespace LoreSoft.Blazor.Controls
             }
         }
 
+        protected bool PreventKey { get; set; }
+
 
         public int Month
         {
@@ -189,17 +189,6 @@ namespace LoreSoft.Blazor.Controls
             _nullableUnderlyingType = Nullable.GetUnderlyingType(typeof(TValue));
         }
 
-        protected override async Task OnAfterRenderAsync(bool firstRender)
-        {
-            if (firstRender)
-            {
-                await JSRuntime.InvokeAsync<object>("BlazorControls.preventEnter", DateTimeInput, true);
-            }
-
-            await base.OnAfterRenderAsync(firstRender);
-        }
-
-
         protected void SetValue(TValue value)
         {
             var isEqual = EqualityComparer<TValue>.Default.Equals(value, Value);
@@ -230,6 +219,11 @@ namespace LoreSoft.Blazor.Controls
             throw new InvalidOperationException($"The type '{targetType}' is not a supported date type.");
         }
 
+        public async Task HandleKeydown(KeyboardEventArgs args)
+        {
+            // prevent form submit on enter
+            PreventKey = (args.Key == "Enter");
+        }
 
         protected void BuildGrid()
         {
