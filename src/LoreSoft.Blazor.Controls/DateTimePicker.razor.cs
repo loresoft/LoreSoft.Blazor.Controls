@@ -219,7 +219,7 @@ namespace LoreSoft.Blazor.Controls
             throw new InvalidOperationException($"The type '{targetType}' is not a supported date type.");
         }
 
-        public async Task HandleKeydown(KeyboardEventArgs args)
+        public void HandleKeydown(KeyboardEventArgs args)
         {
             // prevent form submit on enter
             PreventKey = (args.Key == "Enter");
