@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net.Http;
 using System.Threading.Tasks;
+using LoreSoft.Blazor.Controls;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Sample.Core;
@@ -13,12 +14,28 @@ namespace Sample.ClientSide
         public static async Task Main(string[] args)
         {
             var builder = WebAssemblyHostBuilder.CreateDefault(args);
-            builder.RootComponents.Add<App>("app");
+            var services = builder.Services;
 
-            builder.Services.AddSingleton(new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
-            builder.Services.AddHttpClient<GitHubClient>();
+            builder.RootComponents.Add<App>("app");
+            
+            services
+                .AddHttpClient("default", client => client.BaseAddress = new Uri(builder.HostEnvironment.BaseAddress))
+                .AddHttpMessageHandler<ProgressBarHandler>();
+
+            services
+                .AddHttpClient<GitHubClient>()
+                .AddHttpMessageHandler<ProgressBarHandler>();
+
+            services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("default"));
+
+            services.AddProgressBar();
 
             await builder.Build().RunAsync();
+        }
+
+        public static void ConfigureServices(IServiceCollection services)
+        {
+
         }
     }
 }

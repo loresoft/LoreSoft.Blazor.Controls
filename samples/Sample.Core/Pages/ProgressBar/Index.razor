@@ -1,0 +1,104 @@
+﻿@page "/progressbar/index"
+@using Sample.Core.Pages.ProgressBar
+@using Sample.Core.Services
+@using Sample.Core.Models.GitHub
+
+@inject IJSRuntime JsRuntime
+@inject ProgressBarState ProgressBarState
+@inject GitHubClient GitHubClient
+
+
+<h1>Progress Bar</h1>
+
+<p>Progress Bar Control</p>
+
+<Instructions></Instructions>
+
+<div>
+    <button type="button" class="btn btn-primary" @onclick="ProgressBarState.Start">Start</button>
+    <button type="button" class="btn btn-secondary" @onclick="ProgressBarState.Complete">Stop</button>
+</div>
+
+<div>
+    Count: @ProgressBarState.Count
+</div>
+
+<h3>Github repository Search</h3>
+
+<p>Use Octokit to search for a github repository.</p>
+
+<EditForm Model="NameSearch" OnValidSubmit="HandleValidSubmitAsync">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="form-group">
+        <label for="searchName">Name</label>
+        <InputText id="searchName"
+                   name="searchName"
+                   type="search"
+                   @bind-Value="NameSearch.Name"
+                   class="form-control"
+                   placeholder="Search ..." />
+
+        <ValidationMessage For="@(() => NameSearch.Name)" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">
+        Submit
+    </button>
+    <button type="button" class="btn btn-secondary" @onclick="Clear">
+        Clear
+    </button>
+</EditForm>
+
+<div class="list-group">
+    @foreach (var repo in Items)
+    {
+        <a href="@repo.HtmlUrl" class="list-group-item list-group-item-action" target="_blank">
+            <div class="github-repository clearfix">
+                <div class="github-avatar"><img src="@repo.Owner.AvatarUrl"></div>
+                <div class="github-meta">
+                    <div class="github-title">@repo.FullName</div>
+                    <div class="github-description">@repo.Description</div>
+                    <div class="github-statistics">
+                        <div class="github-forks"><i class="fas fa-bolt"></i> @repo.ForksCount Forks</div>
+                        <div class="github-stargazers"><i class="fas fa-star"></i> @repo.StargazersCount Stars</div>
+                        <div class="github-watchers"><i class="fas fa-eye"></i> @repo.SubscribersCount Watchers</div>
+                    </div>
+                </div>
+            </div>
+        </a>
+    }
+</div>
+
+@code {
+    public NameSearch NameSearch { get; set; } = new NameSearch();
+
+    public List<Repository> Items { get; set; } = new List<Repository>();
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        base.OnAfterRender(firstRender);
+        await JsRuntime.InvokeAsync<object>("Prism.highlightAll");
+    }
+
+    protected async Task HandleValidSubmitAsync()
+    {
+        if (string.IsNullOrEmpty(NameSearch.Name))
+        {
+            Items = new List<Repository>();
+            return;
+        }
+
+        var result = await GitHubClient.SearchRepositories(NameSearch.Name);
+
+        Items = result.Items;
+    }
+
+    protected void Clear()
+    {
+        Items = new List<Repository>();
+        NameSearch.Name = string.Empty;
+    }
+
+}

@@ -63,3 +63,53 @@
         transform: rotate(360deg);
     }
 }
+
+
+/* GitHub */
+.github-repository {
+    padding-top: 4px;
+    padding-bottom: 3px;
+}
+
+.github-avatar {
+    float: left;
+    width: 60px;
+    margin-right: 10px;
+}
+
+.github-avatar img {
+    width: 100%;
+    height: auto;
+    border-radius: 2px;
+}
+
+.github-meta {
+    margin-left: 70px;
+}
+
+.github-title {
+    color: black;
+    font-weight: 700;
+    word-wrap: break-word;
+    line-height: 1.1;
+    margin-bottom: 4px;
+}
+
+.github-description {
+    font-size: 13px;
+    color: #777;
+    margin-top: 4px;
+}
+
+.github-forks,
+.github-stargazers,
+.github-watchers {
+    display: inline-block;
+    color: #aaa;
+    font-size: 11px;
+}
+
+.github-forks,
+.github-stargazers {
+    margin-right: 1em;
+}

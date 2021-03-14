@@ -1,0 +1,82 @@
+﻿@using System.Timers
+@using Timer = System.Timers.Timer
+
+<h3>Table</h3>
+
+<p>Example of for loading a table</p>
+
+<div>
+    <div class="custom-control custom-checkbox">
+        <input type="checkbox" class="custom-control-input" id="busy-check" @bind="IsLoading">
+        <label class="custom-control-label" for="busy-check">Loading</label>
+    </div>
+</div>
+
+<table class="table">
+    <colgroup>
+        <col style="width: 50px" />
+        <col />
+        <col />
+        <col />
+    </colgroup>
+    <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">First</th>
+            <th scope="col">Last</th>
+            <th scope="col">Handle</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (IsLoading)
+        {
+            <tr>
+                <th scope="row"><Skeleton /></th>
+                <td><Skeleton /></td>
+                <td><Skeleton /></td>
+                <td><Skeleton /></td>
+            </tr>
+            <tr>
+                <th scope="row"><Skeleton /></th>
+                <td><Skeleton /></td>
+                <td><Skeleton /></td>
+                <td><Skeleton /></td>
+            </tr>
+            <tr>
+                <th scope="row"><Skeleton /></th>
+                <td><Skeleton /></td>
+                <td><Skeleton /></td>
+                <td><Skeleton /></td>
+            </tr>
+
+        }
+        else
+        {
+            <tr>
+                <th scope="row">1</th>
+                <td>Mark</td>
+                <td>Otto</td>
+                <td>@@mdo</td>
+            </tr>
+            <tr>
+                <th scope="row">2</th>
+                <td>Jacob</td>
+                <td>Thornton</td>
+                <td>@@fat</td>
+            </tr>
+            <tr>
+                <th scope="row">3</th>
+                <td>Larry</td>
+                <td>the Bird</td>
+                <td>@@twitter</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@code {
+
+    [Parameter]
+    public bool IsLoading { get; set; } = true;
+
+}

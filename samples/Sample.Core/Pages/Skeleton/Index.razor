@@ -1,0 +1,24 @@
+﻿@page "/skeleton/index"
+@using Sample.Core.Pages.Skeleton.Examples
+
+@inject IJSRuntime JsRuntime;
+
+<h1>Skeleton</h1>
+
+<p>Skeleton loading Control</p>
+
+<Instructions></Instructions>
+
+<h2 class="mb-3">Examples</h2>
+
+<Basic />
+
+<Table />
+
+@code {
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        base.OnAfterRender(firstRender);
+        await JsRuntime.InvokeAsync<object>("Prism.highlightAll");
+    }
+}

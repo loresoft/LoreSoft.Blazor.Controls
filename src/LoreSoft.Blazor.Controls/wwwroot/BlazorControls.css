@@ -170,15 +170,15 @@
 }
 
 .typeahead-loading-dot-1 {
-    animation: 1s ease-in-out 0ms infinite normal none running dotLoading;
+    animation: 1s ease-in-out 0ms infinite normal none running dot-loading;
 }
 
 .typeahead-loading-dot-2 {
-    animation: 1s ease-in-out 160ms infinite normal none running dotLoading;
+    animation: 1s ease-in-out 160ms infinite normal none running dot-loading;
 }
 
 .typeahead-loading-dot-3 {
-    animation: 1s ease-in-out 320ms infinite normal none running dotLoading;
+    animation: 1s ease-in-out 320ms infinite normal none running dot-loading;
 }
 
 .typeahead-svg {
@@ -266,7 +266,7 @@
     background-color: rgb(222, 235, 255);
 }
 
-@keyframes dotLoading {
+@keyframes dot-loading {
     0%, 80%, 100% {
         opacity: 0;
     }
@@ -588,4 +588,113 @@
     text-decoration: none;
     border: 0 none transparent;
     background-color: transparent;
+}
+
+/* skeleton */
+
+.skeleton {
+    height: 1.2em;
+    display: block;
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+.skeleton-text {
+    height: auto;
+    transform: scale(1, 0.60);
+    margin-top: 0;
+    margin-bottom: 0;
+    transform-origin: 0 60%;
+}
+
+    .skeleton-text:empty:before {
+        content: "\00a0";
+    }
+
+.skeleton-circle {
+    border-radius: 50%;
+}
+
+.skeleton-wave {
+    overflow: hidden;
+    position: relative;
+}
+
+    .skeleton-wave::after {
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        content: "";
+        position: absolute;
+        animation: skeleton-keyframes-wave 1.6s linear 0.5s infinite;
+        transform: translateX(-100%);
+        background: linear-gradient(90deg, transparent, rgba(0, 0, 0, 0.04), transparent);
+    }
+
+@keyframes skeleton-keyframes-wave {
+    0% {
+        transform: translateX(-100%);
+    }
+
+    60% {
+        transform: translateX(100%);
+    }
+
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+/* ProgressBar */
+
+.progress-container {
+    pointer-events: none;
+}
+
+.progress-bar {
+    height: 3px;
+    left: 0;
+    margin-left: 0;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1200;
+}
+
+.progress-peg {
+    display: block;
+    height: 100%;
+    opacity: 1;
+    position: absolute;
+    right: 0;
+    transform: rotate(3deg) translate(0px, -4px);
+    width: 100px;
+}
+
+.progress-spinner {
+    display: block;
+    position: fixed;
+    right: 8px;
+    top: 22px;
+    z-index: 1200;
+}
+
+.progress-spinner-icon {
+    animation: 400ms linear 0s infinite normal none running progress-spinner-keframe;
+    border-width: 2px;
+    border-style: solid;
+    border-radius: 50%;
+    box-sizing: border-box;
+    height: 18px;
+    width: 18px;
+}
+
+@keyframes progress-spinner-keframe {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
 }
