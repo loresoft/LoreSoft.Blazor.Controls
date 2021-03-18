@@ -11,12 +11,12 @@ using Microsoft.JSInterop;
 
 namespace LoreSoft.Blazor.Controls
 {
-    public class TypeaheadBase<TItem, TValue> : ComponentBase, IDisposable
+    public partial class Typeahead<TItem, TValue> : ComponentBase, IDisposable
     {
         private Timer _debounceTimer;
-        private Queue<Func<Task>> _pending;
+        private readonly Queue<Func<Task>> _pending;
 
-        public TypeaheadBase()
+        public Typeahead()
         {
             Items = new List<TItem>();
             AllowClear = true;
@@ -154,18 +154,10 @@ namespace LoreSoft.Blazor.Controls
                 ConvertMethod = item => item is TValue value ? value : default;
             }
 
-            if (SelectedTemplate == null)
-                SelectedTemplate = item => builder => builder.AddContent(0, item?.ToString());
-
-            if (ResultTemplate == null)
-                ResultTemplate = item => builder => builder.AddContent(0, item?.ToString());
-
-            if (NoRecordsTemplate == null)
-                NoRecordsTemplate = builder => builder.AddContent(0, "No Records Found");
-
-            if (LoadingTemplate == null)
-                LoadingTemplate = builder => builder.AddContent(0, "Loading ...");
-
+            SelectedTemplate ??= item => builder => builder.AddContent(0, item?.ToString());
+            ResultTemplate ??= item => builder => builder.AddContent(0, item?.ToString());
+            NoRecordsTemplate ??= builder => builder.AddContent(0, "No Records Found");
+            LoadingTemplate ??= builder => builder.AddContent(0, "Loading ...");
 
             if (FieldIdentifier.Equals(default))
                 FieldIdentifier = IsMultiselect()

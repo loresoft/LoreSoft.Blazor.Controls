@@ -2,15 +2,13 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq.Expressions;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Components.Web;
-using Microsoft.JSInterop;
 
 namespace LoreSoft.Blazor.Controls
 {
-    public class DateTimePickerBase<TValue> : ComponentBase, IDisposable
+    public partial class DateTimePicker<TValue> : ComponentBase, IDisposable
     {
         private readonly EventHandler<ValidationStateChangedEventArgs> _validationStateChangedHandler;
         private bool _previousParsingAttemptFailed;
@@ -19,7 +17,7 @@ namespace LoreSoft.Blazor.Controls
         private int _month;
         private int _year;
 
-        public DateTimePickerBase()
+        public DateTimePicker()
         {
             DateTimeFormatInfo = DateTimeFormatInfo.CurrentInfo;
             DateFormat = "M/d/yyyy";

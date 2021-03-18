@@ -1,15 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq.Expressions;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 
 namespace LoreSoft.Blazor.Controls
 {
-    public class ToggleSwitchBase<TValue> : ComponentBase
+    public partial class ToggleSwitch<TValue> : ComponentBase
     {
-        static ToggleSwitchBase()
+        static ToggleSwitch()
         {
             var targetType = Nullable.GetUnderlyingType(typeof(TValue)) ?? typeof(TValue);
             if (targetType != typeof(bool))
@@ -43,7 +42,7 @@ namespace LoreSoft.Blazor.Controls
                 TValue current = ConvertFromBoolean(value);
                 var isEqual = EqualityComparer<TValue>.Default.Equals(current, Value);
 
-                if (isEqual) 
+                if (isEqual)
                     return;
 
                 Value = current;

@@ -1,0 +1,32 @@
+﻿@using Sample.Core.Models.GitHub
+@using Sample.Core.Services
+
+@inject GitHubClient GitHubClient
+
+<h3>GitHub</h3>
+
+<DataGrid DataProvider="LoadData" class="table table-striped table-hover" @ref="Grid">
+    <DataColumn TItem="Repository" Property="p => p.Id" Width="60px" />
+    <DataColumn TItem="Repository" Property="p => p.Name" SortIndex="1" />
+    <DataColumn TItem="Repository" Property="p => p.Description" SortIndex="0" />
+    <DataColumn TItem="Repository" Property="p => p.Owner.Login" Title="Login" SortIndex="0" />
+    <DataColumn TItem="Repository" Property="p => p.ForksCount" Title="Forks" Width="90px" />
+    <DataColumn TItem="Repository" Property="p => p.StargazersCount" Title="Stars" Width="90px" />
+    <DataColumn TItem="Repository" Property="p => p.SubscribersCount" Title="Watches" Width="90px" />
+
+    <DataPager TItem="Repository" PageSize="10" />
+</DataGrid>
+
+
+@code {
+    private DataGrid<Repository> Grid { get; set; }
+
+    public Repository SelectedRepository { get; set; }
+
+    public async ValueTask<DataResult<Repository>> LoadData(DataRequest request)
+    {
+        var result = await GitHubClient.SearchRepositories("Blazor");
+        var response = new DataResult<Repository>(result.TotalCount, result.Items);
+        return response;
+    }
+}

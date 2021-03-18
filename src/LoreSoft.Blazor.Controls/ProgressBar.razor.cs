@@ -10,7 +10,7 @@ using Timer = System.Timers.Timer;
 
 namespace LoreSoft.Blazor.Controls
 {
-    public class ProgressBarBase : ComponentBase, IDisposable
+    public partial class ProgressBar : ComponentBase, IDisposable
     {
         private Timer _progressTimer;
         private Timer _completeTimer;

@@ -1,0 +1,25 @@
+﻿@using Sample.Core.Services
+@using Sample.Core.Models
+
+<h3>Virtual - No Paging</h3>
+
+<DataGrid Data="People" class="table table-striped table-hover" @ref="Grid">
+    <DataColumn TItem="Person" Property="p => p.Id" Width="60px" />
+    <DataColumn TItem="Person" Property="p => p.FirstName" SortIndex="1" />
+    <DataColumn TItem="Person" Property="p => p.LastName" SortIndex="0" />
+    <DataColumn TItem="Person" Property="p => p.Age" Width="90px" />
+    <DataColumn TItem="Person" Property="p => p.Location" />
+    <DataColumn TItem="Person" Property="p => p.Birthday" Format="d" />
+</DataGrid>
+
+@code {
+    public ICollection<Person> People { get; set; }
+
+    private DataGrid<Person> Grid { get; set; }
+
+    protected override void OnInitialized()
+    {
+        People = Data.GeneratePeople(150).ToList();
+    }
+
+}
