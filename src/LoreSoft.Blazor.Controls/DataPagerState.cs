@@ -11,7 +11,9 @@ namespace LoreSoft.Blazor.Controls
         private int _pageSize;
         private int _total;
 
+
         public event PropertyChangedEventHandler PropertyChanged;
+
 
         public int Page
         {
@@ -22,7 +24,11 @@ namespace LoreSoft.Blazor.Controls
         public int PageSize
         {
             get => _pageSize;
-            set => SetProperty(ref _pageSize, value);
+            set
+            {
+                Reset(); // when page size changes, go back to page 1
+                SetProperty(ref _pageSize, value);
+            }
         }
 
         public int Total
