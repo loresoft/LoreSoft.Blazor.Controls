@@ -700,6 +700,10 @@
 }
 
 /* DataGrid */
+.data-grid-container {
+    position: relative;
+}
+
 .data-grid {
     width: 100%;
     border-collapse: collapse;
@@ -970,6 +974,36 @@ button.data-grid-header {
         .data-check-input[disabled] ~ .data-check-label, .data-check-input:disabled ~ .data-check-label {
             opacity: 0.5;
         }
+
+.data-grid-loader {
+    background-color: rgba(0, 0, 0, 0.1);
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    z-index: 9999;
+    flex-flow: column wrap;
+}
+
+.data-grid-loader-spinner {
+    display: block;
+    z-index: 1200;
+}
+
+.data-grid-loader-spinner-icon {
+    animation: 400ms linear 0s infinite normal none running progress-spinner-keframe;
+    border-color: #212529 transparent transparent #212529;
+    border-width: 5px;
+    border-style: solid;
+    border-radius: 50%;
+    box-sizing: border-box;
+    height: 50px;
+    width: 50px;
+}
 
 @media (max-width: 991.98px) {
     .data-pagination {

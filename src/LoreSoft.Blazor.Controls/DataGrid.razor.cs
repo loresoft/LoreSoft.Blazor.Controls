@@ -87,19 +87,24 @@ namespace LoreSoft.Blazor.Controls
         [Parameter]
         public EventCallback<IEnumerable<TItem>> SelectedItemsChanged { get; set; }
 
+        public bool IsLoading { get; set; }
 
         public List<DataColumn<TItem>> Columns { get; } = new();
 
         public DataPagerState Pager { get; } = new();
 
 
-        public async Task RefreshAsync()
+        public async Task RefreshAsync(bool resetPager = false)
         {
             // clear row flags on refresh
             _expandedItems.Clear();
             SetSelectedItems(new List<TItem>());
 
-            await RefreshCoreAsync(renderOnSuccess: true);
+            // reset page
+            if (resetPager)
+                Pager.Reset();
+
+            await RefreshCoreAsync();
         }
 
 
@@ -254,45 +259,45 @@ namespace LoreSoft.Blazor.Controls
         }
 
 
-        private async ValueTask RefreshCoreAsync(bool renderOnSuccess)
+        private async ValueTask RefreshCoreAsync()
         {
             // cancel pending refresh
             _refreshCancellation?.Cancel();
 
             // clean up
-            CancellationToken cancellationToken;
+            CancellationToken cancellationToken = default;
             _refreshException = null;
 
-            if (_dataProvider == DefaultProvider)
-            {
-                _refreshCancellation = null;
-                cancellationToken = CancellationToken.None;
-            }
-            else
-            {
-                _refreshCancellation = new CancellationTokenSource();
-                cancellationToken = _refreshCancellation.Token;
-            }
-
-            var sorts = Columns
-                .Where(c => c.SortIndex >= 0)
-                .OrderBy(c => c.SortIndex)
-                .Select(c => new DataSort(c.Name, c.SortDescending))
-                .ToArray();
-
-            var request = new DataRequest(Pager.Page, Pager.PageSize, sorts, cancellationToken);
+            IsLoading = true;
+            StateHasChanged();
 
             try
             {
+                if (_dataProvider == DefaultProvider)
+                {
+                    _refreshCancellation = null;
+                    cancellationToken = CancellationToken.None;
+                }
+                else
+                {
+                    _refreshCancellation = new CancellationTokenSource();
+                    cancellationToken = _refreshCancellation.Token;
+                }
+
+                var sorts = Columns
+                    .Where(c => c.SortIndex >= 0)
+                    .OrderBy(c => c.SortIndex)
+                    .Select(c => new DataSort(c.Name, c.SortDescending))
+                    .ToArray();
+
+                var request = new DataRequest(Pager.Page, Pager.PageSize, sorts, cancellationToken);
+
                 var result = await _dataProvider(request);
 
                 if (!cancellationToken.IsCancellationRequested)
                 {
                     Pager.Total = result.Total;
                     View = result.Items.ToList();
-
-                    if (renderOnSuccess)
-                        StateHasChanged();
                 }
             }
             catch (Exception e)
@@ -304,8 +309,12 @@ namespace LoreSoft.Blazor.Controls
                 else
                 {
                     _refreshException = e;
-                    StateHasChanged();
                 }
+            }
+            finally
+            {
+                IsLoading = false;
+                StateHasChanged();
             }
         }
 
@@ -382,7 +391,7 @@ namespace LoreSoft.Blazor.Controls
             {
                 case nameof(DataPagerState.Page):
                 case nameof(DataPagerState.PageSize):
-                    Task.Run(RefreshAsync);
+                    Task.Run(() => RefreshAsync(false));
                     break;
             }
         }

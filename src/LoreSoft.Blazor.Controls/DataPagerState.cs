@@ -55,6 +55,11 @@ namespace LoreSoft.Blazor.Controls
             _pageSize = pageSize;
         }
 
+        internal void Reset()
+        {
+            _page = 1;
+        }
+
 
         protected void SetProperty<T>(ref T field, T value, [CallerMemberName] string propertyName = null)
         {
