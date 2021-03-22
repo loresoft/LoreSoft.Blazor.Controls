@@ -1,9 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
+using System.ComponentModel;
 using LoreSoft.Blazor.Controls.Utilities;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
@@ -11,47 +8,24 @@ using Microsoft.AspNetCore.Components.Web;
 
 namespace LoreSoft.Blazor.Controls
 {
-    public class DataPager<TItem> : ComponentBase
+    public class DataPager : ComponentBase, IDisposable
     {
-        private int? _pageSize;
-
-        [CascadingParameter(Name = "Grid")]
-        protected DataGrid<TItem> Grid { get; set; }
+        [CascadingParameter(Name = "PagerState")]
+        protected DataPagerState PagerState { get; set; }
 
         [Parameter(CaptureUnmatchedValues = true)]
-        public Dictionary<string, object> PagerAttributes { get; set; }
+        public Dictionary<string, object> Attributes { get; set; }
+
 
         [Parameter]
         public EventCallback<PageChangedEventArgs> PagerChanged { get; set; }
 
 
         [Parameter]
-        public int PageSize
-        {
-            get => _pageSize ?? 20;
-            set
-            {
-                // only allow set once
-                if (_pageSize != null)
-                    return;
-
-                _ = SetPageSize(value);
-            }
-        }
-
-        [Parameter]
-        public int[] PageSizeOptions { get; set; } = { 10, 25, 50, 100 };
+        public int PageSize { get; set; } = 25;
 
         [Parameter]
         public int DisplaySize { get; set; } = 5;
-
-
-        [Parameter]
-        public bool ShowPageSizeOption { get; set; } = true;
-
-        [Parameter]
-        public bool ShowPageInformation { get; set; } = true;
-
 
         [Parameter]
         public bool ShowBoundary { get; set; } = true;
@@ -78,7 +52,7 @@ namespace LoreSoft.Blazor.Controls
         public string LastText { get; set; } = "»";
 
         [Parameter]
-        public string PagerClass { get; set; } = "data-pagination";
+        public string PagerClass { get; set; } = "data-pager";
 
         [Parameter]
         public string ItemClass { get; set; } = "data-page-item";
@@ -93,140 +67,76 @@ namespace LoreSoft.Blazor.Controls
         public string DisabledClass { get; set; } = "disabled";
 
 
-        [Parameter]
-        public RenderFragment<DataPager<TItem>> InformationTemplate { get; set; }
-
-        [Parameter]
-        public RenderFragment<DataPager<TItem>> PageSizeTemplate { get; set; }
-
-
-        public int Page { get; internal set; } = 1;
-
-        public int TotalItems { get; internal set; }
-
-        public int StartItem => PageSize == 0 ? 1 : EndItem - (PageSize - 1);
-
-        public int EndItem => PageSize == 0 ? TotalItems : PageSize * Page;
-
-        public int PageCount => TotalItems > 0 ? (int)Math.Ceiling(TotalItems / (double)PageSize) : 0;
-
-        public bool HasPreviousPage => Page > 1;
-
-        public bool HasNextPage => Page < PageCount;
-
-        public bool IsFirstPage => Page <= 1;
-
-        public bool IsLastPage => Page >= PageCount;
-
-
-        public async Task FirstPage()
+        public void FirstPage()
         {
-            if (IsFirstPage)
+            if (PagerState.IsFirstPage)
                 return;
 
-            await GoToPage(1);
+            GoToPage(1);
         }
 
-        public async Task PreviousPage()
+        public void PreviousPage()
         {
-            if (!HasPreviousPage)
+            if (!PagerState.HasPreviousPage)
                 return;
 
-            await GoToPage(Page - 1);
+            GoToPage(PagerState.Page - 1);
         }
 
-        public async Task NextPage()
+        public void NextPage()
         {
-            if (!HasNextPage)
+            if (!PagerState.HasNextPage)
                 return;
 
-            await GoToPage(Page + 1);
+            GoToPage(PagerState.Page + 1);
         }
 
-        public async Task LastPage()
+        public void LastPage()
         {
-            if (IsLastPage)
+            if (PagerState.IsLastPage)
                 return;
 
-            await GoToPage(PageCount);
+            GoToPage(PagerState.PageCount);
         }
 
-        public async Task GoToPage(int page)
+        public void GoToPage(int page)
         {
-            page = Math.Min(page, PageCount);
+            page = Math.Min(page, PagerState.PageCount);
             page = Math.Max(page, 1);
 
-            if (page == Page)
+            if (page == PagerState.Page)
                 return;
 
-            Page = page;
-            await OnChange();
+            PagerState.Page = page;
         }
 
 
-        public async Task SetPageSize(int size)
+        public void Dispose()
         {
-            Console.WriteLine("DataPager.SetPageSize()");
-
-            if (_pageSize == size)
-                return;
-
-            _pageSize = size;
-
-            Page = 1;
-            await OnChange();
+            PagerState.PropertyChanged -= OnStatePropertyChange;
         }
 
 
-        protected async Task OnChange()
+        protected override void OnInitialized()
         {
-            Console.WriteLine("DataPager.OnChange()");
+            if (PagerState == null)
+                throw new InvalidOperationException("DataPager must be child of DataGrid");
 
-            if (Grid != null)
-                await Grid.RefreshAsync();
-            else
-                StateHasChanged();
-
-            if (!PagerChanged.HasDelegate)
-                return;
-
-            var eventArgs = new PageChangedEventArgs(Page, PageSize);
-            await PagerChanged.InvokeAsync(eventArgs);
+            // copy defaults to state
+            PagerState.Attach(1, PageSize);
+            PagerState.PropertyChanged += OnStatePropertyChange;
         }
-
-        protected override async Task OnInitializedAsync()
-        {
-            Console.WriteLine("DataPager.OnInitializedAsync()");
-
-            if (Grid == null)
-                throw new InvalidOperationException("DataColumn<T> must be child of DataGrid");
-
-            Grid.SetPager(this);
-            await Grid.RefreshAsync();
-        }
-
-        protected override void OnParametersSet()
-        {
-            Console.WriteLine("DataPager.OnParametersSet()");
-
-            base.OnParametersSet();
-        }
-
 
         protected override void BuildRenderTree(RenderTreeBuilder builder)
         {
-            if (PageCount == 0)
+            if (PagerState.PageCount == 0)
                 return;
 
             builder.OpenElement(0, "div");
             builder.AddAttribute(1, "role", "navigation");
-            builder.AddAttribute(2, "class", "data-pager");
+            builder.AddMultipleAttributes(2, Attributes);
 
             RenderPagination(builder);
-
-            RenderPageSizeOptions(builder);
-
-            RenderPageInformation(builder);
 
             builder.CloseElement(); // div
 
@@ -249,9 +159,9 @@ namespace LoreSoft.Blazor.Controls
                     RenderPageLink(builder, start - 1, "...");
 
                 for (var p = start; p <= end; p++)
-                    RenderPageLink(builder, p, p.ToString(), p == Page ? CurrentClass : null);
+                    RenderPageLink(builder, p, p.ToString(), p == PagerState.Page ? CurrentClass : null);
 
-                if (end < PageCount)
+                if (end < PagerState.PageCount)
                     RenderPageLink(builder, end + 1, "...");
             }
 
@@ -267,7 +177,7 @@ namespace LoreSoft.Blazor.Controls
                 return;
 
             var page = 1;
-            var disabledClass = IsFirstPage ? DisabledClass : null;
+            var disabledClass = PagerState.IsFirstPage ? DisabledClass : null;
 
             RenderPageLink(builder, page, FirstText, disabledClass);
         }
@@ -277,8 +187,8 @@ namespace LoreSoft.Blazor.Controls
             if (!ShowDirection)
                 return;
 
-            var page = Page - 1;
-            var disabledClass = HasPreviousPage ? null : DisabledClass;
+            var page = PagerState.Page - 1;
+            var disabledClass = PagerState.HasPreviousPage ? null : DisabledClass;
 
             RenderPageLink(builder, page, PreviousText, disabledClass);
         }
@@ -324,8 +234,8 @@ namespace LoreSoft.Blazor.Controls
             if (!ShowDirection)
                 return;
 
-            var page = Page + 1;
-            var disabledClass = HasNextPage ? null : DisabledClass;
+            var page = PagerState.Page + 1;
+            var disabledClass = PagerState.HasNextPage ? null : DisabledClass;
 
             RenderPageLink(builder, page, NextText, disabledClass);
         }
@@ -335,76 +245,17 @@ namespace LoreSoft.Blazor.Controls
             if (!ShowBoundary)
                 return;
 
-            var page = PageCount;
-            var disabledClass = IsLastPage ? DisabledClass : null;
+            var page = PagerState.PageCount;
+            var disabledClass = PagerState.IsLastPage ? DisabledClass : null;
 
             RenderPageLink(builder, page, LastText, disabledClass);
         }
 
-        private void RenderPageSizeOptions(RenderTreeBuilder builder)
-        {
-            if (!ShowPageSizeOption)
-                return;
-
-            builder.OpenElement(15, "div");
-            builder.AddAttribute(16, "class", "data-page-size-options");
-
-            builder.OpenElement(17, "select");
-            builder.AddAttribute(18, "value", PageSize);
-            builder.AddAttribute(19, "onchange", EventCallback.Factory.Create<ChangeEventArgs>(this, e => SetPageSize(Convert.ToInt32(e.Value ?? 0))));
-
-            foreach (var pageSizeOption in PageSizeOptions)
-            {
-                builder.OpenElement(20, "option");
-                builder.AddAttribute(21, "value", pageSizeOption);
-                builder.SetKey(pageSizeOption);
-                builder.AddContent(22, pageSizeOption);
-                builder.CloseElement(); // option
-            }
-
-            builder.OpenElement(23, "option");
-            builder.AddAttribute(24, "value", 0);
-            builder.AddContent(25, "All");
-            builder.CloseElement(); // option
-
-
-            builder.CloseElement(); // select
-
-            builder.OpenElement(26, "span");
-            builder.AddContent(27, "Items per page");
-            builder.CloseElement(); // span
-
-            builder.CloseElement(); // div
-        }
-
-        private void RenderPageInformation(RenderTreeBuilder builder)
-        {
-            if (!ShowPageInformation)
-                return;
-
-            builder.OpenElement(28, "div");
-            builder.AddAttribute(29, "class", "data-page-information");
-
-            if (InformationTemplate != null)
-            {
-                builder.AddContent(30, InformationTemplate(this));
-            }
-            else
-            {
-                builder.OpenElement(31, "span");
-                builder.AddContent(32, $"{StartItem} - {EndItem} of {TotalItems}");
-                builder.CloseElement(); // span
-            }
-
-            builder.CloseElement(); // div
-        }
-
-
         private (int start, int end) GetPageEnds()
         {
             var start = 1;
-            var end = PageCount;
-            var isMax = DisplaySize > 0 && DisplaySize < PageCount;
+            var end = PagerState.PageCount;
+            var isMax = DisplaySize > 0 && DisplaySize < PagerState.PageCount;
 
             if (!isMax)
                 return (start, end);
@@ -413,25 +264,37 @@ namespace LoreSoft.Blazor.Controls
             {
                 int f = (int)Math.Floor(DisplaySize / 2d);
 
-                start = Math.Max(Page - f, 1);
+                start = Math.Max(PagerState.Page - f, 1);
                 end = start + DisplaySize - 1;
 
-                if (end <= PageCount)
+                if (end <= PagerState.PageCount)
                     return (start, end);
 
-                end = PageCount;
+                end = PagerState.PageCount;
                 start = end - DisplaySize + 1;
 
                 return (start, end);
             }
 
 
-            int c = (int)Math.Ceiling(Page / (double)DisplaySize);
+            int c = (int)Math.Ceiling(PagerState.Page / (double)DisplaySize);
 
             start = (c - 1) * DisplaySize + 1;
-            end = Math.Min(start + DisplaySize - 1, PageCount);
+            end = Math.Min(start + DisplaySize - 1, PagerState.PageCount);
             return (start, end);
         }
+
+
+        private void OnStatePropertyChange(object sender, PropertyChangedEventArgs e)
+        {
+            StateHasChanged();
+
+            if (PagerChanged.HasDelegate && (e.PropertyName == nameof(DataPagerState.Page) || e.PropertyName == nameof(DataPagerState.PageSize)))
+            {
+                PagerChanged.InvokeAsync(new PageChangedEventArgs(PagerState.Page, PageSize));
+            }
+        }
+
     }
 
     public record PageChangedEventArgs(int Page, int PageSize);

@@ -1,109 +1,251 @@
 ﻿@typeparam TItem
 @using Microsoft.AspNetCore.Components.Web
 @using Microsoft.AspNetCore.Components.Web.Virtualization
-
-<table @attributes="@TableAttributes">
-    <colgroup>
-        @foreach (var column in VisibleColumns)
-        {
-            if (string.IsNullOrEmpty(column.Width))
+<CascadingValue IsFixed="true" Value="this" Name="Grid">
+    @if (DataToolbar != null)
+    {
+        @DataToolbar(this)
+    }
+    @if (DataColumns != null)
+    {
+        @DataColumns
+    }
+    <table class="data-grid" @attributes="@TableAttributes">
+        <colgroup>
+            @if (DetailTemplate != null)
             {
-                <col />
+                <col style="width: 32px; padding: 0" />
             }
-            else
+            @if (Selectable)
             {
-                <col style="width: @column.Width" />
+                <col style="width: 32px; padding: 0" />
             }
-        }
-    </colgroup>
-    <thead>
-        <tr>
             @foreach (var column in VisibleColumns)
             {
-                <th @key="column" class="@column.HeaderClass">
-                    <div @attributes="@column.HeaderAttributes"
-                         @onclick="() => SortByAsync(column)"
-                         @onkeydown="() => SortByAsync(column)">
-                        @if (column.HeaderTemplate != null)
+                if (string.IsNullOrEmpty(column.Width))
+                {
+                    <col />
+                }
+                else
+                {
+                    <col style="width: @column.Width" />
+                }
+            }
+        </colgroup>
+        <thead>
+            <tr>
+                @if (DetailTemplate != null)
+                {
+                    <th class="data-grid-hierarchy-cell">
+                    </th>
+                }
+                @if (Selectable)
+                {
+                    <th class="data-grid-selector-cell">
+                        <div class="data-check">
+                          <input class="data-check-input" type="checkbox" checked="@IsAllSelected()" @onchange="ToggleSelectAll" />
+                        </div>
+                    </th>
+                }
+                @foreach (var column in VisibleColumns)
+                {
+                    <th @key="column" class="@column.HeaderClass">
+                        @if (Sortable && column.Sortable)
                         {
-                            @column.HeaderTemplate
+                            <button type="button"
+                                    class="data-grid-header"
+                                    @onclick="() => SortByAsync(column)">
+                                @HeaderFragment(column)
+                            </button>
                         }
                         else
                         {
-                            @column.RenderHeader()
+                            <div class="data-grid-header">
+                                @HeaderFragment(column)
+                            </div>
                         }
-
-                        @if (column.Sortable && column.SortIndex >= 0)
+                    </th>
+                }
+            </tr>
+        </thead>
+        @if (_refreshException != null)
+        {
+            <tbody>
+                <tr>
+                    <td colspan="@CellCount" class="data-grid-error">
+                        @if (ErrorTemplate != null)
                         {
-                            <span class="data-grid-header-sort-icon">
-                                @if (column.SortDescending)
-                                {
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-caret-up-fill" viewBox="0 0 16 16">
-                                        <path d="M7.247 4.86l-4.796 5.481c-.566.647-.106 1.659.753 1.659h9.592a1 1 0 0 0 .753-1.659l-4.796-5.48a1 1 0 0 0-1.506 0z" />
-                                    </svg>
-                                }
-                                else
-                                {
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-caret-down-fill" viewBox="0 0 16 16">
-                                        <path d="M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z" />
-                                    </svg>
-                                }
-                            </span>
+                            @ErrorTemplate(this)
                         }
-                    </div>
-                </th>
-            }
-        </tr>
-    </thead>
-    <tbody>
-        @if (View == null)
+                        else
+                        {
+                            @_refreshException.Message
+                        }
+                    </td>
+                </tr>
+            </tbody>
+        }
+        else if (View == null)
         {
             @if (LoadingTemplate != null)
             {
-                @LoadingTemplate
+                <tbody>
+                    <tr>
+                        <td colspan="@CellCount">
+                            @LoadingTemplate(this)
+                        </td>
+                    </tr>
+                </tbody>
             }
             else
             {
                 for (int i = 0; i < 5; i++)
                 {
-                    <tr @key="i">
-                        @foreach (var column in VisibleColumns)
-                        {
-                            <td @key="column" class="@column.ClassName">
-                                <Skeleton />
-                            </td>
-                        }
-                    </tr>
+                    <tbody @key="i">
+                        <tr>
+                            @if (DetailTemplate != null)
+                            {
+                                <td class="data-grid-hierarchy-cell">
+                                </td>
+                            }
+                            @if (Selectable)
+                            {
+                                <td class="data-grid-selector-cell">
+                                </td>
+                            }
+                            @foreach (var column in VisibleColumns)
+                            {
+                                <td @key="column" class="@column.ClassName">
+                                    <Skeleton />
+                                </td>
+                            }
+                        </tr>
+                    </tbody>
                 }
             }
         }
-        else
+        else if (View.Count == 0)
+        {
+            <tbody>
+                <tr>
+                    <td colspan="@CellCount" class="data-grid-empty">
+                        @if (EmptyTemplate != null)
+                        {
+                            @EmptyTemplate(this)
+                        }
+                        else
+                        {
+                            <span>No records to display</span>
+                        }
+                    </td>
+                </tr>
+            </tbody>
+        }
+        else if (Virtualize)
         {
             <Virtualize TItem="TItem"
                         Items="View"
                         Context="item"
                         ItemSize="VirtualItemSize"
                         OverscanCount="VirtualOverscan">
-                <tr @key="item" class="@RowClass" style="@(RowStyle?.Invoke(item))">
-                    @foreach (var column in VisibleColumns)
+                @RowFragment(item)
+            </Virtualize>
+        }
+        else
+        {
+            @foreach (var item in View)
+            {
+                @RowFragment(item)
+            }
+        }
+        @if (VisibleColumns.Any(c => c.FooterTemplate != null))
+        {
+            <tfoot>
+                <tr>
+                    @foreach(var column in VisibleColumns)
                     {
-                        <td @key="column" class="@column.ClassName" style="@(column.Style?.Invoke(item))">
-                            @if (column.Template != null)
+                        <td>
+                            @if (column.FooterTemplate != null)
                             {
-                                @column.Template(item)
-                            }
-                            else
-                            {
-                                @column.RenderCell(item)
+                                @column.FooterTemplate
                             }
                         </td>
                     }
                 </tr>
-            </Virtualize>
+            </tfoot>
+        }
+    </table>
+    @if (DataPagination != null)
+    {
+        <CascadingValue IsFixed="true" Value="Pager" Name="PagerState">
+            <div class="data-pagination">
+                @DataPagination(this)
+            </div>
+        </CascadingValue>
+    }
+</CascadingValue>
+
+@code
+{
+    protected RenderFragment<DataColumn<TItem>> HeaderFragment => column => __builder =>
+    {
+        @if (column.HeaderTemplate != null)
+        {
+            @column.HeaderTemplate
+        }
+        else
+        {
+            @column.HeaderTitle()
         }
 
-    </tbody>
-</table>
-<CascadingValue IsFixed="true" Value="this" Name="Grid">
-    @ChildContent
-</CascadingValue>
+        @if (column.Sortable && column.SortIndex >= 0)
+        {
+            <span class="data-grid-header-sort @(column.SortDescending ? "data-grid-header-sort-desc" : "data-grid-header-sort-asc" )"></span>
+        }
+    };
+
+    protected RenderFragment<TItem> RowFragment => item => __builder =>
+    {
+        <tbody @key="item">
+            <tr class="@RowClass" style="@(RowStyle?.Invoke(item))">
+                @if (DetailTemplate != null)
+                {
+                    <td class="data-grid-hierarchy-cell">
+                        <button type="button"
+                                @onclick="() => ToggleDetailRow(item)"
+                                class="data-grid-hierarchy-button @(IsRowExpanded(item) ? "data-grid-hierarchy-button-expanded" : "data-grid-hierarchy-button-collapsed" )"></button>
+                    </td>
+                }
+                @if (Selectable)
+                {
+                    <td class="data-grid-selector-cell">
+                        <div class="data-check">
+                          <input class="data-check-input" type="checkbox" checked="@(IsRowSelected(item))" @onchange="() => ToggleSelectRow(item)" />
+                        </div>
+                    </td>
+                }
+                @foreach (var column in VisibleColumns)
+                {
+                    <td @key="column" class="@column.ClassName" style="@(column.Style?.Invoke(item))" @attributes="@column.Attributes">
+                        @if (column.Template != null)
+                        {
+                            @column.Template(item)
+                        }
+                        else
+                        {
+                            @column.CellValue(item)
+                        }
+                    </td>
+                }
+            </tr>
+            @if (DetailTemplate != null && IsRowExpanded(item))
+            {
+                <tr>
+                    <td colspan="@CellCount" class="data-grid-detail-cell">
+                        @DetailTemplate(item)
+                    </td>
+                </tr>
+            }
+        </tbody>
+    };
+}

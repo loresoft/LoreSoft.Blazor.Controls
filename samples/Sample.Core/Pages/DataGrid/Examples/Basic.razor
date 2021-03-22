@@ -2,33 +2,47 @@
 @using Sample.Core.Models
 <h3>Basic</h3>
 
-<button class="btn btn-secondary" @onclick="@(() => Grid.SortByAsync("Id"))">Sort By Id</button>
-<button class="btn btn-secondary" @onclick="@(() => Grid.Pager.GoToPage(5))">Go to page 5</button>
+<button class="btn btn-secondary" @onclick="@(() => DataGrid.SortByAsync("Id"))">Sort By Id</button>
+<button class="btn btn-secondary" @onclick="@(() => DataGrid.Pager.Page = 5)">Go to page 5</button>
+<button class="btn btn-secondary" @onclick="@(() => DataGrid.Pager.PageSize = 25)">Page Size 25</button>
 
 
-<DataGrid Data="People" class="table table-striped table-hover" @ref="Grid">
-    <DataColumn TItem="Person" Property="p => p.Id" Width="60px">
-        <Template>
-            <a href="#" class="d-block" title="@context.FullName">@context.Id</a>
-        </Template>
-    </DataColumn>
-    <DataColumn TItem="Person" Property="p => p.FirstName" SortIndex="1" />
-    <DataColumn TItem="Person" Property="p => p.LastName" SortIndex="0" />
-    <DataColumn TItem="Person" Property="p => p.Age" Width="90px" Style="@AgeStyle" />
-    <DataColumn TItem="Person" Property="p => p.Location" Sortable="false" />
-    <DataColumn TItem="Person" Property="p => p.Birthday" Format="d" />
-
-    <DataPager TItem="Person" PageSize="10">
-        <InformationTemplate>
-            <span>@context.StartItem - @context.EndItem of @context.TotalItems items</span>
-        </InformationTemplate>
-    </DataPager>
+<DataGrid Data="People" class="table table-hover" Selectable="true" @bind-SelectedItems="Selected" @ref="DataGrid">
+    <DataColumns>
+        <DataColumn TItem="Person" Property="p => p.Id" Width="70px">
+            <Template Context="item">
+                <a href="#" class="d-block" title="@item.FullName">@item.Id</a>
+            </Template>
+        </DataColumn>
+        <DataColumn TItem="Person" Property="p => p.FirstName" SortIndex="1" />
+        <DataColumn TItem="Person" Property="p => p.LastName" SortIndex="0" />
+        <DataColumn TItem="Person" Property="p => p.Age" Width="90px" Style="@AgeStyle" />
+        <DataColumn TItem="Person" Property="p => p.Location" Sortable="false" />
+        <DataColumn TItem="Person" Property="p => p.Birthday" Format="d" />
+    </DataColumns>
+    <DataPagination Context="grid">
+        <DataPager PageSize="10" />
+        <DataSizer />
+        <div>@grid.Pager.StartItem - @grid.Pager.EndItem of @grid.Pager.Total</div>
+    </DataPagination>
 </DataGrid>
+
+<div class="mt-5">
+    <h4>Selected</h4>
+    <ul>
+        @foreach (var person in Selected)
+        {
+            <li>@person.FullName</li>
+        }
+    </ul>
+</div>
 
 @code {
     public ICollection<Person> People { get; set; }
 
-    private DataGrid<Person> Grid { get; set; }
+    public IEnumerable<Person> Selected { get; set; } = new List<Person>();
+
+    private DataGrid<Person> DataGrid { get; set; }
 
     protected override void OnInitialized()
     {

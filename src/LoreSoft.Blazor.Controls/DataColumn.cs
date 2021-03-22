@@ -1,14 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using LoreSoft.Blazor.Controls.Utilities;
 using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Rendering;
 
 namespace LoreSoft.Blazor.Controls
 {
@@ -23,7 +19,7 @@ namespace LoreSoft.Blazor.Controls
         protected DataGrid<TItem> Grid { get; set; }
 
         [Parameter(CaptureUnmatchedValues = true)]
-        public Dictionary<string, object> CellAttributes { get; set; }
+        public Dictionary<string, object> Attributes { get; set; }
 
         [Parameter]
         public Expression<Func<TItem, object>> Property { get; set; }
@@ -80,6 +76,9 @@ namespace LoreSoft.Blazor.Controls
         [Parameter]
         public RenderFragment<TItem> Template { get; set; }
 
+        [Parameter]
+        public RenderFragment FooterTemplate { get; set; }
+
 
         protected override void OnInitialized()
         {
@@ -109,16 +108,8 @@ namespace LoreSoft.Blazor.Controls
             OnChange();
         }
 
-        internal Dictionary<string, object> HeaderAttributes
-            => AttributeBuilder.Empty()
-                .AddAttribute("tabindex", 0, Sortable && Grid.Sortable)
-                .AddAttribute("role", "button", Sortable && Grid.Sortable)
-                .AddAttribute("aria-pressed", "false", Sortable && Grid.Sortable)
-                .AddAttribute("class", "data-grid-header", Sortable && Grid.Sortable)
-                .Build();
 
-
-        internal string RenderHeader()
+        internal string HeaderTitle()
         {
             if (!string.IsNullOrEmpty(Title))
                 return Title;
@@ -127,7 +118,7 @@ namespace LoreSoft.Blazor.Controls
             return ToTitle(name);
         }
 
-        internal string RenderCell(TItem data)
+        internal string CellValue(TItem data)
         {
             if (data == null || Property == null)
                 return string.Empty;

@@ -23,10 +23,16 @@ namespace Sample.Core.Services
             HttpClient = httpClient;
         }
 
-        public async Task<SearchResult<Repository>> SearchRepositories(string text)
+        public async Task<SearchResult<Repository>> SearchRepositories(string text, int? page = null, int? pageSize = null)
         {
             var encoded = Uri.EscapeDataString(text);
             var url = $"search/repositories?q={encoded}";
+
+            if (page > 0)
+                url += $"&page={page}";
+
+            if (pageSize > 0)
+                url += $"&per_page={pageSize}";
 
             var result = await HttpClient.GetFromJsonAsync<SearchResult<Repository>>(url);
 

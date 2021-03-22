@@ -3,13 +3,18 @@
 
 <h3>Virtual - No Paging</h3>
 
-<DataGrid Data="People" class="table table-striped table-hover" @ref="Grid">
-    <DataColumn TItem="Person" Property="p => p.Id" Width="60px" />
-    <DataColumn TItem="Person" Property="p => p.FirstName" SortIndex="1" />
-    <DataColumn TItem="Person" Property="p => p.LastName" SortIndex="0" />
-    <DataColumn TItem="Person" Property="p => p.Age" Width="90px" />
-    <DataColumn TItem="Person" Property="p => p.Location" />
-    <DataColumn TItem="Person" Property="p => p.Birthday" Format="d" />
+<DataGrid Data="People" Virtualize="true" @ref="Grid">
+    <DataColumns>
+        <DataColumn TItem="Person" Property="p => p.Id" Width="70px" SortIndex="0" />
+        <DataColumn TItem="Person" Property="p => p.FullName">
+            <Template>
+                <a href="#">@context.FullName</a>
+            </Template>
+        </DataColumn>
+        <DataColumn TItem="Person" Property="p => p.Age" Width="90px" />
+        <DataColumn TItem="Person" Property="p => p.Location" />
+        <DataColumn TItem="Person" Property="p => p.Birthday" Format="d" />
+    </DataColumns>
 </DataGrid>
 
 @code {
@@ -19,7 +24,7 @@
 
     protected override void OnInitialized()
     {
-        People = Data.GeneratePeople(150).ToList();
+        People = Data.GeneratePeople(55).ToList();
     }
 
 }

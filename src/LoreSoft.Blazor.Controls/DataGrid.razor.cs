@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
@@ -12,6 +13,7 @@ namespace LoreSoft.Blazor.Controls
 {
     public partial class DataGrid<TItem> : ComponentBase
     {
+        private HashSet<TItem> _expandedItems = new HashSet<TItem>();
         private DataProviderDelegate<TItem> _dataProvider;
         private CancellationTokenSource _refreshCancellation;
         private Exception _refreshException;
@@ -25,15 +27,38 @@ namespace LoreSoft.Blazor.Controls
         [Parameter]
         public DataProviderDelegate<TItem> DataProvider { get; set; }
 
-        [Parameter]
-        public RenderFragment ChildContent { get; set; }
 
         [Parameter]
-        public RenderFragment LoadingTemplate { get; set; }
+        public RenderFragment<DataGrid<TItem>> DataToolbar { get; set; }
 
+        [Parameter]
+        public RenderFragment DataColumns { get; set; }
+
+        [Parameter]
+        public RenderFragment<DataGrid<TItem>> DataPagination { get; set; }
+
+
+        [Parameter]
+        public RenderFragment<TItem> DetailTemplate { get; set; }
+
+
+        [Parameter]
+        public RenderFragment<DataGrid<TItem>> LoadingTemplate { get; set; }
+
+        [Parameter]
+        public RenderFragment<DataGrid<TItem>> ErrorTemplate { get; set; }
+
+        [Parameter]
+        public RenderFragment<DataGrid<TItem>> EmptyTemplate { get; set; }
+
+        [Parameter]
+        public bool Selectable { get; set; }
 
         [Parameter]
         public bool Sortable { get; set; } = true;
+
+        [Parameter]
+        public bool Virtualize { get; set; } = false;
 
 
         [Parameter]
@@ -56,14 +81,23 @@ namespace LoreSoft.Blazor.Controls
         public Func<TItem, bool> Filter { get; set; } = null;
 
 
+        [Parameter]
+        public IEnumerable<TItem> SelectedItems { get; set; } = new List<TItem>();
+
+        [Parameter]
+        public EventCallback<IEnumerable<TItem>> SelectedItemsChanged { get; set; }
+
+
         public List<DataColumn<TItem>> Columns { get; } = new();
 
-        public DataPager<TItem> Pager { get; private set; }
+        public DataPagerState Pager { get; } = new();
 
 
         public async Task RefreshAsync()
         {
-            Console.WriteLine("DataGrid.RefreshAsync()");
+            // clear row flags on refresh
+            _expandedItems.Clear();
+            SetSelectedItems(new List<TItem>());
 
             await RefreshCoreAsync(renderOnSuccess: true);
         }
@@ -71,8 +105,6 @@ namespace LoreSoft.Blazor.Controls
 
         public async Task SortByAsync(DataColumn<TItem> column)
         {
-            Console.WriteLine("DataGrid.SortByAsync()");
-
             if (column == null || !Sortable || !column.Sortable)
                 return;
 
@@ -99,11 +131,15 @@ namespace LoreSoft.Blazor.Controls
 
         protected List<DataColumn<TItem>> VisibleColumns => Columns.Where(c => c.Visible).ToList();
 
+        protected int CellCount => (Columns?.Count ?? 0) + (DetailTemplate != null ? 1 : 0) + (Selectable ? 1 : 0);
+
+        protected override void OnInitialized()
+        {
+            Pager.PropertyChanged += OnStatePropertyChange;
+        }
 
         protected override void OnParametersSet()
         {
-            Console.WriteLine("DataGrid.OnParametersSet()");
-
             if (DataProvider != null)
             {
                 if (Data != null)
@@ -117,9 +153,7 @@ namespace LoreSoft.Blazor.Controls
             }
             else if (Data != null)
             {
-                _dataProvider = DefaultDataProvider;
-
-                var refreshTask = RefreshCoreAsync(renderOnSuccess: false);
+                _dataProvider = DefaultProvider;
             }
             else
             {
@@ -128,20 +162,179 @@ namespace LoreSoft.Blazor.Controls
             }
         }
 
-        protected override void OnAfterRender(bool firstRender)
+        protected override async Task OnAfterRenderAsync(bool firstRender)
         {
-            if (firstRender)
-                StateHasChanged(); // re-render due to columns being added
+            if (!firstRender)
+                return;
+
+            // verify columns added
+            if (Columns == null || Columns.Count == 0)
+                throw new InvalidOperationException("DataGrid requires at least one DataColumn child component.");
+
+
+            // re-render due to columns being added
+            await RefreshAsync();
         }
 
 
-        protected ICollection<TItem> PageData(ICollection<TItem> queryable)
+        protected bool IsRowExpanded(TItem item)
         {
-            if (Pager == null || Pager.PageSize == 0)
+            return _expandedItems.Contains(item);
+        }
+
+        protected void ToggleDetailRow(TItem item)
+        {
+            if (_expandedItems.Contains(item))
+                _expandedItems.Remove(item);
+            else
+                _expandedItems.Add(item);
+
+            StateHasChanged();
+        }
+
+
+        protected bool IsAllSelected()
+        {
+            return View?.All(IsRowSelected) == true;
+        }
+
+        protected void ToggleSelectAll()
+        {
+            if (IsAllSelected())
+                DeselectAll();
+            else
+                SelectAll();
+        }
+
+        protected bool IsRowSelected(TItem item)
+        {
+            return SelectedItems?.Contains(item) ?? false;
+        }
+
+        protected void ToggleSelectRow(TItem item)
+        {
+            var list = new List<TItem>(SelectedItems ?? Enumerable.Empty<TItem>());
+            if (IsRowSelected(item))
+            {
+                list.Remove(item);
+                SetSelectedItems(list);
+            }
+            else
+            {
+                list.Add(item);
+                SetSelectedItems(list);
+            }
+
+            StateHasChanged();
+        }
+
+        protected void SelectAll()
+        {
+            var list = View?.ToList() ?? new List<TItem>();
+            SetSelectedItems(list);
+            StateHasChanged();
+        }
+
+        protected void DeselectAll()
+        {
+            SetSelectedItems(new List<TItem>());
+            StateHasChanged();
+        }
+
+        protected async void SetSelectedItems(IEnumerable<TItem> items)
+        {
+            SelectedItems = items;
+            await SelectedItemsChanged.InvokeAsync(SelectedItems);
+        }
+
+
+        internal void AddColumn(DataColumn<TItem> column)
+        {
+            Columns.Add(column);
+        }
+
+
+        private async ValueTask RefreshCoreAsync(bool renderOnSuccess)
+        {
+            // cancel pending refresh
+            _refreshCancellation?.Cancel();
+
+            // clean up
+            CancellationToken cancellationToken;
+            _refreshException = null;
+
+            if (_dataProvider == DefaultProvider)
+            {
+                _refreshCancellation = null;
+                cancellationToken = CancellationToken.None;
+            }
+            else
+            {
+                _refreshCancellation = new CancellationTokenSource();
+                cancellationToken = _refreshCancellation.Token;
+            }
+
+            var sorts = Columns
+                .Where(c => c.SortIndex >= 0)
+                .OrderBy(c => c.SortIndex)
+                .Select(c => new DataSort(c.Name, c.SortDescending))
+                .ToArray();
+
+            var request = new DataRequest(Pager.Page, Pager.PageSize, sorts, cancellationToken);
+
+            try
+            {
+                var result = await _dataProvider(request);
+
+                if (!cancellationToken.IsCancellationRequested)
+                {
+                    Pager.Total = result.Total;
+                    View = result.Items.ToList();
+
+                    if (renderOnSuccess)
+                        StateHasChanged();
+                }
+            }
+            catch (Exception e)
+            {
+                if (e is OperationCanceledException oce && oce.CancellationToken == cancellationToken)
+                {
+                    // canceled the operation, suppress exception.
+                }
+                else
+                {
+                    _refreshException = e;
+                    StateHasChanged();
+                }
+            }
+        }
+
+        // used when Data is set directly
+        private ValueTask<DataResult<TItem>> DefaultProvider(DataRequest request)
+        {
+            if (Data == null || Data.Count == 0)
+                return ValueTask.FromResult(new DataResult<TItem>(0, Enumerable.Empty<TItem>()));
+
+            var query = Data.AsQueryable();
+
+            if (Filter != null)
+                query = query.Where(i => Filter(i));
+
+            var total = query.Count();
+
+            var sorted = SortData(query, request);
+            sorted = PageData(sorted, request);
+
+            return ValueTask.FromResult(new DataResult<TItem>(total, sorted));
+        }
+
+        private ICollection<TItem> PageData(ICollection<TItem> queryable, DataRequest request)
+        {
+            if (Pager == null || request.PageSize == 0)
                 return queryable;
 
-            var size = Pager.PageSize;
-            int skip = Math.Max(size * (Pager.Page - 1), 0);
+            var size = request.PageSize;
+            int skip = Math.Max(size * (request.Page - 1), 0);
 
             return queryable
                 .Skip(skip)
@@ -149,13 +342,15 @@ namespace LoreSoft.Blazor.Controls
                 .ToList();
         }
 
-        protected ICollection<TItem> SortData(IQueryable<TItem> queryable)
+        private ICollection<TItem> SortData(IQueryable<TItem> queryable, DataRequest request)
         {
-            if (!Sortable)
+            if (!Sortable || request.Sorts == null || request.Sorts.Length == 0)
                 return queryable.ToList();
 
+            var columns = request.Sorts.Select(s => s.Property);
+
             var sorted = Columns
-                .Where(c => c.SortIndex >= 0)
+                .Where(c => columns.Contains(c.Name))
                 .OrderBy(c => c.SortIndex)
                 .ToList();
 
@@ -181,93 +376,24 @@ namespace LoreSoft.Blazor.Controls
             return orderedQueryable.ToList();
         }
 
-
-        internal void AddColumn(DataColumn<TItem> column)
+        private void OnStatePropertyChange(object sender, PropertyChangedEventArgs e)
         {
-            Columns.Add(column);
-        }
-
-        internal void SetPager(DataPager<TItem> pager)
-        {
-            Pager = pager;
-        }
-
-
-        private async ValueTask RefreshCoreAsync(bool renderOnSuccess)
-        {
-            Console.WriteLine("DataGrid.RefreshCoreAsync()");
-
-            _refreshCancellation?.Cancel();
-            CancellationToken cancellationToken;
-
-            if (_dataProvider == DefaultDataProvider)
+            switch (e.PropertyName)
             {
-                _refreshCancellation = null;
-                cancellationToken = CancellationToken.None;
+                case nameof(DataPagerState.Page):
+                case nameof(DataPagerState.PageSize):
+                    Task.Run(RefreshAsync);
+                    break;
             }
-            else
-            {
-                _refreshCancellation = new CancellationTokenSource();
-                cancellationToken = _refreshCancellation.Token;
-            }
-
-            var request = Pager == null
-                ? new DataRequest(0, 0, cancellationToken)
-                : new DataRequest(Pager.StartItem, Pager.PageSize, cancellationToken);
-
-            try
-            {
-                var result = await _dataProvider(request);
-
-                if (!cancellationToken.IsCancellationRequested)
-                {
-                    if (Pager != null)
-                        Pager.TotalItems = result.Total;
-
-                    View = result.Items.ToList();
-
-                    if (renderOnSuccess)
-                        StateHasChanged();
-                }
-            }
-            catch (Exception e)
-            {
-                if (e is OperationCanceledException oce && oce.CancellationToken == cancellationToken)
-                {
-                    // canceled the operation, suppress exception.
-                }
-                else
-                {
-                    _refreshException = e;
-                    StateHasChanged();
-                }
-            }
-        }
-
-        private ValueTask<DataResult<TItem>> DefaultDataProvider(DataRequest request)
-        {
-            Console.WriteLine("DataGrid.DefaultDataProvider()");
-
-            var query = Data.AsQueryable();
-
-            if (Filter != null)
-                query = query.Where(i => Filter(i));
-
-            var total = query.Count();
-
-            var sorted = SortData(query);
-            sorted = PageData(sorted);
-
-
-            return ValueTask.FromResult(new DataResult<TItem>(total, sorted));
         }
 
     }
 
-    public record DataRequest(int Start, int Count, CancellationToken CancellationToken);
+    public record DataSort(string Property, bool Descending);
+
+    public record DataRequest(int Page, int PageSize, DataSort[] Sorts, CancellationToken CancellationToken);
 
     public record DataResult<TItem>(int Total, IEnumerable<TItem> Items);
 
     public delegate ValueTask<DataResult<TItem>> DataProviderDelegate<TItem>(DataRequest request);
-
 }
