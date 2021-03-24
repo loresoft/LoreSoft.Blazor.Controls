@@ -26,11 +26,6 @@ In the head tag add the following CSS.
 <link rel="stylesheet" href="_content/LoreSoft.Blazor.Controls/BlazorControls.css" />
 ```
 
-Then add the JS script at the bottom of the page using the following script tag.
-
-```html
-<script src="_content/LoreSoft.Blazor.Controls/BlazorControls.js"></script>
-```
 
 ## Typeahead Features
 
