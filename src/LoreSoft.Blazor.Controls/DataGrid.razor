@@ -69,9 +69,9 @@
                     }
                 </tr>
             </thead>
-            @if (_refreshException != null)
-            {
-                <tbody>
+            <tbody>
+                @if (_refreshException != null)
+                {
                     <tr>
                         <td colspan="@CellCount" class="data-grid-error">
                             @if (ErrorTemplate != null)
@@ -84,14 +84,12 @@
                             }
                         </td>
                     </tr>
-                </tbody>
-            }
-            else if (View == null)
-            {
-                for (int i = 0; i < 5; i++)
+                }
+                else if (View == null)
                 {
-                    <tbody @key="i">
-                        <tr>
+                    for (int i = 0; i < 5; i++)
+                    {
+                        <tr key="i">
                             @if (DetailTemplate != null)
                             {
                                 <td class="data-grid-hierarchy-cell">
@@ -109,12 +107,10 @@
                                 </td>
                             }
                         </tr>
-                    </tbody>
+                    }
                 }
-            }
-            else if (View.Count == 0)
-            {
-                <tbody>
+                else if (View.Count == 0)
+                {
                     <tr>
                         <td colspan="@CellCount" class="data-grid-empty">
                             @if (EmptyTemplate != null)
@@ -127,25 +123,25 @@
                             }
                         </td>
                     </tr>
-                </tbody>
-            }
-            else if (Virtualize)
-            {
-                <Virtualize TItem="TItem"
-                            Items="View"
-                            Context="item"
-                            ItemSize="VirtualItemSize"
-                            OverscanCount="VirtualOverscan">
-                    @RowFragment(item)
-                </Virtualize>
-            }
-            else
-            {
-                @foreach (var item in View)
-                {
-                    @RowFragment(item)
                 }
-            }
+                else if (Virtualize)
+                {
+                    <Virtualize TItem="TItem"
+                                Items="View"
+                                Context="item"
+                                ItemSize="VirtualItemSize"
+                                OverscanCount="VirtualOverscan">
+                        @RowFragment(item)
+                    </Virtualize>
+                }
+                else
+                {
+                    @foreach (var item in View)
+                    {
+                        @RowFragment(item)
+                    }
+                }
+            </tbody>
             @if (VisibleColumns.Any(c => c.FooterTemplate != null))
             {
                 <tfoot>
@@ -175,11 +171,7 @@
         {
             @if (LoadingTemplate == null)
             {
-                <div class="data-grid-loader">
-                    <div class="data-grid-loader-spinner">
-                        <div class="data-grid-loader-spinner-icon"></div>
-                    </div>
-                </div>
+                <LoadingBlock IsLoading="true"/>
             }
             else
             {
@@ -210,46 +202,44 @@
 
     protected RenderFragment<TItem> RowFragment => item => __builder =>
     {
-        <tbody @key="item">
-            <tr class="@RowClass" style="@(RowStyle?.Invoke(item))">
-                @if (DetailTemplate != null)
-                {
-                    <td class="data-grid-hierarchy-cell">
-                        <button type="button"
-                                @onclick="() => ToggleDetailRow(item)"
-                                class="data-grid-hierarchy-button @(IsRowExpanded(item) ? "data-grid-hierarchy-button-expanded" : "data-grid-hierarchy-button-collapsed" )"></button>
-                    </td>
-                }
-                @if (Selectable)
-                {
-                    <td class="data-grid-selector-cell">
-                        <div class="data-check">
-                          <input class="data-check-input" type="checkbox" checked="@(IsRowSelected(item))" @onchange="() => ToggleSelectRow(item)" />
-                        </div>
-                    </td>
-                }
-                @foreach (var column in VisibleColumns)
-                {
-                    <td @key="column" class="@column.ClassName" style="@(column.Style?.Invoke(item))" @attributes="@column.Attributes">
-                        @if (column.Template != null)
-                        {
-                            @column.Template(item)
-                        }
-                        else
-                        {
-                            @column.CellValue(item)
-                        }
-                    </td>
-                }
-            </tr>
-            @if (DetailTemplate != null && IsRowExpanded(item))
+        <tr @key="new {item, i = 0}" class="@RowClass" style="@(RowStyle?.Invoke(item))">
+            @if (DetailTemplate != null)
             {
-                <tr>
-                    <td colspan="@CellCount" class="data-grid-detail-cell">
-                        @DetailTemplate(item)
-                    </td>
-                </tr>
+                <td class="data-grid-hierarchy-cell">
+                    <button type="button"
+                            @onclick="() => ToggleDetailRow(item)"
+                            class="data-grid-hierarchy-button @(IsRowExpanded(item) ? "data-grid-hierarchy-button-expanded" : "data-grid-hierarchy-button-collapsed" )"></button>
+                </td>
             }
-        </tbody>
+            @if (Selectable)
+            {
+                <td class="data-grid-selector-cell">
+                    <div class="data-check">
+                      <input class="data-check-input" type="checkbox" checked="@(IsRowSelected(item))" @onchange="() => ToggleSelectRow(item)" />
+                    </div>
+                </td>
+            }
+            @foreach (var column in VisibleColumns)
+            {
+                <td @key="column" class="@column.ClassName" style="@(column.Style?.Invoke(item))" @attributes="@column.Attributes">
+                    @if (column.Template != null)
+                    {
+                        @column.Template(item)
+                    }
+                    else
+                    {
+                        @column.CellValue(item)
+                    }
+                </td>
+            }
+        </tr>
+        @if (DetailTemplate != null && IsRowExpanded(item))
+        {
+            <tr @key="new {item, i = 1}" class="data-grid-detail-row">
+                <td colspan="@CellCount" class="data-grid-detail-cell">
+                    @DetailTemplate(item)
+                </td>
+            </tr>
+        }
     };
 }
