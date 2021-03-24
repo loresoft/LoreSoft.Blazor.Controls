@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
+using DataGenerator.Sources;
 using Sample.Core.Models;
 
 namespace Sample.Core.Services
@@ -7,12 +9,12 @@ namespace Sample.Core.Services
     {
         public static IReadOnlyCollection<Person> PersonList { get; } = new List<Person>
         {
-            new Person {Id = 1, Firstname = "John", Lastname = "Smith"},
-            new Person {Id = 2, Firstname = "Jane", Lastname = "Doe"},
-            new Person {Id = 3, Firstname = "Tom", Lastname = "Jones"},
-            new Person {Id = 4, Firstname = "Fred", Lastname = "Gouch"},
-            new Person {Id = 5, Firstname = "John", Lastname = "Philips"},
-            new Person {Id = 6, Firstname = "Jon", Lastname = "Thomas"}
+            new Person {Id = 1, FirstName = "John", LastName = "Smith"},
+            new Person {Id = 2, FirstName = "Jane", LastName = "Doe"},
+            new Person {Id = 3, FirstName = "Tom", LastName = "Jones"},
+            new Person {Id = 4, FirstName = "Fred", LastName = "Gouch"},
+            new Person {Id = 5, FirstName = "John", LastName = "Philips"},
+            new Person {Id = 6, FirstName = "Jon", LastName = "Thomas"}
         };
 
         public static IReadOnlyCollection<StateLocation> StateList { get; } = new List<StateLocation>
@@ -70,5 +72,21 @@ namespace Sample.Core.Services
             new StateLocation("WY - Wyoming", "WY")
         };
 
+        public static IReadOnlyCollection<Person> GeneratePeople(int count = 100)
+        {
+            var generator = DataGenerator.Generator.Create(options => options
+                .Entity<Person>(builder =>
+                {
+                    builder.Property(p => p.Id).DataSource<IntegerSource>();
+                    builder.Property(p => p.FirstName).DataSource<FirstNameSource>();
+                    builder.Property(p => p.LastName).DataSource<LastNameSource>();
+                    builder.Property(p => p.Score).IntegerSource(1, 100);
+                    builder.Property(p => p.Location).DataSource<CitySource>();
+                    builder.Property(p => p.Birthday).DataSource<DateTimeSource>();
+                })
+            );
+
+            return generator.List<Person>(count).ToList();
+        }
     }
 }

@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Components;
 
 namespace LoreSoft.Blazor.Controls
 {
-    public class SkeletonBase : ComponentBase
+    public partial class Skeleton : ComponentBase
     {
         [Parameter]
         public string Width { set; get; }

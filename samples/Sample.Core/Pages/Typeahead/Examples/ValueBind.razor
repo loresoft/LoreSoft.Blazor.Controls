@@ -11,7 +11,7 @@
         @LookupPerson(personId)?.FullName
     </SelectedTemplate>
     <ResultTemplate Context="person">
-        @person.Firstname @person.Lastname
+        @person.FirstName @person.LastName
     </ResultTemplate>
 </Typeahead>
 
@@ -26,7 +26,7 @@
         @@LookupPerson(personId)?.FullName
     &lt;/SelectedTemplate&gt;
     &lt;ResultTemplate Context="person"&gt;
-        @@person.Firstname @@person.Lastname
+        @@person.FirstName @@person.LastName
     &lt;/ResultTemplate&gt;
 &lt;/Typeahead&gt;</code></pre>
 
