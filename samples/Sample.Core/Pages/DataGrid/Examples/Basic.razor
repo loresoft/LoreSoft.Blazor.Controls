@@ -16,7 +16,7 @@
         </DataColumn>
         <DataColumn TItem="Person" Property="p => p.FirstName" SortIndex="1" />
         <DataColumn TItem="Person" Property="p => p.LastName" SortIndex="0" />
-        <DataColumn TItem="Person" Property="p => p.Age" Width="90px" Style="@AgeStyle" />
+        <DataColumn TItem="Person" Property="p => p.Score" Width="90px" Style="@SoreStyle" />
         <DataColumn TItem="Person" Property="p => p.Location" Sortable="false" />
         <DataColumn TItem="Person" Property="p => p.Birthday" Format="d" />
     </DataColumns>
@@ -50,11 +50,11 @@
     }
 
 
-    protected string AgeStyle(Person person)
+    protected string SoreStyle(Person person)
     {
-        if (person.Age > 75)
+        if (person.Score > 75)
             return "background-color: #dc3545";
-        if (person.Age > 50)
+        if (person.Score > 50)
             return "background-color: #ffc107";
 
         return null;

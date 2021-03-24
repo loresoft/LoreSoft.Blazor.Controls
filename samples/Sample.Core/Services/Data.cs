@@ -80,7 +80,7 @@ namespace Sample.Core.Services
                     builder.Property(p => p.Id).DataSource<IntegerSource>();
                     builder.Property(p => p.FirstName).DataSource<FirstNameSource>();
                     builder.Property(p => p.LastName).DataSource<LastNameSource>();
-                    builder.Property(p => p.Age).IntegerSource(1, 100);
+                    builder.Property(p => p.Score).IntegerSource(1, 100);
                     builder.Property(p => p.Location).DataSource<CitySource>();
                     builder.Property(p => p.Birthday).DataSource<DateTimeSource>();
                 })

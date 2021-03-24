@@ -5,11 +5,11 @@ namespace Sample.Core.Models
     public class Person
     {
         public Person() { }
-        public Person(string firstName, string lastName, int age, string location)
+        public Person(string firstName, string lastName, int score, string location)
         {
             FirstName = firstName;
             LastName = lastName;
-            Age = age;
+            Score = score;
             Location = location;
         }
 
@@ -17,7 +17,7 @@ namespace Sample.Core.Models
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string FullName => FirstName + " " + LastName;
-        public int Age { get; set; }
+        public int Score { get; set; }
         public string Location { get; set; }
         public DateTime? Birthday { get; set; }
     }
