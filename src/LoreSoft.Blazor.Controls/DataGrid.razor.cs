@@ -13,7 +13,7 @@ namespace LoreSoft.Blazor.Controls
 {
     public partial class DataGrid<TItem> : ComponentBase
     {
-        private HashSet<TItem> _expandedItems = new HashSet<TItem>();
+        private HashSet<TItem> _expandedItems = new();
         private DataProviderDelegate<TItem> _dataProvider;
         private CancellationTokenSource _refreshCancellation;
         private Exception _refreshException;

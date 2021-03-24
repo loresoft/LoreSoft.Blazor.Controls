@@ -148,7 +148,7 @@
                     <tr>
                         @foreach (var column in VisibleColumns)
                         {
-                            <td>
+                            <td @key="column">
                                 @if (column.FooterTemplate != null)
                                 {
                                     @column.FooterTemplate

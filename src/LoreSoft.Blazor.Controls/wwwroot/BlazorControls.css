@@ -651,7 +651,7 @@
     pointer-events: none;
 }
 
-.progress-bar {
+.progress-status-bar {
     height: 3px;
     left: 0;
     margin-left: 0;
@@ -661,7 +661,7 @@
     z-index: 1200;
 }
 
-.progress-peg {
+.progress-status-peg {
     display: block;
     height: 100%;
     opacity: 1;
@@ -671,7 +671,7 @@
     width: 100px;
 }
 
-.progress-spinner {
+.progress-status-spinner {
     display: block;
     position: fixed;
     right: 8px;
@@ -679,7 +679,7 @@
     z-index: 1200;
 }
 
-.progress-spinner-icon {
+.progress-status-spinner-icon {
     animation: 400ms linear 0s infinite normal none running progress-spinner-keframe;
     border-width: 2px;
     border-style: solid;
