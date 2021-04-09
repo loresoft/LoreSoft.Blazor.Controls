@@ -167,7 +167,7 @@ namespace LoreSoft.Blazor.Controls
             _debounceTimer = new Timer();
             _debounceTimer.Interval = Debounce;
             _debounceTimer.AutoReset = false;
-            _debounceTimer.Elapsed += Search;
+            _debounceTimer.Elapsed += (s, e) => InvokeAsync(() => Search(s, e));
         }
 
         protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -182,7 +182,7 @@ namespace LoreSoft.Blazor.Controls
         public async void Search(object source, ElapsedEventArgs e)
         {
             Loading = true;
-            await InvokeAsync(StateHasChanged);
+            StateHasChanged();
 
             var result = await SearchMethod(_searchText);
 
@@ -191,7 +191,7 @@ namespace LoreSoft.Blazor.Controls
                 : result.ToList();
 
             Loading = false;
-            await InvokeAsync(StateHasChanged);
+            StateHasChanged();
         }
 
         public async Task SelectResult(TItem item)
