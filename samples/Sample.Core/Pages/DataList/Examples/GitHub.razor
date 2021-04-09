@@ -1,0 +1,58 @@
+﻿@using Sample.Core.Models.GitHub
+@using Sample.Core.Services
+@using System.Linq.Dynamic.Core;
+
+@inject GitHubClient GitHubClient
+
+<h3>GitHub</h3>
+
+<input type="text" class="form-control" @bind-value="SearchText.Value" @bind-value:event="oninput" />
+
+<DataList DataProvider="LoadData" @ref="DataList" class="list-group">
+    <RowTemplate Context="item">
+        <a @key="item" href="#" class="list-group-item list-group-item-action">
+            <div class="github-repository clearfix">
+                <div class="github-avatar"><img src="@item.Owner.AvatarUrl"></div>
+                <div class="github-meta">
+                    <div class="github-title">@item.FullName</div>
+                    <div class="github-description">@item.Description</div>
+                    <div class="github-statistics">
+                        <div class="github-forks"><i class="fas fa-bolt"></i> @item.ForksCount Forks</div>
+                        <div class="github-stargazers"><i class="fas fa-star"></i> @item.StargazersCount Stars</div>
+                        <div class="github-watchers"><i class="fas fa-eye"></i> @item.SubscribersCount Watchers</div>
+                    </div>
+                </div>
+            </div>
+        </a>
+    </RowTemplate>
+    <DataPagination Context="list">
+        <DataPager PageSize="10" />
+        <DataSizer />
+        <div>@list.Pager.StartItem - @list.Pager.EndItem of @list.Pager.Total</div>
+    </DataPagination>
+</DataList>
+
+
+@code {
+    private DataList<Repository> DataList { get; set; }
+
+    private DebounceValue<string> SearchText { get; set; }
+
+    public async ValueTask<DataResult<Repository>> LoadData(DataRequest request)
+    {
+        var value = SearchText.Value;
+        var result = await GitHubClient.SearchRepositories(value, request.Page, request.PageSize);
+
+        var response = new DataResult<Repository>(result.TotalCount, result.Items);
+        return response;
+    }
+
+    protected override void OnInitialized()
+    {
+        SearchText = new DebounceValue<string>("blazor")
+        {
+            Trigger = _ => InvokeAsync(() => DataList.RefreshAsync(true))
+        };
+    }
+
+}

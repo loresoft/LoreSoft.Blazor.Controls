@@ -31,9 +31,19 @@ namespace LoreSoft.Blazor.Controls.Utilities
 
         public CssBuilder AddClass(CssBuilder builder, Func<bool> when) => this.AddClass(builder, when());
 
-        public CssBuilder AddClass(IReadOnlyDictionary<string, object> attributes) =>
-            attributes == null ? this :
-            attributes.TryGetValue("class", out var c) ? AddClass(c.ToString()) : this;
+        public CssBuilder MergeClass(IDictionary<string, object> attributes)
+        {
+            if (attributes == null)
+                return this;
+
+            if (!attributes.TryGetValue("class", out var value))
+                return this;
+
+            // remove so it doesn't overwrite
+            attributes.Remove("class");
+
+            return AddClass(value.ToString());
+        }
 
         public override string ToString()
         {

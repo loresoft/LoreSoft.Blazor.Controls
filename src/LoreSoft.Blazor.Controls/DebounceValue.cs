@@ -4,7 +4,7 @@ using System.Timers;
 
 namespace LoreSoft.Blazor.Controls
 {
-    public class DebounceValue<T>
+    public class DebounceValue<T> : IDisposable
     {
         private readonly Timer _debounceTimer;
         private T _value;
@@ -45,5 +45,10 @@ namespace LoreSoft.Blazor.Controls
             Trigger?.Invoke(_value);
         }
 
+        public void Dispose()
+        {
+            _debounceTimer.Elapsed -= OnElapsed;
+            _debounceTimer.Dispose();
+        }
     }
 }

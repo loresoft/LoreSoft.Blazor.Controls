@@ -1,15 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
 
 namespace LoreSoft.Blazor.Controls
 {
-    public class DataSizer : ComponentBase
+    public class DataSizer : ComponentBase, IDisposable
     {
         [CascadingParameter(Name = "PagerState")]
         protected DataPagerState PagerState { get; set; } = new();
@@ -26,6 +23,10 @@ namespace LoreSoft.Blazor.Controls
         [Parameter]
         public string DescriptionLabel { get; set; } = "Items per page";
 
+        public void Dispose()
+        {
+            PagerState.PropertyChanged -= OnStatePropertyChange;
+        }
 
         protected override void OnInitialized()
         {
@@ -81,7 +82,8 @@ namespace LoreSoft.Blazor.Controls
         private void OnStatePropertyChange(object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName == nameof(DataPagerState.PageSize))
-                StateHasChanged();
+                InvokeAsync(StateHasChanged);
         }
+
     }
 }

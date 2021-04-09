@@ -1,0 +1,46 @@
+﻿@using Sample.Core.Services
+@using Sample.Core.Models
+<h3>Basic</h3>
+
+<button class="btn btn-secondary" @onclick="@(() => DataList.Pager.Page = 5)">Go to page 5</button>
+<button class="btn btn-secondary" @onclick="@(() => DataList.Pager.PageSize = 25)">Page Size 25</button>
+
+<DataList Data="People" @ref="DataList" class="list-group">
+    <RowTemplate Context="item">
+        <a @key="item" href="#" class="list-group-item list-group-item-action">
+            <div class="d-flex w-100 justify-content-between">
+                <h5 class="mb-1">@item.FullName</h5>
+                <small>@item.Score</small>
+            </div>
+            <p class="mb-1">@item.Location</p>
+        </a>
+    </RowTemplate>
+    <DataPagination Context="list">
+        <DataPager PageSize="10" />
+        <DataSizer />
+        <div>@list.Pager.StartItem - @list.Pager.EndItem of @list.Pager.Total</div>
+    </DataPagination>
+</DataList>
+
+@code {
+    public ICollection<Person> People { get; set; }
+
+    private DataList<Person> DataList { get; set; }
+
+    protected override void OnInitialized()
+    {
+        People = Data.GeneratePeople(200).ToList();
+    }
+
+
+    protected string SoreStyle(Person person)
+    {
+        if (person.Score > 75)
+            return "background-color: #dc3545";
+        if (person.Score > 50)
+            return "background-color: #ffc107";
+
+        return null;
+    }
+
+}

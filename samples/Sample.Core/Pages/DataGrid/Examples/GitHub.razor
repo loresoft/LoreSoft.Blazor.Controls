@@ -60,7 +60,7 @@
     {
         SearchText = new DebounceValue<string>("blazor")
         {
-            Trigger = async (value) => await Grid.RefreshAsync(true)
+            Trigger = _ => InvokeAsync(() => Grid.RefreshAsync(true))
         };
     }
 

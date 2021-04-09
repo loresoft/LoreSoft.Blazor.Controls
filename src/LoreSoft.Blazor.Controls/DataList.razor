@@ -1,0 +1,95 @@
+﻿@typeparam TItem
+@inherits DataComponentBase<TItem>
+@using Microsoft.AspNetCore.Components.Web
+@using Microsoft.AspNetCore.Components.Web.Virtualization
+
+<CascadingValue IsFixed="true" Value="this" Name="Grid">
+    <div class="@ClassName" @attributes="@Attributes">
+        @if (DataToolbar != null)
+        {
+            @DataToolbar
+        }
+
+        @if (DataError != null)
+        {
+            @if (ErrorTemplate != null)
+            {
+                @ErrorTemplate(DataError)
+            }
+            else
+            {
+                @DataError.Message
+            }
+        }
+        else if (View == null)
+        {
+            @if (LoadingTemplate == null)
+            {
+                <LoadingBlock IsLoading="true" />
+            }
+            else
+            {
+                @LoadingTemplate
+            }
+        }
+        else if (View.Count == 0)
+        {
+            @if (EmptyTemplate != null)
+            {
+                @EmptyTemplate
+            }
+            else
+            {
+                <div>No records to display</div>
+            }
+        }
+        else if (Virtualize)
+        {
+            <Virtualize TItem="TItem"
+                        Items="View"
+                        Context="item"
+                        ItemSize="VirtualItemSize"
+                        OverscanCount="VirtualOverscan">
+                @RowTemplate(item)
+            </Virtualize>
+        }
+        else
+        {
+            @foreach (var item in View)
+            {
+                @RowTemplate(item)
+            }
+        }
+
+        @if (FooterTemplate != null)
+        {
+            @FooterTemplate
+        }
+
+        @if (DataPagination != null)
+        {
+            <CascadingValue IsFixed="true" Value="Pager" Name="PagerState">
+                <div class="data-pagination">
+                    @DataPagination(this)
+                </div>
+            </CascadingValue>
+        }
+
+        @if (IsLoading)
+        {
+            @if (LoadingTemplate == null)
+            {
+                <LoadingBlock IsLoading="true" />
+            }
+            else
+            {
+                @LoadingTemplate
+            }
+        }
+
+    </div>
+</CascadingValue>
+
+@code {
+
+}

@@ -287,12 +287,15 @@ namespace LoreSoft.Blazor.Controls
 
         private void OnStatePropertyChange(object sender, PropertyChangedEventArgs e)
         {
-            StateHasChanged();
-
-            if (PagerChanged.HasDelegate && (e.PropertyName == nameof(DataPagerState.Page) || e.PropertyName == nameof(DataPagerState.PageSize)))
+            InvokeAsync(() =>
             {
-                PagerChanged.InvokeAsync(new PageChangedEventArgs(PagerState.Page, PageSize));
-            }
+                StateHasChanged();
+
+                if (PagerChanged.HasDelegate && (e.PropertyName == nameof(DataPagerState.Page) || e.PropertyName == nameof(DataPagerState.PageSize)))
+                {
+                    PagerChanged.InvokeAsync(new PageChangedEventArgs(PagerState.Page, PageSize));
+                }
+            });
         }
 
     }

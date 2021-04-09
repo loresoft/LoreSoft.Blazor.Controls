@@ -1,0 +1,29 @@
+﻿@using Sample.Core.Services
+@using Sample.Core.Models
+
+<h3>Virtual - No Paging</h3>
+
+<DataList Data="People" Virtualize="true" @ref="DataList" class="list-group">
+    <RowTemplate Context="item">
+        <a @key="item" href="#" class="list-group-item list-group-item-action">
+            <div class="d-flex w-100 justify-content-between">
+                <h5 class="mb-1">@item.FullName</h5>
+                <small>@item.Score</small>
+            </div>
+            <p class="mb-1">@item.Location</p>
+        </a>
+    </RowTemplate>
+</DataList>
+
+
+@code {
+    public ICollection<Person> People { get; set; }
+
+    private DataList<Person> DataList { get; set; }
+
+    protected override void OnInitialized()
+    {
+        People = Data.GeneratePeople(55).ToList();
+    }
+
+}

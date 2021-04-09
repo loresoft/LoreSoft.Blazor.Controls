@@ -975,6 +975,9 @@ button.data-grid-header {
             opacity: 0.5;
         }
 
+.data-list {
+    position: relative;
+}
 
 @media (max-width: 991.98px) {
     .data-pagination {

@@ -1,11 +1,13 @@
 ﻿@typeparam TItem
+@inherits DataComponentBase<TItem>
 @using Microsoft.AspNetCore.Components.Web
 @using Microsoft.AspNetCore.Components.Web.Virtualization
+
 <CascadingValue IsFixed="true" Value="this" Name="Grid">
     <div class="data-grid-container">
         @if (DataToolbar != null)
         {
-            @DataToolbar(this)
+            @DataToolbar
         }
         @if (DataColumns != null)
         {
@@ -70,17 +72,17 @@
                 </tr>
             </thead>
             <tbody>
-                @if (_refreshException != null)
+                @if (DataError != null)
                 {
                     <tr>
                         <td colspan="@CellCount" class="data-grid-error">
                             @if (ErrorTemplate != null)
                             {
-                                @ErrorTemplate(this)
+                                @ErrorTemplate(DataError)
                             }
                             else
                             {
-                                @_refreshException.Message
+                                @DataError.Message
                             }
                         </td>
                     </tr>
@@ -115,7 +117,7 @@
                         <td colspan="@CellCount" class="data-grid-empty">
                             @if (EmptyTemplate != null)
                             {
-                                @EmptyTemplate(this)
+                                @EmptyTemplate
                             }
                             else
                             {
@@ -175,7 +177,7 @@
             }
             else
             {
-                @LoadingTemplate(this)
+                @LoadingTemplate
             }
         }
     </div>
