@@ -15,6 +15,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{3E5818B3
 	ProjectSection(SolutionItems) = preProject
 		build\common.props = build\common.props
 		.github\workflows\dotnetcore.yml = .github\workflows\dotnetcore.yml
+		GitVersion.yml = GitVersion.yml
 		build\sourcelink.props = build\sourcelink.props
 		build\version.props = build\version.props
 	EndProjectSection

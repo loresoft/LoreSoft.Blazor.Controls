@@ -2,16 +2,16 @@ name: .NET Core
 
 on: [push, pull_request]
 
-env:
-    VERSION_NUMBER: 6.5.0.${{github.run_number}}
-
 jobs:
   build:
 
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
+    - name: Checkout
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
 
     - name: Setup .NET Core 3.1
       uses: actions/setup-dotnet@v1
@@ -23,14 +23,25 @@ jobs:
       with:
         dotnet-version: 5.0.x
 
+    - name: Install GitVersion
+      uses: gittools/actions/gitversion/setup@v0.9.7
+      with:
+        versionSpec: '5.x'
+
+    - name: Determine Version
+      id: gitversion
+      uses: gittools/actions/gitversion/execute@v0.9.7
+      with:
+        useConfigFile: true
+
     - name: Build Reason
-      run: "echo ref: ${{github.ref}} event: ${{github.event_name}} version: $VERSION_NUMBER"
+      run: "echo ref: ${{github.ref}} event: ${{github.event_name}}"
 
     - name: Install Tool
       run: dotnet tool install -g dotnet-property
 
     - name: Update Version
-      run: dotnet property "**/version.props" Version:"$VERSION_NUMBER" PackageVersion:"$VERSION_NUMBER" AssemblyVersion:"$VERSION_NUMBER" FileVersion:"$VERSION_NUMBER" InformationalVersion:"$VERSION_NUMBER+$GITHUB_SHA"
+      run: "dotnet property **/version.props Version:${{steps.gitversion.outputs.nuGetVersion}} PackageVersion:${{steps.gitversion.outputs.nuGetVersion}} AssemblyVersion:${{steps.gitversion.outputs.AssemblySemVer}} FileVersion:${{steps.gitversion.outputs.AssemblySemFileVer }} InformationalVersion:${{ steps.gitversion.outputs.InformationalVersion}}"
 
     - name: Build Solution
       run: dotnet build --configuration Release
