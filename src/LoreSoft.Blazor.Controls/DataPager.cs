@@ -120,7 +120,7 @@ namespace LoreSoft.Blazor.Controls
         protected override void OnInitialized()
         {
             if (PagerState == null)
-                throw new InvalidOperationException("DataPager must be child of DataGrid");
+                throw new InvalidOperationException("DataSizer requires a cascading parameter PagerState.");
 
             // copy defaults to state
             PagerState.Attach(1, PageSize);

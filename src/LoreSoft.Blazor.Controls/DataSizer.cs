@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
 
@@ -30,8 +31,13 @@ namespace LoreSoft.Blazor.Controls
 
         protected override void OnInitialized()
         {
-            PagerState.PropertyChanged += OnStatePropertyChange;
+            if (PagerState == null)
+                throw new InvalidOperationException("DataSizer requires a cascading parameter PagerState.");
 
+            if (!PageSizeOptions.Contains(PagerState.PageSize))
+                PageSizeOptions = PageSizeOptions.Append(PagerState.PageSize).OrderBy(p => p).ToArray();
+
+            PagerState.PropertyChanged += OnStatePropertyChange;
         }
 
         protected override void BuildRenderTree(RenderTreeBuilder builder)
@@ -81,8 +87,10 @@ namespace LoreSoft.Blazor.Controls
 
         private void OnStatePropertyChange(object sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == nameof(DataPagerState.PageSize))
-                InvokeAsync(StateHasChanged);
+            if (e.PropertyName != nameof(DataPagerState.PageSize))
+                return;
+
+            InvokeAsync(StateHasChanged);
         }
 
     }

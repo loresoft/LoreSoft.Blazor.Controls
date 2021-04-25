@@ -38,9 +38,9 @@ namespace LoreSoft.Blazor.Controls
         }
 
 
-        public int StartItem => PageSize == 0 ? 1 : EndItem - (PageSize - 1);
+        public int StartItem => PageSize == 0 ? 1 : Math.Max(EndItem - (PageSize - 1), 0);
 
-        public int EndItem => PageSize == 0 ? Total : PageSize * Page;
+        public int EndItem => PageSize == 0 ? Total : Math.Min(PageSize * Page, Total);
 
 
         public int PageCount => Total > 0 ? (int)Math.Ceiling(Total / (double)PageSize) : 0;
