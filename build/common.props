@@ -1,5 +1,4 @@
 <Project>
-  <Import Project="version.props" />
 
   <PropertyGroup Label="Source Link">
     <ProjectParentDirectory>$([System.IO.Path]::GetDirectoryName('$(MSBuildProjectDirectory)'))</ProjectParentDirectory>
