@@ -37,6 +37,9 @@ namespace LoreSoft.Blazor.Controls
         public bool ShowPage { get; set; } = true;
 
         [Parameter]
+        public bool ShowEmpty { get; set; } = false;
+
+        [Parameter]
         public bool CenterSelected { get; set; } = true;
 
         [Parameter]
@@ -129,7 +132,7 @@ namespace LoreSoft.Blazor.Controls
 
         protected override void BuildRenderTree(RenderTreeBuilder builder)
         {
-            if (PagerState.PageCount == 0)
+            if (PagerState.PageCount == 0 && !ShowEmpty)
                 return;
 
             builder.OpenElement(0, "div");
