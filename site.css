@@ -1,0 +1,115 @@
+﻿.valid.modified:not([type=checkbox]) {
+    outline: 1px solid #26b050;
+}
+
+.invalid {
+    outline: 1px solid #ff0000;
+}
+
+.validation-message {
+    color: #ff0000;
+}
+
+#blazor-error-ui {
+    background: lightyellow;
+    bottom: 0;
+    box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.2);
+    display: none;
+    left: 0;
+    padding: 0.6rem 1.25rem 0.7rem 1.25rem;
+    position: fixed;
+    width: 100%;
+    z-index: 1040;
+}
+
+    #blazor-error-ui .dismiss {
+        cursor: pointer;
+        position: absolute;
+        right: 0.75rem;
+        top: 0.5rem;
+    }
+
+.footer {
+    margin: 5rem 0;
+    width: 100%;
+    height: 40px;
+    line-height: 40px;
+    font-size: 85%;
+}
+
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0 10%;
+}
+
+.loader {
+    border: 5px solid #f3f3f3;
+    -webkit-animation: spin 1s linear infinite;
+    animation: spin 1s linear infinite;
+    border-top: 5px solid #555;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+
+/* GitHub */
+.github-repository {
+    padding-top: 4px;
+    padding-bottom: 3px;
+}
+
+.github-avatar {
+    float: left;
+    width: 60px;
+    margin-right: 10px;
+}
+
+.github-avatar img {
+    width: 100%;
+    height: auto;
+    border-radius: 2px;
+}
+
+.github-meta {
+    margin-left: 70px;
+}
+
+.github-title {
+    color: black;
+    font-weight: 700;
+    word-wrap: break-word;
+    line-height: 1.1;
+    margin-bottom: 4px;
+}
+
+.github-description {
+    font-size: 13px;
+    color: #777;
+    margin-top: 4px;
+}
+
+.github-forks,
+.github-stargazers,
+.github-watchers {
+    display: inline-block;
+    color: #aaa;
+    font-size: 11px;
+}
+
+.github-forks,
+.github-stargazers {
+    margin-right: 1em;
+}
