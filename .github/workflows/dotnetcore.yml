@@ -53,10 +53,11 @@ jobs:
     - name: Publish CI Packages
       if: success() && github.event_name != 'pull_request'
       run: |
+        dotnet nuget add source --username pwelter34 --password ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/loresoft/index.json"
         for package in $(find -name "*.nupkg"); do
           echo "${0##*/}": Pushing $package...
           dotnet nuget push $package --source https://www.myget.org/F/loresoft/api/v3/index.json --api-key ${{ secrets.MYGET_KEY }} --skip-duplicate
-          dotnet nuget push $package --source https://nuget.pkg.github.com/loresoft/index.json --username pwelter34 --password ${{ secrets.GITHUB_TOKEN }} --skip-duplicate
+          dotnet nuget push $package --source "github" --api-key ${{ secrets.GITHUB_TOKEN }} --skip-duplicate
         done
 
     - name: Publish Release Packages
