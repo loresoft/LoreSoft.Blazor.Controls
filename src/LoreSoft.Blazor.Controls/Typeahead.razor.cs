@@ -21,6 +21,7 @@ namespace LoreSoft.Blazor.Controls
             Items = new List<TItem>();
             AllowClear = true;
             Loading = false;
+            CloseOnSelect = true;
             SearchMode = false;
             SelectedIndex = 0;
             SearchResults = new List<TItem>();
@@ -98,6 +99,9 @@ namespace LoreSoft.Blazor.Controls
 
         [Parameter]
         public bool Disabled { get; set; } = false;
+
+        [Parameter] 
+        public bool CloseOnSelect { get; set; }
 
         [Parameter]
         public FieldIdentifier FieldIdentifier { get; set; }
@@ -214,7 +218,7 @@ namespace LoreSoft.Blazor.Controls
             }
 
             EditContext?.NotifyFieldChanged(FieldIdentifier);
-            CloseMenu();
+            if (CloseOnSelect) CloseMenu();
         }
 
         public async Task RemoveValue(TValue item)
