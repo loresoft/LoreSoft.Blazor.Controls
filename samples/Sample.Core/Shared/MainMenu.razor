@@ -1,49 +1,51 @@
 ﻿<nav class="navbar navbar-expand-xl navbar-light bg-light fixed-top">
-    <a class="navbar-brand" href="/">
-        <img src="logo.png"
-             alt="LoreSoft"
-             height="30" />
-        Blazor Controls
-    </a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarCollapse">
-        <ul class="navbar-nav mr-auto">
-            <li class="nav-item">
-                <NavLink class="nav-link" href="/" Match="NavLinkMatch.All">Home</NavLink>
-            </li>
+    <div class="container-fluid">
+        <a class="navbar-brand" href="/">
+            <img src="logo.png"
+                 alt="LoreSoft"
+                 height="30" />
+            Blazor Controls
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <NavLink class="nav-link" href="/" Match="NavLinkMatch.All">Home</NavLink>
+                </li>
 
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="navbar-components" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    Components
-                </a>
-                <div class="dropdown-menu" aria-labelledby="navbar-components">
-                    <NavLink class="dropdown-item" href="/datagrid/index" Match="NavLinkMatch.Prefix">DataGrid</NavLink>
-                    <NavLink class="dropdown-item" href="/datalist/index" Match="NavLinkMatch.Prefix">DataList</NavLink>
-                    <div class="dropdown-divider"></div>
-                    <NavLink class="dropdown-item" href="/datetimepicker/index" Match="NavLinkMatch.Prefix">DateTimePicker</NavLink>
-                    <div class="dropdown-divider"></div>
-                    <NavLink class="dropdown-item" href="/progressbar/index" Match="NavLinkMatch.Prefix">ProgressBar</NavLink>
-                    <NavLink class="dropdown-item" href="/skeleton/index" Match="NavLinkMatch.Prefix">Skeleton</NavLink>
-                    <NavLink class="dropdown-item" href="/toggleSwitch/index" Match="NavLinkMatch.Prefix">ToggleSwitch</NavLink>
-                    <div class="dropdown-divider"></div>
-                    <NavLink class="dropdown-item" href="/typeahead/index" Match="NavLinkMatch.Prefix">Typeahead</NavLink>
-                </div>
-            </li>
-        </ul>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbar-components" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Components
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbar-components">
+                        <NavLink class="dropdown-item" href="/datagrid/index" Match="NavLinkMatch.Prefix">DataGrid</NavLink>
+                        <NavLink class="dropdown-item" href="/datalist/index" Match="NavLinkMatch.Prefix">DataList</NavLink>
+                        <div class="dropdown-divider"></div>
+                        <NavLink class="dropdown-item" href="/datetimepicker/index" Match="NavLinkMatch.Prefix">DateTimePicker</NavLink>
+                        <div class="dropdown-divider"></div>
+                        <NavLink class="dropdown-item" href="/progressbar/index" Match="NavLinkMatch.Prefix">ProgressBar</NavLink>
+                        <NavLink class="dropdown-item" href="/skeleton/index" Match="NavLinkMatch.Prefix">Skeleton</NavLink>
+                        <NavLink class="dropdown-item" href="/toggleSwitch/index" Match="NavLinkMatch.Prefix">ToggleSwitch</NavLink>
+                        <div class="dropdown-divider"></div>
+                        <NavLink class="dropdown-item" href="/typeahead/index" Match="NavLinkMatch.Prefix">Typeahead</NavLink>
+                    </div>
+                </li>
+            </ul>
 
-        <ul class="navbar-nav">
-            <li class="nav-item">
-                <a class="nav-link" title="GitHub Repository" target="_blank" href="https://github.com/loresoft/LoreSoft.Blazor.Controls">
-                    <i class="fab fa-github"></i> GitHub Repository
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" title="Nuget Package" target="_blank" href="https://www.nuget.org/packages/LoreSoft.Blazor.Controls/">
-                    <img aria-hidden="true" alt="" src="https://www.nuget.org/Content/gallery/img/default-package-icon.svg" height="16" style="margin-top: -6px;" /> Nuget Package
-                </a>
-            </li>
-        </ul>
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" title="GitHub Repository" target="_blank" href="https://github.com/loresoft/LoreSoft.Blazor.Controls">
+                        <i class="fab fa-github"></i> GitHub Repository
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" title="Nuget Package" target="_blank" href="https://www.nuget.org/packages/LoreSoft.Blazor.Controls/">
+                        <img aria-hidden="true" alt="" src="https://www.nuget.org/Content/gallery/img/default-package-icon.svg" height="16" style="margin-top: -6px;" /> Nuget Package
+                    </a>
+                </li>
+            </ul>
+        </div>
     </div>
 </nav>

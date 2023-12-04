@@ -6,7 +6,7 @@
     <DataAnnotationsValidator />
     <ValidationSummary />
 
-    <div class="form-group">
+    <div class="mb-3">
         <label for="DisplayName">Display Name *</label>
         <InputText id="DisplayName"
                    name="DisplayName"
@@ -15,7 +15,7 @@
                    placeholder="Display Name" />
         <ValidationMessage For="@(() => Register.DisplayName)" />
     </div>
-    <div class="form-group">
+    <div class="mb-3">
         <label for="EmailAddress">EmailAddress *</label>
         <InputText id="EmailAddress"
                    name="EmailAddress"
@@ -25,7 +25,7 @@
                    placeholder="Email Address" />
         <ValidationMessage For="@(() => Register.EmailAddress)" />
     </div>
-    <div class="form-group">
+    <div class="mb-3">
         <label for="Manager">Manager *</label>
         <Typeahead SearchMethod="@SearchPeople"
                    Items="Data.PersonList"
@@ -40,12 +40,12 @@
         </Typeahead>
         <ValidationMessage For="@(() => Register.Manager)" />
     </div>
-    <div class="form-group">
+    <div class="mb-3">
         <label for="Birthday">Birthday *</label>
         <DateTimePicker @bind-Value="Register.Birthday" placeholder="Select Birthday"></DateTimePicker>
         <ValidationMessage For="@(() => Register.Birthday)" />
     </div>
-    <div class="form-group">
+    <div class="mb-3">
         <label for="Agree">Agree to terms *</label>
         <ToggleSwitch @bind-Value="Register.Agree"></ToggleSwitch>
         <ValidationMessage For="@(() => Register.Agree)" />
