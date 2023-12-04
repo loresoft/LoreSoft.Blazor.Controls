@@ -6,6 +6,7 @@ env:
   DOTNET_ENVIRONMENT: github
   ASPNETCORE_ENVIRONMENT: github
   BUILD_PATH: "${{github.workspace}}/artifacts"
+  
 
 on:
   push:
@@ -47,7 +48,7 @@ jobs:
 
       - name: Publish Samples
         if: success() && github.event_name != 'pull_request'
-        run: dotnet publish --configuration Release --output "${{env.BUILD_PATH}}/sample"
+        run: dotnet publish ./samples/Sample.ClientSide/Sample.ClientSide.csproj --configuration Release --output "${{env.BUILD_PATH}}/sample"
 
       - name: Upload Packages
         if: success() && github.event_name != 'pull_request'
@@ -61,7 +62,7 @@ jobs:
         uses: actions/upload-pages-artifact@v2
         with:
           name: github-pages
-          path: "${{env.BUILD_PATH}}/sample"
+          path: "${{env.BUILD_PATH}}/sample/wwwroot"
 
   deploy:
     runs-on: ubuntu-latest
