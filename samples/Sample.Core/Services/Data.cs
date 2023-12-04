@@ -1,7 +1,10 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
-using DataGenerator.Sources;
+
+using Bogus;
+
 using Sample.Core.Models;
+
+using Person = Sample.Core.Models.Person;
 
 namespace Sample.Core.Services
 {
@@ -9,84 +12,80 @@ namespace Sample.Core.Services
     {
         public static IReadOnlyCollection<Person> PersonList { get; } = new List<Person>
         {
-            new Person {Id = 1, FirstName = "John", LastName = "Smith"},
-            new Person {Id = 2, FirstName = "Jane", LastName = "Doe"},
-            new Person {Id = 3, FirstName = "Tom", LastName = "Jones"},
-            new Person {Id = 4, FirstName = "Fred", LastName = "Gouch"},
-            new Person {Id = 5, FirstName = "John", LastName = "Philips"},
-            new Person {Id = 6, FirstName = "Jon", LastName = "Thomas"}
+            new() {Id = 1, FirstName = "John", LastName = "Smith"},
+            new() {Id = 2, FirstName = "Jane", LastName = "Doe"},
+            new() {Id = 3, FirstName = "Tom", LastName = "Jones"},
+            new() {Id = 4, FirstName = "Fred", LastName = "Gouch"},
+            new() {Id = 5, FirstName = "John", LastName = "Philips"},
+            new() {Id = 6, FirstName = "Jon", LastName = "Thomas"}
         };
 
         public static IReadOnlyCollection<StateLocation> StateList { get; } = new List<StateLocation>
         {
-            new StateLocation("AL - Alabama", "AL"),
-            new StateLocation("AK - Alaska", "AK"),
-            new StateLocation("AZ - Arizona", "AZ"),
-            new StateLocation("AR - Arkansas", "AR"),
-            new StateLocation("CA - California", "CA"),
-            new StateLocation("CO - Colorado", "CO"),
-            new StateLocation("CT - Connecticut", "CT"),
-            new StateLocation("DE - Delaware", "DE"),
-            new StateLocation("DC - District Of Columbia", "DC"),
-            new StateLocation("FL - Florida", "FL"),
-            new StateLocation("GA - Georgia", "GA"),
-            new StateLocation("HI - Hawaii", "HI"),
-            new StateLocation("ID - Idaho", "ID"),
-            new StateLocation("IL - Illinois", "IL"),
-            new StateLocation("IN - Indiana", "IN"),
-            new StateLocation("IA - Iowa", "IA"),
-            new StateLocation("KS - Kansas", "KS"),
-            new StateLocation("KY - Kentucky", "KY"),
-            new StateLocation("LA - Louisiana", "LA"),
-            new StateLocation("ME - Maine", "ME"),
-            new StateLocation("MD - Maryland", "MD"),
-            new StateLocation("MA - Massachusetts", "MA"),
-            new StateLocation("MI - Michigan", "MI"),
-            new StateLocation("MN - Minnesota", "MN"),
-            new StateLocation("MS - Mississippi", "MS"),
-            new StateLocation("MO - Missouri", "MO"),
-            new StateLocation("MT - Montana", "MT"),
-            new StateLocation("NE - Nebraska", "NE"),
-            new StateLocation("NV - Nevada", "NV"),
-            new StateLocation("NH - New Hampshire", "NH"),
-            new StateLocation("NJ - New Jersey", "NJ"),
-            new StateLocation("NM - New Mexico", "NM"),
-            new StateLocation("NY - New York", "NY"),
-            new StateLocation("NC - North Carolina", "NC"),
-            new StateLocation("ND - North Dakota", "ND"),
-            new StateLocation("OH - Ohio", "OH"),
-            new StateLocation("OK - Oklahoma", "OK"),
-            new StateLocation("OR - Oregon", "OR"),
-            new StateLocation("PA - Pennsylvania", "PA"),
-            new StateLocation("RI - Rhode Island", "RI"),
-            new StateLocation("SC - South Carolina", "SC"),
-            new StateLocation("SD - South Dakota", "SD"),
-            new StateLocation("TN - Tennessee", "TN"),
-            new StateLocation("TX - Texas", "TX"),
-            new StateLocation("UT - Utah", "UT"),
-            new StateLocation("VT - Vermont", "VT"),
-            new StateLocation("VA - Virginia", "VA"),
-            new StateLocation("WA - Washington", "WA"),
-            new StateLocation("WV - West Virginia", "WV"),
-            new StateLocation("WI - Wisconsin", "WI"),
-            new StateLocation("WY - Wyoming", "WY")
+            new("AL - Alabama", "AL"),
+            new("AK - Alaska", "AK"),
+            new("AZ - Arizona", "AZ"),
+            new("AR - Arkansas", "AR"),
+            new("CA - California", "CA"),
+            new("CO - Colorado", "CO"),
+            new("CT - Connecticut", "CT"),
+            new("DE - Delaware", "DE"),
+            new("DC - District Of Columbia", "DC"),
+            new("FL - Florida", "FL"),
+            new("GA - Georgia", "GA"),
+            new("HI - Hawaii", "HI"),
+            new("ID - Idaho", "ID"),
+            new("IL - Illinois", "IL"),
+            new("IN - Indiana", "IN"),
+            new("IA - Iowa", "IA"),
+            new("KS - Kansas", "KS"),
+            new("KY - Kentucky", "KY"),
+            new("LA - Louisiana", "LA"),
+            new("ME - Maine", "ME"),
+            new("MD - Maryland", "MD"),
+            new("MA - Massachusetts", "MA"),
+            new("MI - Michigan", "MI"),
+            new("MN - Minnesota", "MN"),
+            new("MS - Mississippi", "MS"),
+            new("MO - Missouri", "MO"),
+            new("MT - Montana", "MT"),
+            new("NE - Nebraska", "NE"),
+            new("NV - Nevada", "NV"),
+            new("NH - New Hampshire", "NH"),
+            new("NJ - New Jersey", "NJ"),
+            new("NM - New Mexico", "NM"),
+            new("NY - New York", "NY"),
+            new("NC - North Carolina", "NC"),
+            new("ND - North Dakota", "ND"),
+            new("OH - Ohio", "OH"),
+            new("OK - Oklahoma", "OK"),
+            new("OR - Oregon", "OR"),
+            new("PA - Pennsylvania", "PA"),
+            new("RI - Rhode Island", "RI"),
+            new("SC - South Carolina", "SC"),
+            new("SD - South Dakota", "SD"),
+            new("TN - Tennessee", "TN"),
+            new("TX - Texas", "TX"),
+            new("UT - Utah", "UT"),
+            new("VT - Vermont", "VT"),
+            new("VA - Virginia", "VA"),
+            new("WA - Washington", "WA"),
+            new("WV - West Virginia", "WV"),
+            new("WI - Wisconsin", "WI"),
+            new("WY - Wyoming", "WY")
         };
 
         public static IReadOnlyCollection<Person> GeneratePeople(int count = 100)
         {
-            var generator = DataGenerator.Generator.Create(options => options
-                .Entity<Person>(builder =>
-                {
-                    builder.Property(p => p.Id).DataSource<IntegerSource>();
-                    builder.Property(p => p.FirstName).DataSource<FirstNameSource>();
-                    builder.Property(p => p.LastName).DataSource<LastNameSource>();
-                    builder.Property(p => p.Score).IntegerSource(1, 100);
-                    builder.Property(p => p.Location).DataSource<CitySource>();
-                    builder.Property(p => p.Birthday).DataSource<DateTimeSource>();
-                })
-            );
+            var generator = new Faker<Person>()
+                .RuleFor(p => p.Id, f => f.IndexGlobal)
+                .RuleFor(p => p.FirstName, f => f.Name.FirstName())
+                .RuleFor(p => p.LastName, f => f.Name.LastName())
+                .RuleFor(p => p.Score, f => f.Random.Int(1, 100))
+                .RuleFor(p => p.Location, f => f.Address.City())
+                .RuleFor(p => p.Birthday, f => f.Date.Past(60));
 
-            return generator.List<Person>(count).ToList();
+            return generator.Generate(count);
         }
     }
 }

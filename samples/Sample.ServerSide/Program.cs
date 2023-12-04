@@ -1,5 +1,9 @@
+using LoreSoft.Blazor.Controls;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
+
+using Sample.Core;
+using Sample.Core.Services;
 
 namespace Sample.ServerSide
 {
@@ -7,17 +11,26 @@ namespace Sample.ServerSide
     {
         public static void Main(string[] args)
         {
-            CreateHostBuilder(args).Build().Run();
-        }
+            var builder = WebApplication.CreateBuilder(args);
 
-        public static IHostBuilder CreateHostBuilder(string[] args)
-        {
-            return Host
-                .CreateDefaultBuilder(args)
-                .ConfigureWebHostDefaults(webBuilder =>
-                {
-                    webBuilder.UseStartup<Startup>();
-                });
+            builder.Services
+                .AddHttpClient<GitHubClient>()
+                .AddHttpMessageHandler<ProgressBarHandler>();
+
+            builder.Services.AddRazorPages();
+            builder.Services.AddServerSideBlazor(config => { config.DetailedErrors = true; });
+            builder.Services.AddProgressBar();
+
+            var app = builder.Build();
+
+            app.UseHttpsRedirection();
+            app.UseStaticFiles();
+            app.UseAntiforgery();
+
+            app.MapBlazorHub();
+            app.MapFallbackToPage("/_Host");
+            
+            app.Run();
         }
     }
 }

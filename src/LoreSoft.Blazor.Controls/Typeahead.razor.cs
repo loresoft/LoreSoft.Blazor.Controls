@@ -13,7 +13,7 @@ namespace LoreSoft.Blazor.Controls
 {
     public partial class Typeahead<TItem, TValue> : ComponentBase, IDisposable
     {
-        private Timer _debounceTimer;
+        private System.Timers.Timer _debounceTimer;
         private readonly Queue<Func<Task>> _pending;
 
         public Typeahead()
@@ -164,7 +164,7 @@ namespace LoreSoft.Blazor.Controls
                     ? FieldIdentifier.Create(ValuesExpression)
                     : FieldIdentifier.Create(ValueExpression);
 
-            _debounceTimer = new Timer();
+            _debounceTimer = new System.Timers.Timer();
             _debounceTimer.Interval = Debounce;
             _debounceTimer.AutoReset = false;
             _debounceTimer.Elapsed += (s, e) => InvokeAsync(() => Search(s, e));

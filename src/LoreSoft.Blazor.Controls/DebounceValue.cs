@@ -6,7 +6,7 @@ namespace LoreSoft.Blazor.Controls
 {
     public class DebounceValue<T> : IDisposable
     {
-        private readonly Timer _debounceTimer;
+        private readonly System.Timers.Timer _debounceTimer;
         private T _value;
 
 
@@ -18,7 +18,7 @@ namespace LoreSoft.Blazor.Controls
         public DebounceValue(T value, int interval = 800)
         {
             _value = value;
-            _debounceTimer = new Timer();
+            _debounceTimer = new System.Timers.Timer();
             _debounceTimer.Interval = interval;
             _debounceTimer.AutoReset = false;
             _debounceTimer.Elapsed += OnElapsed;

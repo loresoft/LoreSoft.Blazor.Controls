@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.29123.89
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34309.116
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LoreSoft.Blazor.Controls", "src\LoreSoft.Blazor.Controls\LoreSoft.Blazor.Controls.csproj", "{F9459EF7-3E4F-4C94-B2A0-680D8C437FB4}"
 EndProject
@@ -13,10 +13,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sample.ServerSide", "sample
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{3E5818B3-6609-4EC5-AFA1-849C4E5080D1}"
 	ProjectSection(SolutionItems) = preProject
-		build\common.props = build\common.props
+		Directory.Build.props = Directory.Build.props
 		.github\workflows\dotnetcore.yml = .github\workflows\dotnetcore.yml
-		GitVersion.yml = GitVersion.yml
-		build\sourcelink.props = build\sourcelink.props
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sample.ClientSide", "samples\Sample.ClientSide\Sample.ClientSide.csproj", "{0015C9C3-114B-4C3B-AF31-08D0143714F3}"

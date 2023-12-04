@@ -1,17 +1,15 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
-  <Import Project="..\..\build\common.props" />
-
   <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="DataGenerator" Version="5.0.0.178" />
+    <PackageReference Include="Bogus" Version="34.0.2" />
     <PackageReference Include="System.ComponentModel.Annotations" Version="5.0.0" />
-    <PackageReference Include="System.Net.Http.Json" Version="7.0.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Components" Version="7.0.1" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="7.0.1" />
+    <PackageReference Include="System.Net.Http.Json" Version="8.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Components" Version="8.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="8.0.0" />
   </ItemGroup>
 
   <ItemGroup>
