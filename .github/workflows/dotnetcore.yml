@@ -109,7 +109,7 @@ jobs:
     steps:
       - name: Deploy Sample
         id: deployment
-        uses: actions/deploy-pages@v2
+        uses: actions/deploy-pages@v3
 
     environment:
       name: github-pages
