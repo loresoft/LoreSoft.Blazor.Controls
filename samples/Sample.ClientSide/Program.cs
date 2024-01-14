@@ -27,11 +27,21 @@ namespace Sample.ClientSide
                 .AddHttpClient<GitHubClient>()
                 .AddHttpMessageHandler<ProgressBarHandler>();
 
-            services.AddScoped(sp => sp.GetRequiredService<IHttpClientFactory>().CreateClient("default"));
+            services
+                .AddHttpClient<RandomDataClient>()
+                .AddHttpMessageHandler<ProgressBarHandler>();
 
-            services.AddProgressBar();
+            services.AddScoped(sp => sp
+                .GetRequiredService<IHttpClientFactory>()
+                .CreateClient("default")
+            );
 
-            await builder.Build().RunAsync();
+            services
+                .AddProgressBar();
+
+            await builder
+                .Build()
+                .RunAsync();
         }
     }
 }

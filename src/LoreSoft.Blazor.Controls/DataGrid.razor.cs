@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Serialization;
 using System.Threading;
 using System.Threading.Tasks;
+
 using Microsoft.AspNetCore.Components;
 
 namespace LoreSoft.Blazor.Controls
@@ -38,6 +40,8 @@ namespace LoreSoft.Blazor.Controls
         [Parameter]
         public Func<TItem, string> RowStyle { get; set; }
 
+        [Parameter]
+        public Func<TItem, Dictionary<string, object>> RowAttributes { get; set; }
 
         [Parameter]
         public IEnumerable<TItem> SelectedItems { get; set; } = new List<TItem>();
@@ -64,7 +68,7 @@ namespace LoreSoft.Blazor.Controls
             if (column == null || !Sortable || !column.Sortable)
                 return;
 
-            var descending = column.SortIndex >= 0 && !column.SortDescending;
+            var descending = column.CurrentSortIndex >= 0 && !column.CurrentSortDescending;
 
             Columns.ForEach(c => c.UpdateSort(-1, false));
 
@@ -177,9 +181,9 @@ namespace LoreSoft.Blazor.Controls
         protected override DataRequest CreateDataRequest(CancellationToken cancellationToken)
         {
             var sorts = Columns
-                .Where(c => c.SortIndex >= 0)
-                .OrderBy(c => c.SortIndex)
-                .Select(c => new DataSort(c.Name, c.SortDescending))
+                .Where(c => c.CurrentSortIndex >= 0)
+                .OrderBy(c => c.CurrentSortIndex)
+                .Select(c => new DataSort(c.Name, c.CurrentSortDescending))
                 .ToArray();
 
             return new DataRequest(Pager.Page, Pager.PageSize, sorts, cancellationToken);
@@ -194,7 +198,7 @@ namespace LoreSoft.Blazor.Controls
 
             var sorted = Columns
                 .Where(c => columns.Contains(c.Name))
-                .OrderBy(c => c.SortIndex)
+                .OrderBy(c => c.CurrentSortIndex)
                 .ToList();
 
             if (sorted.Count == 0)
@@ -203,7 +207,7 @@ namespace LoreSoft.Blazor.Controls
             var queue = new Queue<DataColumn<TItem>>(sorted);
             var column = queue.Dequeue();
 
-            var orderedQueryable = column.SortDescending
+            var orderedQueryable = column.CurrentSortDescending
                 ? queryable.OrderByDescending(column.Property)
                 : queryable.OrderBy(column.Property);
 
@@ -211,7 +215,7 @@ namespace LoreSoft.Blazor.Controls
             {
                 column = queue.Dequeue();
 
-                orderedQueryable = column.SortDescending
+                orderedQueryable = column.CurrentSortDescending
                     ? orderedQueryable.ThenByDescending(column.Property)
                     : orderedQueryable.ThenBy(column.Property);
             }

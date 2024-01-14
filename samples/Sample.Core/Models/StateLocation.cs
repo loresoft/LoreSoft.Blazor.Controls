@@ -1,4 +1,6 @@
-﻿namespace Sample.Core.Models
+﻿using Sample.Core.Pages.DataGrid.Examples;
+
+namespace Sample.Core.Models
 {
     public class StateLocation
     {
@@ -8,7 +10,7 @@
             Value = value;
         }
 
-        public string Name { get; set; }  
-        public string Value { get; set; }  
+        public string Name { get; set; }
+        public string Value { get; set; }
     }
 }

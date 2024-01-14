@@ -17,21 +17,21 @@
             <colgroup>
                 @if (DetailTemplate != null)
                 {
-                    <col style="width: 32px; padding: 0"/>
+                    <col style="width: 32px; padding: 0" />
                 }
                 @if (Selectable)
                 {
-                    <col style="width: 32px; padding: 0"/>
+                    <col style="width: 32px; padding: 0" />
                 }
                 @foreach (var column in VisibleColumns)
                 {
                     if (string.IsNullOrEmpty(column.Width))
                     {
-                        <col/>
+                        <col />
                     }
                     else
                     {
-                        <col style="width: @column.Width"/>
+                        <col style="width: @column.Width" />
                     }
                 }
             </colgroup>
@@ -46,7 +46,10 @@
                     {
                         <th class="data-grid-selector-cell">
                             <div class="data-check">
-                                <input class="data-check-input" type="checkbox" checked="@IsAllSelected()" @onchange="ToggleSelectAll"/>
+                                <input class="data-check-input"
+                                       type="checkbox"
+                                       checked="@IsAllSelected()"
+                                       @onchange="ToggleSelectAll" />
                             </div>
                         </th>
                     }
@@ -105,7 +108,7 @@
                             @foreach (var column in VisibleColumns)
                             {
                                 <td @key="column" class="@column.ClassName">
-                                    <Skeleton/>
+                                    <Skeleton />
                                 </td>
                             }
                         </tr>
@@ -173,7 +176,7 @@
         {
             @if (LoadingTemplate == null)
             {
-                <LoadingBlock IsLoading="true"/>
+                <LoadingBlock IsLoading="true" />
             }
             else
             {
@@ -196,15 +199,18 @@
             @column.HeaderTitle()
         }
 
-        @if (column.Sortable && column.SortIndex >= 0)
+        @if (column.Sortable && column.CurrentSortIndex >= 0)
         {
-            <span class="data-grid-header-sort @(column.SortDescending ? "data-grid-header-sort-desc" : "data-grid-header-sort-asc" )"></span>
+            <span class="data-grid-header-sort @(column.CurrentSortDescending ? "data-grid-header-sort-desc" : "data-grid-header-sort-asc" )"></span>
         }
     };
 
     protected RenderFragment<TItem> RowFragment => item => __builder =>
     {
-        <tr @key="new {item, i = 0}" class="@RowClass" style="@(RowStyle?.Invoke(item))">
+        <tr @key="new {item, i = 0}"
+            @attributes="RowAttributes?.Invoke(item)"
+            class="@RowClass"
+            style="@(RowStyle?.Invoke(item))">
             @if (DetailTemplate != null)
             {
                 <td class="data-grid-hierarchy-cell">
@@ -217,13 +223,19 @@
             {
                 <td class="data-grid-selector-cell">
                     <div class="data-check">
-                      <input class="data-check-input" type="checkbox" checked="@(IsRowSelected(item))" @onchange="() => ToggleSelectRow(item)" />
+                        <input class="data-check-input"
+                               type="checkbox"
+                               checked="@(IsRowSelected(item))"
+                               @onchange="() => ToggleSelectRow(item)" />
                     </div>
                 </td>
             }
             @foreach (var column in VisibleColumns)
             {
-                <td @key="column" class="@column.ClassName" style="@(column.Style?.Invoke(item))" @attributes="@column.Attributes">
+                <td @key="column"
+                    class="@column.ClassName"
+                    style="@(column.Style?.Invoke(item))"
+                    @attributes="@(column.ComputeAttributes(item))">
                     @if (column.Template != null)
                     {
                         @column.Template(item)

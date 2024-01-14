@@ -1,4 +1,5 @@
 ﻿using Sample.Core.Models.GitHub;
+
 using System;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -39,6 +40,4 @@ namespace Sample.Core.Services
             return result;
         }
     }
-
-
 }

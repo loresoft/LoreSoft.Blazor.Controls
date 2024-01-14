@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Linq.Expressions;
 using System.Text;
 using System.Text.RegularExpressions;
+
 using Microsoft.AspNetCore.Components;
 
 namespace LoreSoft.Blazor.Controls
@@ -12,14 +13,15 @@ namespace LoreSoft.Blazor.Controls
     {
         private Func<TItem, object> _propertyAccessor;
         private string _propertyName;
-        private int? _sortIndex;
-        private bool? _sortDescending;
 
         [CascadingParameter(Name = "Grid")]
         protected DataGrid<TItem> Grid { get; set; }
 
         [Parameter(CaptureUnmatchedValues = true)]
-        public Dictionary<string, object> Attributes { get; set; }
+        public Dictionary<string, object> UnmatchedAttributes { get; set; }
+
+        [Parameter]
+        public Func<TItem, Dictionary<string, object>> CellAttributes { get; set; }
 
         [Parameter]
         public Expression<Func<TItem, object>> Property { get; set; }
@@ -50,18 +52,10 @@ namespace LoreSoft.Blazor.Controls
         public bool Sortable { get; set; } = true;
 
         [Parameter]
-        public int SortIndex
-        {
-            get => _sortIndex ?? -1;
-            set => SetInitialValue(ref _sortIndex, value);
-        }
+        public int SortIndex { get; set; } = -1;
 
         [Parameter]
-        public bool SortDescending
-        {
-            get => _sortDescending ?? false;
-            set => SetInitialValue(ref _sortDescending, value);
-        }
+        public bool SortDescending { get; set; }
 
 
         [Parameter]
@@ -80,6 +74,11 @@ namespace LoreSoft.Blazor.Controls
         public RenderFragment FooterTemplate { get; set; }
 
 
+        internal int CurrentSortIndex { get; set; } = -1;
+
+        internal bool CurrentSortDescending { get; set; }
+
+
         protected override void OnInitialized()
         {
             if (Grid == null)
@@ -88,26 +87,12 @@ namespace LoreSoft.Blazor.Controls
             if (Property == null)
                 throw new InvalidOperationException("DataColumn Property parameter is required");
 
+            CurrentSortIndex = SortIndex;
+            CurrentSortDescending = SortDescending;
+
             // register with parent grid
             Grid.AddColumn(this);
         }
-
-        protected void OnChange()
-        {
-            InvokeAsync(StateHasChanged);
-            Grid?.RefreshAsync();
-        }
-
-        // parameter properties with internal changes can only be set once
-        protected void SetInitialValue<T>(ref T field, T value)
-        {
-            if (field != null)
-                return;
-
-            field = value;
-            OnChange();
-        }
-
 
         internal string HeaderTitle()
         {
@@ -146,8 +131,8 @@ namespace LoreSoft.Blazor.Controls
 
         internal void UpdateSort(int index, bool descending)
         {
-            _sortIndex = index;
-            _sortDescending = descending;
+            CurrentSortIndex = index;
+            CurrentSortDescending = descending;
         }
 
         private string PropertyName()
@@ -185,6 +170,24 @@ namespace LoreSoft.Blazor.Controls
             }
 
             return spacedName.ToString();
+        }
+
+        internal Dictionary<string, object> ComputeAttributes(TItem data)
+        {
+            var attributes = new Dictionary<string, object>();
+            if (CellAttributes != null)
+            {
+                var computed = CellAttributes(data);
+                if (computed != null)
+                    foreach (var attribute in computed)
+                        attributes[attribute.Key] = attribute.Value;
+            }
+
+            if (UnmatchedAttributes != null)
+                foreach (var attribute in UnmatchedAttributes)
+                    attributes[attribute.Key] = attribute.Value;
+
+            return attributes;
         }
     }
 }
