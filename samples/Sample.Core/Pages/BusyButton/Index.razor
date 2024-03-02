@@ -1,0 +1,60 @@
+﻿@page "/busybutton/index"
+
+<h1>BusyButton</h1>
+
+<p>Busy Button Control</p>
+
+<Instructions></Instructions>
+
+<h2 class="mb-3">Examples</h2>
+
+<h3>Basic</h3>
+
+<p>Example of using BusyButton</p>
+
+<div class="m-1">
+    <div class="form-check m-1">
+        <input type="checkbox" class="form-check-input" id="busy-check" @bind="IsBusy">
+        <label class="form-check-label" for="busy-check">Loading</label>
+    </div>
+    <div class="form-check m-1">
+        <input type="checkbox" class="form-check-input" id="busy-check" @bind="IsDisabled">
+        <label class="form-check-label" for="busy-check">Disabled</label>
+    </div>
+</div>
+
+<div class="m-1">
+    <BusyButton Busy="@IsBusy"
+                Disabled="@IsDisabled"
+                id="save-button"
+                type="submit"
+                class="btn btn-primary">
+        Save
+    </BusyButton>
+</div>
+
+
+
+<div class="m-1">
+    <BusyButton Busy="@IsBusy"
+                Disabled="@IsDisabled"
+                id="save-button"
+                type="submit"
+                class="btn btn-primary">
+        <BusyTemplate>
+            Saving ...
+        </BusyTemplate>
+        <ChildContent>
+            Save
+        </ChildContent>
+    </BusyButton>
+</div>
+
+@code {
+    [Parameter]
+    public bool IsBusy { get; set; } = true;
+
+    [Parameter]
+    public bool IsDisabled { get; set; } = false;
+
+}

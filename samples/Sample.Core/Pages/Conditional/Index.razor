@@ -1,0 +1,42 @@
+﻿@page "/conditional/index"
+
+<h1>Contional</h1>
+
+<p>Conditional Control</p>
+
+<Instructions></Instructions>
+
+<h2 class="mb-3">Examples</h2>
+
+<h3>Basic</h3>
+
+<p>Example of using Conditional</p>
+
+<div class="m-1">
+    <div class="form-check m-1">
+        <input type="checkbox" class="form-check-input" id="busy-check" @bind="IsCondition">
+        <label class="form-check-label" for="busy-check">Condition</label>
+    </div>
+</div>
+
+<div class="m-1">
+    <Conditional Condition="@IsCondition">
+        This can be seen when condition is true
+    </Conditional>
+</div>
+
+<div class="m-1">
+    <Conditional Condition="@IsCondition">
+        <Passed>
+            This can be seen when condition passed
+        </Passed>
+        <Failed>
+            This can be seen when condition failed
+        </Failed>
+    </Conditional>
+</div>
+
+@code {
+    [Parameter]
+    public bool IsCondition { get; set; } = true;
+}

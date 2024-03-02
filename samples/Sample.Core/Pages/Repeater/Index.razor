@@ -1,0 +1,54 @@
+﻿@page "/repeater/index"
+
+<h1>Repeater</h1>
+
+<p>Repeater Control</p>
+
+<Instructions></Instructions>
+
+<h2 class="mb-3">Examples</h2>
+
+<h3>Basic</h3>
+
+<p>Repeat Items for Dropdown</p>
+
+<div class="m-1">
+    <select name="color">
+        <Repeater Items="Colors">
+            <Row>
+                <option value="@context">@context</option>
+            </Row>
+        </Repeater>
+    </select>
+</div>
+
+<p>Repeat Items for Table</p>
+
+<div class="m-1">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+            </tr>
+        </thead>
+        <tbody>
+            <Repeater Items="People">
+                <Row Context="person">
+                    <tr>
+                        <td>@person.Name</td>
+                        <td>@person.Email</td>
+                    </tr>
+                </Row>
+            </Repeater>
+        </tbody>
+    </table>
+</div>
+
+@code {
+    public List<string> Colors = ["Red", "Green", "Blue"];
+
+    public List<Person> People = [new("Jim", "jim@email.com"), new("Bob", "bob@email.com")];
+
+    public record Person(string Name, string Email);
+}
