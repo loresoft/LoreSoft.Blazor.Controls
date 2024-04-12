@@ -17,6 +17,10 @@ namespace Sample.ServerSide
                 .AddHttpClient<GitHubClient>()
                 .AddHttpMessageHandler<ProgressBarHandler>();
 
+            builder.Services
+                .AddHttpClient<RandomDataClient>()
+                .AddHttpMessageHandler<ProgressBarHandler>();
+
             builder.Services.AddRazorPages();
             builder.Services.AddServerSideBlazor(config => { config.DetailedErrors = true; });
             builder.Services.AddProgressBar();
@@ -29,7 +33,7 @@ namespace Sample.ServerSide
 
             app.MapBlazorHub();
             app.MapFallbackToPage("/_Host");
-            
+
             app.Run();
         }
     }

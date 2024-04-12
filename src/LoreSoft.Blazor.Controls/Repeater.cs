@@ -9,7 +9,7 @@ public class Repeater<TItem> : ComponentBase
     public IEnumerable<TItem> Items { get; set; }
 
     [Parameter, EditorRequired]
-    public RenderFragment<TItem> Row { get; set; }
+    public RenderFragment<TItem> ChildContent { get; set; }
 
     [Parameter]
     public RenderFragment Empty { get; set; }
@@ -21,13 +21,12 @@ public class Repeater<TItem> : ComponentBase
         {
             foreach (var item in Items)
             {
-                builder.AddContent(1, Row, item);
-                builder.SetKey(item);
+                builder.AddContent(0, ChildContent, item);
             }
         }
         else if (Empty != null)
         {
-            builder.AddContent(2, Empty);
+            builder.AddContent(1, Empty);
         }
     }
 }

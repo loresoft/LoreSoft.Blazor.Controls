@@ -13,14 +13,26 @@
 <p>Repeat Items for Dropdown</p>
 
 <div class="m-1">
-    <select name="color">
+    <select name="color" @bind="SelectedColor">
+        <option value="">- select -</option>
         <Repeater Items="Colors">
-            <Row>
-                <option value="@context">@context</option>
-            </Row>
+            <option @key="context" value="@context">@context</option>
         </Repeater>
     </select>
 </div>
+
+<p>Bound Value: @SelectedColor</p>
+
+<div class="m-1">
+    <select name="person" @bind="SelectedPerson">
+        <option value="">- select -</option>
+        <Repeater Items="People" Context="person">
+            <option @key="person.Email" value="@person.Email">@person.Name</option>
+        </Repeater>
+    </select>
+</div>
+
+<p>Bound Value: @SelectedPerson</p>
 
 <p>Repeat Items for Table</p>
 
@@ -33,13 +45,11 @@
             </tr>
         </thead>
         <tbody>
-            <Repeater Items="People">
-                <Row Context="person">
-                    <tr>
-                        <td>@person.Name</td>
-                        <td>@person.Email</td>
-                    </tr>
-                </Row>
+            <Repeater Items="People" Context="person">
+                <tr @key="person.Email">
+                    <td>@person.Name</td>
+                    <td>@person.Email</td>
+                </tr>
             </Repeater>
         </tbody>
     </table>
@@ -49,6 +59,10 @@
     public List<string> Colors = ["Red", "Green", "Blue"];
 
     public List<Person> People = [new("Jim", "jim@email.com"), new("Bob", "bob@email.com")];
+
+    public string SelectedColor { get; set; }
+
+    public string SelectedPerson { get; set; } = "bob@email.com";
 
     public record Person(string Name, string Email);
 }
