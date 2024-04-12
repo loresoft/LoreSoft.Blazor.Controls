@@ -1,4 +1,6 @@
-﻿using System.Text.Json;
+﻿#nullable enable
+
+using System.Text.Json;
 
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
@@ -8,10 +10,10 @@ namespace LoreSoft.Blazor.Controls;
 public class JsonDisplay : ComponentBase
 {
     [Parameter]
-    public string Json { get; set; }
+    public string? Json { get; set; }
 
     [Parameter]
-    public JsonElement JsonElement { get; set; }
+    public JsonElement? JsonElement { get; set; }
 
     [Parameter(CaptureUnmatchedValues = true)]
     public Dictionary<string, object>? Attributes { get; set; }
@@ -24,9 +26,9 @@ public class JsonDisplay : ComponentBase
             var document = JsonDocument.Parse(Json);
             AppendValue(builder, document.RootElement);
         }
-        else
+        else if (JsonElement.HasValue)
         {
-            AppendValue(builder, JsonElement);
+            AppendValue(builder, JsonElement.Value);
         }
     }
 
@@ -59,6 +61,7 @@ public class JsonDisplay : ComponentBase
         builder.OpenElement(3, "table");
         builder.AddAttribute(4, "class", "json-object");
         builder.AddMultipleAttributes(5, Attributes);
+        builder.SetKey(jsonElement);
 
         foreach (var jsonProperty in jsonElement.EnumerateObject())
         {
