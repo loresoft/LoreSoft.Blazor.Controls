@@ -4,8 +4,6 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 
 		<IsPackable>false</IsPackable>
-
-		<BlazorCacheBootResources>false</BlazorCacheBootResources>
 	</PropertyGroup>
 
 	<ItemGroup>

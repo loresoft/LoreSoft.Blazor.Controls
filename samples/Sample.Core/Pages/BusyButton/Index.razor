@@ -25,6 +25,7 @@
 
 <div class="m-1">
     <BusyButton Busy="@IsBusy"
+                BusyText="Saving"
                 Disabled="@IsDisabled"
                 id="save-button"
                 type="submit"
@@ -33,8 +34,6 @@
     </BusyButton>
 </div>
 
-
-
 <div class="m-1">
     <BusyButton Busy="@IsBusy"
                 Disabled="@IsDisabled"
@@ -42,11 +41,22 @@
                 type="submit"
                 class="btn btn-primary">
         <BusyTemplate>
-            Saving ...
+            <span class='spinner-border spinner-border-sm'></span> Saving...
         </BusyTemplate>
         <ChildContent>
             Save
         </ChildContent>
+    </BusyButton>
+</div>
+
+
+<div class="m-1">
+    <BusyButton Busy="@IsBusy"
+                Disabled="@IsDisabled"
+                Trigger="Process"
+                id="save-button"
+                class="btn btn-primary">
+        Process
     </BusyButton>
 </div>
 
@@ -57,4 +67,8 @@
     [Parameter]
     public bool IsDisabled { get; set; } = false;
 
+    public async Task Process()
+    {
+        await Task.Delay(2000);
+    }
 }
