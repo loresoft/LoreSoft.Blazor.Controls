@@ -5,8 +5,6 @@ namespace LoreSoft.Blazor.Controls;
 
 public class Repeater<TItem> : ComponentBase
 {
-    private int _sequence = 0;
-
     [Parameter, EditorRequired]
     public IEnumerable<TItem> Items { get; set; }
 
@@ -23,15 +21,13 @@ public class Repeater<TItem> : ComponentBase
         {
             foreach (var item in Items)
             {
-                builder.AddContent(Next(), Row, item);
+                builder.AddContent(1, Row, item);
+                builder.SetKey(item);
             }
         }
         else if (Empty != null)
         {
-            builder.AddContent(Next(), Empty);
+            builder.AddContent(2, Empty);
         }
     }
-
-    protected int Next() => _sequence++;
-
 }

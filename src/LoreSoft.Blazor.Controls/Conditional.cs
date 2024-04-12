@@ -28,12 +28,12 @@ public class Conditional : ComponentBase
             }
             else if (ChildContent != null)
             {
-                builder.AddContent(1, ChildContent);
+                builder.AddContent(2, ChildContent);
             }
         }
         else if (Failed != null)
         {
-            builder.AddContent(1, Failed);
+            builder.AddContent(3, Failed);
         }
     }
 
