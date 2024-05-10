@@ -1,4 +1,4 @@
-﻿.typeahead-container {
+.typeahead-container {
     position: relative;
     box-sizing: border-box;
 }
@@ -1083,8 +1083,8 @@ button.data-grid-header {
 }
 
 .json-name {
-    background-color: rgb(249, 249, 249);
-    white-space: nowrap;
+  background-color: #f9f9f9;
+  white-space: nowrap;
 }
 
 .json-value {
