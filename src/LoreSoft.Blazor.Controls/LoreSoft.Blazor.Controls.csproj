@@ -2,13 +2,11 @@
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <IsPackable>true</IsPackable>
-
-    <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Components" Version="8.0.4" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="8.0.4" />
+    <PackageReference Include="Microsoft.AspNetCore.Components" Version="8.0.5" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="8.0.5" />
   </ItemGroup>
 
   <ItemGroup>
