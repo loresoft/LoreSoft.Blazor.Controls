@@ -1,8 +1,13 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+
+using LoreSoft.Blazor.Controls.Extensions;
+using LoreSoft.Blazor.Controls.Utilities;
+
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
+using Microsoft.AspNetCore.Components.Rendering;
 
 namespace LoreSoft.Blazor.Controls;
 
@@ -16,7 +21,7 @@ public partial class ToggleSwitch<TValue> : ComponentBase
     }
 
     [Parameter(CaptureUnmatchedValues = true)]
-    public IReadOnlyDictionary<string, object> AdditionalAttributes { get; set; }
+    public Dictionary<string, object> Attributes { get; set; } = [];
 
     [Parameter]
     public TValue Value { get; set; }
@@ -34,7 +39,7 @@ public partial class ToggleSwitch<TValue> : ComponentBase
     public FieldIdentifier FieldIdentifier { get; set; }
 
 
-    public bool CurrentValue
+    protected bool CurrentValue
     {
         get => ConvertToBoolean(Value);
         set
@@ -51,30 +56,40 @@ public partial class ToggleSwitch<TValue> : ComponentBase
         }
     }
 
-    public string CssClass
-    {
-        get
-        {
-            var fieldClass = EditContext != null
-                ? EditContext.FieldCssClass(FieldIdentifier)
-                : string.Empty;
-
-            if (AdditionalAttributes != null &&
-                AdditionalAttributes.TryGetValue("class", out var cssClass) &&
-                !string.IsNullOrEmpty(Convert.ToString(cssClass)))
-            {
-                return $"toggle-switch {cssClass} {fieldClass}";
-            }
-
-            return $"toggle-switch {fieldClass}";
-        }
-    }
-
 
     protected override void OnInitialized()
     {
         if (FieldIdentifier.Equals(default))
             FieldIdentifier = FieldIdentifier.Create(ValueExpression);
+    }
+
+    protected override void BuildRenderTree(RenderTreeBuilder builder)
+    {
+        var fieldClass = EditContext != null
+            ? EditContext.FieldCssClass(FieldIdentifier)
+            : string.Empty;
+
+        var className = new CssBuilder("toggle-switch")
+            .MergeClass(Attributes)
+            .AddClass(fieldClass, v => v.HasValue())
+            .ToString();
+
+        builder.OpenElement(0, "label");
+        builder.AddAttribute(1, "class", className);
+        builder.AddMultipleAttributes(2, Attributes);
+
+        builder.OpenElement(3, "input");
+        builder.AddAttribute(4, "type", "checkbox");
+        builder.AddAttribute(5, "checked", BindConverter.FormatValue(CurrentValue));
+        builder.AddAttribute(6, "onchange", EventCallback.Factory.CreateBinder(this, v => CurrentValue = v, CurrentValue));
+        builder.SetUpdatesAttributeName("checked");
+        builder.CloseElement(); // input
+
+        builder.OpenElement(7, "span");
+        builder.AddAttribute(8, "class", "toggle-slider");
+        builder.CloseComponent(); // slider
+
+        builder.CloseElement(); //label
     }
 
 

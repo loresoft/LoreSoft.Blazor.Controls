@@ -1,3 +1,5 @@
+using LoreSoft.Blazor.Controls.Extensions;
+
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
 
@@ -38,7 +40,7 @@ public class LoadingBlock : ComponentBase
             builder.CloseElement(); // div
         }
 
-        if (!string.IsNullOrEmpty(LoadingText))
+        if (LoadingText.HasValue())
         {
             builder.OpenElement(6, "div");
             builder.AddAttribute(7, "class", "loading-block-text");

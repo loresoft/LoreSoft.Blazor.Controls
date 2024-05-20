@@ -1,15 +1,21 @@
 using System.Timers;
 
+using LoreSoft.Blazor.Controls.Utilities;
+
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Rendering;
 
 using Timer = System.Timers.Timer;
 
 namespace LoreSoft.Blazor.Controls;
 
-public partial class ProgressBar : ComponentBase, IDisposable
+public class ProgressBar : ComponentBase, IDisposable
 {
     private Timer _progressTimer;
     private Timer _completeTimer;
+
+    [Inject]
+    protected ProgressBarState State { get; set; }
 
     [Parameter]
     public string Color { get; set; } = "#29d";
@@ -23,14 +29,15 @@ public partial class ProgressBar : ComponentBase, IDisposable
     [Parameter]
     public double MinimumProgress { get; set; } = 0.05;
 
-    [Inject]
-    protected ProgressBarState State { get; set; }
+    [Parameter(CaptureUnmatchedValues = true)]
+    public Dictionary<string, object> Attributes { get; set; } = [];
 
 
     protected int Opacity { get; set; }
 
     protected double Progress { get; set; }
 
+    protected string ClassName { get; set; }
 
     protected string ContainerStyle => $"opacity: {Opacity}; transition: opacity {AnimationDuration}ms linear 0s;";
 
@@ -55,6 +62,45 @@ public partial class ProgressBar : ComponentBase, IDisposable
         _completeTimer.AutoReset = false;
         _completeTimer.Elapsed += OnComplete;
 
+    }
+
+    protected override void OnParametersSet()
+    {
+        // update only after parameters are set
+        ClassName = new CssBuilder("progress-container")
+            .MergeClass(Attributes)
+            .ToString();
+    }
+
+    protected override void BuildRenderTree(RenderTreeBuilder builder)
+    {
+        builder.OpenElement(0, "div");
+        builder.AddAttribute(1, "class", ClassName);
+        builder.AddAttribute(2, "style", ContainerStyle);
+        builder.AddMultipleAttributes(3, Attributes);
+
+        builder.OpenElement(4, "div");
+        builder.AddAttribute(5, "class", "progress-status-bar");
+        builder.AddAttribute(6, "style", BarStyle);
+
+        builder.OpenElement(7, "div");
+        builder.AddAttribute(8, "class", "progress-status-peg");
+        builder.AddAttribute(9, "style", PegStyle);
+        builder.CloseElement(); // peg
+
+        builder.CloseElement(); // bar
+
+        builder.OpenElement(10, "div");
+        builder.AddAttribute(11, "class", "progress-status-spinner");
+
+        builder.OpenElement(12, "div");
+        builder.AddAttribute(13, "class", "progress-status-spinner-icon");
+        builder.AddAttribute(14, "style", IconStyle);
+        builder.CloseElement(); // icon
+
+        builder.CloseElement(); // spinner
+
+        builder.CloseElement(); // container
     }
 
     private void OnComplete(object sender, ElapsedEventArgs e)

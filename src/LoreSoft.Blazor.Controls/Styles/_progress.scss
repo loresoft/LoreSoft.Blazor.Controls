@@ -1,0 +1,51 @@
+.progress-container {
+  pointer-events: none;
+}
+
+.progress-status-bar {
+  height: 3px;
+  left: 0;
+  margin-left: 0;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 1200;
+}
+
+.progress-status-peg {
+  display: block;
+  height: 100%;
+  opacity: 1;
+  position: absolute;
+  right: 0;
+  transform: rotate(3deg) translate(0px, -4px);
+  width: 100px;
+}
+
+.progress-status-spinner {
+  display: block;
+  position: fixed;
+  right: 8px;
+  top: 22px;
+  z-index: 1200;
+}
+
+.progress-status-spinner-icon {
+  animation: 400ms linear 0s infinite normal none running progress-spinner-keframe;
+  border-width: 2px;
+  border-style: solid;
+  border-radius: 50%;
+  box-sizing: border-box;
+  height: 18px;
+  width: 18px;
+}
+
+@keyframes progress-spinner-keframe {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}

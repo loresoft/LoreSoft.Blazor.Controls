@@ -35,6 +35,9 @@ public struct StyleBuilder
     public StyleBuilder AddStyle(string prop, string value, Func<bool> when)
         => AddStyle(prop, value, when());
 
+    public StyleBuilder AddStyle(string prop, string value, Func<string, bool> when)
+        => AddStyle(prop, value, when(value));
+
     public StyleBuilder AddStyle(string prop, Func<string> value, Func<bool> when)
         => AddStyle(prop, value(), when());
 
@@ -47,9 +50,16 @@ public struct StyleBuilder
     public StyleBuilder AddStyle(StyleBuilder builder, Func<bool> when)
         => AddStyle(builder, when());
 
-    public StyleBuilder AddStyle(IReadOnlyDictionary<string, object> attributes) =>
-        attributes == null ? this :
-        attributes.TryGetValue("style", out var c) ? AddRaw(c.ToString()) : this;
+    public StyleBuilder MergeStyle(IReadOnlyDictionary<string, object> attributes)
+    {
+        if (attributes == null)
+            return this;
+
+        if (attributes.TryGetValue("style", out var c))
+            return AddRaw(c.ToString());
+
+        return this;
+    }
 
     public override readonly string ToString()
     {

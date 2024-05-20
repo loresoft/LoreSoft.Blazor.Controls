@@ -16,17 +16,26 @@ public struct CssBuilder
         return this;
     }
 
-    public CssBuilder AddClass(string value, bool when) => when ? this.AddClass(value) : this;
+    public CssBuilder AddClass(string value, bool when)
+        => when ? this.AddClass(value) : this;
 
-    public CssBuilder AddClass(string value, Func<bool> when) => this.AddClass(value, when());
+    public CssBuilder AddClass(string value, Func<bool> when)
+        => this.AddClass(value, when());
 
-    public CssBuilder AddClass(Func<string> value, bool when) => when ? this.AddClass(value()) : this;
+    public CssBuilder AddClass(string value, Func<string, bool> when)
+        => this.AddClass(value, when(value));
 
-    public CssBuilder AddClass(Func<string> value, Func<bool> when) => this.AddClass(value, when());
+    public CssBuilder AddClass(Func<string> value, bool when)
+        => when ? this.AddClass(value()) : this;
 
-    public CssBuilder AddClass(CssBuilder builder, bool when) => when ? this.AddClass(builder.ToString()) : this;
+    public CssBuilder AddClass(Func<string> value, Func<bool> when)
+        => this.AddClass(value, when());
 
-    public CssBuilder AddClass(CssBuilder builder, Func<bool> when) => this.AddClass(builder, when());
+    public CssBuilder AddClass(CssBuilder builder, bool when)
+        => when ? this.AddClass(builder.ToString()) : this;
+
+    public CssBuilder AddClass(CssBuilder builder, Func<bool> when)
+        => this.AddClass(builder, when());
 
     public CssBuilder MergeClass(IDictionary<string, object> attributes)
     {
