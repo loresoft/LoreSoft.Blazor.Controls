@@ -1,5 +1,3 @@
-﻿using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.Linq.Expressions;
 using System.Text;
@@ -7,187 +5,186 @@ using System.Text.RegularExpressions;
 
 using Microsoft.AspNetCore.Components;
 
-namespace LoreSoft.Blazor.Controls
+namespace LoreSoft.Blazor.Controls;
+
+public class DataColumn<TItem> : ComponentBase
 {
-    public class DataColumn<TItem> : ComponentBase
+    private Func<TItem, object> _propertyAccessor;
+    private string _propertyName;
+
+    [CascadingParameter(Name = "Grid")]
+    protected DataGrid<TItem> Grid { get; set; }
+
+    [Parameter(CaptureUnmatchedValues = true)]
+    public Dictionary<string, object> UnmatchedAttributes { get; set; }
+
+    [Parameter]
+    public Func<TItem, Dictionary<string, object>> CellAttributes { get; set; }
+
+    [Parameter]
+    public Expression<Func<TItem, object>> Property { get; set; }
+
+    [Parameter]
+    public string Title { get; set; }
+
+    [Parameter]
+    public string Width { get; set; }
+
+    [Parameter]
+    public string Format { get; set; }
+
+    [Parameter]
+    public string ClassName { get; set; }
+
+    [Parameter]
+    public Func<TItem, string> Style { get; set; }
+
+    [Parameter]
+    public string HeaderClass { get; set; }
+
+    [Parameter]
+    public string FooterClass { get; set; }
+
+
+    [Parameter]
+    public bool Sortable { get; set; } = true;
+
+    [Parameter]
+    public int SortIndex { get; set; } = -1;
+
+    [Parameter]
+    public bool SortDescending { get; set; }
+
+
+    [Parameter]
+    public bool Visible { get; set; } = true;
+
+    public string Name => PropertyName();
+
+
+    [Parameter]
+    public RenderFragment HeaderTemplate { get; set; }
+
+    [Parameter]
+    public RenderFragment<TItem> Template { get; set; }
+
+    [Parameter]
+    public RenderFragment FooterTemplate { get; set; }
+
+
+    internal int CurrentSortIndex { get; set; } = -1;
+
+    internal bool CurrentSortDescending { get; set; }
+
+
+    protected override void OnInitialized()
     {
-        private Func<TItem, object> _propertyAccessor;
-        private string _propertyName;
+        if (Grid == null)
+            throw new InvalidOperationException("DataColumn must be child of DataGrid");
 
-        [CascadingParameter(Name = "Grid")]
-        protected DataGrid<TItem> Grid { get; set; }
+        if (Property == null)
+            throw new InvalidOperationException("DataColumn Property parameter is required");
 
-        [Parameter(CaptureUnmatchedValues = true)]
-        public Dictionary<string, object> UnmatchedAttributes { get; set; }
+        CurrentSortIndex = SortIndex;
+        CurrentSortDescending = SortDescending;
 
-        [Parameter]
-        public Func<TItem, Dictionary<string, object>> CellAttributes { get; set; }
+        // register with parent grid
+        Grid.AddColumn(this);
+    }
 
-        [Parameter]
-        public Expression<Func<TItem, object>> Property { get; set; }
+    internal string HeaderTitle()
+    {
+        if (!string.IsNullOrEmpty(Title))
+            return Title;
 
-        [Parameter]
-        public string Title { get; set; }
+        var name = PropertyName();
+        return ToTitle(name);
+    }
 
-        [Parameter]
-        public string Width { get; set; }
+    internal string CellValue(TItem data)
+    {
+        if (data == null || Property == null)
+            return string.Empty;
 
-        [Parameter]
-        public string Format { get; set; }
+        _propertyAccessor ??= Property.Compile();
 
-        [Parameter]
-        public string ClassName { get; set; }
+        object value = null;
 
-        [Parameter]
-        public Func<TItem, string> Style { get; set; }
-
-        [Parameter]
-        public string HeaderClass { get; set; }
-
-        [Parameter]
-        public string FooterClass { get; set; }
-
-
-        [Parameter]
-        public bool Sortable { get; set; } = true;
-
-        [Parameter]
-        public int SortIndex { get; set; } = -1;
-
-        [Parameter]
-        public bool SortDescending { get; set; }
-
-
-        [Parameter]
-        public bool Visible { get; set; } = true;
-
-        public string Name => PropertyName();
-
-
-        [Parameter]
-        public RenderFragment HeaderTemplate { get; set; }
-
-        [Parameter]
-        public RenderFragment<TItem> Template { get; set; }
-
-        [Parameter]
-        public RenderFragment FooterTemplate { get; set; }
-
-
-        internal int CurrentSortIndex { get; set; } = -1;
-
-        internal bool CurrentSortDescending { get; set; }
-
-
-        protected override void OnInitialized()
+        try
         {
-            if (Grid == null)
-                throw new InvalidOperationException("DataColumn must be child of DataGrid");
+            value = _propertyAccessor.Invoke(data);
+        }
+        catch (NullReferenceException)
+        {
 
-            if (Property == null)
-                throw new InvalidOperationException("DataColumn Property parameter is required");
-
-            CurrentSortIndex = SortIndex;
-            CurrentSortDescending = SortDescending;
-
-            // register with parent grid
-            Grid.AddColumn(this);
         }
 
-        internal string HeaderTitle()
-        {
-            if (!string.IsNullOrEmpty(Title))
-                return Title;
+        if (value == null)
+            return string.Empty;
 
-            var name = PropertyName();
-            return ToTitle(name);
-        }
+        return string.IsNullOrEmpty(Format)
+            ? value.ToString()
+            : string.Format(CultureInfo.CurrentCulture, $"{{0:{Format}}}", value);
+    }
 
-        internal string CellValue(TItem data)
-        {
-            if (data == null || Property == null)
-                return string.Empty;
+    internal void UpdateSort(int index, bool descending)
+    {
+        CurrentSortIndex = index;
+        CurrentSortDescending = descending;
+    }
 
-            _propertyAccessor ??= Property.Compile();
+    private string PropertyName()
+    {
+        if (Property == null)
+            return string.Empty;
 
-            object value = null;
-
-            try
-            {
-                value = _propertyAccessor.Invoke(data);
-            }
-            catch (NullReferenceException)
-            {
-
-            }
-
-            if (value == null)
-                return string.Empty;
-
-            return string.IsNullOrEmpty(Format)
-                ? value.ToString()
-                : string.Format(CultureInfo.CurrentCulture, $"{{0:{Format}}}", value);
-        }
-
-        internal void UpdateSort(int index, bool descending)
-        {
-            CurrentSortIndex = index;
-            CurrentSortDescending = descending;
-        }
-
-        private string PropertyName()
-        {
-            if (Property == null)
-                return string.Empty;
-
-            if (!string.IsNullOrEmpty(_propertyName))
-                return _propertyName;
-
-            _propertyName = Property?.Body switch
-            {
-                MemberExpression memberExpression => memberExpression.Member.Name,
-                UnaryExpression { Operand: MemberExpression memberOperand } => memberOperand.Member.Name,
-                _ => string.Empty
-            };
-
+        if (!string.IsNullOrEmpty(_propertyName))
             return _propertyName;
+
+        _propertyName = Property?.Body switch
+        {
+            MemberExpression memberExpression => memberExpression.Member.Name,
+            UnaryExpression { Operand: MemberExpression memberOperand } => memberOperand.Member.Name,
+            _ => string.Empty
+        };
+
+        return _propertyName;
+    }
+
+    private string ToTitle(string value)
+    {
+        if (string.IsNullOrEmpty(value))
+            return value;
+
+        var words = Regex.Matches(value, @"([A-Z][a-z]*)|([0-9]+)");
+
+        var spacedName = new StringBuilder();
+        foreach (Match word in words)
+        {
+            if (spacedName.Length > 0)
+                spacedName.Append(' ');
+
+            spacedName.Append(word.Value);
         }
 
-        private string ToTitle(string value)
+        return spacedName.ToString();
+    }
+
+    internal Dictionary<string, object> ComputeAttributes(TItem data)
+    {
+        var attributes = new Dictionary<string, object>();
+        if (CellAttributes != null)
         {
-            if (string.IsNullOrEmpty(value))
-                return value;
-
-            var words = Regex.Matches(value, @"([A-Z][a-z]*)|([0-9]+)");
-
-            var spacedName = new StringBuilder();
-            foreach (Match word in words)
-            {
-                if (spacedName.Length > 0)
-                    spacedName.Append(' ');
-
-                spacedName.Append(word.Value);
-            }
-
-            return spacedName.ToString();
-        }
-
-        internal Dictionary<string, object> ComputeAttributes(TItem data)
-        {
-            var attributes = new Dictionary<string, object>();
-            if (CellAttributes != null)
-            {
-                var computed = CellAttributes(data);
-                if (computed != null)
-                    foreach (var attribute in computed)
-                        attributes[attribute.Key] = attribute.Value;
-            }
-
-            if (UnmatchedAttributes != null)
-                foreach (var attribute in UnmatchedAttributes)
+            var computed = CellAttributes(data);
+            if (computed != null)
+                foreach (var attribute in computed)
                     attributes[attribute.Key] = attribute.Value;
-
-            return attributes;
         }
+
+        if (UnmatchedAttributes != null)
+            foreach (var attribute in UnmatchedAttributes)
+                attributes[attribute.Key] = attribute.Value;
+
+        return attributes;
     }
 }

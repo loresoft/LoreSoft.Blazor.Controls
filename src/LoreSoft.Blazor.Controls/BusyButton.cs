@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
 using Microsoft.AspNetCore.Components.Web;
 
@@ -22,7 +22,7 @@ public class BusyButton : ComponentBase
     public RenderFragment ChildContent { get; set; }
 
     [Parameter(CaptureUnmatchedValues = true)]
-    public Dictionary<string, object> Attributes { get; set; } = new Dictionary<string, object>();
+    public Dictionary<string, object> Attributes { get; set; } = [];
 
     [Parameter]
     public EventCallback Trigger { get; set; }
