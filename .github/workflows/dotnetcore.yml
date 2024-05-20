@@ -39,6 +39,9 @@ jobs:
       - name: Restore Dependencies
         run: dotnet restore
 
+      - name: Install Sass
+        run: npm i -g sass
+
       - name: Build Solution
         run: dotnet build --no-restore --configuration Release
 
