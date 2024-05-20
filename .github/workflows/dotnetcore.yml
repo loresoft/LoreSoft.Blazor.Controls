@@ -47,7 +47,7 @@ jobs:
 
       - name: Create Packages
         if: success() && github.event_name != 'pull_request'
-        run: dotnet pack --configuration Release --no-build --output "${{env.BUILD_PATH}}"
+        run: dotnet pack --configuration Release --no-build --output "${{env.BUILD_PATH}}/packages"
 
       - name: Publish Samples
         if: success() && github.event_name != 'pull_request'
