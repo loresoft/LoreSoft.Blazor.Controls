@@ -1,6 +1,3 @@
-﻿using System;
-using System.Collections.Generic;
-
 namespace LoreSoft.Blazor.Controls.Utilities;
 
 public struct CssBuilder
@@ -45,7 +42,7 @@ public struct CssBuilder
         return AddClass(value.ToString());
     }
 
-    public override string ToString()
+    public override readonly string ToString()
     {
         var value = _buffer?.Trim();
         return string.IsNullOrEmpty(value) ? null : value;

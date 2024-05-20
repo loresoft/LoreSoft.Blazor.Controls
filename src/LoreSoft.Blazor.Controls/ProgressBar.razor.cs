@@ -1,11 +1,7 @@
-﻿using System;
-using System.Net.Http;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Timers;
+
 using Microsoft.AspNetCore.Components;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
+
 using Timer = System.Timers.Timer;
 
 namespace LoreSoft.Blazor.Controls;
@@ -111,73 +107,5 @@ public partial class ProgressBar : ComponentBase, IDisposable
         State.OnChange -= OnProgressStateChange;
         _progressTimer?.Dispose();
         _completeTimer?.Dispose();
-    }
-}
-
-public class ProgressBarState
-{
-    public event Action OnChange;
-
-    public int Count { get; private set; }
-
-    public bool Loading => Count > 0;
-
-    public void Start()
-    {
-        Count++;
-        NotifyStateChanged();
-    }
-
-    public void Complete()
-    {
-        Count--;
-        NotifyStateChanged();
-    }
-
-    public void Reset()
-    {
-        Count = 0;
-        NotifyStateChanged();
-    }
-
-
-    protected void NotifyStateChanged()
-    {
-        OnChange?.Invoke();
-    }
-}
-
-public static class ProgressBarExtensions
-{
-    public static IServiceCollection AddProgressBar(this IServiceCollection services)
-    {
-        services.TryAddSingleton<ProgressBarState>();
-        services.TryAddTransient<ProgressBarHandler>();
-
-        return services;
-    }
-}
-
-public class ProgressBarHandler : DelegatingHandler
-{
-    private readonly ProgressBarState _progressState;
-
-    public ProgressBarHandler(ProgressBarState progressState)
-    {
-        _progressState = progressState;
-    }
-
-    protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
-    {
-        _progressState.Start();
-
-        try
-        {
-            return await base.SendAsync(request, cancellationToken);
-        }
-        finally
-        {
-            _progressState.Complete();
-        }
     }
 }

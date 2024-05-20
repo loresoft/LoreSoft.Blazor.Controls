@@ -1,6 +1,3 @@
-﻿using System;
-using System.Collections.Generic;
-
 namespace LoreSoft.Blazor.Controls.Utilities;
 
 
@@ -54,7 +51,7 @@ public struct StyleBuilder
         attributes == null ? this :
         attributes.TryGetValue("style", out var c) ? AddRaw(c.ToString()) : this;
 
-    public override string ToString()
+    public override readonly string ToString()
     {
         var value = _buffer?.Trim();
         return string.IsNullOrEmpty(value) ? null : value;
