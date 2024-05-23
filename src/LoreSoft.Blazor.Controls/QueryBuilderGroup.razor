@@ -1,0 +1,57 @@
+@typeparam TItem
+
+@using Microsoft.AspNetCore.Components.Web
+
+<div class="query-group">
+    <div class="query-group-header">
+        <select @bind="Group.Logic"
+                class="query-select"
+                title="Logical Operator">
+            <option value="@QueryLogic.And">AND</option>
+            <option value="@QueryLogic.Or">OR</option>
+        </select>
+
+        <button @onclick="AddFilter"
+                type="button"
+                class="query-button"
+                title="Add Filter">
+            <i class="query-button-add"></i>
+            Filter
+        </button>
+
+        <button @onclick="AddGroup"
+                type="button"
+                class="query-button"
+                title="Add Group">
+            <i class="query-button-add"></i>
+            Group
+        </button>
+
+        @if (Parent != null)
+        {
+            <button @onclick="DeleteGroup"
+                    type="button"
+                    class="query-button"
+                    title="Delete Group">
+                <i class="query-button-delete"></i>
+                Group
+            </button>
+        }
+    </div>
+
+    <div class="query-group-body">
+        @foreach (var query in Group.Filters)
+        {
+            if (query is QueryGroup queryGroup)
+            {
+                <QueryBuilderGroup TItem="TItem" Group="queryGroup" Parent="Group" />
+            }
+            else if (query is QueryFilter queryFilter)
+            {
+                <QueryBuilderFilter TItem="TItem" Filter="queryFilter" Parent="Group" />
+            }
+        }
+    </div>
+</div>
+
+

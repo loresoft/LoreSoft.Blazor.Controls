@@ -1,13 +1,17 @@
 #nullable enable
 
 using System.Diagnostics.CodeAnalysis;
+using System.Text.RegularExpressions;
+using System.Text;
+using static System.Net.Mime.MediaTypeNames;
+using System.Globalization;
 
 namespace LoreSoft.Blazor.Controls.Extensions;
 
 /// <summary>
 /// <see cref="String"/> extension methods
 /// </summary>
-public static class StringExtensions
+public static partial class StringExtensions
 {
     /// <summary>
     /// Truncates the specified text.
@@ -78,4 +82,27 @@ public static class StringExtensions
     {
         return !string.IsNullOrEmpty(value);
     }
+
+    [return: NotNullIfNotNull(nameof(value))]
+    public static string? ToTitle(this string? value)
+    {
+        if (string.IsNullOrEmpty(value))
+            return value;
+
+        var words = WordRegex().Matches(value);
+
+        var spacedName = new StringBuilder();
+        foreach (Match word in words)
+        {
+            if (spacedName.Length > 0)
+                spacedName.Append(' ');
+
+            spacedName.Append(word.Value);
+        }
+
+        return spacedName.ToString();
+    }
+
+    [GeneratedRegex(@"([A-Z][a-z]*)|([0-9]+)")]
+    private static partial Regex WordRegex();
 }

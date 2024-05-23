@@ -1,10 +1,10 @@
-﻿using System.Collections.Generic;
-using System.Text;
 using LoreSoft.Blazor.Controls.Utilities;
+
 using Microsoft.AspNetCore.Components;
 
 namespace LoreSoft.Blazor.Controls;
 
+[CascadingTypeParameter(nameof(TItem))]
 public partial class DataList<TItem> : DataComponentBase<TItem>
 {
     [Parameter(CaptureUnmatchedValues = true)]

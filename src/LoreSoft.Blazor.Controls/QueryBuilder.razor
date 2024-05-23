@@ -1,0 +1,12 @@
+@typeparam TItem
+@using Microsoft.AspNetCore.Components.Web
+
+<CascadingValue IsFixed="true" Value="this" Name="QueryBuilder">
+    @if (QueryFields != null)
+    {
+        @QueryFields
+    }
+    <div class="query-builder">
+        <QueryBuilderGroup TItem="TItem" Group="RootQuery" />
+    </div>
+</CascadingValue>

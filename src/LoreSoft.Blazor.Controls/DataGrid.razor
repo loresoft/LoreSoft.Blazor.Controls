@@ -1,4 +1,4 @@
-﻿@typeparam TItem
+@typeparam TItem
 @inherits DataComponentBase<TItem>
 @using Microsoft.AspNetCore.Components.Web
 @using Microsoft.AspNetCore.Components.Web.Virtualization
@@ -94,7 +94,7 @@
                 {
                     for (int i = 0; i < 5; i++)
                     {
-                        <tr key="i">
+                        <tr @key="i">
                             @if (DetailTemplate != null)
                             {
                                 <td class="data-grid-hierarchy-cell">

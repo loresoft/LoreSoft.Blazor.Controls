@@ -1,9 +1,11 @@
-﻿using System;
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+
 using Microsoft.AspNetCore.Components;
 
 namespace LoreSoft.Blazor.Controls;
@@ -12,9 +14,10 @@ public abstract class DataComponentBase<TItem> : ComponentBase, IDisposable
 {
     private DataProviderDelegate<TItem> _dataProvider;
     private CancellationTokenSource _refreshCancellation;
+    private IEnumerable<TItem> _data;
 
     [Parameter]
-    public ICollection<TItem> Data { get; set; }
+    public IEnumerable<TItem> Data { get; set; }
 
     [Parameter]
     public DataProviderDelegate<TItem> DataProvider { get; set; }
@@ -80,7 +83,7 @@ public abstract class DataComponentBase<TItem> : ComponentBase, IDisposable
         Pager.PropertyChanged += OnStatePropertyChange;
     }
 
-    protected override void OnParametersSet()
+    protected override async Task OnParametersSetAsync()
     {
         if (DataProvider != null)
         {
@@ -96,6 +99,13 @@ public abstract class DataComponentBase<TItem> : ComponentBase, IDisposable
         else if (Data != null)
         {
             _dataProvider = DefaultProvider;
+
+            // if Data was replaces, refresh
+            if (_data != Data)
+            {
+                _data = Data;
+                await RefreshAsync();
+            }
         }
         else
         {
@@ -177,13 +187,12 @@ public abstract class DataComponentBase<TItem> : ComponentBase, IDisposable
     // used when Data is set directly
     protected virtual ValueTask<DataResult<TItem>> DefaultProvider(DataRequest request)
     {
-        if (Data == null || Data.Count == 0)
+        if (Data == null || !Data.Any())
             return ValueTask.FromResult(new DataResult<TItem>(0, Enumerable.Empty<TItem>()));
 
         var query = Data.AsQueryable();
 
-        if (Filter != null)
-            query = query.Where(i => Filter(i));
+        query = FilterData(query, request);
 
         var total = query.Count();
 
@@ -208,6 +217,14 @@ public abstract class DataComponentBase<TItem> : ComponentBase, IDisposable
 
     protected virtual IQueryable<TItem> SortData(IQueryable<TItem> queryable, DataRequest request)
     {
+        return queryable;
+    }
+
+    protected virtual IQueryable<TItem> FilterData(IQueryable<TItem> queryable, DataRequest request)
+    {
+        if (Filter != null)
+            return queryable.Where(i => Filter(i));
+
         return queryable;
     }
 

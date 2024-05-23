@@ -1,0 +1,82 @@
+@typeparam TItem
+
+@using LoreSoft.Blazor.Controls.Extensions
+@using Microsoft.AspNetCore.Components.Web
+@using System.Globalization
+
+<div class="query-filter">
+
+    <select id="field-@Filter.Id"
+            name="field-@Filter.Id"
+            title="Select Filter Field"
+            @bind="Filter.Field"
+            @bind:after="FieldChanged"
+            class="query-filter-fields">
+        <option>- Field -</option>
+        <Repeater Items="Fields" Context="field">
+            <option @key="field" value="@field.Name">@field.Name</option>
+        </Repeater>
+    </select>
+
+    @if (Field != null)
+    {
+        if (Field.OperatorTemplate != null)
+        {
+            @Field.OperatorTemplate(Filter)
+        }
+        else
+        {
+            <select id="operator-@Filter.Id"
+                    name="operator-@Filter.Id"
+                    title="Select Filter Operator"
+                    @bind="Filter.Operator"
+                    @bind:after="@OperatorChanged"
+                    class="query-filter-operators">
+                <option>- Operator -</option>
+                <Repeater Items="Field.CurrentOperators" Context="item">
+                    <option @key="item" value="@item">@item</option>
+                </Repeater>
+            </select>
+        }
+
+        if (ShowValueInput && Field.ValueTemplate != null)
+        {
+            @Field.ValueTemplate(Filter)
+        }
+        else if (ShowValueInput && Field.Type == typeof(bool))
+        {
+            <select id="value-@Filter.Id"
+                    name="value-@Filter.Id"
+                    title="Select Filter Value"
+                    value="@GetValue()"
+                    @onchange="SetValue"
+                    class="query-filter-value">
+                <option>- Select -</option>
+                <option value="true">true</option>
+                <option value="false">false</option>
+            </select>
+        }
+        else if (ShowValueInput)
+        {
+            <input id="value-@Filter.Id"
+                   name="value-@Filter.Id"
+                   title="Enter Filter Value"
+                   value="@GetValue()"
+                   @onchange="SetValue"
+                   type="@Field.CurrentInputType"
+                   class="query-filter-value" />
+        }
+    }
+
+    @if (Parent != null)
+    {
+        <button @onclick="DeleteFilter"
+                type="button"
+                class="query-button query-filter-remove"
+                title="Delete Filter">
+            <i class="query-button-delete"></i>
+        </button>
+    }
+</div>
+
+

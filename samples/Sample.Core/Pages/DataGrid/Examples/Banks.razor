@@ -1,4 +1,4 @@
-﻿@using Sample.Core.Services
+@using Sample.Core.Services
 @using Sample.Core.Models
 
 @inject RandomDataClient RandomDataClient;
@@ -29,13 +29,7 @@
 
     protected async override Task OnInitializedAsync()
     {
-        var results = await RandomDataClient.GetBanks();
-
-        Data = results;
-
-        // triger refresh
-        StateHasChanged();
-        await DataGrid.RefreshAsync(true);
+        Data = await RandomDataClient.GetBanks();
     }
 
     private Dictionary<string, object> CellAttributes(Bank bank)

@@ -1,7 +1,7 @@
 using System.Globalization;
 using System.Linq.Expressions;
-using System.Text;
-using System.Text.RegularExpressions;
+
+using LoreSoft.Blazor.Controls.Extensions;
 
 using Microsoft.AspNetCore.Components;
 
@@ -98,7 +98,7 @@ public class DataColumn<TItem> : ComponentBase
             return Title;
 
         var name = PropertyName();
-        return ToTitle(name);
+        return name.ToTitle();
     }
 
     internal string CellValue(TItem data)
@@ -151,24 +151,6 @@ public class DataColumn<TItem> : ComponentBase
         return _propertyName;
     }
 
-    private string ToTitle(string value)
-    {
-        if (string.IsNullOrEmpty(value))
-            return value;
-
-        var words = Regex.Matches(value, @"([A-Z][a-z]*)|([0-9]+)");
-
-        var spacedName = new StringBuilder();
-        foreach (Match word in words)
-        {
-            if (spacedName.Length > 0)
-                spacedName.Append(' ');
-
-            spacedName.Append(word.Value);
-        }
-
-        return spacedName.ToString();
-    }
 
     internal Dictionary<string, object> ComputeAttributes(TItem data)
     {

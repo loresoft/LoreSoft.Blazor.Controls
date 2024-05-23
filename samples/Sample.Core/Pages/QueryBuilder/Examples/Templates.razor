@@ -1,0 +1,66 @@
+@using LoreSoft.Blazor.Controls.Utilities
+@using Sample.Core.Models
+@using System.Text.Json
+
+<h3 class="m-2">Using Templates</h3>
+
+<QueryBuilder TItem="Bank" @bind-Query="Query">
+    <QueryFields>
+        <QueryBuilderField Field="p => p.Id" />
+        <QueryBuilderField Field="p => p.AccountNumber" />
+        <QueryBuilderField Field="p => p.IBAN" />
+        <QueryBuilderField Field="p => p.BankName">
+            <ValueTemplate Context="filter">
+                <select value="@Binding.Format(filter.Value)"
+                        @onchange="e => filter.Value = Binding.Convert<string>(e.Value)">
+                    <option>- Select Bank -</option>
+                    <option value="Chase Bank">Chase Bank</option>
+                    <option value="Bank of America">Bank of America</option>
+                    <option value="Wells Fargo">Wells Fargo</option>
+                    <option value="Citibank">Citibank</option>
+                    <option value="U.S. Bank">U.S. Bank</option>
+                    <option value="PNC Bank">PNC Bank</option>
+                    <option value="Goldman Sachs Bank">Goldman Sachs Bank</option>
+                    <option value="Truist Bank">Truist Bank</option>
+                    <option value="Capital One">Capital One</option>
+                    <option value="TD Bank">TD Bank</option>
+                </select>
+            </ValueTemplate>
+        </QueryBuilderField>
+        <QueryBuilderField Field="p => p.RoutingNumber" />
+        <QueryBuilderField Field="p => p.SwiftBIC" />
+        <QueryBuilderField Field="p => p.IsActive" />
+        <QueryBuilderField Field="p => p.Created" />
+    </QueryFields>
+</QueryBuilder>
+
+<h4 class="m-2">Query JSON</h4>
+
+<pre style="max-height: 400px; max-width: calc(100vw - 4em);"><code class="language-json">@Serialize(Query)</code></pre>
+
+@code {
+    protected QueryGroup Query { get; set; } = new()
+        {
+            Filters = new List<QueryRule>
+            {
+                new QueryFilter{ Field = nameof(Bank.BankName), Operator = QueryOperators.Contains, Value = "Wells Fargo" },
+                new QueryFilter{ Field = nameof(Bank.IsActive), Operator = QueryOperators.Equal, Value = true },
+                new QueryGroup {
+                    Logic = QueryLogic.Or,
+                    Filters = new List<QueryRule>
+                    {
+                        new QueryFilter{ Field = nameof(Bank.AccountNumber), Operator = QueryOperators.Equal, Value = "88888" },
+                        new QueryFilter{ Field = nameof(Bank.AccountNumber), Operator = QueryOperators.Equal, Value = "99999" },
+                    }
+                }
+            }
+        };
+
+    protected string Serialize(QueryGroup query)
+    {
+        var options = new JsonSerializerOptions(JsonSerializerDefaults.Web);
+        options.WriteIndented = true;
+        return JsonSerializer.Serialize(query, options);
+    }
+
+}

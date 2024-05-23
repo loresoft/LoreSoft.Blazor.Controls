@@ -1,0 +1,27 @@
+@page "/query/index"
+@using Sample.Core.Models
+@using System.Text.Json
+@using Sample.Core.Pages.QueryBuilder.Examples
+
+@inject IJSRuntime JsRuntime;
+
+<h1>Query Builder</h1>
+
+<p>Query Builder Control</p>
+
+<Instructions></Instructions>
+
+<h2 class="m-3">Examples</h2>
+
+<Basic />
+
+<Templates />
+
+@code {
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        base.OnAfterRender(firstRender);
+        //TODO fix highlight, breaks data binding
+        //await JsRuntime.InvokeAsync<object>("Prism.highlightAll");
+    }
+}

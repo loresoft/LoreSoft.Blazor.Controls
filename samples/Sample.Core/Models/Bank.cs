@@ -1,4 +1,4 @@
-﻿using System.Text.Json.Serialization;
+using System.Text.Json.Serialization;
 
 namespace Sample.Core.Models
 {
@@ -24,5 +24,9 @@ namespace Sample.Core.Models
 
         [JsonPropertyName("swift_bic")]
         public string SwiftBIC { get; set; }
+
+        public bool IsActive { get; set; }
+
+        public DateTimeOffset Created { get; set; } = DateTimeOffset.Now;
     }
 }

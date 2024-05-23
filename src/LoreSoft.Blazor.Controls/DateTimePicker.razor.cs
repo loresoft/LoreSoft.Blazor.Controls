@@ -1,7 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.Linq.Expressions;
+
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Components.Web;
@@ -195,9 +194,9 @@ public partial class DateTimePicker<TValue> : ComponentBase, IDisposable
 
         Value = value;
         ValueChanged.InvokeAsync(value);
-        
+
         _parsingValidationMessages?.Clear();
-        
+
         EditContext?.NotifyFieldChanged(FieldIdentifier);
         EditContext?.NotifyValidationStateChanged();
     }
@@ -327,32 +326,32 @@ public partial class DateTimePicker<TValue> : ComponentBase, IDisposable
         switch (value)
         {
             case DateTime dateTimeValue:
-                {
-                    var dateTime = new DateTime(
-                        cell.Year,
-                        cell.Month,
-                        cell.Day,
-                        dateTimeValue.Hour,
-                        dateTimeValue.Minute,
-                        0);
+            {
+                var dateTime = new DateTime(
+                    cell.Year,
+                    cell.Month,
+                    cell.Day,
+                    dateTimeValue.Hour,
+                    dateTimeValue.Minute,
+                    0);
 
-                    SetValue((TValue)(object)dateTime);
-                    break;
-                }
+                SetValue((TValue)(object)dateTime);
+                break;
+            }
             case DateTimeOffset dateTimeOffsetValue:
-                {
-                    var dateTimeOffset = new DateTimeOffset(
-                        cell.Year,
-                        cell.Month,
-                        cell.Day,
-                        dateTimeOffsetValue.Hour,
-                        dateTimeOffsetValue.Minute,
-                        dateTimeOffsetValue.Second,
-                        dateTimeOffsetValue.Offset);
+            {
+                var dateTimeOffset = new DateTimeOffset(
+                    cell.Year,
+                    cell.Month,
+                    cell.Day,
+                    dateTimeOffsetValue.Hour,
+                    dateTimeOffsetValue.Minute,
+                    dateTimeOffsetValue.Second,
+                    dateTimeOffsetValue.Offset);
 
-                    SetValue((TValue)(object)dateTimeOffset);
-                    break;
-                }
+                SetValue((TValue)(object)dateTimeOffset);
+                break;
+            }
             case TimeSpan timeSpanValue:
                 break;
         }

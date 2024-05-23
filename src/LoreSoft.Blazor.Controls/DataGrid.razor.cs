@@ -1,14 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text.Json.Serialization;
-using System.Threading;
-using System.Threading.Tasks;
-
 using Microsoft.AspNetCore.Components;
 
 namespace LoreSoft.Blazor.Controls;
 
+[CascadingTypeParameter(nameof(TItem))]
 public partial class DataGrid<TItem> : DataComponentBase<TItem>
 {
     private HashSet<TItem> _expandedItems = new();
@@ -44,13 +38,13 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
     public Func<TItem, Dictionary<string, object>> RowAttributes { get; set; }
 
     [Parameter]
-    public IEnumerable<TItem> SelectedItems { get; set; } = new List<TItem>();
+    public IEnumerable<TItem> SelectedItems { get; set; } = [];
 
     [Parameter]
     public EventCallback<IEnumerable<TItem>> SelectedItemsChanged { get; set; }
 
 
-    public List<DataColumn<TItem>> Columns { get; } = new();
+    public List<DataColumn<TItem>> Columns { get; } = [];
 
 
     public override async Task RefreshAsync(bool resetPager = false)
