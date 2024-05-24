@@ -9,12 +9,14 @@
     <select id="field-@Filter.Id"
             name="field-@Filter.Id"
             title="Select Filter Field"
+            required="true"
+            autocomplete="off"
             @bind="Filter.Field"
             @bind:after="FieldChanged"
             class="query-filter-fields">
-        <option>- Field -</option>
+        <option value="">- Field -</option>
         <Repeater Items="Fields" Context="field">
-            <option @key="field" value="@field.Name">@field.Name</option>
+            <option @key="field" value="@field.Name">@field.CurrentTitle</option>
         </Repeater>
     </select>
 
@@ -29,10 +31,12 @@
             <select id="operator-@Filter.Id"
                     name="operator-@Filter.Id"
                     title="Select Filter Operator"
+                    required="true"
+                    autocomplete="off"
                     @bind="Filter.Operator"
                     @bind:after="@OperatorChanged"
                     class="query-filter-operators">
-                <option>- Operator -</option>
+                <option value="">- Operator -</option>
                 <Repeater Items="Field.CurrentOperators" Context="item">
                     <option @key="item" value="@item">@item</option>
                 </Repeater>
@@ -49,9 +53,11 @@
                     name="value-@Filter.Id"
                     title="Select Filter Value"
                     value="@GetValue()"
+                    required="true"
+                    autocomplete="off"
                     @onchange="SetValue"
                     class="query-filter-value">
-                <option>- Select -</option>
+                <option value="">- Select -</option>
                 <option value="true">true</option>
                 <option value="false">false</option>
             </select>
@@ -62,6 +68,7 @@
                    name="value-@Filter.Id"
                    title="Enter Filter Value"
                    value="@GetValue()"
+                   autocomplete="off"
                    @onchange="SetValue"
                    type="@Field.CurrentInputType"
                    class="query-filter-value" />

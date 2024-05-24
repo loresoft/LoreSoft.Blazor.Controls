@@ -6,6 +6,8 @@
     <div class="query-group-header">
         <select @bind="Group.Logic"
                 class="query-select"
+                required="true"
+                autocomplete="off"
                 title="Logical Operator">
             <option value="@QueryLogic.And">AND</option>
             <option value="@QueryLogic.Or">OR</option>

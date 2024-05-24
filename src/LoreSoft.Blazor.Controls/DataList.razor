@@ -1,4 +1,4 @@
-﻿@typeparam TItem
+@typeparam TItem
 @inherits DataComponentBase<TItem>
 @using Microsoft.AspNetCore.Components.Web
 @using Microsoft.AspNetCore.Components.Web.Virtualization
@@ -7,7 +7,7 @@
     <div class="@ClassName" @attributes="@Attributes">
         @if (DataToolbar != null)
         {
-            @DataToolbar
+            @DataToolbar(this)
         }
 
         @if (DataError != null)

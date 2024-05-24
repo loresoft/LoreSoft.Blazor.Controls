@@ -1,4 +1,4 @@
-﻿@using Sample.Core.Services
+@using Sample.Core.Services
 @using Sample.Core.Models
 <h3>Basic</h3>
 
@@ -7,18 +7,18 @@
 <button class="btn btn-secondary" @onclick="@(() => DataGrid.Pager.PageSize = 25)">Page Size 25</button>
 
 
-<DataGrid Data="People" class="table table-hover" Selectable="true" @bind-SelectedItems="Selected" @ref="DataGrid">
+<DataGrid Data="People" class="table table-hover" Filterable="true" Selectable="true" @bind-SelectedItems="Selected" @ref="DataGrid">
     <DataColumns>
-        <DataColumn TItem="Person" Property="p => p.Id" Width="70px">
+        <DataColumn TItem="Person" Property="p => p.Id" Width="90px">
             <Template Context="item">
                 <a href="#" class="d-block" title="@item.FullName">@item.Id</a>
             </Template>
         </DataColumn>
         <DataColumn TItem="Person" Property="p => p.FirstName" SortIndex="1" />
         <DataColumn TItem="Person" Property="p => p.LastName" SortIndex="0" />
-        <DataColumn TItem="Person" Property="p => p.Score" Width="100px" Style="@SoreStyle" />
+        <DataColumn TItem="Person" Property="p => p.Score" Width="120px" Style="@SoreStyle" />
         <DataColumn TItem="Person" Property="p => p.Location" Sortable="false" />
-        <DataColumn TItem="Person" Property="p => p.Birthday" Format="d" />
+        <DataColumn TItem="Person" Property="p => p.Birthday" Width="110px" Format="d" />
     </DataColumns>
     <DataPagination Context="grid">
         <DataPager PageSize="10" />

@@ -5,11 +5,11 @@ public struct StyleBuilder
 {
     private string _buffer;
 
-    public static StyleBuilder Default(string prop, string value) => new StyleBuilder(prop, value);
+    public static StyleBuilder Default(string prop, string value) => new(prop, value);
 
     public static StyleBuilder Default(string style) => Empty().AddStyle(style);
 
-    public static StyleBuilder Empty() => new StyleBuilder();
+    public static StyleBuilder Empty() => new();
 
     public StyleBuilder(string prop, string value)
         => _buffer = $"{prop}:{value};";
@@ -50,15 +50,18 @@ public struct StyleBuilder
     public StyleBuilder AddStyle(StyleBuilder builder, Func<bool> when)
         => AddStyle(builder, when());
 
-    public StyleBuilder MergeStyle(IReadOnlyDictionary<string, object> attributes)
+    public StyleBuilder MergeStyle(IDictionary<string, object> attributes)
     {
         if (attributes == null)
             return this;
 
-        if (attributes.TryGetValue("style", out var c))
-            return AddRaw(c.ToString());
+        if (!attributes.TryGetValue("style", out var c))
+            return this;
 
-        return this;
+        // remove so it doesn't overwrite
+        attributes.Remove("style");
+
+        return AddRaw(c.ToString());
     }
 
     public override readonly string ToString()

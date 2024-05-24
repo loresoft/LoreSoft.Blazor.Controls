@@ -1,10 +1,8 @@
 #nullable enable
 
 using System.Diagnostics.CodeAnalysis;
-using System.Text.RegularExpressions;
 using System.Text;
-using static System.Net.Mime.MediaTypeNames;
-using System.Globalization;
+using System.Text.RegularExpressions;
 
 namespace LoreSoft.Blazor.Controls.Extensions;
 

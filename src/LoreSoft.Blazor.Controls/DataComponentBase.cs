@@ -24,7 +24,7 @@ public abstract class DataComponentBase<TItem> : ComponentBase, IDisposable
 
 
     [Parameter]
-    public RenderFragment DataToolbar { get; set; }
+    public RenderFragment<DataComponentBase<TItem>> DataToolbar { get; set; }
 
     [Parameter]
     public RenderFragment<DataComponentBase<TItem>> DataPagination { get; set; }
@@ -180,7 +180,7 @@ public abstract class DataComponentBase<TItem> : ComponentBase, IDisposable
 
     protected virtual DataRequest CreateDataRequest(CancellationToken cancellationToken)
     {
-        var request = new DataRequest(Pager.Page, Pager.PageSize, null, cancellationToken);
+        var request = new DataRequest(Pager.Page, Pager.PageSize, null, null, cancellationToken);
         return request;
     }
 
@@ -243,7 +243,7 @@ public abstract class DataComponentBase<TItem> : ComponentBase, IDisposable
 
 public record DataSort(string Property, bool Descending);
 
-public record DataRequest(int Page, int PageSize, DataSort[] Sorts, CancellationToken CancellationToken);
+public record DataRequest(int Page, int PageSize, DataSort[] Sorts, QueryGroup Query, CancellationToken CancellationToken);
 
 public record DataResult<TItem>(int Total, IEnumerable<TItem> Items);
 

@@ -57,6 +57,10 @@ public class DataColumn<TItem> : ComponentBase
 
 
     [Parameter]
+    public bool Filterable { get; set; } = true;
+
+
+    [Parameter]
     public bool Visible { get; set; } = true;
 
     public string Name => PropertyName();

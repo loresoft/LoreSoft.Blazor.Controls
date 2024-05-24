@@ -146,57 +146,61 @@ public class QueryBuilderField<TItem> : ComponentBase
     }
 
 
-    private bool IsComparableType(Type TargetType)
+    private bool IsComparableType(Type targetType)
     {
-        if (TargetType == typeof(int))
+        var type = targetType.GetUnderlyingType();
+
+        if (type == typeof(int))
             return true;
-        if (TargetType == typeof(long))
+        if (type == typeof(long))
             return true;
-        if (TargetType == typeof(short))
+        if (type == typeof(short))
             return true;
-        if (TargetType == typeof(float))
+        if (type == typeof(float))
             return true;
-        if (TargetType == typeof(double))
+        if (type == typeof(double))
             return true;
-        if (TargetType == typeof(decimal))
+        if (type == typeof(decimal))
             return true;
-        if (TargetType == typeof(DateTime))
+        if (type == typeof(DateTime))
             return true;
-        if (TargetType == typeof(DateTimeOffset))
+        if (type == typeof(DateTimeOffset))
             return true;
-        if (TargetType == typeof(DateOnly))
+        if (type == typeof(DateOnly))
             return true;
-        if (TargetType == typeof(TimeOnly))
+        if (type == typeof(TimeOnly))
             return true;
-        if (TargetType == typeof(TimeSpan))
+        if (type == typeof(TimeSpan))
             return true;
 
         return false;
     }
 
-    private string GetInputType(Type TargetType)
+    private string GetInputType(Type targetType)
     {
-        if (TargetType == typeof(int))
+        var type = targetType.GetUnderlyingType();
+
+        if (type == typeof(int))
             return "number";
-        if (TargetType == typeof(long))
+        if (type == typeof(long))
             return "number";
-        if (TargetType == typeof(short))
+        if (type == typeof(short))
             return "number";
-        if (TargetType == typeof(float))
+        if (type == typeof(float))
             return "number";
-        if (TargetType == typeof(double))
+        if (type == typeof(double))
             return "number";
-        if (TargetType == typeof(decimal))
+        if (type == typeof(decimal))
             return "number";
-        if (TargetType == typeof(DateTime))
+        if (type == typeof(DateTime))
             return "date";
-        if (TargetType == typeof(DateTimeOffset))
+        if (type == typeof(DateTimeOffset))
             return "date";
-        if (TargetType == typeof(DateOnly))
+        if (type == typeof(DateOnly))
             return "date";
-        if (TargetType == typeof(TimeOnly))
+        if (type == typeof(TimeOnly))
             return "time";
-        if (TargetType == typeof(TimeSpan))
+        if (type == typeof(TimeSpan))
             return "time";
 
         return "text";

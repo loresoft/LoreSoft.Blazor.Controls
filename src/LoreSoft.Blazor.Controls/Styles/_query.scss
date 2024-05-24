@@ -4,9 +4,10 @@
 
 .query-builder select,
 .query-builder button,
-.query-builder input {
+.query-builder input,
+.query-button {
   color: #6c757d;
-  background-color: transparent;
+  background-color: #fff;
   border: 1px solid #ccc;
   font-weight: 400;
   padding: .25rem .75rem;
@@ -15,19 +16,32 @@
 }
 
 .query-builder select,
-.query-builder button {
+.query-builder button,
+.query-button {
   cursor: pointer;
 }
 
 .query-builder select:hover,
 .query-builder button:hover,
-.query-builder input:hover {
+.query-builder input:hover,
+.query-button:hover {
   border: 1px solid #6c757d;
   color: #000;
 }
 
+.query-builder select:invalid,
+.query-builder input:invalid {
+  border: 1px solid #dc3546;
+}
+
+
 .query-group .query-group {
   margin-left: 2.5rem;
+}
+
+.query-group-header {
+  background-color: #f2f2f2;
+  padding: .125rem;
 }
 
 .query-button-delete::before {

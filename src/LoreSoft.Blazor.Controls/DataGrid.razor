@@ -1,5 +1,6 @@
 @typeparam TItem
 @inherits DataComponentBase<TItem>
+@using Microsoft.AspNetCore.Components.Rendering
 @using Microsoft.AspNetCore.Components.Web
 @using Microsoft.AspNetCore.Components.Web.Virtualization
 
@@ -7,12 +8,13 @@
     <div class="data-grid-container">
         @if (DataToolbar != null)
         {
-            @DataToolbar
+            @DataToolbar(this)
         }
         @if (DataColumns != null)
         {
             @DataColumns
         }
+
         <table class="data-grid" @attributes="@TableAttributes">
             <colgroup>
                 @if (DetailTemplate != null)
@@ -49,6 +51,7 @@
                                 <input class="data-check-input"
                                        type="checkbox"
                                        checked="@IsAllSelected()"
+                                       title="Select All"
                                        @onchange="ToggleSelectAll" />
                             </div>
                         </th>
@@ -56,23 +59,76 @@
                     @foreach (var column in VisibleColumns)
                     {
                         <th @key="column" class="@column.HeaderClass">
-                            @if (Sortable && column.Sortable)
-                            {
-                                <button type="button"
-                                        class="data-grid-header"
-                                        @onclick="() => SortByAsync(column)">
-                                    @HeaderFragment(column)
-                                </button>
-                            }
-                            else
-                            {
-                                <div class="data-grid-header">
-                                    @HeaderFragment(column)
-                                </div>
-                            }
+                            <div class="data-grid-header">
+                                @if (Sortable && column.Sortable)
+                                {
+                                    <button type="button"
+                                            class="data-grid-header-title"
+                                            title="Sort by @column.HeaderTitle()"
+                                            @onclick="() => SortByAsync(column)">
+                                        @HeaderFragment(column)
+                                    </button>
+                                }
+                                else
+                                {
+                                    <div class="data-grid-header-title">
+                                        @HeaderFragment(column)
+                                    </div>
+                                }
+
+                                @if (column.Sortable && column.CurrentSortIndex >= 0)
+                                {
+                                    <span class="data-grid-header-sort @(column.CurrentSortDescending ? "data-grid-header-sort-desc" : "data-grid-header-sort-asc" )"></span>
+                                }
+
+                                @if (Filterable && column.Filterable)
+                                {
+                                    <button type="button"
+                                            class="data-grid-header-filter"
+                                            title="Show Filter Dialog"
+                                            @onclick="ShowFilter">
+                                        <span class="@(IsFilterActive() ? "data-grid-header-filter-active" : "data-grid-header-filter-icon" )"></span>
+                                    </button>
+                                }
+                            </div>
                         </th>
                     }
                 </tr>
+                @if (FilterOpen)
+                {
+                    <tr>
+                        <td colspan="@CellCount" class="filter-row">
+                            <div class="filter-background"
+                                 @onclick="CloseFilter"></div>
+
+                            <div class="filter-container">
+                                <form name="filter-builder-form" @onsubmit="ApplyFilters">
+                                    <QueryBuilder TItem="TItem" Query="RootQuery">
+                                        <QueryFields>
+                                            @foreach (var column in Columns.Where(c => c.Filterable))
+                                            {
+                                                <QueryBuilderField Field="column.Property" Title="@column.HeaderTitle()" />
+                                            }
+                                        </QueryFields>
+                                    </QueryBuilder>
+
+                                    <div class="filter-footer">
+                                        <button type="submit"
+                                                class="query-button">
+                                            Apply
+                                        </button>
+
+                                        <button type="button"
+                                                class="query-button"
+                                                @onclick="ClearFilters">
+                                            Clear
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                }
             </thead>
             <tbody>
                 @if (DataError != null)
@@ -198,11 +254,6 @@
         {
             @column.HeaderTitle()
         }
-
-        @if (column.Sortable && column.CurrentSortIndex >= 0)
-        {
-            <span class="data-grid-header-sort @(column.CurrentSortDescending ? "data-grid-header-sort-desc" : "data-grid-header-sort-asc" )"></span>
-        }
     };
 
     protected RenderFragment<TItem> RowFragment => item => __builder =>
@@ -216,6 +267,7 @@
                 <td class="data-grid-hierarchy-cell">
                     <button type="button"
                             @onclick="() => ToggleDetailRow(item)"
+                            title="Show Details"
                             class="data-grid-hierarchy-button @(IsRowExpanded(item) ? "data-grid-hierarchy-button-expanded" : "data-grid-hierarchy-button-collapsed" )"></button>
                 </td>
             }
@@ -226,6 +278,7 @@
                         <input class="data-check-input"
                                type="checkbox"
                                checked="@(IsRowSelected(item))"
+                               title="Select Row"
                                @onchange="() => ToggleSelectRow(item)" />
                     </div>
                 </td>

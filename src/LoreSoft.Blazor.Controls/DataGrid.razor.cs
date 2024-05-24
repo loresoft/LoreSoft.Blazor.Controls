@@ -1,3 +1,6 @@
+using LoreSoft.Blazor.Controls.Extensions;
+using LoreSoft.Blazor.Controls.Utilities;
+
 using Microsoft.AspNetCore.Components;
 
 namespace LoreSoft.Blazor.Controls;
@@ -6,6 +9,7 @@ namespace LoreSoft.Blazor.Controls;
 public partial class DataGrid<TItem> : DataComponentBase<TItem>
 {
     private HashSet<TItem> _expandedItems = new();
+    private QueryGroup _query;
 
     [Parameter(CaptureUnmatchedValues = true)]
     public Dictionary<string, object> TableAttributes { get; set; }
@@ -23,6 +27,9 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
 
     [Parameter]
     public bool Sortable { get; set; } = true;
+
+    [Parameter]
+    public bool Filterable { get; set; }
 
 
     [Parameter]
@@ -44,7 +51,47 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
     public EventCallback<IEnumerable<TItem>> SelectedItemsChanged { get; set; }
 
 
+    [Parameter]
+    public QueryGroup Query { get; set; }
+
+    protected QueryGroup RootQuery { get; set; }
+
+
     public List<DataColumn<TItem>> Columns { get; } = [];
+
+
+    protected bool FilterOpen { get; set; }
+
+    protected void ShowFilter()
+    {
+        if (RootQuery.Filters.Count == 0)
+            RootQuery.Filters.Add(new QueryFilter());
+
+        FilterOpen = true;
+    }
+
+    protected void CloseFilter()
+    {
+        FilterOpen = false;
+    }
+
+    protected bool IsFilterActive()
+    {
+        return LinqExpressionBuilder.IsValid(RootQuery);
+    }
+
+    protected async Task ApplyFilters()
+    {
+        FilterOpen = false;
+        await RefreshAsync(true);
+    }
+
+    protected async Task ClearFilters()
+    {
+        RootQuery.Filters.Clear();
+        FilterOpen = false;
+        await RefreshAsync(true);
+    }
 
 
     public override async Task RefreshAsync(bool resetPager = false)
@@ -94,6 +141,19 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
         await base.OnAfterRenderAsync(firstRender);
     }
 
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+
+        // only update RootQuery if Query changed
+        if (_query != Query)
+        {
+            _query = Query;
+            RootQuery = Query;
+        }
+
+        RootQuery ??= new QueryGroup();
+    }
 
     protected bool IsRowExpanded(TItem item)
     {
@@ -180,7 +240,15 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
             .Select(c => new DataSort(c.Name, c.CurrentSortDescending))
             .ToArray();
 
-        return new DataRequest(Pager.Page, Pager.PageSize, sorts, cancellationToken);
+        return new DataRequest(Pager.Page, Pager.PageSize, sorts, RootQuery, cancellationToken);
+    }
+
+    protected override IQueryable<TItem> FilterData(IQueryable<TItem> queryable, DataRequest request)
+    {
+        if (!Filterable || !LinqExpressionBuilder.IsValid(RootQuery))
+            return queryable;
+
+        return queryable.Filter(request.Query);
     }
 
     protected override IQueryable<TItem> SortData(IQueryable<TItem> queryable, DataRequest request)

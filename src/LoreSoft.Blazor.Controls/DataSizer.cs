@@ -46,22 +46,23 @@ public class DataSizer : ComponentBase, IDisposable
 
         builder.OpenElement(3, "select");
         builder.AddAttribute(4, "value", PagerState.PageSize);
-        builder.AddAttribute(5, "onchange", EventCallback.Factory.Create<ChangeEventArgs>(this, e => SetPageSize(Convert.ToInt32(e.Value ?? 0))));
+        builder.AddAttribute(5, "title", "Select page size");
+        builder.AddAttribute(6, "onchange", EventCallback.Factory.Create<ChangeEventArgs>(this, e => SetPageSize(Convert.ToInt32(e.Value ?? 0))));
 
         foreach (var pageSizeOption in PageSizeOptions)
         {
-            builder.OpenElement(6, "option");
-            builder.AddAttribute(7, "value", pageSizeOption);
+            builder.OpenElement(7, "option");
+            builder.AddAttribute(8, "value", pageSizeOption);
             builder.SetKey(pageSizeOption);
-            builder.AddContent(8, pageSizeOption);
+            builder.AddContent(9, pageSizeOption);
             builder.CloseElement(); // option
         }
 
         if (IncludeAllOption)
         {
-            builder.OpenElement(9, "option");
-            builder.AddAttribute(10, "value", 0);
-            builder.AddContent(11, "All");
+            builder.OpenElement(10, "option");
+            builder.AddAttribute(11, "value", 0);
+            builder.AddContent(12, "All");
             builder.CloseElement(); // option
         }
 
@@ -69,8 +70,8 @@ public class DataSizer : ComponentBase, IDisposable
 
         if (!string.IsNullOrEmpty(DescriptionLabel))
         {
-            builder.OpenElement(12, "span");
-            builder.AddContent(13, DescriptionLabel);
+            builder.OpenElement(13, "span");
+            builder.AddContent(14, DescriptionLabel);
             builder.CloseElement(); // span
         }
 

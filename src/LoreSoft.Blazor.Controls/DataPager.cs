@@ -159,13 +159,13 @@ public class DataPager : ComponentBase, IDisposable
             var (start, end) = GetPageEnds();
 
             if (start > 1)
-                RenderPageLink(builder, start - 1, "...");
+                RenderPageLink(builder, start - 1, "...", $"Go to page {start - 1}");
 
             for (var p = start; p <= end; p++)
-                RenderPageLink(builder, p, p.ToString(), p == PagerState.Page ? CurrentClass : null);
+                RenderPageLink(builder, p, p.ToString(), $"Go to page {p}", p == PagerState.Page ? CurrentClass : null);
 
             if (end < PagerState.PageCount)
-                RenderPageLink(builder, end + 1, "...");
+                RenderPageLink(builder, end + 1, "...", $"Go to page {end + 1}");
         }
 
         RenderNextLink(builder);
@@ -182,7 +182,7 @@ public class DataPager : ComponentBase, IDisposable
         var page = 1;
         var disabledClass = PagerState.IsFirstPage ? DisabledClass : null;
 
-        RenderPageLink(builder, page, FirstText, disabledClass);
+        RenderPageLink(builder, page, FirstText, "Go to first page", disabledClass);
     }
 
     private void RenderPreviousLink(RenderTreeBuilder builder)
@@ -193,10 +193,10 @@ public class DataPager : ComponentBase, IDisposable
         var page = PagerState.Page - 1;
         var disabledClass = PagerState.HasPreviousPage ? null : DisabledClass;
 
-        RenderPageLink(builder, page, PreviousText, disabledClass);
+        RenderPageLink(builder, page, PreviousText, "Go to previous page", disabledClass);
     }
 
-    private void RenderPageLink(RenderTreeBuilder builder, int page, string text, string disabledClass = null)
+    private void RenderPageLink(RenderTreeBuilder builder, int page, string text, string title, string disabledClass = null)
     {
         if (!ShowPage)
             return;
@@ -217,15 +217,16 @@ public class DataPager : ComponentBase, IDisposable
             builder.OpenElement(7, "button");
             builder.AddAttribute(8, "class", ButtonClass);
             builder.AddAttribute(9, "type", "button");
-            builder.AddAttribute(10, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, () => GoToPage(page)));
-            builder.AddContent(11, text);
+            builder.AddAttribute(10, "title", title);
+            builder.AddAttribute(11, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, () => GoToPage(page)));
+            builder.AddContent(12, text);
             builder.CloseElement(); // button
         }
         else
         {
-            builder.OpenElement(12, "span");
-            builder.AddAttribute(13, "class", ButtonClass);
-            builder.AddContent(14, text);
+            builder.OpenElement(13, "span");
+            builder.AddAttribute(14, "class", ButtonClass);
+            builder.AddContent(15, text);
             builder.CloseElement(); // span
         }
 
@@ -240,7 +241,7 @@ public class DataPager : ComponentBase, IDisposable
         var page = PagerState.Page + 1;
         var disabledClass = PagerState.HasNextPage ? null : DisabledClass;
 
-        RenderPageLink(builder, page, NextText, disabledClass);
+        RenderPageLink(builder, page, NextText, "Go to next page", disabledClass);
     }
 
     private void RenderLastLink(RenderTreeBuilder builder)
@@ -251,7 +252,7 @@ public class DataPager : ComponentBase, IDisposable
         var page = PagerState.PageCount;
         var disabledClass = PagerState.IsLastPage ? DisabledClass : null;
 
-        RenderPageLink(builder, page, LastText, disabledClass);
+        RenderPageLink(builder, page, LastText, "Go to last page", disabledClass);
     }
 
     private (int start, int end) GetPageEnds()

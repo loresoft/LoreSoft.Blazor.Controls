@@ -7,7 +7,9 @@ public static class QueryOperators
     public const string Contains = "contains";
     public const string NotContains = "not contains";
     public const string StartsWith = "starts with";
+    public const string NotStartsWith = "not starts with";
     public const string EndsWith = "ends with";
+    public const string NotEndsWith = "not ends with";
     public const string GreaterThan = "greater than";
     public const string GreaterThanOrEqual = "greater than or equal";
     public const string LessThan = "less than";

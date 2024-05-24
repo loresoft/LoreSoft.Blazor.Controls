@@ -1,4 +1,4 @@
-﻿@using Sample.Core.Models.GitHub
+@using Sample.Core.Models.GitHub
 @using Sample.Core.Services
 
 @inject GitHubClient GitHubClient
@@ -7,7 +7,10 @@
 
 <input type="text" class="form-control" @bind-value="SearchText.Value" @bind-value:event="oninput" />
 
-<DataGrid DataProvider="LoadData" class="table" Sortable="false" Selectable="true" @ref="Grid">
+<DataGrid DataProvider="LoadData" class="table" Sortable="false" Selectable="true" Filterable="true" @ref="Grid">
+    <DataToolbar Context="grid">
+
+    </DataToolbar>
     <DataColumns>
         <DataColumn TItem="Repository" Property="p => p.Id" Width="70px" />
         <DataColumn TItem="Repository" Property="p => p.Name" />
