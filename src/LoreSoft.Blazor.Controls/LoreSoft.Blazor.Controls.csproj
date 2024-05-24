@@ -21,6 +21,12 @@
     <EmbeddedResource Include="wwwroot\**" Exclude="**\*.js;**\*.css" LogicalName="blazor:file:%(RecursiveDir)%(Filename)%(Extension)" />
   </ItemGroup>
 
+  <ItemGroup>
+    <EmbeddedResource Include="LinkerConfig.xml">
+      <LogicalName>$(MSBuildProjectName).xml</LogicalName>
+    </EmbeddedResource>
+  </ItemGroup>
+
   <Target Name="SassCheck" BeforeTargets="PreBuild">
     <Exec Command="sass --version" ContinueOnError="true">
       <Output TaskParameter="ExitCode" PropertyName="ErrorCodeSass" />

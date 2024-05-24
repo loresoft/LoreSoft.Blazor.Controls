@@ -49,10 +49,6 @@ public abstract class DataComponentBase<TItem> : ComponentBase, IDisposable
     public int VirtualOverscan { get; set; } = 3;
 
 
-    [Parameter]
-    public Func<TItem, bool> Filter { get; set; } = null;
-
-
     public bool IsLoading { get; set; }
 
     public DataPagerState Pager { get; } = new();
@@ -222,9 +218,6 @@ public abstract class DataComponentBase<TItem> : ComponentBase, IDisposable
 
     protected virtual IQueryable<TItem> FilterData(IQueryable<TItem> queryable, DataRequest request)
     {
-        if (Filter != null)
-            return queryable.Where(i => Filter(i));
-
         return queryable;
     }
 

@@ -5,6 +5,7 @@
 <button class="btn btn-secondary" @onclick="@(() => DataGrid.SortByAsync("Id"))">Sort By Id</button>
 <button class="btn btn-secondary" @onclick="@(() => DataGrid.Pager.Page = 5)">Go to page 5</button>
 <button class="btn btn-secondary" @onclick="@(() => DataGrid.Pager.PageSize = 25)">Page Size 25</button>
+<button class="btn btn-secondary" @onclick="ApplyFilter">Filter High Score</button>
 
 
 <DataGrid Data="People" class="table table-hover" Filterable="true" Selectable="true" @bind-SelectedItems="Selected" @ref="DataGrid">
@@ -58,6 +59,17 @@
             return "background-color: #ffc107";
 
         return null;
+    }
+
+    private async Task ApplyFilter()
+    {
+        var filters = new List<QueryRule>
+        {
+            new QueryFilter { Field = nameof(Person.Score), Operator = QueryOperators.GreaterThan, Value = 50 },
+            new QueryFilter { Field = nameof(Person.Birthday), Operator = QueryOperators.GreaterThan, Value = new DateTime(2000, 1, 1) }
+        };
+
+        await DataGrid.ApplyFilters(filters, true);
     }
 
 }

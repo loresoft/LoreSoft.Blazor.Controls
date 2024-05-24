@@ -5,11 +5,24 @@
 
 <h3>GitHub</h3>
 
-<input type="text" class="form-control" @bind-value="SearchText.Value" @bind-value:event="oninput" />
 
-<DataGrid DataProvider="LoadData" class="table" Sortable="false" Selectable="true" Filterable="true" @ref="Grid">
+<DataGrid DataProvider="LoadData" class="table" Sortable="false" Selectable="true" @ref="Grid">
     <DataToolbar Context="grid">
-
+        <form @onsubmit="() => Grid.RefreshAsync(true)">
+            <div class="input-group input-group-sm mr-2">
+                <input type="search"
+                       @bind="SearchText"
+                       class="form-control"
+                       placeholder="Search" />
+                <div class="input-group-append">
+                    <button class="btn btn-sm btn-outline-secondary"
+                            type="submit">
+                        <i class="fas fa-search"
+                           aria-hidden="true"></i>
+                    </button>
+                </div>
+            </div>
+        </form>
     </DataToolbar>
     <DataColumns>
         <DataColumn TItem="Repository" Property="p => p.Id" Width="70px" />
@@ -45,25 +58,16 @@
 @code {
     private DataGrid<Repository> Grid { get; set; }
 
-    private DebounceValue<string> SearchText { get; set; }
+    private string SearchText { get; set; } = "Blazor";
 
     public Repository SelectedRepository { get; set; }
 
     public async ValueTask<DataResult<Repository>> LoadData(DataRequest request)
     {
-        var value = SearchText.Value;
+        var value = SearchText;
         var result = await GitHubClient.SearchRepositories(value, request.Page, request.PageSize);
 
         var response = new DataResult<Repository>(result.TotalCount, result.Items);
         return response;
     }
-
-    protected override void OnInitialized()
-    {
-        SearchText = new DebounceValue<string>("blazor")
-        {
-            Trigger = _ => InvokeAsync(() => Grid.RefreshAsync(true))
-        };
-    }
-
 }

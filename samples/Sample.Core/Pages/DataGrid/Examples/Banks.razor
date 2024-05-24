@@ -5,7 +5,7 @@
 
 <h3>Banks</h3>
 
-<DataGrid Data="Data" class="table table-hover" @ref="DataGrid" RowAttributes="RowAttributes">
+<DataGrid Data="Data" class="table table-hover" @ref="DataGrid" RowAttributes="RowAttributes" Filterable="true">
     <DataColumns>
         <DataColumn TItem="Bank" Property="p => p.Id" Width="70px" data-test="testing" CellAttributes="CellAttributes" />
         <DataColumn TItem="Bank" Property="p => p.AccountNumber" Width="150px" Title="Account" SortIndex="0" />

@@ -86,13 +86,21 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
         await RefreshAsync(true);
     }
 
-    protected async Task ClearFilters()
+    public async Task ClearFilters()
     {
         RootQuery.Filters.Clear();
         FilterOpen = false;
         await RefreshAsync(true);
     }
 
+    public async Task ApplyFilters(IEnumerable<QueryRule> rules, bool replace = false)
+    {
+        if (replace)
+            RootQuery.Filters.Clear();
+
+        RootQuery.Filters.AddRange(rules);
+        await RefreshAsync(true);
+    }
 
     public override async Task RefreshAsync(bool resetPager = false)
     {
