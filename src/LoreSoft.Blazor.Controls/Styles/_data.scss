@@ -32,8 +32,14 @@ button.data-grid-header-filter {
   cursor: pointer;
   background-color: transparent;
   border: 0 none;
-  padding: 0.025rem 0.2rem;
+  padding: 0;
   font: inherit;
+}
+
+.data-grid-header-sort {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .data-grid-header-sort-asc::before,

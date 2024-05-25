@@ -78,7 +78,9 @@
 
                                 @if (column.Sortable && column.CurrentSortIndex >= 0)
                                 {
-                                    <span class="data-grid-header-sort @(column.CurrentSortDescending ? "data-grid-header-sort-desc" : "data-grid-header-sort-asc" )"></span>
+                                    <div class="data-grid-header-sort">
+                                        <span class="@(column.CurrentSortDescending ? "data-grid-header-sort-desc" : "data-grid-header-sort-asc" )"></span>
+                                    </div>
                                 }
 
                                 @if (Filterable && column.Filterable)
