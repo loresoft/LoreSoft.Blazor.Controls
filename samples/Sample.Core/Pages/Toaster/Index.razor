@@ -1,0 +1,113 @@
+@page "/toaster/index"
+
+@inject IToaster Toaster
+
+<h1>Toaster</h1>
+
+<p>Toaster Control</p>
+
+<Instructions></Instructions>
+
+<h2 class="mb-3">Example</h2>
+
+<h3>Data</h3>
+<div class="form-row mb-3">
+    <div class="form-group col-6">
+        <label for="message">Message</label>
+        <input id="message" class="form-control" @bind="message" />
+    </div>
+</div>
+<div class="form-row">
+    <h3>Actions</h3>
+    <div class="form-group pl-3">
+        <button class="btn btn-primary" @onclick="@(() => Show(ToastLevel.Information))">Information</button>
+        <button class="btn btn-success" @onclick="@(() => Show(ToastLevel.Success))">Success</button>
+        <button class="btn btn-warning" @onclick="@(() => Show(ToastLevel.Warning))">Warning</button>
+        <button class="btn btn-danger" @onclick="@(() => Show(ToastLevel.Error))">Error</button>
+        <button class="btn btn-dark" @onclick="@(() => Toaster.Clear())">Clear</button>
+    </div>
+</div>
+<div class="form-row mt-3 configuration">
+    <div class="col-4">
+        <div class="form-group">
+            <h5>Shared options</h5>
+        </div>
+        <div class="form-group row">
+            <label for="position" class="col-sm-6 col-form-label">Position</label>
+            <div class="col-sm-5">
+                <select id="position" class="form-control form-control-sm" @bind="position">
+                    <option value="@ToastPosition.TopLeft">Top left</option>
+                    <option value="@ToastPosition.TopCenter">Top center</option>
+                    <option value="@ToastPosition.TopRight">Top right</option>
+                    <option value="@ToastPosition.BottomRight">Bottom right</option>
+                    <option value="@ToastPosition.BottomCenter">Bottom center</option>
+                    <option value="@ToastPosition.BottomLeft">Bottom left</option>
+
+                </select>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label for="visibleStateDuration" class="col-sm-7 col-form-label">Visible duration</label>
+            <div class="col-sm-4">
+                <input type="number" class="form-control form-control-sm" id="visibleStateDuration" @bind="timeout" />
+            </div>
+        </div>
+    </div>
+    <div class="col-4">
+        <h5>Toast options</h5>
+        <div class="form-check">
+            <input type="checkbox" class="form-check-input" id="showProgressbar" @bind="showProgressBar" />
+            <label class="form-check-label" for="showProgressbar">
+                Progress bar
+            </label>
+        </div>
+        <div class="form-check">
+            <input type="checkbox" class="form-check-input" id="showCloseIcon" @bind="showCloseIcon" />
+            <label class="form-check-label" for="showCloseIcon">
+                Close icon
+            </label>
+        </div>
+        <div class="form-check">
+            <input type="checkbox" class="form-check-input" id="pauseHover" @bind="pauseHover" />
+            <label class="form-check-label" for="pauseHover">
+                Pause progress on hover
+            </label>
+        </div>
+        <div class="form-check">
+            <input type="checkbox" class="form-check-input" id="actionOnClick" @bind="actionOnClick" />
+            <label class="form-check-label" for="actionOnClick">
+                Action on click (message in console)
+            </label>
+        </div>
+    </div>
+</div>
+
+@code {
+    string message = "Test Message";
+
+    //toast options
+    int timeout = 10;
+    bool showProgressBar = true;
+    bool showCloseIcon = true;
+    bool pauseHover = false;
+    bool actionOnClick;
+    ToastPosition position = ToastPosition.TopRight;
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+    }
+
+    void Show(ToastLevel type)
+    {
+        Toaster.Show(type, message, config =>
+        {
+            config.ShowProgressBar = showProgressBar;
+            config.ShowCloseButton = showCloseIcon;
+            config.PauseProgressOnHover = pauseHover;
+            config.Position = position;
+            config.Timeout = timeout;
+        });
+    }
+
+}

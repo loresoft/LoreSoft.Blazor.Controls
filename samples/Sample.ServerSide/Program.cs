@@ -1,40 +1,39 @@
 using LoreSoft.Blazor.Controls;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Hosting;
 
-using Sample.Core;
 using Sample.Core.Services;
 
-namespace Sample.ServerSide
+namespace Sample.ServerSide;
+
+public class Program
 {
-    public class Program
+    public static void Main(string[] args)
     {
-        public static void Main(string[] args)
-        {
-            var builder = WebApplication.CreateBuilder(args);
+        var builder = WebApplication.CreateBuilder(args);
 
-            builder.Services
-                .AddHttpClient<GitHubClient>()
-                .AddHttpMessageHandler<ProgressBarHandler>();
+        builder.Logging.SetMinimumLevel(LogLevel.Trace);
 
-            builder.Services
-                .AddHttpClient<RandomDataClient>()
-                .AddHttpMessageHandler<ProgressBarHandler>();
+        builder.Services
+            .AddHttpClient<GitHubClient>()
+            .AddHttpMessageHandler<ProgressBarHandler>();
 
-            builder.Services.AddRazorPages();
-            builder.Services.AddServerSideBlazor(config => { config.DetailedErrors = true; });
-            builder.Services.AddProgressBar();
+        builder.Services
+            .AddHttpClient<RandomDataClient>()
+            .AddHttpMessageHandler<ProgressBarHandler>();
 
-            var app = builder.Build();
+        builder.Services.AddRazorPages();
+        builder.Services.AddServerSideBlazor(config => { config.DetailedErrors = true; });
 
-            app.UseHttpsRedirection();
-            app.UseStaticFiles();
-            app.UseAntiforgery();
+        builder.Services.AddBlazorControls();
 
-            app.MapBlazorHub();
-            app.MapFallbackToPage("/_Host");
+        var app = builder.Build();
 
-            app.Run();
-        }
+        app.UseHttpsRedirection();
+        app.UseStaticFiles();
+        app.UseAntiforgery();
+
+        app.MapBlazorHub();
+        app.MapFallbackToPage("/_Host");
+
+        app.Run();
     }
 }

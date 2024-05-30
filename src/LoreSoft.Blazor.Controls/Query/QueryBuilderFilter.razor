@@ -1,4 +1,5 @@
 @typeparam TItem
+@namespace LoreSoft.Blazor.Controls
 
 @using LoreSoft.Blazor.Controls.Extensions
 @using Microsoft.AspNetCore.Components.Web
@@ -15,9 +16,10 @@
             @bind:after="FieldChanged"
             class="query-filter-fields">
         <option value="">- Field -</option>
-        <Repeater Items="Fields" Context="field">
+        @foreach (var field in Fields)
+        {
             <option @key="field" value="@field.Name">@field.CurrentTitle</option>
-        </Repeater>
+        }
     </select>
 
     @if (Field != null)
@@ -37,9 +39,10 @@
                     @bind:after="@OperatorChanged"
                     class="query-filter-operators">
                 <option value="">- Operator -</option>
-                <Repeater Items="Field.CurrentOperators" Context="item">
+                @foreach (var item in Field.CurrentOperators)
+                {
                     <option @key="item" value="@item">@item</option>
-                </Repeater>
+                }
             </select>
         }
 

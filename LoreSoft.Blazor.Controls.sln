@@ -20,7 +20,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{3E5818B3
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sample.ClientSide", "samples\Sample.ClientSide\Sample.ClientSide.csproj", "{0015C9C3-114B-4C3B-AF31-08D0143714F3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LoreSoft.Blazor.Controls.Tests", "test\LoreSoft.Blazor.Controls.Tests\LoreSoft.Blazor.Controls.Tests.csproj", "{1E7E912F-9D53-4F8C-BCB6-F3AF1BA449CD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LoreSoft.Blazor.Controls.Tests", "test\LoreSoft.Blazor.Controls.Tests\LoreSoft.Blazor.Controls.Tests.csproj", "{1E7E912F-9D53-4F8C-BCB6-F3AF1BA449CD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

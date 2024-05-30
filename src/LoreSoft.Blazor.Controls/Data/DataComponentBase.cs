@@ -1,10 +1,4 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 
 using Microsoft.AspNetCore.Components;
 
@@ -234,10 +228,3 @@ public abstract class DataComponentBase<TItem> : ComponentBase, IDisposable
     }
 }
 
-public record DataSort(string Property, bool Descending);
-
-public record DataRequest(int Page, int PageSize, DataSort[] Sorts, QueryGroup Query, CancellationToken CancellationToken);
-
-public record DataResult<TItem>(int Total, IEnumerable<TItem> Items);
-
-public delegate ValueTask<DataResult<TItem>> DataProviderDelegate<TItem>(DataRequest request);

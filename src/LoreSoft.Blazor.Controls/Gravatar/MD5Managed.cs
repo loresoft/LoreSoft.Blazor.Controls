@@ -1,4 +1,4 @@
-﻿//Copyright (c) Microsoft Corporation.  All rights reserved.
+//Copyright (c) Microsoft Corporation.  All rights reserved.
 using System;
 using System.Security.Cryptography;
 
@@ -10,13 +10,13 @@ using System.Security.Cryptography;
 // * Copyright (c) Microsoft Corporation.  All rights reserved.
 // **************************************************************
 
-namespace LoreSoft.Blazor.Internal;
+namespace LoreSoft.Blazor.Controls;
 
 internal sealed class MD5Managed : HashAlgorithm
 {
     private byte[] _data;
     private ABCDStruct _abcd;
-    private Int64 _totalLength;
+    private long _totalLength;
     private int _dataSize;
 
     public MD5Managed()

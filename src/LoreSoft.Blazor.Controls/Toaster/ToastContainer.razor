@@ -1,0 +1,22 @@
+@namespace LoreSoft.Blazor.Controls
+
+@if (ToastList.Count > 0)
+{
+    @foreach (var positionGroup in ToastList.GroupBy(x => x.ToastSettings.Position))
+    {
+        <div @key="positionGroup.Key"
+             @attributes="Attributes"
+             class="@ContainerClass(positionGroup.Key)">
+            <CascadingValue Value=this IsFixed="true">
+                @foreach (var toast in positionGroup!.OrderBy(x => x.TimeStamp))
+                {
+                    <ToastElement @key="toast.Id"
+                                  ToastId="toast.Id"
+                                  Message="toast.Message"
+                                  Level="toast.Level"
+                                  Settings="toast.ToastSettings" />
+                }
+            </CascadingValue>
+        </div>
+    }
+}

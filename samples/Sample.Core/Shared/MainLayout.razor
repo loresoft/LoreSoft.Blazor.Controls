@@ -1,11 +1,13 @@
-﻿@inherits Microsoft.AspNetCore.Components.LayoutComponentBase
+@inherits Microsoft.AspNetCore.Components.LayoutComponentBase
 
 <MainMenu></MainMenu>
+
+<ProgressBar Color="#f44336" />
+
+<ToastContainer MaxToast="10" Position="@ToastPosition.TopCenter" />
 
 <main role="main" class="container">
     @Body
 </main>
 
 <Footer></Footer>
-
-<ProgressBar Color="#f44336" />

@@ -1,4 +1,4 @@
-﻿namespace LoreSoft.Blazor.Controls;
+namespace LoreSoft.Blazor.Controls;
 
 public class ProgressBarState
 {

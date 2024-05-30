@@ -1,4 +1,4 @@
-﻿//Copyright (c) Microsoft Corporation.  All rights reserved.
+//Copyright (c) Microsoft Corporation.  All rights reserved.
 using System;
 using System.Text;
 
@@ -10,9 +10,9 @@ using System.Text;
 // * Copyright (c) Microsoft Corporation.  All rights reserved.
 // **************************************************************
 
-namespace LoreSoft.Blazor.Internal;
+namespace LoreSoft.Blazor.Controls;
 
-// Simple struct for the (a,b,c,d) which is used to compute the mesage digest.    
+// Simple struct for the (a,b,c,d) which is used to compute the mesage digest.
 struct ABCDStruct
 {
     public uint A;
@@ -29,9 +29,9 @@ internal sealed class MD5Core
     public static byte[] GetHash(string input, Encoding encoding)
     {
         if (null == input)
-            throw new System.ArgumentNullException("input", "Unable to calculate hash over null input data");
+            throw new ArgumentNullException("input", "Unable to calculate hash over null input data");
         if (null == encoding)
-            throw new System.ArgumentNullException("encoding", "Unable to calculate hash over a string without a default encoding. Consider using the GetHash(string) overload to use UTF8 Encoding");
+            throw new ArgumentNullException("encoding", "Unable to calculate hash over a string without a default encoding. Consider using the GetHash(string) overload to use UTF8 Encoding");
 
         byte[] target = encoding.GetBytes(input);
 
@@ -46,7 +46,7 @@ internal sealed class MD5Core
     public static string GetHashString(byte[] input)
     {
         if (null == input)
-            throw new System.ArgumentNullException("input", "Unable to calculate hash over null input data");
+            throw new ArgumentNullException("input", "Unable to calculate hash over null input data");
 
         string retval = BitConverter.ToString(GetHash(input));
         retval = retval.Replace("-", "");
@@ -57,9 +57,9 @@ internal sealed class MD5Core
     public static string GetHashString(string input, Encoding encoding)
     {
         if (null == input)
-            throw new System.ArgumentNullException("input", "Unable to calculate hash over null input data");
+            throw new ArgumentNullException("input", "Unable to calculate hash over null input data");
         if (null == encoding)
-            throw new System.ArgumentNullException("encoding", "Unable to calculate hash over a string without a default encoding. " +
+            throw new ArgumentNullException("encoding", "Unable to calculate hash over a string without a default encoding. " +
                                                                "Consider using the GetHashString(string) overload to use UTF8 Encoding");
 
         byte[] target = encoding.GetBytes(input);
@@ -75,7 +75,7 @@ internal sealed class MD5Core
     public static byte[] GetHash(byte[] input)
     {
         if (null == input)
-            throw new System.ArgumentNullException("input", "Unable to calculate hash over null input data");
+            throw new ArgumentNullException("input", "Unable to calculate hash over null input data");
 
         //Intitial values defined in RFC 1321
         var abcd = new ABCDStruct();
@@ -88,19 +88,19 @@ internal sealed class MD5Core
         int startIndex = 0;
         while (startIndex <= input.Length - 64)
         {
-            MD5Core.GetHashBlock(input, ref abcd, startIndex);
+            GetHashBlock(input, ref abcd, startIndex);
             startIndex += 64;
         }
-        // The final data block. 
-        return MD5Core.GetHashFinalBlock(input, startIndex, input.Length - startIndex, abcd, (Int64)input.Length * 8);
+        // The final data block.
+        return GetHashFinalBlock(input, startIndex, input.Length - startIndex, abcd, (long)input.Length * 8);
     }
 
-    internal static byte[] GetHashFinalBlock(byte[] input, int ibStart, int cbSize, ABCDStruct ABCD, Int64 len)
+    internal static byte[] GetHashFinalBlock(byte[] input, int ibStart, int cbSize, ABCDStruct ABCD, long len)
     {
         byte[] working = new byte[64];
         byte[] length = BitConverter.GetBytes(len);
 
-        //Padding is a single bit 1, followed by the number of 0s required to make size congruent to 448 modulo 512. Step 1 of RFC 1321  
+        //Padding is a single bit 1, followed by the number of 0s required to make size congruent to 448 modulo 512. Step 1 of RFC 1321
         //The CLR ensures that our buffer is 0-assigned, we don't need to explicitly set it. This is why it ends up being quicker to just
         //use a temporary array rather then doing in-place assignment (5% for small inputs)
         Array.Copy(input, ibStart, working, 0, cbSize);
@@ -223,49 +223,49 @@ internal sealed class MD5Core
     {
         //                  (b + LSR((a + F(b, c, d) + x + t), s))
         //F(x, y, z)        ((x & y) | ((x ^ 0xFFFFFFFF) & z))
-        return unchecked(b + LSR((a + ((b & c) | ((b ^ 0xFFFFFFFF) & d)) + x + t), s));
+        return unchecked(b + LSR(a + (b & c | (b ^ 0xFFFFFFFF) & d) + x + t, s));
     }
 
     private static uint r2(uint a, uint b, uint c, uint d, uint x, int s, uint t)
     {
         //                  (b + LSR((a + G(b, c, d) + x + t), s))
         //G(x, y, z)        ((x & z) | (y & (z ^ 0xFFFFFFFF)))
-        return unchecked(b + LSR((a + ((b & d) | (c & (d ^ 0xFFFFFFFF))) + x + t), s));
+        return unchecked(b + LSR(a + (b & d | c & (d ^ 0xFFFFFFFF)) + x + t, s));
     }
 
     private static uint r3(uint a, uint b, uint c, uint d, uint x, int s, uint t)
     {
         //                  (b + LSR((a + H(b, c, d) + k + i), s))
         //H(x, y, z)        (x ^ y ^ z)
-        return unchecked(b + LSR((a + (b ^ c ^ d) + x + t), s));
+        return unchecked(b + LSR(a + (b ^ c ^ d) + x + t, s));
     }
 
     private static uint r4(uint a, uint b, uint c, uint d, uint x, int s, uint t)
     {
         //                  (b + LSR((a + I(b, c, d) + k + i), s))
         //I(x, y, z)        (y ^ (x | (z ^ 0xFFFFFFFF)))
-        return unchecked(b + LSR((a + (c ^ (b | (d ^ 0xFFFFFFFF))) + x + t), s));
+        return unchecked(b + LSR(a + (c ^ (b | d ^ 0xFFFFFFFF)) + x + t, s));
     }
 
     // Implementation of left rotate
-    // s is an int instead of a uint becuase the CLR requires the argument passed to >>/<< is of 
+    // s is an int instead of a uint becuase the CLR requires the argument passed to >>/<< is of
     // type int. Doing the demoting inside this function would add overhead.
     private static uint LSR(uint i, int s)
     {
-        return ((i << s) | (i >> (32 - s)));
+        return i << s | i >> 32 - s;
     }
 
     //Convert input array into array of UInts
     private static uint[] Converter(byte[] input, int ibStart)
     {
         if (null == input)
-            throw new System.ArgumentNullException("input", "Unable convert null array to array of uInts");
+            throw new ArgumentNullException("input", "Unable convert null array to array of uInts");
 
         uint[] result = new uint[16];
 
         for (int i = 0; i < 16; i++)
         {
-            result[i] = (uint)input[ibStart + i * 4];
+            result[i] = input[ibStart + i * 4];
             result[i] += (uint)input[ibStart + i * 4 + 1] << 8;
             result[i] += (uint)input[ibStart + i * 4 + 2] << 16;
             result[i] += (uint)input[ibStart + i * 4 + 3] << 24;

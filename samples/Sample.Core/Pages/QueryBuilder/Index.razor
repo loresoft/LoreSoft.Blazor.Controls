@@ -18,10 +18,5 @@
 <Templates />
 
 @code {
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        base.OnAfterRender(firstRender);
-        //TODO fix highlight, breaks data binding
-        //await JsRuntime.InvokeAsync<object>("Prism.highlightAll");
-    }
+
 }
