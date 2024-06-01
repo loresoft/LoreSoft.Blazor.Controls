@@ -1,4 +1,4 @@
-﻿@using Sample.Core.Models.GitHub
+@using Sample.Core.Models.GitHub
 @using Sample.Core.Services
 
 @inject GitHubClient GitHubClient
@@ -48,10 +48,11 @@
 
     protected override void OnInitialized()
     {
-        SearchText = new DebounceValue<string>("blazor")
-        {
-            Trigger = _ => InvokeAsync(() => DataList.RefreshAsync(true))
-        };
+        SearchText = new DebounceValue<string>(
+            (v) => InvokeAsync(() => DataList.RefreshAsync(true)),
+            DebounceValue<string>.DefaultDelay,
+            "blazor"
+        );
     }
 
 }

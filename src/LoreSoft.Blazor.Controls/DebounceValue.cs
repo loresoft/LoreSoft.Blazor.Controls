@@ -1,28 +1,32 @@
-using System.Timers;
+#nullable enable
 
 namespace LoreSoft.Blazor.Controls;
 
-public class DebounceValue<T> : IDisposable
+public class DebounceValue<T>
 {
-    private readonly System.Timers.Timer _debounceTimer;
-    private T _value;
+    public static readonly TimeSpan DefaultDelay = TimeSpan.FromMilliseconds(800);
 
+    private T? _value;
+    private int _last = 0;
 
-    public DebounceValue(int interval = 800)
-        : this(default, interval)
+    public DebounceValue(Action<T?> action)
+        : this(action, DefaultDelay, default)
     {
     }
 
-    public DebounceValue(T value, int interval = 800)
+    public DebounceValue(Action<T?> action, TimeSpan delay)
+        : this(action, delay, default)
     {
+    }
+
+    public DebounceValue(Action<T?> action, TimeSpan delay, T? value)
+    {
+        Action = action;
+        Delay = delay;
         _value = value;
-        _debounceTimer = new System.Timers.Timer();
-        _debounceTimer.Interval = interval;
-        _debounceTimer.AutoReset = false;
-        _debounceTimer.Elapsed += OnElapsed;
     }
 
-    public T Value
+    public T? Value
     {
         get => _value;
         set
@@ -31,21 +35,18 @@ public class DebounceValue<T> : IDisposable
                 return;
 
             _value = value;
-            _debounceTimer.Stop();
-            _debounceTimer.Start();
+
+            var current = Interlocked.Increment(ref _last);
+
+            Task.Delay(Delay).ContinueWith(_ =>
+            {
+                if (current == _last)
+                    Action(_value);
+            });
         }
     }
 
-    public Action<T> Trigger { get; set; }
+    public Action<T?> Action { get; }
 
-    private void OnElapsed(object sender, ElapsedEventArgs e)
-    {
-        Trigger?.Invoke(_value);
-    }
-
-    public void Dispose()
-    {
-        _debounceTimer.Elapsed -= OnElapsed;
-        _debounceTimer.Dispose();
-    }
+    public TimeSpan Delay { get; }
 }
