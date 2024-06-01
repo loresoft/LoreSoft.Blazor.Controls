@@ -8,7 +8,14 @@
 <button class="btn btn-secondary" @onclick="ApplyFilter">Filter High Score</button>
 
 
-<DataGrid Data="People" class="table table-hover" Filterable="true" Selectable="true" @bind-SelectedItems="Selected" @ref="DataGrid">
+<DataGrid Data="People"
+          TItem="Person"
+          Filterable="true"
+          Selectable="true"
+          RowDoubleClick="HandleRowClick"
+          @bind-SelectedItems="Selected"
+          @ref="DataGrid"
+          class="table table-hover">
     <DataColumns>
         <DataColumn TItem="Person" Property="p => p.Id" Width="90px">
             <Template Context="item">
@@ -72,4 +79,8 @@
         await DataGrid.ApplyFilters(filters, true);
     }
 
+    private void HandleRowClick(Person person)
+    {
+        Console.WriteLine("Row Click: {0}", person.FullName);
+    }
 }

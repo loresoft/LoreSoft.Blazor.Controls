@@ -264,6 +264,7 @@
     {
         <tr @key="new {item, i = 0}"
             @attributes="RowAttributes?.Invoke(item)"
+            @ondblclick="() => RowDoubleClick.InvokeAsync(item)"
             class="@RowClass"
             style="@(RowStyle?.Invoke(item))">
             @if (DetailTemplate != null)

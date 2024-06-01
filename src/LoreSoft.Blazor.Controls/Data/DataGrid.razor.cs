@@ -50,6 +50,8 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
     [Parameter]
     public EventCallback<IEnumerable<TItem>> SelectedItemsChanged { get; set; }
 
+    [Parameter]
+    public EventCallback<TItem> RowDoubleClick { get; set; }
 
     [Parameter]
     public QueryGroup Query { get; set; }
