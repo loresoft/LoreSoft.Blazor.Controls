@@ -75,6 +75,9 @@ public class DataColumn<TItem> : ComponentBase
     [Parameter]
     public RenderFragment FooterTemplate { get; set; }
 
+    [Parameter]
+    public RenderFragment<QueryFilter> FilterTemplate { get; set; }
+
 
     internal int CurrentSortIndex { get; set; } = -1;
 

@@ -13,7 +13,7 @@
             <ValueTemplate Context="filter">
                 <select value="@Binding.Format(filter.Value)"
                         @onchange="e => filter.Value = Binding.Convert<string>(e.Value)">
-                    <option>- Select Bank -</option>
+                    <option value="">- Select Bank -</option>
                     <option value="Chase Bank">Chase Bank</option>
                     <option value="Bank of America">Bank of America</option>
                     <option value="Wells Fargo">Wells Fargo</option>

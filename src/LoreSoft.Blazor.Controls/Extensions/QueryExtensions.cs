@@ -1,9 +1,9 @@
 #nullable enable
 
-using LoreSoft.Blazor.Controls.Utilities;
-
 using System.Linq.Dynamic.Core;
 using System.Text;
+
+using LoreSoft.Blazor.Controls.Utilities;
 
 namespace LoreSoft.Blazor.Controls.Extensions;
 
@@ -61,5 +61,24 @@ public static class QueryExtensions
             return query;
 
         return query.Where(predicate, parameters);
+    }
+
+    public static DataResult<T> DataQuery<T>(this IQueryable<T> query, DataRequest request)
+    {
+        var filterQuery = query.Filter(request.Query);
+
+        var total = filterQuery.Count();
+
+        if (total == 0)
+            return new DataResult<T>(total, []);
+
+        var sortedQuery = filterQuery.Sort(request.Sorts);
+
+        if (request.Page > 0 && request.PageSize > 0)
+            sortedQuery = sortedQuery.Page(request.Page, request.PageSize);
+
+        var results = sortedQuery.ToList();
+
+        return new DataResult<T>(total, results);
     }
 }
