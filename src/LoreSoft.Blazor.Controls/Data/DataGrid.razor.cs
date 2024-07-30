@@ -242,7 +242,7 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
     }
 
 
-    protected override DataRequest CreateDataRequest(CancellationToken cancellationToken)
+    public override DataRequest CreateDataRequest(CancellationToken cancellationToken = default)
     {
         var sorts = Columns
             .Where(c => c.CurrentSortIndex >= 0)

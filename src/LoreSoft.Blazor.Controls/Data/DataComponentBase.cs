@@ -168,10 +168,9 @@ public abstract class DataComponentBase<TItem> : ComponentBase, IDisposable
     }
 
 
-    protected virtual DataRequest CreateDataRequest(CancellationToken cancellationToken)
+    public virtual DataRequest CreateDataRequest(CancellationToken cancellationToken = default)
     {
-        var request = new DataRequest(Pager.Page, Pager.PageSize, null, null, cancellationToken);
-        return request;
+        return new DataRequest(Pager.Page, Pager.PageSize, null, null, cancellationToken);
     }
 
     // used when Data is set directly
