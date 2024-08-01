@@ -1,5 +1,6 @@
 using System.Globalization;
 using System.Linq.Expressions;
+using System.Reflection;
 
 using LoreSoft.Blazor.Controls.Extensions;
 
@@ -10,7 +11,6 @@ namespace LoreSoft.Blazor.Controls;
 public class DataColumn<TItem> : ComponentBase
 {
     private Func<TItem, object> _propertyAccessor;
-    private string _propertyName;
 
     [CascadingParameter(Name = "Grid")]
     protected DataGrid<TItem> Grid { get; set; }
@@ -63,9 +63,6 @@ public class DataColumn<TItem> : ComponentBase
     [Parameter]
     public bool Visible { get; set; } = true;
 
-    public string Name => PropertyName();
-
-
     [Parameter]
     public RenderFragment HeaderTemplate { get; set; }
 
@@ -78,6 +75,9 @@ public class DataColumn<TItem> : ComponentBase
     [Parameter]
     public RenderFragment<QueryFilter> FilterTemplate { get; set; }
 
+    public string Name { get; set; }
+
+    public Type Type { get; set; }
 
     internal int CurrentSortIndex { get; set; } = -1;
 
@@ -99,13 +99,19 @@ public class DataColumn<TItem> : ComponentBase
         Grid.AddColumn(this);
     }
 
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+
+        UpdateProperty();
+    }
+
     internal string HeaderTitle()
     {
         if (!string.IsNullOrEmpty(Title))
             return Title;
 
-        var name = PropertyName();
-        return name.ToTitle();
+        return Name.ToTitle();
     }
 
     internal string CellValue(TItem data)
@@ -140,24 +146,31 @@ public class DataColumn<TItem> : ComponentBase
         CurrentSortDescending = descending;
     }
 
-    private string PropertyName()
+    private void UpdateProperty()
     {
-        if (Property == null)
-            return string.Empty;
+        MemberInfo memberInfo = null;
 
-        if (!string.IsNullOrEmpty(_propertyName))
-            return _propertyName;
+        if (Property?.Body is MemberExpression memberExpression)
+            memberInfo = memberExpression.Member;
+        else if (Property?.Body is UnaryExpression { Operand: MemberExpression memberOperand })
+            memberInfo = memberOperand.Member;
 
-        _propertyName = Property?.Body switch
+        if (memberInfo is PropertyInfo propertyInfo)
         {
-            MemberExpression memberExpression => memberExpression.Member.Name,
-            UnaryExpression { Operand: MemberExpression memberOperand } => memberOperand.Member.Name,
-            _ => string.Empty
-        };
-
-        return _propertyName;
+            Name = propertyInfo.Name;
+            Type = propertyInfo.PropertyType;
+        }
+        else if (memberInfo is FieldInfo fieldInfo)
+        {
+            Name = fieldInfo.Name;
+            Type = fieldInfo.FieldType;
+        }
+        else
+        {
+            Name = memberInfo.Name;
+            Type = typeof(object);
+        }
     }
-
 
     internal Dictionary<string, object> ComputeAttributes(TItem data)
     {

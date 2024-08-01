@@ -142,6 +142,7 @@ public class QueryBuilderField<TItem> : ComponentBase
         else
         {
             Name = memberInfo.Name;
+            Type = typeof(object);
         }
     }
 
