@@ -192,6 +192,7 @@ public class LinqExpressionBuilder
             .Append(method)
             .Append("(@")
             .Append(index)
+            .Append(", StringComparison.OrdinalIgnoreCase")
             .Append(')');
 
         parameters.Add(value);

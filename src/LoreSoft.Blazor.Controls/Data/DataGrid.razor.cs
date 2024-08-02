@@ -1,3 +1,5 @@
+using System;
+
 using LoreSoft.Blazor.Controls.Extensions;
 using LoreSoft.Blazor.Controls.Utilities;
 
@@ -88,6 +90,32 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
         await RefreshAsync(true);
     }
 
+
+    public async Task QuickSearch(string searchText)
+    {
+
+        RootQuery.Filters.Clear();
+
+        if (!string.IsNullOrWhiteSpace(searchText))
+        {
+            RootQuery.Logic = QueryLogic.Or;
+
+            // all filterable string columns
+            foreach (var column in Columns.Where(c => c.Filterable && c.Type == typeof(string)))
+            {
+                var filter = new QueryFilter
+                {
+                    Field = column.Name,
+                    Operator = QueryOperators.Contains,
+                    Value = searchText
+                };
+                RootQuery.Filters.Add(filter);
+            }
+        }
+
+        await RefreshAsync(true);
+    }
+
     public async Task ClearFilters()
     {
         RootQuery.Filters.Clear();
@@ -103,6 +131,7 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
         RootQuery.Filters.AddRange(rules);
         await RefreshAsync(true);
     }
+
 
     public override async Task RefreshAsync(bool resetPager = false)
     {

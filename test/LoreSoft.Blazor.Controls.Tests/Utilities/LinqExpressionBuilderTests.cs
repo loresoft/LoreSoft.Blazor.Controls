@@ -183,7 +183,7 @@ public class LinqExpressionBuilderTests
         builder.Build(queryFilter);
 
         builder.Expression.Should().NotBeEmpty();
-        builder.Expression.Should().Be("Name.Contains(@0)");
+        builder.Expression.Should().Be("Name.Contains(@0, StringComparison.OrdinalIgnoreCase)");
 
         builder.Parameters.Count.Should().Be(1);
         builder.Parameters[0].Should().Be("berry");
@@ -266,7 +266,7 @@ public class LinqExpressionBuilderTests
         builder.Build(queryFilter);
 
         builder.Expression.Should().NotBeEmpty();
-        builder.Expression.Should().Be("!Name.Contains(@0)");
+        builder.Expression.Should().Be("!Name.Contains(@0, StringComparison.OrdinalIgnoreCase)");
 
         builder.Parameters.Count.Should().Be(1);
         builder.Parameters[0].Should().Be("berry");
@@ -295,7 +295,7 @@ public class LinqExpressionBuilderTests
         builder.Build(queryFilter);
 
         builder.Expression.Should().NotBeEmpty();
-        builder.Expression.Should().Be("Name.StartsWith(@0)");
+        builder.Expression.Should().Be("Name.StartsWith(@0, StringComparison.OrdinalIgnoreCase)");
 
         builder.Parameters.Count.Should().Be(1);
         builder.Parameters[0].Should().Be("P");
@@ -324,7 +324,7 @@ public class LinqExpressionBuilderTests
         builder.Build(queryFilter);
 
         builder.Expression.Should().NotBeEmpty();
-        builder.Expression.Should().Be("!Name.StartsWith(@0)");
+        builder.Expression.Should().Be("!Name.StartsWith(@0, StringComparison.OrdinalIgnoreCase)");
 
         builder.Parameters.Count.Should().Be(1);
         builder.Parameters[0].Should().Be("P");
@@ -352,7 +352,7 @@ public class LinqExpressionBuilderTests
         builder.Build(queryFilter);
 
         builder.Expression.Should().NotBeEmpty();
-        builder.Expression.Should().Be("Name.EndsWith(@0)");
+        builder.Expression.Should().Be("Name.EndsWith(@0, StringComparison.OrdinalIgnoreCase)");
 
         builder.Parameters.Count.Should().Be(1);
         builder.Parameters[0].Should().Be("berry");
@@ -380,7 +380,7 @@ public class LinqExpressionBuilderTests
         builder.Build(queryFilter);
 
         builder.Expression.Should().NotBeEmpty();
-        builder.Expression.Should().Be("!Name.EndsWith(@0)");
+        builder.Expression.Should().Be("!Name.EndsWith(@0, StringComparison.OrdinalIgnoreCase)");
 
         builder.Parameters.Count.Should().Be(1);
         builder.Parameters[0].Should().Be("berry");

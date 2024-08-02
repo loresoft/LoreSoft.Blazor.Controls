@@ -7,6 +7,22 @@
 <button class="btn btn-secondary" @onclick="@(() => DataGrid.Pager.PageSize = 25)">Page Size 25</button>
 <button class="btn btn-secondary" @onclick="ApplyFilter">Filter High Score</button>
 
+<div class="d-flex justify-content-end p-1">
+    <div class="w-25">
+        <div class="input-group input-group-sm">
+            <span class="input-group-text bg-body border-end-0">
+                <i class="fas fa-search"></i>
+            </span>
+            <input type="search"
+                   class="form-control border-start-0"
+                   placeholder="Search"
+                   @bind-value="SearchText.Value"
+                   @bind-value:event="oninput" />
+        </div>
+    </div>
+</div>
+
+
 
 <DataGrid Data="People"
           TItem="Person"
@@ -52,8 +68,11 @@
 
     private DataGrid<Person> DataGrid { get; set; }
 
+    protected DebounceValue<string> SearchText { get; set; }
+
     protected override void OnInitialized()
     {
+        SearchText = new DebounceValue<string>((value) => InvokeAsync(() => DataGrid.QuickSearch(value)));
         People = Data.GeneratePeople(200).ToList();
     }
 
