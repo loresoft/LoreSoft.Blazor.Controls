@@ -14,7 +14,7 @@
             {
                 foreach (var value in Values)
                 {
-                    <div class="typeahead-multi-value">
+                    <div @key="value" class="typeahead-multi-value">
                         <div class="typeahead-multi-value-label">
                             @SelectedTemplate(value)
                         </div>
