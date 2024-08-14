@@ -18,10 +18,16 @@
   color: #6c757d;
 }
 
+.data-grid-table {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
 .data-grid-header {
   display: flex;
   flex-direction: row;
 }
+
 .data-grid-header-title {
   flex-grow: 1;
   text-align: left;
@@ -336,10 +342,10 @@ button.data-grid-header-filter {
 }
 
 .filter-row {
-    padding: 0;
-    border: 0 none;
+  padding: 0;
+  border: 0 none;
 }
 
 .filter-footer {
-    margin-top: 1em;
+  margin-top: 1em;
 }

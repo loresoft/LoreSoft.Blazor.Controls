@@ -17,215 +17,217 @@
             @DataColumns
         }
 
-        <table class="data-grid" @attributes="@TableAttributes">
-            <colgroup>
-                @if (DetailTemplate != null)
-                {
-                    <col style="width: 32px; padding: 0" />
-                }
-                @if (Selectable)
-                {
-                    <col style="width: 32px; padding: 0" />
-                }
-                @foreach (var column in VisibleColumns)
-                {
-                    if (string.IsNullOrEmpty(column.Width))
-                    {
-                        <col />
-                    }
-                    else
-                    {
-                        <col style="width: @column.Width" />
-                    }
-                }
-            </colgroup>
-            <thead>
-                <tr>
+        <div class="data-grid-table">
+            <table class="data-grid" @attributes="@TableAttributes">
+                <colgroup>
                     @if (DetailTemplate != null)
                     {
-                        <th class="data-grid-hierarchy-cell">
-                        </th>
+                        <col style="width: 32px; padding: 0" />
                     }
                     @if (Selectable)
                     {
-                        <th class="data-grid-selector-cell">
-                            <div class="data-check">
-                                <input class="data-check-input"
-                                       type="checkbox"
-                                       checked="@IsAllSelected()"
-                                       title="Select All"
-                                       @onchange="ToggleSelectAll" />
-                            </div>
-                        </th>
+                        <col style="width: 32px; padding: 0" />
                     }
                     @foreach (var column in VisibleColumns)
                     {
-                        <th @key="column" class="@column.HeaderClass">
-                            <div class="data-grid-header">
-                                @if (Sortable && column.Sortable)
+                        if (string.IsNullOrEmpty(column.Width))
+                        {
+                            <col />
+                        }
+                        else
+                        {
+                            <col style="width: @column.Width" />
+                        }
+                    }
+                </colgroup>
+                <thead>
+                    <tr>
+                        @if (DetailTemplate != null)
+                        {
+                            <th class="data-grid-hierarchy-cell">
+                            </th>
+                        }
+                        @if (Selectable)
+                        {
+                            <th class="data-grid-selector-cell">
+                                <div class="data-check">
+                                    <input class="data-check-input"
+                                           type="checkbox"
+                                           checked="@IsAllSelected()"
+                                           title="Select All"
+                                           @onchange="ToggleSelectAll" />
+                                </div>
+                            </th>
+                        }
+                        @foreach (var column in VisibleColumns)
+                        {
+                            <th @key="column" class="@column.HeaderClass">
+                                <div class="data-grid-header">
+                                    @if (Sortable && column.Sortable)
+                                    {
+                                        <button type="button"
+                                                class="data-grid-header-title"
+                                                title="Sort by @column.HeaderTitle()"
+                                                @onclick="() => SortByAsync(column)">
+                                            @HeaderFragment(column)
+                                        </button>
+                                    }
+                                    else
+                                    {
+                                        <div class="data-grid-header-title">
+                                            @HeaderFragment(column)
+                                        </div>
+                                    }
+
+                                    @if (column.Sortable && column.CurrentSortIndex >= 0)
+                                    {
+                                        <div class="data-grid-header-sort">
+                                            <span class="@(column.CurrentSortDescending ? "data-grid-header-sort-desc" : "data-grid-header-sort-asc" )"></span>
+                                        </div>
+                                    }
+
+                                    @if (Filterable && column.Filterable)
+                                    {
+                                        <button type="button"
+                                                class="data-grid-header-filter"
+                                                title="Show Filter Dialog"
+                                                @onclick="ShowFilter">
+                                            <span class="@(IsFilterActive() ? "data-grid-header-filter-active" : "data-grid-header-filter-icon" )"></span>
+                                        </button>
+                                    }
+                                </div>
+                            </th>
+                        }
+                    </tr>
+                    @if (FilterOpen)
+                    {
+                        <tr>
+                            <td colspan="@CellCount" class="filter-row">
+                                <div class="filter-background"
+                                     @onclick="CloseFilter"></div>
+
+                                <div class="filter-container">
+                                    <form name="filter-builder-form" @onsubmit="ApplyFilters">
+                                        <QueryBuilder TItem="TItem" Query="RootQuery">
+                                            <QueryFields>
+                                                @foreach (var column in Columns.Where(c => c.Filterable))
+                                                {
+                                                    <QueryBuilderField Field="column.Property"
+                                                                       Title="@column.HeaderTitle()"
+                                                                       ValueTemplate="@column.FilterTemplate" />
+                                                }
+                                            </QueryFields>
+                                        </QueryBuilder>
+
+                                        <div class="filter-footer">
+                                            <button type="submit"
+                                                    class="query-button">
+                                                Apply
+                                            </button>
+
+                                            <button type="button"
+                                                    class="query-button"
+                                                    @onclick="ClearFilters">
+                                                Clear
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </thead>
+                <tbody>
+                    @if (DataError != null)
+                    {
+                        <tr>
+                            <td colspan="@CellCount" class="data-grid-error">
+                                @if (ErrorTemplate != null)
                                 {
-                                    <button type="button"
-                                            class="data-grid-header-title"
-                                            title="Sort by @column.HeaderTitle()"
-                                            @onclick="() => SortByAsync(column)">
-                                        @HeaderFragment(column)
-                                    </button>
+                                    @ErrorTemplate(DataError)
                                 }
                                 else
                                 {
-                                    <div class="data-grid-header-title">
-                                        @HeaderFragment(column)
-                                    </div>
+                                    @DataError.Message
                                 }
-
-                                @if (column.Sortable && column.CurrentSortIndex >= 0)
-                                {
-                                    <div class="data-grid-header-sort">
-                                        <span class="@(column.CurrentSortDescending ? "data-grid-header-sort-desc" : "data-grid-header-sort-asc" )"></span>
-                                    </div>
-                                }
-
-                                @if (Filterable && column.Filterable)
-                                {
-                                    <button type="button"
-                                            class="data-grid-header-filter"
-                                            title="Show Filter Dialog"
-                                            @onclick="ShowFilter">
-                                        <span class="@(IsFilterActive() ? "data-grid-header-filter-active" : "data-grid-header-filter-icon" )"></span>
-                                    </button>
-                                }
-                            </div>
-                        </th>
+                            </td>
+                        </tr>
                     }
-                </tr>
-                @if (FilterOpen)
-                {
-                    <tr>
-                        <td colspan="@CellCount" class="filter-row">
-                            <div class="filter-background"
-                                 @onclick="CloseFilter"></div>
-
-                            <div class="filter-container">
-                                <form name="filter-builder-form" @onsubmit="ApplyFilters">
-                                    <QueryBuilder TItem="TItem" Query="RootQuery">
-                                        <QueryFields>
-                                            @foreach (var column in Columns.Where(c => c.Filterable))
-                                            {
-                                                <QueryBuilderField Field="column.Property"
-                                                                   Title="@column.HeaderTitle()"
-                                                                   ValueTemplate="@column.FilterTemplate" />
-                                            }
-                                        </QueryFields>
-                                    </QueryBuilder>
-
-                                    <div class="filter-footer">
-                                        <button type="submit"
-                                                class="query-button">
-                                            Apply
-                                        </button>
-
-                                        <button type="button"
-                                                class="query-button"
-                                                @onclick="ClearFilters">
-                                            Clear
-                                        </button>
-                                    </div>
-                                </form>
-                            </div>
-                        </td>
-                    </tr>
-                }
-            </thead>
-            <tbody>
-                @if (DataError != null)
-                {
-                    <tr>
-                        <td colspan="@CellCount" class="data-grid-error">
-                            @if (ErrorTemplate != null)
-                            {
-                                @ErrorTemplate(DataError)
-                            }
-                            else
-                            {
-                                @DataError.Message
-                            }
-                        </td>
-                    </tr>
-                }
-                else if (View == null)
-                {
-                    for (int i = 0; i < 5; i++)
+                    else if (View == null)
                     {
-                        <tr @key="i">
-                            @if (DetailTemplate != null)
-                            {
-                                <td class="data-grid-hierarchy-cell">
-                                </td>
-                            }
-                            @if (Selectable)
-                            {
-                                <td class="data-grid-selector-cell">
-                                </td>
-                            }
+                        for (int i = 0; i < 5; i++)
+                        {
+                            <tr @key="i">
+                                @if (DetailTemplate != null)
+                                {
+                                    <td class="data-grid-hierarchy-cell">
+                                    </td>
+                                }
+                                @if (Selectable)
+                                {
+                                    <td class="data-grid-selector-cell">
+                                    </td>
+                                }
+                                @foreach (var column in VisibleColumns)
+                                {
+                                    <td @key="column" class="@column.ClassName">
+                                        <Skeleton />
+                                    </td>
+                                }
+                            </tr>
+                        }
+                    }
+                    else if (View.Count == 0)
+                    {
+                        <tr>
+                            <td colspan="@CellCount" class="data-grid-empty">
+                                @if (EmptyTemplate != null)
+                                {
+                                    @EmptyTemplate
+                                }
+                                else
+                                {
+                                    <span>No records to display</span>
+                                }
+                            </td>
+                        </tr>
+                    }
+                    else if (Virtualize)
+                    {
+                        <Virtualize TItem="TItem"
+                                    Items="View"
+                                    Context="item"
+                                    ItemSize="VirtualItemSize"
+                                    OverscanCount="VirtualOverscan">
+                            @RowFragment(item)
+                        </Virtualize>
+                    }
+                    else
+                    {
+                        @foreach (var item in View)
+                        {
+                            @RowFragment(item)
+                        }
+                    }
+                </tbody>
+                @if (VisibleColumns.Any(c => c.FooterTemplate != null))
+                {
+                    <tfoot>
+                        <tr>
                             @foreach (var column in VisibleColumns)
                             {
-                                <td @key="column" class="@column.ClassName">
-                                    <Skeleton />
+                                <td @key="column">
+                                    @if (column.FooterTemplate != null)
+                                    {
+                                        @column.FooterTemplate
+                                    }
                                 </td>
                             }
                         </tr>
-                    }
+                    </tfoot>
                 }
-                else if (View.Count == 0)
-                {
-                    <tr>
-                        <td colspan="@CellCount" class="data-grid-empty">
-                            @if (EmptyTemplate != null)
-                            {
-                                @EmptyTemplate
-                            }
-                            else
-                            {
-                                <span>No records to display</span>
-                            }
-                        </td>
-                    </tr>
-                }
-                else if (Virtualize)
-                {
-                    <Virtualize TItem="TItem"
-                                Items="View"
-                                Context="item"
-                                ItemSize="VirtualItemSize"
-                                OverscanCount="VirtualOverscan">
-                        @RowFragment(item)
-                    </Virtualize>
-                }
-                else
-                {
-                    @foreach (var item in View)
-                    {
-                        @RowFragment(item)
-                    }
-                }
-            </tbody>
-            @if (VisibleColumns.Any(c => c.FooterTemplate != null))
-            {
-                <tfoot>
-                    <tr>
-                        @foreach (var column in VisibleColumns)
-                        {
-                            <td @key="column">
-                                @if (column.FooterTemplate != null)
-                                {
-                                    @column.FooterTemplate
-                                }
-                            </td>
-                        }
-                    </tr>
-                </tfoot>
-            }
-        </table>
+            </table>
+        </div>
         @if (DataPagination != null)
         {
             <CascadingValue IsFixed="true" Value="Pager" Name="PagerState">
