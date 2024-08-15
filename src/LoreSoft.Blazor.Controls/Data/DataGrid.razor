@@ -30,14 +30,8 @@
                     }
                     @foreach (var column in VisibleColumns)
                     {
-                        if (string.IsNullOrEmpty(column.Width))
-                        {
-                            <col />
-                        }
-                        else
-                        {
-                            <col style="width: @column.Width" />
-                        }
+                        <col class="@column.ColumnClass"
+                             style="@column.CurrentColumnStyle" />
                     }
                 </colgroup>
                 <thead>

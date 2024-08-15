@@ -3,6 +3,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 
 using LoreSoft.Blazor.Controls.Extensions;
+using LoreSoft.Blazor.Controls.Utilities;
 
 using Microsoft.AspNetCore.Components;
 
@@ -47,6 +48,13 @@ public class DataColumn<TItem> : ComponentBase
 
 
     [Parameter]
+    public string ColumnClass { get; set; }
+
+    [Parameter]
+    public string ColumnStyle { get; set; }
+
+
+    [Parameter]
     public bool Sortable { get; set; } = true;
 
     [Parameter]
@@ -83,6 +91,7 @@ public class DataColumn<TItem> : ComponentBase
 
     internal bool CurrentSortDescending { get; set; }
 
+    internal string CurrentColumnStyle { get; set; }
 
     protected override void OnInitialized()
     {
@@ -102,6 +111,11 @@ public class DataColumn<TItem> : ComponentBase
     protected override void OnParametersSet()
     {
         base.OnParametersSet();
+
+        CurrentColumnStyle = new StyleBuilder()
+            .AddStyle(ColumnStyle)
+            .AddStyle("width", Width, (v) => v.HasValue())
+            .ToString();
 
         UpdateProperty();
     }
