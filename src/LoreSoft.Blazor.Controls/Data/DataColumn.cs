@@ -69,6 +69,16 @@ public class DataColumn<TItem> : ComponentBase
 
 
     [Parameter]
+    public bool Groupable { get; set; } = true;
+
+    [Parameter]
+    public bool Grouping { get; set; }
+
+    [Parameter]
+    public RenderFragment<IGrouping<string, TItem>> GroupTemplate { get; set; }
+
+
+    [Parameter]
     public bool Visible { get; set; } = true;
 
     [Parameter]

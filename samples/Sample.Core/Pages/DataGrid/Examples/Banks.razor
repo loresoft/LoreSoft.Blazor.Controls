@@ -5,12 +5,12 @@
 
 <h3>Banks</h3>
 
-<DataGrid Data="Data" class="table table-hover" @ref="DataGrid" RowAttributes="RowAttributes" Filterable="true">
+<DataGrid Data="Data" class="table table-hover" @ref="DataGrid" RowAttributes="RowAttributes" Filterable="true" Groupable="true">
     <DataColumns>
         <DataColumn TItem="Bank" Property="p => p.Id" Width="70px" data-test="testing" CellAttributes="CellAttributes" />
-        <DataColumn TItem="Bank" Property="p => p.AccountNumber" Width="150px" Title="Account" SortIndex="0" />
+        <DataColumn TItem="Bank" Property="p => p.AccountNumber" Width="150px" Title="Account" />
         <DataColumn TItem="Bank" Property="p => p.IBAN" Width="200px" />
-        <DataColumn TItem="Bank" Property="p => p.BankName" />
+        <DataColumn TItem="Bank" Property="p => p.BankName" Grouping="true" SortIndex="0" />
         <DataColumn TItem="Bank" Property="p => p.RoutingNumber" Width="200px" />
         <DataColumn TItem="Bank" Property="p => p.SwiftBIC" Width="200px" />
     </DataColumns>

@@ -196,6 +196,40 @@
                             @RowFragment(item)
                         </Virtualize>
                     }
+                    else if (Groupable && Columns.Any(c => c.Grouping))
+                    {
+                        var groupColumn = Columns.FirstOrDefault(c => c.Grouping) ?? Columns.First();
+
+                        foreach (var group in View.GroupBy(groupColumn.CellValue))
+                        {
+                            var groupKey = group.Key;
+
+                            <tr @key="group" class="data-grid-group-row">
+                                <td colspan="@CellCount" class="data-grid-group-cell">
+                                    <button type="button"
+                                            @onclick="() => ToggleGroupRow(groupKey)"
+                                            title="Show Group"
+                                            class="data-grid-group-button @(IsGroupExpanded(groupKey) ? "data-grid-group-button-expanded" : "data-grid-group-button-collapsed" )"></button>
+
+                                    @if (groupColumn.GroupTemplate != null)
+                                    {
+                                        @groupColumn.GroupTemplate(group)
+                                    }
+                                    else
+                                    {
+                                        <span>@groupColumn.HeaderTitle(): @groupKey</span>
+                                    }
+                                </td>
+                            </tr>
+                            @if (IsGroupExpanded(groupKey))
+                            {
+                                @foreach (var item in group)
+                                {
+                                    @RowFragment(item)
+                                }
+                            }
+                        }
+                    }
                     else
                     {
                         @foreach (var item in View)

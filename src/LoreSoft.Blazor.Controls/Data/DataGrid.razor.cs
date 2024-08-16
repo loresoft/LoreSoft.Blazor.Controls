@@ -1,4 +1,5 @@
 using System;
+using System.Linq.Dynamic.Core;
 
 using LoreSoft.Blazor.Controls.Extensions;
 using LoreSoft.Blazor.Controls.Utilities;
@@ -11,6 +12,8 @@ namespace LoreSoft.Blazor.Controls;
 public partial class DataGrid<TItem> : DataComponentBase<TItem>
 {
     private HashSet<TItem> _expandedItems = new();
+    private HashSet<string> _expandedGroups = new();
+
     private QueryGroup _query;
 
     [Parameter(CaptureUnmatchedValues = true)]
@@ -33,6 +36,8 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
     [Parameter]
     public bool Filterable { get; set; }
 
+    [Parameter]
+    public bool Groupable { get; set; }
 
     [Parameter]
     public string TableClass { get; set; } = "table";
@@ -205,6 +210,22 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
             _expandedItems.Remove(item);
         else
             _expandedItems.Add(item);
+
+        StateHasChanged();
+    }
+
+
+    protected bool IsGroupExpanded(string key)
+    {
+        return _expandedGroups.Contains(key);
+    }
+
+    protected void ToggleGroupRow(string key)
+    {
+        if (_expandedGroups.Contains(key))
+            _expandedGroups.Remove(key);
+        else
+            _expandedGroups.Add(key);
 
         StateHasChanged();
     }

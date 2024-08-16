@@ -84,15 +84,26 @@ button.data-grid-header-filter {
   padding: 0 !important;
 }
 
-.data-grid-hierarchy-button {
+.data-grid-group-cell {
+  font-weight: 600;
+}
+
+.data-grid-hierarchy-button,
+.data-grid-group-button {
   cursor: pointer;
   background-color: transparent;
   border: 0 none;
   padding: 0;
 }
 
+.data-grid-group-button {
+  padding-right: .5rem
+}
+
 .data-grid-hierarchy-button-expanded::before,
-.data-grid-hierarchy-button-collapsed::before {
+.data-grid-hierarchy-button-collapsed::before,
+.data-grid-group-button-expanded::before,
+.data-grid-group-button-collapsed::before {
   display: inline-block;
   content: "";
   vertical-align: -.125em;
@@ -102,11 +113,13 @@ button.data-grid-header-filter {
   opacity: 0.5;
 }
 
-.data-grid-hierarchy-button-expanded::before {
+.data-grid-hierarchy-button-expanded::before,
+.data-grid-group-button-expanded::before {
   background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' fill='currentColor' viewBox='0 0 16 16'><path d='M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z' /></svg>");
 }
 
-.data-grid-hierarchy-button-collapsed::before {
+.data-grid-hierarchy-button-collapsed::before,
+.data-grid-group-button-collapsed::before {
   background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' fill='currentColor' viewBox='0 0 16 16'><path d='M12.14 8.753l-5.482 4.796c-.646.566-1.658.106-1.658-.753V3.204a1 1 0 0 1 1.659-.753l5.48 4.796a1 1 0 0 1 0 1.506z'/></svg>");
 }
 
