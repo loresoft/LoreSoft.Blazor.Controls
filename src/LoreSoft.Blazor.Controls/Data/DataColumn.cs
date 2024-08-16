@@ -88,7 +88,7 @@ public class DataColumn<TItem> : ComponentBase
     public RenderFragment<TItem> Template { get; set; }
 
     [Parameter]
-    public RenderFragment FooterTemplate { get; set; }
+    public RenderFragment<ICollection<TItem>> FooterTemplate { get; set; }
 
     [Parameter]
     public RenderFragment<QueryFilter> FilterTemplate { get; set; }

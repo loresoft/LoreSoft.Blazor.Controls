@@ -242,12 +242,20 @@
                 {
                     <tfoot>
                         <tr>
+                            @if (DetailTemplate != null)
+                            {
+                                <td></td>
+                            }
+                            @if (Selectable)
+                            {
+                                <td></td>
+                            }
                             @foreach (var column in VisibleColumns)
                             {
                                 <td @key="column">
                                     @if (column.FooterTemplate != null)
                                     {
-                                        @column.FooterTemplate
+                                        @column.FooterTemplate(View)
                                     }
                                 </td>
                             }
