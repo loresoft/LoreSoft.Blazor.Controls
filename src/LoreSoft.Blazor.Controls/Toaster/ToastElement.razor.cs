@@ -105,7 +105,7 @@ public partial class ToastElement : IDisposable
         };
 
         return CssBuilder
-            .Default("toast")
+            .Default("toast-element")
             .AddClass(className)
             .AddClass(Settings.ClassName)
             .ToString();
