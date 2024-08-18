@@ -229,9 +229,9 @@
                                 @foreach (var column in VisibleColumns)
                                 {
                                     <td @key="column">
-                                        @if (groupColumn.GroupTemplate != null)
+                                        @if (column.GroupTemplate != null)
                                         {
-                                            @groupColumn.GroupTemplate(group)
+                                            @column.GroupTemplate(group)
                                         }
                                         else if (column == groupColumn)
                                         {
