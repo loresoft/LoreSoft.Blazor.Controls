@@ -158,6 +158,9 @@ public abstract class DataComponentBase<TItem> : ComponentBase, IDisposable
             else
             {
                 DataError = ex;
+                Pager.Total = 0;
+                View = null;
+
             }
         }
         finally

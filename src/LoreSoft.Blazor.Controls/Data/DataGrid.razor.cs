@@ -174,8 +174,12 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
 
     protected List<DataColumn<TItem>> VisibleColumns => Columns.Where(c => c.Visible).ToList();
 
-    protected int CellCount => (Columns?.Count ?? 0) + (DetailTemplate != null ? 1 : 0) + (Selectable ? 1 : 0);
+    protected int CellCount => (Columns?.Count ?? 0)
+        + (DetailTemplate != null || (Groupable && Columns.Any(c => c.Grouping)) ? 1 : 0)
+        + (Selectable ? 1 : 0);
 
+
+    protected bool HasGrouping => Groupable && Columns.Any(c => c.Grouping);
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -233,7 +237,10 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
 
     protected bool IsAllSelected()
     {
-        return View?.All(IsRowSelected) == true;
+        if (View == null || View.Count == 0)
+            return false;
+
+        return View.All(IsRowSelected);
     }
 
     protected void ToggleSelectAll()

@@ -8,14 +8,17 @@
 }
 
 .data-grid-error {
-  padding: 1.5rem;
-  color: #dc3545;
+  padding: 1.5rem !important;
+  color: #dc3545 !important;
+  text-align: center;
+  font-weight: 600;
 }
 
 .data-grid-empty {
+  padding: 1.5rem !important;
+  color: #6c757d !important;
   text-align: center;
-  padding: 1.5rem;
-  color: #6c757d;
+  font-weight: 600;
 }
 
 .data-grid-table {
@@ -84,8 +87,10 @@ button.data-grid-header-filter {
   padding: 0 !important;
 }
 
-.data-grid-group-cell {
-  font-weight: 600;
+.data-grid-group-row {
+  td {
+    font-weight: 600;
+  }
 }
 
 .data-grid-hierarchy-button,

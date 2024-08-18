@@ -20,7 +20,7 @@
         <div class="data-grid-table">
             <table class="data-grid" @attributes="@TableAttributes">
                 <colgroup>
-                    @if (DetailTemplate != null)
+                    @if (DetailTemplate != null || HasGrouping)
                     {
                         <col style="width: 32px; padding: 0" />
                     }
@@ -36,7 +36,7 @@
                 </colgroup>
                 <thead>
                     <tr>
-                        @if (DetailTemplate != null)
+                        @if (DetailTemplate != null || HasGrouping)
                         {
                             <th class="data-grid-hierarchy-cell">
                             </th>
@@ -147,28 +147,39 @@
                             </td>
                         </tr>
                     }
-                    else if (View == null)
+                    else if (View == null || IsLoading)
                     {
-                        for (int i = 0; i < 5; i++)
+                        @if (LoadingTemplate != null)
                         {
-                            <tr @key="i">
-                                @if (DetailTemplate != null)
-                                {
-                                    <td class="data-grid-hierarchy-cell">
-                                    </td>
-                                }
-                                @if (Selectable)
-                                {
-                                    <td class="data-grid-selector-cell">
-                                    </td>
-                                }
-                                @foreach (var column in VisibleColumns)
-                                {
-                                    <td @key="column" class="@column.ClassName">
-                                        <Skeleton />
-                                    </td>
-                                }
+                            <tr>
+                                <td colspan="@CellCount">
+                                    @LoadingTemplate
+                                </td>
                             </tr>
+                        }
+                        else
+                        {
+                            for (int i = 0; i < 5; i++)
+                            {
+                                <tr @key="i">
+                                    @if (DetailTemplate != null || HasGrouping)
+                                    {
+                                        <td class="data-grid-hierarchy-cell">
+                                        </td>
+                                    }
+                                    @if (Selectable)
+                                    {
+                                        <td class="data-grid-selector-cell">
+                                        </td>
+                                    }
+                                    @foreach (var column in VisibleColumns)
+                                    {
+                                        <td @key="column" class="@column.ClassName">
+                                            <Skeleton />
+                                        </td>
+                                    }
+                                </tr>
+                            }
                         }
                     }
                     else if (View.Count == 0)
@@ -196,7 +207,7 @@
                             @RowFragment(item)
                         </Virtualize>
                     }
-                    else if (Groupable && Columns.Any(c => c.Grouping))
+                    else if (HasGrouping)
                     {
                         var groupColumn = Columns.FirstOrDefault(c => c.Grouping) ?? Columns.First();
 
@@ -205,22 +216,31 @@
                             var groupKey = group.Key;
 
                             <tr @key="group" class="data-grid-group-row">
-                                <td colspan="@CellCount" class="data-grid-group-cell">
+                                <td class="data-grid-hierarchy-cell">
                                     <button type="button"
                                             @onclick="() => ToggleGroupRow(groupKey)"
                                             title="Show Group"
                                             class="data-grid-group-button @(IsGroupExpanded(groupKey) ? "data-grid-group-button-expanded" : "data-grid-group-button-collapsed" )"></button>
-
-                                    @if (groupColumn.GroupTemplate != null)
-                                    {
-                                        @groupColumn.GroupTemplate(group)
-                                    }
-                                    else
-                                    {
-                                        <span>@groupColumn.HeaderTitle(): @groupKey</span>
-                                    }
                                 </td>
+                                @if (Selectable)
+                                {
+                                    <td></td>
+                                }
+                                @foreach (var column in VisibleColumns)
+                                {
+                                    <td @key="column">
+                                        @if (groupColumn.GroupTemplate != null)
+                                        {
+                                            @groupColumn.GroupTemplate(group)
+                                        }
+                                        else if (column == groupColumn)
+                                        {
+                                            @groupKey
+                                        }
+                                    </td>
+                                }
                             </tr>
+
                             @if (IsGroupExpanded(groupKey))
                             {
                                 @foreach (var item in group)
@@ -242,7 +262,7 @@
                 {
                     <tfoot>
                         <tr>
-                            @if (DetailTemplate != null)
+                            @if (DetailTemplate != null || HasGrouping)
                             {
                                 <td></td>
                             }
@@ -272,17 +292,6 @@
                 </div>
             </CascadingValue>
         }
-        @if (IsLoading)
-        {
-            @if (LoadingTemplate == null)
-            {
-                <LoadingBlock IsLoading="true" />
-            }
-            else
-            {
-                @LoadingTemplate
-            }
-        }
     </div>
 </CascadingValue>
 
@@ -307,6 +316,7 @@
             @ondblclick="() => RowDoubleClick.InvokeAsync(item)"
             class="@RowClass"
             style="@(RowStyle?.Invoke(item))">
+
             @if (DetailTemplate != null)
             {
                 <td class="data-grid-hierarchy-cell">
@@ -316,6 +326,11 @@
                             class="data-grid-hierarchy-button @(IsRowExpanded(item) ? "data-grid-hierarchy-button-expanded" : "data-grid-hierarchy-button-collapsed" )"></button>
                 </td>
             }
+            else if (HasGrouping)
+            {
+                <td class="data-grid-hierarchy-cell"></td>
+            }
+
             @if (Selectable)
             {
                 <td class="data-grid-selector-cell">
@@ -328,6 +343,7 @@
                     </div>
                 </td>
             }
+
             @foreach (var column in VisibleColumns)
             {
                 <td @key="column"

@@ -37,7 +37,7 @@ public class DataPager : ComponentBase, IDisposable
     public bool ShowPage { get; set; } = true;
 
     [Parameter]
-    public bool ShowEmpty { get; set; } = false;
+    public bool ShowEmpty { get; set; } = true;
 
     [Parameter]
     public bool CenterSelected { get; set; } = true;
