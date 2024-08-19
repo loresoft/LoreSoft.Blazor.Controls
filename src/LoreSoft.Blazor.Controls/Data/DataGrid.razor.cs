@@ -138,13 +138,13 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
     }
 
 
-    public override async Task RefreshAsync(bool resetPager = false)
+    public override async Task RefreshAsync(bool resetPager = false, bool forceReload = false)
     {
         // clear row flags on refresh
         _expandedItems.Clear();
         SetSelectedItems(new List<TItem>());
 
-        await base.RefreshAsync(resetPager);
+        await base.RefreshAsync(resetPager, forceReload);
     }
 
 

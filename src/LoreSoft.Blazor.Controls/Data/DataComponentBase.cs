@@ -67,11 +67,15 @@ public abstract class DataComponentBase<TItem> : ComponentBase, IDisposable
     protected Exception DataError { get; private set; }
 
 
-    public virtual async Task RefreshAsync(bool resetPager = false)
+    public virtual async Task RefreshAsync(bool resetPager = false, bool forceReload = false)
     {
         // reset page
         if (resetPager)
             Pager.Reset();
+
+        // clear cached data to force data loader to re-run
+        if (forceReload && DataLoader != null)
+            _data = null;
 
         await RefreshCoreAsync();
     }

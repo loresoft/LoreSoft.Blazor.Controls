@@ -5,6 +5,8 @@
 
 <h3>Banks</h3>
 
+<button class="btn btn-secondary" @onclick="@(() => DataGrid.RefreshAsync(forceReload: true))">Reload</button>
+
 <DataGrid DataLoader="LoadData" class="table table-hover" @ref="DataGrid" RowAttributes="RowAttributes" Filterable="true" Groupable="true">
     <DataColumns>
         <DataColumn TItem="Bank" Property="p => p.BankName" Grouping="true" SortIndex="0" />
