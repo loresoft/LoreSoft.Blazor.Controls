@@ -5,7 +5,7 @@
 
 <h3>Banks</h3>
 
-<DataGrid Data="Data" class="table table-hover" @ref="DataGrid" RowAttributes="RowAttributes" Filterable="true" Groupable="true">
+<DataGrid DataLoader="LoadData" class="table table-hover" @ref="DataGrid" RowAttributes="RowAttributes" Filterable="true" Groupable="true">
     <DataColumns>
         <DataColumn TItem="Bank" Property="p => p.BankName" Grouping="true" SortIndex="0" />
         <DataColumn TItem="Bank" Property="p => p.Id" Width="70px" data-test="testing" CellAttributes="CellAttributes" />
@@ -23,14 +23,7 @@
 
 
 @code {
-    public ICollection<Bank> Data { get; set; } = new List<Bank>();
-
     private DataGrid<Bank> DataGrid { get; set; }
-
-    protected async override Task OnInitializedAsync()
-    {
-        Data = await RandomDataClient.GetBanks();
-    }
 
     private Dictionary<string, object> CellAttributes(Bank bank)
     {
@@ -46,5 +39,10 @@
         {
             { "data-row-" + bank.Id, "Test " + bank.BankName }
         };
+    }
+
+    private async Task<IEnumerable<Bank>> LoadData()
+    {
+        return await RandomDataClient.GetBanks();
     }
 }

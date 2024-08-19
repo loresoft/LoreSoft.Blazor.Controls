@@ -9,12 +9,16 @@ public abstract class DataComponentBase<TItem> : ComponentBase, IDisposable
     private DataProviderDelegate<TItem> _dataProvider;
     private CancellationTokenSource _refreshCancellation;
     private IEnumerable<TItem> _data;
+    private bool _isLoading;
 
     [Parameter]
     public IEnumerable<TItem> Data { get; set; }
 
     [Parameter]
     public DataProviderDelegate<TItem> DataProvider { get; set; }
+
+    [Parameter]
+    public Func<Task<IEnumerable<TItem>>> DataLoader { get; set; }
 
 
     [Parameter]
@@ -43,7 +47,18 @@ public abstract class DataComponentBase<TItem> : ComponentBase, IDisposable
     public int VirtualOverscan { get; set; } = 3;
 
 
-    public bool IsLoading { get; set; }
+    public bool IsLoading
+    {
+        get => _isLoading;
+        set
+        {
+            if (_isLoading == value)
+                return;
+
+            _isLoading = value;
+            StateHasChanged();
+        }
+    }
 
     public DataPagerState Pager { get; } = new();
 
@@ -77,7 +92,7 @@ public abstract class DataComponentBase<TItem> : ComponentBase, IDisposable
     {
         if (DataProvider != null)
         {
-            if (Data != null)
+            if (Data != null || DataLoader != null)
             {
                 throw new InvalidOperationException(
                     $"Component can only accept one item source from its parameters. " +
@@ -96,6 +111,10 @@ public abstract class DataComponentBase<TItem> : ComponentBase, IDisposable
                 _data = Data;
                 await RefreshAsync();
             }
+        }
+        else if (DataLoader != null)
+        {
+            _dataProvider = DefaultProvider;
         }
         else
         {
@@ -177,12 +196,15 @@ public abstract class DataComponentBase<TItem> : ComponentBase, IDisposable
     }
 
     // used when Data is set directly
-    protected virtual ValueTask<DataResult<TItem>> DefaultProvider(DataRequest request)
+    protected virtual async ValueTask<DataResult<TItem>> DefaultProvider(DataRequest request)
     {
-        if (Data == null || !Data.Any())
-            return ValueTask.FromResult(new DataResult<TItem>(0, Enumerable.Empty<TItem>()));
+        if (_data == null && DataLoader != null)
+            _data = await DataLoader();
 
-        var query = Data.AsQueryable();
+        if (_data == null || !_data.Any())
+            return new DataResult<TItem>(0, []);
+
+        var query = _data.AsQueryable();
 
         query = FilterData(query, request);
 
@@ -191,7 +213,7 @@ public abstract class DataComponentBase<TItem> : ComponentBase, IDisposable
         var sorted = SortData(query, request);
         sorted = PageData(sorted, request);
 
-        return ValueTask.FromResult(new DataResult<TItem>(total, sorted));
+        return new DataResult<TItem>(total, sorted);
     }
 
     protected virtual IQueryable<TItem> PageData(IQueryable<TItem> queryable, DataRequest request)

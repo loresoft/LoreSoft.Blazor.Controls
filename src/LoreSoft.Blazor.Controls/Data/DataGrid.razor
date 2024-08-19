@@ -147,39 +147,28 @@
                             </td>
                         </tr>
                     }
-                    else if (View == null || IsLoading)
+                    else if (View == null)
                     {
-                        @if (LoadingTemplate != null)
+                        for (int i = 0; i < 5; i++)
                         {
-                            <tr>
-                                <td colspan="@CellCount">
-                                    @LoadingTemplate
-                                </td>
+                            <tr @key="i">
+                                @if (DetailTemplate != null || HasGrouping)
+                                {
+                                    <td class="data-grid-hierarchy-cell">
+                                    </td>
+                                }
+                                @if (Selectable)
+                                {
+                                    <td class="data-grid-selector-cell">
+                                    </td>
+                                }
+                                @foreach (var column in VisibleColumns)
+                                {
+                                    <td @key="column" class="@column.ClassName">
+                                        <Skeleton />
+                                    </td>
+                                }
                             </tr>
-                        }
-                        else
-                        {
-                            for (int i = 0; i < 5; i++)
-                            {
-                                <tr @key="i">
-                                    @if (DetailTemplate != null || HasGrouping)
-                                    {
-                                        <td class="data-grid-hierarchy-cell">
-                                        </td>
-                                    }
-                                    @if (Selectable)
-                                    {
-                                        <td class="data-grid-selector-cell">
-                                        </td>
-                                    }
-                                    @foreach (var column in VisibleColumns)
-                                    {
-                                        <td @key="column" class="@column.ClassName">
-                                            <Skeleton />
-                                        </td>
-                                    }
-                                </tr>
-                            }
                         }
                     }
                     else if (View.Count == 0)
@@ -291,6 +280,17 @@
                     @DataPagination(this)
                 </div>
             </CascadingValue>
+        }
+        @if (IsLoading)
+        {
+            @if (LoadingTemplate == null)
+            {
+                <LoadingBlock IsLoading="true" />
+            }
+            else
+            {
+                @LoadingTemplate
+            }
         }
     </div>
 </CascadingValue>
