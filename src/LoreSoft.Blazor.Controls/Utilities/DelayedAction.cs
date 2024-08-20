@@ -1,4 +1,8 @@
+// Ignore Spelling: Debounce
+
 namespace LoreSoft.Blazor.Controls.Utilities;
+
+#nullable enable
 
 // https://www.meziantou.net/debouncing-throttling-javascript-events-in-a-blazor-application.htm
 public static class DelayedAction
