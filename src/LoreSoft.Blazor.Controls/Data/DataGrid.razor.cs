@@ -96,14 +96,16 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
     }
 
 
-    public async Task QuickSearch(string searchText)
+    public async Task QuickSearch(string searchText, bool clearFilter = false)
     {
-
-        RootQuery.Filters.Clear();
+        if (clearFilter)
+            RootQuery.Filters.Clear();
+        else
+            RootQuery.Filters.RemoveAll(f => f.Id == nameof(QuickSearch));
 
         if (!string.IsNullOrWhiteSpace(searchText))
         {
-            RootQuery.Logic = QueryLogic.Or;
+            var quickSearch = new QueryGroup { Id = nameof(QuickSearch), Logic = QueryLogic.Or };
 
             // all filterable string columns
             foreach (var column in Columns.Where(c => c.Filterable && c.Type == typeof(string)))
@@ -114,8 +116,10 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
                     Operator = QueryOperators.Contains,
                     Value = searchText
                 };
-                RootQuery.Filters.Add(filter);
+                quickSearch.Filters.Add(filter);
             }
+
+            RootQuery.Filters.Add(quickSearch);
         }
 
         await RefreshAsync(true);
