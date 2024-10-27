@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Globalization;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -93,9 +94,11 @@ public class DataColumn<TItem> : ComponentBase
     [Parameter]
     public RenderFragment<QueryFilter> FilterTemplate { get; set; }
 
-    public string Name { get; set; }
+    public string PropertyName { get; set; }
 
-    public Type Type { get; set; }
+    public string ColumnName { get; set; }
+
+    public Type PropertyType { get; set; }
 
     internal int CurrentSortIndex { get; set; } = -1;
 
@@ -135,7 +138,7 @@ public class DataColumn<TItem> : ComponentBase
         if (!string.IsNullOrEmpty(Title))
             return Title;
 
-        return Name.ToTitle();
+        return PropertyName.ToTitle();
     }
 
     internal string CellValue(TItem data)
@@ -181,19 +184,22 @@ public class DataColumn<TItem> : ComponentBase
 
         if (memberInfo is PropertyInfo propertyInfo)
         {
-            Name = propertyInfo.Name;
-            Type = propertyInfo.PropertyType;
+            PropertyName = propertyInfo.Name;
+            PropertyType = propertyInfo.PropertyType;
         }
         else if (memberInfo is FieldInfo fieldInfo)
         {
-            Name = fieldInfo.Name;
-            Type = fieldInfo.FieldType;
+            PropertyName = fieldInfo.Name;
+            PropertyType = fieldInfo.FieldType;
         }
         else
         {
-            Name = memberInfo.Name;
-            Type = typeof(object);
+            PropertyName = memberInfo.Name;
+            PropertyType = typeof(object);
         }
+
+        var columnAttribute = memberInfo.GetCustomAttribute<ColumnAttribute>(true);
+        ColumnName = columnAttribute != null ? columnAttribute.Name : PropertyName;
     }
 
     internal Dictionary<string, object> ComputeAttributes(TItem data)

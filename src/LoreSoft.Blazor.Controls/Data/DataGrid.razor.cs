@@ -108,11 +108,11 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
             var quickSearch = new QueryGroup { Id = nameof(QuickSearch), Logic = QueryLogic.Or };
 
             // all filterable string columns
-            foreach (var column in Columns.Where(c => c.Filterable && c.Type == typeof(string)))
+            foreach (var column in Columns.Where(c => c.Filterable && c.PropertyType == typeof(string)))
             {
                 var filter = new QueryFilter
                 {
-                    Field = column.Name,
+                    Field = column.ColumnName,
                     Operator = QueryOperators.Contains,
                     Value = searchText
                 };
@@ -171,7 +171,7 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
         if (!Sortable)
             return;
 
-        var column = Columns.Find(c => c.Name == columnName);
+        var column = Columns.Find(c => c.ColumnName == columnName);
         await SortByAsync(column);
     }
 
@@ -308,7 +308,7 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
         var sorts = Columns
             .Where(c => c.CurrentSortIndex >= 0)
             .OrderBy(c => c.CurrentSortIndex)
-            .Select(c => new DataSort(c.Name, c.CurrentSortDescending))
+            .Select(c => new DataSort(c.ColumnName, c.CurrentSortDescending))
             .ToArray();
 
         return new DataRequest(Pager.Page, Pager.PageSize, sorts, RootQuery, cancellationToken);
@@ -330,7 +330,7 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
         var columns = request.Sorts.Select(s => s.Property);
 
         var sorted = Columns
-            .Where(c => columns.Contains(c.Name))
+            .Where(c => columns.Contains(c.ColumnName))
             .OrderBy(c => c.CurrentSortIndex)
             .ToList();
 
