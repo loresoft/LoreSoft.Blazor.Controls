@@ -29,7 +29,7 @@ public partial class QueryBuilderFilter<TItem>
 
     protected void FieldChanged()
     {
-        Field = Fields.FirstOrDefault(f => f.Name == Filter.Field);
+        Field = Fields.FirstOrDefault(f => f.Column == Filter.Field);
         QueryBuilder.Refresh();
     }
 

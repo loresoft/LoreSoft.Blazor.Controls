@@ -18,7 +18,7 @@
         <option value="">- Field -</option>
         @foreach (var field in Fields)
         {
-            <option @key="field" value="@field.Name">@field.CurrentTitle</option>
+            <option @key="field" value="@field.Column">@field.CurrentTitle</option>
         }
     </select>
 

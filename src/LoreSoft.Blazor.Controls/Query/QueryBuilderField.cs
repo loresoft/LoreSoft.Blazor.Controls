@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq.Expressions;
 using System.Reflection;
 
@@ -33,6 +34,8 @@ public class QueryBuilderField<TItem> : ComponentBase
 
 
     public string Name { get; set; }
+
+    public string Column { get; set; }
 
     public Type Type { get; set; }
 
@@ -144,6 +147,9 @@ public class QueryBuilderField<TItem> : ComponentBase
             Name = memberInfo.Name;
             Type = typeof(object);
         }
+
+        var columnAttribute = memberInfo.GetCustomAttribute<ColumnAttribute>(true);
+        Column = columnAttribute != null ? columnAttribute.Name : Name;
     }
 
 
