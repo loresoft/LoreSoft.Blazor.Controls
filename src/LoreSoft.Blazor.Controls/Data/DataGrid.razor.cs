@@ -137,10 +137,23 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
         if (replace)
             RootQuery.Filters.Clear();
 
-        RootQuery.Filters.AddRange(rules);
+        if (rules != null)
+            RootQuery.Filters.AddRange(rules);
+
         await RefreshAsync(true);
     }
 
+    public async Task ApplyFilter(QueryRule rule)
+    {
+        if (rule == null)
+            return;
+
+        if (rule.Id.HasValue())
+            RootQuery.Filters.RemoveAll(f => f.Id == rule.Id);
+
+        RootQuery.Filters.Add(rule);
+        await RefreshAsync(true);
+    }
 
     public override async Task RefreshAsync(bool resetPager = false, bool forceReload = false)
     {
