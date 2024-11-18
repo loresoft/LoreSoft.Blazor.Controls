@@ -1,4 +1,5 @@
 using System;
+using System.Data;
 using System.Linq.Dynamic.Core;
 
 using LoreSoft.Blazor.Controls.Extensions;
@@ -63,7 +64,7 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
     [Parameter]
     public QueryGroup Query { get; set; }
 
-    protected QueryGroup RootQuery { get; set; }
+    public QueryGroup RootQuery { get; set; }
 
 
     public List<DataColumn<TItem>> Columns { get; } = [];
@@ -154,6 +155,19 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
         RootQuery.Filters.Add(rule);
         await RefreshAsync(true);
     }
+
+    public async Task RemoveFilters(Predicate<QueryRule> match)
+    {
+        RootQuery.Filters.RemoveAll(match);
+        await RefreshAsync(true);
+    }
+
+    public async Task RemoveFilter(string id)
+    {
+        RootQuery.Filters.RemoveAll(f => f.Id == id);
+        await RefreshAsync(true);
+    }
+
 
     public override async Task RefreshAsync(bool resetPager = false, bool forceReload = false)
     {
