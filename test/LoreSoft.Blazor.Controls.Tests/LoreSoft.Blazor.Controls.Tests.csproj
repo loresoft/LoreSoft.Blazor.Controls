@@ -7,7 +7,7 @@
     <IsTestProject>true</IsTestProject>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="bunit" Version="1.37.7" />
+    <PackageReference Include="bunit" Version="1.38.5" />
     <PackageReference Include="coverlet.collector" Version="6.0.3">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
