@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 namespace LoreSoft.Blazor.Controls.Utilities;
@@ -11,7 +11,7 @@ public readonly struct AttributeBuilder
         => new(prop, value);
 
     public static AttributeBuilder Empty()
-        => new(new Dictionary<string, object>());
+        => new([]);
 
     public AttributeBuilder(Dictionary<string, object> attributes)
     {
