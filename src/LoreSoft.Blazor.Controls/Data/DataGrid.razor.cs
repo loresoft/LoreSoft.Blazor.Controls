@@ -72,7 +72,7 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
 
     protected bool FilterOpen { get; set; }
 
-    protected void ShowFilter()
+    public void ShowFilter()
     {
         if (RootQuery.Filters.Count == 0)
             RootQuery.Filters.Add(new QueryFilter());
@@ -80,12 +80,12 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
         FilterOpen = true;
     }
 
-    protected void CloseFilter()
+    public void CloseFilter()
     {
         FilterOpen = false;
     }
 
-    protected bool IsFilterActive()
+    public bool IsFilterActive()
     {
         return LinqExpressionBuilder.IsValid(RootQuery);
     }

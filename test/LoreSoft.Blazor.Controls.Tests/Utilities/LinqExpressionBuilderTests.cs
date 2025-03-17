@@ -15,11 +15,11 @@ public class LinqExpressionBuilderTests
         var builder = new LinqExpressionBuilder();
         builder.Build(queryFilter);
 
-        builder.Expression.Should().NotBeEmpty();
-        builder.Expression.Should().Be("Rank == @0");
+        Assert.NotEmpty(builder.Expression);
+        Assert.Equal("Rank == @0", builder.Expression);
 
-        builder.Parameters.Count.Should().Be(1);
-        builder.Parameters[0].Should().Be(7);
+        Assert.Single(builder.Parameters);
+        Assert.Equal(7, builder.Parameters[0]);
 
         var predicate = builder.Expression;
         var parameters = builder.Parameters.ToArray();
@@ -27,8 +27,8 @@ public class LinqExpressionBuilderTests
         var query = Fruit.Data().AsQueryable();
 
         var results = query.Where(predicate, parameters).ToList();
-        results.Should().NotBeEmpty();
-        results.Count.Should().Be(3);
+        Assert.NotEmpty(results);
+        Assert.Equal(3, results.Count);
     }
 
     [Fact]
@@ -40,11 +40,11 @@ public class LinqExpressionBuilderTests
         var builder = new LinqExpressionBuilder();
         builder.Build(queryFilter);
 
-        builder.Expression.Should().NotBeEmpty();
-        builder.Expression.Should().Be("Id == @0");
+        Assert.NotEmpty(builder.Expression);
+        Assert.Equal("Id == @0", builder.Expression);
 
-        builder.Parameters.Count.Should().Be(1);
-        builder.Parameters[0].Should().Be(pearId);
+        Assert.Single(builder.Parameters);
+        Assert.Equal(pearId, builder.Parameters[0]);
 
         var predicate = builder.Expression;
         var parameters = builder.Parameters.ToArray();
@@ -52,8 +52,8 @@ public class LinqExpressionBuilderTests
         var query = Fruit.Data().AsQueryable();
 
         var results = query.Where(predicate, parameters).ToList();
-        results.Should().NotBeEmpty();
-        results.Count.Should().Be(1);
+        Assert.NotEmpty(results);
+        Assert.Single(results);
     }
 
     [Fact]
@@ -72,12 +72,12 @@ public class LinqExpressionBuilderTests
         var builder = new LinqExpressionBuilder();
         builder.Build(queryFilter);
 
-        builder.Expression.Should().NotBeEmpty();
-        builder.Expression.Should().Be("(Rank == @0 or Name == @1)");
+        Assert.NotEmpty(builder.Expression);
+        Assert.Equal("(Rank == @0 or Name == @1)", builder.Expression);
 
-        builder.Parameters.Count.Should().Be(2);
-        builder.Parameters[0].Should().Be(7);
-        builder.Parameters[1].Should().Be("Apple");
+        Assert.Equal(2, builder.Parameters.Count);
+        Assert.Equal(7, builder.Parameters[0]);
+        Assert.Equal("Apple", builder.Parameters[1]);
 
         var predicate = builder.Expression;
         var parameters = builder.Parameters.ToArray();
@@ -85,8 +85,8 @@ public class LinqExpressionBuilderTests
         var query = Fruit.Data().AsQueryable();
 
         var results = query.Where(predicate, parameters).ToList();
-        results.Should().NotBeEmpty();
-        results.Count.Should().Be(4);
+        Assert.NotEmpty(results);
+        Assert.Equal(4, results.Count);
     }
 
     [Fact]
@@ -105,12 +105,12 @@ public class LinqExpressionBuilderTests
         var builder = new LinqExpressionBuilder();
         builder.Build(queryFilter);
 
-        builder.Expression.Should().NotBeEmpty();
-        builder.Expression.Should().Be("(Rank == @0 and Name == @1)");
+        Assert.NotEmpty(builder.Expression);
+        Assert.Equal("(Rank == @0 and Name == @1)", builder.Expression);
 
-        builder.Parameters.Count.Should().Be(2);
-        builder.Parameters[0].Should().Be(7);
-        builder.Parameters[1].Should().Be("Blueberry");
+        Assert.Equal(2, builder.Parameters.Count);
+        Assert.Equal(7, builder.Parameters[0]);
+        Assert.Equal("Blueberry", builder.Parameters[1]);
 
         var predicate = builder.Expression;
         var parameters = builder.Parameters.ToArray();
@@ -118,8 +118,8 @@ public class LinqExpressionBuilderTests
         var query = Fruit.Data().AsQueryable();
 
         var results = query.Where(predicate, parameters).ToList();
-        results.Should().NotBeEmpty();
-        results.Count.Should().Be(1);
+        Assert.NotEmpty(results);
+        Assert.Single(results);
     }
 
     [Fact]
@@ -150,13 +150,13 @@ public class LinqExpressionBuilderTests
         var builder = new LinqExpressionBuilder();
         builder.Build(queryFilter);
 
-        builder.Expression.Should().NotBeEmpty();
-        builder.Expression.Should().Be("(Rank > @0 and (Name == @1 or Name == @2))");
+        Assert.NotEmpty(builder.Expression);
+        Assert.Equal("(Rank > @0 and (Name == @1 or Name == @2))", builder.Expression);
 
-        builder.Parameters.Count.Should().Be(3);
-        builder.Parameters[0].Should().Be(5);
-        builder.Parameters[1].Should().Be("Strawberry");
-        builder.Parameters[2].Should().Be("Blueberry");
+        Assert.Equal(3, builder.Parameters.Count);
+        Assert.Equal(5, builder.Parameters[0]);
+        Assert.Equal("Strawberry", builder.Parameters[1]);
+        Assert.Equal("Blueberry", builder.Parameters[2]);
 
 
         var predicate = builder.Expression;
@@ -165,8 +165,8 @@ public class LinqExpressionBuilderTests
         var query = Fruit.Data().AsQueryable();
 
         var results = query.Where(predicate, parameters).ToList();
-        results.Should().NotBeEmpty();
-        results.Count.Should().Be(2);
+        Assert.NotEmpty(results);
+        Assert.Equal(2, results.Count);
 
     }
 
@@ -182,11 +182,11 @@ public class LinqExpressionBuilderTests
         var builder = new LinqExpressionBuilder();
         builder.Build(queryFilter);
 
-        builder.Expression.Should().NotBeEmpty();
-        builder.Expression.Should().Be("Name.Contains(@0, StringComparison.OrdinalIgnoreCase)");
+        Assert.NotEmpty(builder.Expression);
+        Assert.Equal("Name.Contains(@0, StringComparison.OrdinalIgnoreCase)", builder.Expression);
 
-        builder.Parameters.Count.Should().Be(1);
-        builder.Parameters[0].Should().Be("berry");
+        Assert.Single(builder.Parameters);
+        Assert.Equal("berry", builder.Parameters[0]);
 
         var predicate = builder.Expression;
         var parameters = builder.Parameters.ToArray();
@@ -194,8 +194,8 @@ public class LinqExpressionBuilderTests
         var query = Fruit.Data().AsQueryable();
 
         var results = query.Where(predicate, parameters).ToList();
-        results.Should().NotBeEmpty();
-        results.Count.Should().Be(3);
+        Assert.NotEmpty(results);
+        Assert.Equal(3, results.Count);
 
     }
 
@@ -210,10 +210,10 @@ public class LinqExpressionBuilderTests
         var builder = new LinqExpressionBuilder();
         builder.Build(queryFilter);
 
-        builder.Expression.Should().NotBeEmpty();
-        builder.Expression.Should().Be("Description == NULL");
+        Assert.NotEmpty(builder.Expression);
+        Assert.Equal("Description == NULL", builder.Expression);
 
-        builder.Parameters.Count.Should().Be(0);
+        Assert.Empty(builder.Parameters);
 
         var predicate = builder.Expression;
         var parameters = builder.Parameters.ToArray();
@@ -221,8 +221,8 @@ public class LinqExpressionBuilderTests
         var query = Fruit.Data().AsQueryable();
 
         var results = query.Where(predicate, parameters).ToList();
-        results.Should().NotBeEmpty();
-        results.Count.Should().Be(10);
+        Assert.NotEmpty(results);
+        Assert.Equal(10, results.Count);
 
     }
 
@@ -237,10 +237,10 @@ public class LinqExpressionBuilderTests
         var builder = new LinqExpressionBuilder();
         builder.Build(queryFilter);
 
-        builder.Expression.Should().NotBeEmpty();
-        builder.Expression.Should().Be("Name != NULL");
+        Assert.NotEmpty(builder.Expression);
+        Assert.Equal("Name != NULL", builder.Expression);
 
-        builder.Parameters.Count.Should().Be(0);
+        Assert.Empty(builder.Parameters);
 
         var predicate = builder.Expression;
         var parameters = builder.Parameters.ToArray();
@@ -248,8 +248,8 @@ public class LinqExpressionBuilderTests
         var query = Fruit.Data().AsQueryable();
 
         var results = query.Where(predicate, parameters).ToList();
-        results.Should().NotBeEmpty();
-        results.Count.Should().Be(10);
+        Assert.NotEmpty(results);
+        Assert.Equal(10, results.Count);
 
     }
 
@@ -265,11 +265,11 @@ public class LinqExpressionBuilderTests
         var builder = new LinqExpressionBuilder();
         builder.Build(queryFilter);
 
-        builder.Expression.Should().NotBeEmpty();
-        builder.Expression.Should().Be("!Name.Contains(@0, StringComparison.OrdinalIgnoreCase)");
+        Assert.NotEmpty(builder.Expression);
+        Assert.Equal("!Name.Contains(@0, StringComparison.OrdinalIgnoreCase)", builder.Expression);
 
-        builder.Parameters.Count.Should().Be(1);
-        builder.Parameters[0].Should().Be("berry");
+        Assert.Single(builder.Parameters);
+        Assert.Equal("berry", builder.Parameters[0]);
 
         var predicate = builder.Expression;
         var parameters = builder.Parameters.ToArray();
@@ -277,8 +277,8 @@ public class LinqExpressionBuilderTests
         var query = Fruit.Data().AsQueryable();
 
         var results = query.Where(predicate, parameters).ToList();
-        results.Should().NotBeEmpty();
-        results.Count.Should().Be(7);
+        Assert.NotEmpty(results);
+        Assert.Equal(7, results.Count);
 
     }
 
@@ -294,11 +294,11 @@ public class LinqExpressionBuilderTests
         var builder = new LinqExpressionBuilder();
         builder.Build(queryFilter);
 
-        builder.Expression.Should().NotBeEmpty();
-        builder.Expression.Should().Be("Name.StartsWith(@0, StringComparison.OrdinalIgnoreCase)");
+        Assert.NotEmpty(builder.Expression);
+        Assert.Equal("Name.StartsWith(@0, StringComparison.OrdinalIgnoreCase)", builder.Expression);
 
-        builder.Parameters.Count.Should().Be(1);
-        builder.Parameters[0].Should().Be("P");
+        Assert.Single(builder.Parameters);
+        Assert.Equal("P", builder.Parameters[0]);
 
         var predicate = builder.Expression;
         var parameters = builder.Parameters.ToArray();
@@ -306,8 +306,8 @@ public class LinqExpressionBuilderTests
         var query = Fruit.Data().AsQueryable();
 
         var results = query.Where(predicate, parameters).ToList();
-        results.Should().NotBeEmpty();
-        results.Count.Should().Be(3);
+        Assert.NotEmpty(results);
+        Assert.Equal(3, results.Count);
 
     }
 
@@ -323,11 +323,11 @@ public class LinqExpressionBuilderTests
         var builder = new LinqExpressionBuilder();
         builder.Build(queryFilter);
 
-        builder.Expression.Should().NotBeEmpty();
-        builder.Expression.Should().Be("!Name.StartsWith(@0, StringComparison.OrdinalIgnoreCase)");
+        Assert.NotEmpty(builder.Expression);
+        Assert.Equal("!Name.StartsWith(@0, StringComparison.OrdinalIgnoreCase)", builder.Expression);
 
-        builder.Parameters.Count.Should().Be(1);
-        builder.Parameters[0].Should().Be("P");
+        Assert.Single(builder.Parameters);
+        Assert.Equal("P", builder.Parameters[0]);
 
         var predicate = builder.Expression;
         var parameters = builder.Parameters.ToArray();
@@ -335,8 +335,8 @@ public class LinqExpressionBuilderTests
         var query = Fruit.Data().AsQueryable();
 
         var results = query.Where(predicate, parameters).ToList();
-        results.Should().NotBeEmpty();
-        results.Count.Should().Be(7);
+        Assert.NotEmpty(results);
+        Assert.Equal(7, results.Count);
     }
 
     [Fact]
@@ -351,11 +351,11 @@ public class LinqExpressionBuilderTests
         var builder = new LinqExpressionBuilder();
         builder.Build(queryFilter);
 
-        builder.Expression.Should().NotBeEmpty();
-        builder.Expression.Should().Be("Name.EndsWith(@0, StringComparison.OrdinalIgnoreCase)");
+        Assert.NotEmpty(builder.Expression);
+        Assert.Equal("Name.EndsWith(@0, StringComparison.OrdinalIgnoreCase)", builder.Expression);
 
-        builder.Parameters.Count.Should().Be(1);
-        builder.Parameters[0].Should().Be("berry");
+        Assert.Single(builder.Parameters);
+        Assert.Equal("berry", builder.Parameters[0]);
 
         var predicate = builder.Expression;
         var parameters = builder.Parameters.ToArray();
@@ -363,8 +363,8 @@ public class LinqExpressionBuilderTests
         var query = Fruit.Data().AsQueryable();
 
         var results = query.Where(predicate, parameters).ToList();
-        results.Should().NotBeEmpty();
-        results.Count.Should().Be(3);
+        Assert.NotEmpty(results);
+        Assert.Equal(3, results.Count);
     }
 
     [Fact]
@@ -379,11 +379,11 @@ public class LinqExpressionBuilderTests
         var builder = new LinqExpressionBuilder();
         builder.Build(queryFilter);
 
-        builder.Expression.Should().NotBeEmpty();
-        builder.Expression.Should().Be("!Name.EndsWith(@0, StringComparison.OrdinalIgnoreCase)");
+        Assert.NotEmpty(builder.Expression);
+        Assert.Equal("!Name.EndsWith(@0, StringComparison.OrdinalIgnoreCase)", builder.Expression);
 
-        builder.Parameters.Count.Should().Be(1);
-        builder.Parameters[0].Should().Be("berry");
+        Assert.Single(builder.Parameters);
+        Assert.Equal("berry", builder.Parameters[0]);
 
         var predicate = builder.Expression;
         var parameters = builder.Parameters.ToArray();
@@ -391,8 +391,8 @@ public class LinqExpressionBuilderTests
         var query = Fruit.Data().AsQueryable();
 
         var results = query.Where(predicate, parameters).ToList();
-        results.Should().NotBeEmpty();
-        results.Count.Should().Be(7);
+        Assert.NotEmpty(results);
+        Assert.Equal(7, results.Count);
     }
 
     [Fact]
@@ -401,9 +401,9 @@ public class LinqExpressionBuilderTests
         var builder = new LinqExpressionBuilder();
         builder.Build(null);
 
-        builder.Expression.Should().BeEmpty();
+        Assert.Empty(builder.Expression);
 
-        builder.Parameters.Count.Should().Be(0);
+        Assert.Empty(builder.Parameters);
     }
 
     [Fact]
@@ -414,9 +414,9 @@ public class LinqExpressionBuilderTests
         var builder = new LinqExpressionBuilder();
         builder.Build(queryFilter);
 
-        builder.Expression.Should().BeEmpty();
+        Assert.Empty(builder.Expression);
 
-        builder.Parameters.Count.Should().Be(0);
+        Assert.Empty(builder.Parameters);
     }
 
 
@@ -425,7 +425,7 @@ public class LinqExpressionBuilderTests
     {
         QueryGroup? query = null;
         var isValid = LinqExpressionBuilder.IsValid(query);
-        isValid.Should().BeFalse();
+        Assert.False(isValid);
     }
 
     [Fact]
@@ -433,7 +433,7 @@ public class LinqExpressionBuilderTests
     {
         var query = new QueryGroup();
         var isValid = LinqExpressionBuilder.IsValid(query);
-        isValid.Should().BeFalse();
+        Assert.False(isValid);
     }
 
     [Fact]
@@ -444,7 +444,7 @@ public class LinqExpressionBuilderTests
             Filters = [new QueryFilter()]
         };
         var isValid = LinqExpressionBuilder.IsValid(query);
-        isValid.Should().BeFalse();
+        Assert.False(isValid);
     }
 
     [Fact]
@@ -455,7 +455,7 @@ public class LinqExpressionBuilderTests
             Filters = [new QueryGroup()]
         };
         var isValid = LinqExpressionBuilder.IsValid(query);
-        isValid.Should().BeFalse();
+        Assert.False(isValid);
     }
 
     [Fact]
@@ -476,7 +476,7 @@ public class LinqExpressionBuilderTests
         };
 
         var isValid = LinqExpressionBuilder.IsValid(query);
-        isValid.Should().BeTrue();
+        Assert.True(isValid);
     }
 
     [Fact]
@@ -484,7 +484,7 @@ public class LinqExpressionBuilderTests
     {
         var query = new QueryFilter();
         var isValid = LinqExpressionBuilder.IsValid(query);
-        isValid.Should().BeFalse();
+        Assert.False(isValid);
     }
 
     [Fact]
@@ -492,7 +492,7 @@ public class LinqExpressionBuilderTests
     {
         var query = new QueryFilter { Field = "Rank", Value = 7 };
         var isValid = LinqExpressionBuilder.IsValid(query);
-        isValid.Should().BeTrue();
+        Assert.True(isValid);
     }
 
     [Fact]
@@ -503,6 +503,6 @@ public class LinqExpressionBuilderTests
             Filters = [new QueryFilter { Field = "Name", Value = "Test" }]
         };
         var isValid = LinqExpressionBuilder.IsValid(query);
-        isValid.Should().BeTrue();
+        Assert.True(isValid);
     }
 }

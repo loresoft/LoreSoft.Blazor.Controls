@@ -23,7 +23,7 @@ public static class ServiceCollectionExtensions
 
     public static IServiceCollection AddToaster(this IServiceCollection services)
     {
-        services.TryAddSingleton<IToaster, Toaster>();;
+        services.TryAddSingleton<IToaster, Toaster>();
 
         return services;
     }
