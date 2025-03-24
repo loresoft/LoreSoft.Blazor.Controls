@@ -142,10 +142,10 @@ public partial class Typeahead<TItem, TValue> : ComponentBase, IDisposable
     {
         if (SearchMethod == null)
         {
-            if (typeof(TItem) == typeof(string) && Items != null)
-                SearchMethod = (text) => Task.FromResult(Items.Where(x => x is string s && s.Contains(text, StringComparison.InvariantCultureIgnoreCase)));
+            if (typeof(TItem) != typeof(string) || Items == null)
+                throw new InvalidOperationException($"{GetType()} requires a {nameof(SearchMethod)} parameter.");
 
-            throw new InvalidOperationException($"{GetType()} requires a {nameof(SearchMethod)} parameter.");
+            SearchMethod = (text) => Task.FromResult(Items.Where(x => x is string s && s.Contains(text, StringComparison.InvariantCultureIgnoreCase)));
         }
 
         if (ConvertMethod == null)
