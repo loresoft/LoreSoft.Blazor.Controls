@@ -1,4 +1,5 @@
 using System.Linq.Expressions;
+using System.Net;
 using System.Timers;
 
 using Microsoft.AspNetCore.Components;
@@ -140,7 +141,12 @@ public partial class Typeahead<TItem, TValue> : ComponentBase, IDisposable
     protected override void OnInitialized()
     {
         if (SearchMethod == null)
+        {
+            if (typeof(TItem) == typeof(string) && Items != null)
+                SearchMethod = (text) => Task.FromResult(Items.Where(x => x is string s && s.Contains(text, StringComparison.InvariantCultureIgnoreCase)));
+
             throw new InvalidOperationException($"{GetType()} requires a {nameof(SearchMethod)} parameter.");
+        }
 
         if (ConvertMethod == null)
         {
@@ -156,9 +162,11 @@ public partial class Typeahead<TItem, TValue> : ComponentBase, IDisposable
         LoadingTemplate ??= builder => builder.AddContent(0, "Loading ...");
 
         if (FieldIdentifier.Equals(default))
+        {
             FieldIdentifier = IsMultiselect()
                 ? FieldIdentifier.Create(ValuesExpression)
                 : FieldIdentifier.Create(ValueExpression);
+        }
 
         _debounceTimer = new System.Timers.Timer();
         _debounceTimer.Interval = Debounce;

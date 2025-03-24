@@ -1,19 +1,16 @@
-using System;
-using System.Data;
-using System.Linq.Dynamic.Core;
-
 using LoreSoft.Blazor.Controls.Extensions;
 using LoreSoft.Blazor.Controls.Utilities;
 
 using Microsoft.AspNetCore.Components;
 
+// ReSharper disable once CheckNamespace
 namespace LoreSoft.Blazor.Controls;
 
 [CascadingTypeParameter(nameof(TItem))]
 public partial class DataGrid<TItem> : DataComponentBase<TItem>
 {
-    private HashSet<TItem> _expandedItems = new();
-    private HashSet<string> _expandedGroups = new();
+    private HashSet<TItem> _expandedItems = [];
+    private HashSet<string> _expandedGroups = [];
 
     private QueryGroup _query;
 
@@ -173,7 +170,7 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
     {
         // clear row flags on refresh
         _expandedItems.Clear();
-        SetSelectedItems(new List<TItem>());
+        SetSelectedItems([]);
 
         await base.RefreshAsync(resetPager, forceReload);
     }
@@ -206,7 +203,7 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
     protected List<DataColumn<TItem>> VisibleColumns => Columns.Where(c => c.Visible).ToList();
 
     protected int CellCount => (Columns?.Count ?? 0)
-        + (DetailTemplate != null || (Groupable && Columns.Any(c => c.Grouping)) ? 1 : 0)
+        + (DetailTemplate != null || (Groupable && Columns?.Any(c => c.Grouping) == true) ? 1 : 0)
         + (Selectable ? 1 : 0);
 
 

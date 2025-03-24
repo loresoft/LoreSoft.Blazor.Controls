@@ -28,6 +28,24 @@ public static class DelayedAction
         };
     }
 
+    public static Func<Task> DebounceAsync(this Func<Task> action, TimeSpan? interval = null)
+    {
+        ArgumentNullException.ThrowIfNull(action);
+
+        var delay = interval ?? DefaultDelay;
+        var last = 0;
+
+        return async () =>
+        {
+            var current = Interlocked.Increment(ref last);
+            await Task.Delay(delay);
+            if (current == last)
+            {
+                await action();
+            }
+        };
+    }
+
     public static Action<T> Debounce<T>(this Action<T> action, TimeSpan? interval = null)
     {
         ArgumentNullException.ThrowIfNull(action);
@@ -44,6 +62,24 @@ public static class DelayedAction
                     if (current == last)
                         action(arg);
                 });
+        };
+    }
+
+    public static Func<T, Task> DebounceAsync<T>(this Func<T, Task> action, TimeSpan? interval = null)
+    {
+        ArgumentNullException.ThrowIfNull(action);
+
+        var delay = interval ?? DefaultDelay;
+        var last = 0;
+
+        return async arg =>
+        {
+            var current = Interlocked.Increment(ref last);
+            await Task.Delay(delay);
+            if (current == last)
+            {
+                await action(arg);
+            }
         };
     }
 
