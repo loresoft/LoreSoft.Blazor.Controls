@@ -33,7 +33,7 @@ public class DataSizer : ComponentBase, IDisposable
             throw new InvalidOperationException("DataSizer requires a cascading parameter PagerState.");
 
         if (!PageSizeOptions.Contains(PagerState.PageSize))
-            PageSizeOptions = PageSizeOptions.Append(PagerState.PageSize).OrderBy(p => p).ToArray();
+            PageSizeOptions = PageSizeOptions.Append(PagerState.PageSize).Order().ToArray();
 
         PagerState.PropertyChanged += OnStatePropertyChange;
     }

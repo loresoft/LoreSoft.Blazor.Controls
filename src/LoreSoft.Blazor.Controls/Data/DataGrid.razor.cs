@@ -75,11 +75,19 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
             RootQuery.Filters.Add(new QueryFilter());
 
         FilterOpen = true;
+        StateHasChanged();
     }
 
     public void CloseFilter()
     {
         FilterOpen = false;
+        StateHasChanged();
+    }
+
+    public void ToggleFilter()
+    {
+        FilterOpen = !FilterOpen;
+        StateHasChanged();
     }
 
     public bool IsFilterActive()
