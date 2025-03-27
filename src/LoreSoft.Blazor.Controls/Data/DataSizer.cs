@@ -14,6 +14,9 @@ public class DataSizer : ComponentBase, IDisposable
     public Dictionary<string, object> Attributes { get; set; }
 
     [Parameter]
+    public int? PageSize { get; set; }
+
+    [Parameter]
     public int[] PageSizeOptions { get; set; } = { 10, 25, 50, 100 };
 
     [Parameter]
@@ -31,6 +34,9 @@ public class DataSizer : ComponentBase, IDisposable
     {
         if (PagerState == null)
             throw new InvalidOperationException("DataSizer requires a cascading parameter PagerState.");
+
+        if (PageSize.HasValue && PagerState.PageSize != PageSize )
+            PagerState.Attach(1, PageSize.Value);
 
         if (!PageSizeOptions.Contains(PagerState.PageSize))
             PageSizeOptions = PageSizeOptions.Append(PagerState.PageSize).Order().ToArray();

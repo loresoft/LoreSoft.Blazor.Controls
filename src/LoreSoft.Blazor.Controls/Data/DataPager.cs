@@ -126,7 +126,9 @@ public class DataPager : ComponentBase, IDisposable
             throw new InvalidOperationException("DataSizer requires a cascading parameter PagerState.");
 
         // copy defaults to state
-        PagerState.Attach(1, PageSize);
+        if (PagerState.PageSize != PageSize)
+            PagerState.Attach(1, PageSize);
+
         PagerState.PropertyChanged += OnStatePropertyChange;
     }
 
