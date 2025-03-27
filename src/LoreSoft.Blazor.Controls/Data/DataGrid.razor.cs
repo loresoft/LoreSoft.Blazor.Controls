@@ -210,7 +210,7 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
 
     protected List<DataColumn<TItem>> VisibleColumns => Columns.Where(c => c.Visible).ToList();
 
-    protected int CellCount => (Columns?.Count ?? 0)
+    protected int CellCount => (Columns?.Count(c => c.Visible) ?? 0)
         + (DetailTemplate != null || (Groupable && Columns?.Any(c => c.Grouping) == true) ? 1 : 0)
         + (Selectable ? 1 : 0);
 

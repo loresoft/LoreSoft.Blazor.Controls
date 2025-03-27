@@ -36,7 +36,7 @@ public class DataPagerState
     }
 
 
-    public int StartItem => PageSize == 0 ? 1 : Math.Max(EndItem - (PageSize - 1), 0);
+    public int StartItem => PageSize == 0 ? 1 : Math.Max(EndItem - (PageSize - 1), 1);
 
     public int EndItem => PageSize == 0 ? Total : Math.Min(PageSize * Page, Total);
 
