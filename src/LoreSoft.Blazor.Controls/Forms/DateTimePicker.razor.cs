@@ -458,7 +458,7 @@ public partial class DateTimePicker<TValue> : ComponentBase, IDisposable
 
     protected void TimeCellKeyDown(KeyboardEventArgs args, TimePickerSegment segment)
     {
-        if ((args.Key == "Enter"))
+        if (args.Key == "Enter")
             SelectTime(segment);
 
     }

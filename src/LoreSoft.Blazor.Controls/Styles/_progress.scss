@@ -31,21 +31,11 @@
 }
 
 .progress-status-spinner-icon {
-  animation: 400ms linear 0s infinite normal none running progress-spinner-keframe;
+  animation: 400ms linear 0s infinite normal none running spinner-keyframe;
   border-width: 2px;
   border-style: solid;
   border-radius: 50%;
   box-sizing: border-box;
   height: 18px;
   width: 18px;
-}
-
-@keyframes progress-spinner-keframe {
-  0% {
-    transform: rotate(0deg);
-  }
-
-  100% {
-    transform: rotate(360deg);
-  }
 }

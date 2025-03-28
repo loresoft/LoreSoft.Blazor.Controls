@@ -57,7 +57,7 @@ button.data-grid-header-filter {
 .data-grid-header-filter-active::before {
   display: inline-block;
   content: "";
-  vertical-align: -.125em;
+  vertical-align: -0.125em;
   background-repeat: no-repeat;
   width: 16px;
   height: 16px;
@@ -102,7 +102,7 @@ button.data-grid-header-filter {
 }
 
 .data-grid-group-button {
-  padding-right: .5rem
+  padding-right: 0.5rem;
 }
 
 .data-grid-hierarchy-button-expanded::before,
@@ -111,7 +111,7 @@ button.data-grid-header-filter {
 .data-grid-group-button-collapsed::before {
   display: inline-block;
   content: "";
-  vertical-align: -.125em;
+  vertical-align: -0.125em;
   background-repeat: no-repeat;
   width: 16px;
   height: 16px;
@@ -139,104 +139,36 @@ button.data-grid-header-filter {
   align-items: center;
 }
 
-
-.data-pager {
-  display: flex;
-  padding-left: 0;
-  list-style: none;
+.data-page-size-options {
   margin: 0.25rem;
-}
 
-.data-page-link {
-  position: relative;
-  display: block;
-  color: #0d6efd;
-  text-decoration: none;
-  background-color: #fff;
-  border: 1px solid #dee2e6;
-  transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-}
+  select {
+    padding: 0.375rem 2.25rem 0.375rem 0.75rem;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;
+    color: #212529;
+    background-color: #fff;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 16px 12px;
+    border: 0 none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    cursor: pointer;
+    margin-right: 0.3rem;
 
-.data-page-link:hover {
-  z-index: 2;
-  color: #0a58ca;
-  background-color: #e9ecef;
-  border-color: #dee2e6;
-}
-
-.data-page-link:focus {
-  z-index: 3;
-  color: #0a58ca;
-  background-color: #e9ecef;
-  outline: 0;
-  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
-}
-
-.data-page-item:not(:first-child) .data-page-link {
-  margin-left: -1px;
-}
-
-.data-page-item.active .data-page-link {
-  z-index: 3;
-  color: #fff;
-  background-color: #0d6efd;
-  border-color: #0d6efd;
-}
-
-.data-page-item.disabled .data-page-link {
-  color: #6c757d;
-  pointer-events: none;
-  background-color: #fff;
-  border-color: #dee2e6;
-}
-
-.data-page-link {
-  padding: 0.375rem 0.75rem;
-}
-
-.data-page-item:first-child .data-page-link {
-  border-top-left-radius: 0.25rem;
-  border-bottom-left-radius: 0.25rem;
-}
-
-.data-page-item:last-child .data-page-link {
-  border-top-right-radius: 0.25rem;
-  border-bottom-right-radius: 0.25rem;
-}
-
-
-.data-page-size-options select {
-  padding: 0.375rem 2.25rem 0.375rem 0.75rem;
-  font-size: 1rem;
-  font-weight: 400;
-  line-height: 1.5;
-  color: #212529;
-  background-color: #fff;
-  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
-  background-repeat: no-repeat;
-  background-position: right 0.75rem center;
-  background-size: 16px 12px;
-  border: 0 none;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
-  cursor: pointer;
-  margin-right: 0.3rem;
-}
-
-.data-page-size-options select:focus {
-  outline: 0;
-  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
-}
-
-.data-page-size-options select:disabled {
-  color: #6c757d;
-  background-color: #e9ecef;
-}
-
-.data-page-size-options select:-moz-focusring {
-  color: transparent;
-  text-shadow: 0 0 0 #212529;
+    &:focus {
+      outline: 0;
+      box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+    }
+    &:disabled {
+      color: #6c757d;
+      background-color: #e9ecef;
+    }
+  }
 }
 
 .data-page-size-options,
@@ -275,11 +207,11 @@ button.data-grid-header-filter {
   -moz-appearance: none;
   appearance: none;
   -webkit-print-color-adjust: exact;
-  color-adjust: exact;
+  print-color-adjust: exact;
   cursor: pointer;
 }
 
-.data-check-input[type=checkbox] {
+.data-check-input[type="checkbox"] {
   border-radius: 0.25em;
 }
 
@@ -298,11 +230,11 @@ button.data-grid-header-filter {
   border-color: #0d6efd;
 }
 
-.data-check-input:checked[type=checkbox] {
+.data-check-input:checked[type="checkbox"] {
   background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3e%3cpath fill='none' stroke='%23fff' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='M6 10l3 3l6-6'/%3e%3c/svg%3e");
 }
 
-.data-check-input[type=checkbox]:indeterminate {
+.data-check-input[type="checkbox"]:indeterminate {
   background-color: #0d6efd;
   border-color: #0d6efd;
   background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20'%3e%3cpath fill='none' stroke='%23fff' stroke-linecap='round' stroke-linejoin='round' stroke-width='3' d='M6 10h8'/%3e%3c/svg%3e");
@@ -314,7 +246,8 @@ button.data-grid-header-filter {
   opacity: 0.5;
 }
 
-.data-check-input[disabled] ~ .data-check-label, .data-check-input:disabled ~ .data-check-label {
+.data-check-input[disabled] ~ .data-check-label,
+.data-check-input:disabled ~ .data-check-label {
   opacity: 0.5;
 }
 
@@ -345,7 +278,7 @@ button.data-grid-header-filter {
 }
 
 .filter-container {
-  background-color: rgb(255, 255, 255);
+  background-color: #ffffff;
   box-shadow: rgba(0, 0, 0, 0.1) 0px 0px 0px 1px, rgba(0, 0, 0, 0.1) 0px 4px 11px;
   margin-bottom: 8px;
   margin-top: 2px;
@@ -353,14 +286,14 @@ button.data-grid-header-filter {
   width: 100%;
   z-index: 1050;
   box-sizing: border-box;
-  border: 1px solid rgb(191, 191, 191);
+  border: 1px solid #bfbfbf;
   border-radius: 4px;
   min-height: 150px;
-  padding: .75em;
+  padding: 0.75em;
 }
 
 .filter-row {
-  padding: 0;
+  padding: 0 !important;
   border: 0 none;
 }
 

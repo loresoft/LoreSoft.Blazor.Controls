@@ -2,6 +2,7 @@
 @import "data";
 @import "json";
 @import "loading";
+@import "pager";
 @import "picker";
 @import "progress";
 @import "query";
@@ -17,5 +18,15 @@
 
   40% {
     opacity: 1;
+  }
+}
+
+@keyframes spinner-keyframe {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
   }
 }

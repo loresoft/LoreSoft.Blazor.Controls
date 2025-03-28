@@ -1,9 +1,14 @@
+.busy-button {
+  --busy-indicator-color: #ccc;
+  --busy-loading-color: #ccc;
+}
+
 .busy-loading-indicator {
   align-self: center;
   background-color: transparent;
   border: 0;
   box-sizing: border-box;
-  color: #ccc;
+  color: var(--busy-indicator-color);
   display: inline-block;
   font-size: 4px;
   line-height: 1;
@@ -12,30 +17,33 @@
   padding: 8px;
   text-align: center;
   transition: color 150ms ease 0s;
-  vertical-align: middle
+  vertical-align: middle;
 }
 
-.busy-loading-dot-1, .busy-loading-dot-2, .busy-loading-dot-3 {
-  background-color: #ccc;
+.busy-loading-dot-1,
+.busy-loading-dot-2,
+.busy-loading-dot-3 {
+  background-color: var(--busy-loading-color);
   border-radius: 1em;
   display: inline-block;
   height: 1em;
   vertical-align: top;
-  width: 1em
+  width: 1em;
 }
 
-.busy-loading-dot-2, .busy-loading-dot-3 {
-  margin-left: 1em
+.busy-loading-dot-2,
+.busy-loading-dot-3 {
+  margin-left: 1em;
 }
 
 .busy-loading-dot-1 {
-  animation: 1s ease-in-out 0ms infinite normal none running dot-loading
+  animation: 1s ease-in-out 0ms infinite normal none running dot-loading;
 }
 
 .busy-loading-dot-2 {
-  animation: 1s ease-in-out 160ms infinite normal none running dot-loading
+  animation: 1s ease-in-out 160ms infinite normal none running dot-loading;
 }
 
 .busy-loading-dot-3 {
-  animation: 1s ease-in-out 320ms infinite normal none running dot-loading
+  animation: 1s ease-in-out 320ms infinite normal none running dot-loading;
 }

@@ -1,3 +1,5 @@
+using LoreSoft.Blazor.Controls.Utilities;
+
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
 using Microsoft.AspNetCore.Components.Web;
@@ -32,23 +34,28 @@ public class BusyButton : ComponentBase
     /// <inheritdoc />
     protected override void BuildRenderTree(RenderTreeBuilder builder)
     {
+        var className = new CssBuilder("busy-button")
+            .MergeClass(Attributes)
+            .ToString();
+
         builder.OpenElement(0, "button");
         builder.AddMultipleAttributes(1, Attributes);
-        builder.AddAttribute(2, "disabled", Disabled || IsBusy);
+        builder.AddAttribute(2, "class", className);
+        builder.AddAttribute(3, "disabled", Disabled || IsBusy);
 
         if (Trigger.HasDelegate)
         {
-            builder.AddAttribute(3, "type", "button");
-            builder.AddAttribute(4, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, ExecuteTrigger));
+            builder.AddAttribute(4, "type", "button");
+            builder.AddAttribute(5, "onclick", EventCallback.Factory.Create<MouseEventArgs>(this, ExecuteTrigger));
         }
 
         if (IsBusy)
         {
-            builder.AddContent(5, BusyTemplate);
+            builder.AddContent(6, BusyTemplate);
         }
         else
         {
-            builder.AddContent(6, ChildContent);
+            builder.AddContent(7, ChildContent);
         }
 
         builder.CloseElement(); // button
