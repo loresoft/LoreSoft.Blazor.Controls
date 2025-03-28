@@ -1,39 +1,57 @@
-.toaster-container {
+.toaster {
+  --toaster-information-color: #2563eb;
+  --toaster-success-color: #16a34a;
+  --toaster-warning-color: #eab308;
+  --toaster-error-color: #dc2626;
+
+  --toaster-border-color: #fff;
+  --toaster-border-radius: 0.25rem;
+  --toaster-border-width: 6px;
+
+  --toaster-element-bg: #fff;
+  --toaster-element-color: #1d1d1b;
+  --toaster-element-width: 25rem;
+
+  --toaster-offset-top: 2rem;
+  --toaster-offset-bottom: 2rem;
+  --toaster-offset-left: 2rem;
+  --toaster-offset-right: 2rem;
+
   display: flex;
   flex-direction: column;
   position: fixed;
   z-index: 9999;
 
   &.toaster-top-center {
-    top: 2rem;
+    top: var(--toaster-offset-top);
     left: 50%;
     transform: translate(-50%, 0%);
   }
 
   &.toaster-top-left {
-    top: 2rem;
-    left: 2rem;
+    top: var(--toaster-offset-top);
+    left: var(--toaster-offset-left);
   }
 
   &.toaster-top-right {
-    top: 2rem;
-    right: 2rem;
+    top: var(--toaster-offset-top);
+    right: var(--toaster-offset-right);
   }
 
   &.toaster-bottom-center {
-    bottom: 2rem;
+    bottom: var(--toaster-offset-bottom);
     left: 50%;
     transform: translate(-50%, 0%);
   }
 
   &.toaster-bottom-left {
-    bottom: 2rem;
-    left: 2rem;
+    bottom: var(--toaster-offset-bottom);
+    left: var(--toaster-offset-left);
   }
 
   &.toaster-bottom-right {
-    bottom: 2rem;
-    right: 2rem;
+    bottom: var(--toaster-offset-bottom);
+    right: var(--toaster-offset-right);
   }
 
   .toast-element {
@@ -42,43 +60,44 @@
     flex-direction: row;
     animation: fadein 1.5s;
     margin-bottom: 1rem;
-    padding: .5rem;
-    color: #1D1D1B;
-    width: 25rem;
-    border-radius: .25rem;
-    box-shadow: rgba(0,0,0,0.30) 0px 10px 30px 2px;
-    background-color: #fff;
-    border-top: 6px solid #fff;
+    padding: 0.5rem;
+    color: var(--toaster-element-color);
+    width: var(--toaster-element-width);
+    border-radius: var(--toaster-border-radius);
+    box-shadow: rgba(0, 0, 0, 0.3) 0px 10px 30px 2px;
+    background-color: var(--toaster-element-bg);
+    border-top: var(--toaster-border-width) solid var(--toaster-border-color);
 
     &.toast-information {
-      border-top: 6px solid #2563eb;
+      border-top: var(--toaster-border-width) solid
+        var(--toaster-information-color);
 
       .toast-icon {
-        color: #2563eb;
+        color: var(--toaster-information-color);
       }
     }
 
     &.toast-success {
-      border-top: 6px solid #16a34a;
+      border-top: var(--toaster-border-width) solid var(--toaster-success-color);
 
       .toast-icon {
-        color: #16a34a;
+        color: var(--toaster-success-color);
       }
     }
 
     &.toast-warning {
-      border-top: 6px solid #eab308;
+      border-top: var(--toaster-border-width) solid var(--toaster-warning-color);
 
       .toast-icon {
-        color: #eab308;
+        color: var(--toaster-warning-color);
       }
     }
 
     &.toast-error {
-      border-top: 6px solid #dc2626;
+      border-top: var(--toaster-border-width) solid var(--toaster-error-color);
 
       .toast-icon {
-        color: #dc2626;
+        color: var(--toaster-error-color);
       }
     }
 
@@ -86,7 +105,7 @@
       border: 0;
       display: flex;
       align-items: center;
-      margin-right: .5rem;
+      margin-right: 0.5rem;
 
       .toast-icon-image {
         height: 22px;
@@ -98,23 +117,23 @@
       flex-grow: 1;
       margin: auto 0;
       font-weight: 500;
-      font-size: .9rem;
+      font-size: 0.9rem;
       overflow-wrap: break-word;
       word-wrap: break-word;
       word-break: break-word;
-      padding: .25rem;
+      padding: 0.25rem;
     }
 
     .toast-close {
       box-sizing: content-box;
       width: 1em;
       height: 1em;
-      padding: .5rem;
+      padding: 0.5rem;
       color: #000;
       background: transparent center/1em auto no-repeat;
       background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path d='M.293.293a1 1 0 0 1 1.414 0L8 6.586 14.293.293a1 1 0 1 1 1.414 1.414L9.414 8l6.293 6.293a1 1 0 0 1-1.414 1.414L8 9.414l-6.293 6.293a1 1 0 0 1-1.414-1.414L6.586 8 .293 1.707a1 1 0 0 1 0-1.414'/></svg>");
       border: 0;
-      border-radius: .375rem;
+      border-radius: 0.375rem;
       opacity: 0.5;
 
       &:hover {
@@ -128,16 +147,16 @@
       left: 0;
       right: 0;
       height: 6px;
-      border-bottom-left-radius: .375rem;
-      border-bottom-right-radius: .375rem;
+      border-bottom-left-radius: 0.375rem;
+      border-bottom-right-radius: 0.375rem;
 
       > span {
         position: absolute;
         filter: brightness(75%);
         height: 6px;
-        border-bottom-left-radius: .375rem;
+        border-bottom-left-radius: 0.375rem;
         background-image: linear-gradient(rgba(0, 0, 0, 0.1) 0 0);
-        transition: all .1s linear;
+        transition: all 0.1s linear;
       }
     }
   }

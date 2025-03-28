@@ -96,7 +96,7 @@ public partial class ToastContainer: IDisposable
         };
 
         return CssBuilder
-            .Default("toaster-container")
+            .Default("toaster")
             .AddClass(className)
             .MergeClass(Attributes)
             .ToString();

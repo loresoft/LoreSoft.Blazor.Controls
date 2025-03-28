@@ -1,4 +1,14 @@
 .toggle-switch {
+  --toggle-switch-bg: #ccc;
+  --toggle-switch-color: #828282;
+  --toggle-switch-content: "NO";
+
+  --toggle-slider-bg: #fff;
+
+  --toggle-checked-bg: #0d6efd;
+  --toggle-checked-color: #e6e6e6;
+  --toggle-checked-content: "YES";
+
   position: relative;
   display: inline-block;
   width: 70px;
@@ -19,9 +29,9 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgb(204, 204, 204);
-  -webkit-transition: .4s;
-  transition: .4s;
+  background-color: var(--toggle-switch-bg);
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
   border-radius: 4px;
 }
 
@@ -32,29 +42,30 @@
   width: 26px;
   left: 4px;
   bottom: 4px;
-  background-color: rgb(255, 255, 255);
-  -webkit-transition: .4s;
-  transition: .4s;
+  background-color: var(--toggle-slider-bg);
+  -webkit-transition: 0.4s;
+  transition: 0.4s;
   border-radius: 2px;
 }
 
 .toggle-slider:after {
   position: absolute;
-  content: "NO";
+  content: var(--toggle-switch-content);
   height: 22px;
   width: 26px;
   right: 6px;
   top: 6px;
-  color: rgb(130, 130, 130);
+  color: var(--toggle-switch-color);
   font-size: 12px;
 }
 
 .toggle-switch input:checked + .toggle-slider {
-  background-color: rgb(38, 132, 255);
+  background-color: var(--toggle-checked-bg);
 }
 
 .toggle-switch input:focus + .toggle-slider {
-  outline: 1px solid rgb(38, 132, 255);
+  outline: 0;
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
 }
 
 .toggle-switch input:checked + .toggle-slider:before {
@@ -64,8 +75,8 @@
 }
 
 .toggle-switch input:checked + .toggle-slider:after {
-  content: "YES";
+  content: var(--toggle-checked-content);
   left: 6px;
   top: 6px;
-  color: rgb(230, 230, 230);
+  color: var(--toggle-checked-color);
 }
