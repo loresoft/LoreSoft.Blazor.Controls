@@ -1,11 +1,11 @@
 .query-builder {
   --query-color: #6c757d;
-  --query-bg: #fff;
+  --query-bg: var(--bs-body-bg, #fff);
   --query-border-width: 1px;
   --query-border-color: #ccc;
   --query-hover-color: #000;
   --query-hover-border-color: #6c757d;
-  --query-invalid-border-color: #dc3546;
+  --query-invalid-border-color: var(--bs-danger, #dc3545);
   --query-group-header-bg: #f2f2f2;
 
   position: relative;

@@ -3,9 +3,9 @@
   --toggle-switch-color: #828282;
   --toggle-switch-content: "NO";
 
-  --toggle-slider-bg: #fff;
+  --toggle-slider-bg: var(--bs-body-bg, #fff);
 
-  --toggle-checked-bg: #0d6efd;
+  --toggle-checked-bg: var(--bs-primary, #0d6efd);
   --toggle-checked-color: #e6e6e6;
   --toggle-checked-content: "YES";
 

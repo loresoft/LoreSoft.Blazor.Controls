@@ -6,7 +6,7 @@
 
 <div @attributes="AdditionalAttributes"
      class="typeahead @ValidationClass()">
-    <div class="typeahead-control"
+    <div class="typeahead-control @(SearchMode ? "typeahead-active" : null)"
          tabindex="0"
          @onfocus="ShowMenu">
         <div class="typeahead-value-container">

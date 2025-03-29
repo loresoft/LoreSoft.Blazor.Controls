@@ -1,11 +1,11 @@
 :root {
-  --json-border-width: 1px;
-  --json-border-color: #dee2e6;
-  --json-object-color: #212529;
+  --json-border-width: var(--bs-border-width, 1px);
+  --json-border-color: var(--bs-border-color, #dee2e6);
+  --json-object-color: var(--bs-body-color, #212529);
   --json-name-color: inherit;
   --json-name-bg: #f9f9f9;
   --json-value-color: inherit;
-  --json-value-bg: #fff;
+  --json-value-bg: var(--bs-body-bg, #fff);
 }
 
 .json-object {

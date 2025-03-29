@@ -1,10 +1,10 @@
 .loading-block-overlay {
   --loading-block-bg: rgba(0, 0, 0, 0.1);
   --loading-block-zindex: 9999;
-  --loading-block-spinner-color: #212529;
+  --loading-block-spinner-color: var(--bs-body-color, #212529);
   --loading-block-spinner-size: 5px;
   --loading-block-spinner-zindex: 1200;
-  --loading-block-text-color: #212529;
+  --loading-block-text-color: var(--bs-body-color, #212529);
 
   background-color: var(--loading-block-bg);
   position: absolute;

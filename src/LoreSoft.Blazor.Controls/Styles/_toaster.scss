@@ -4,7 +4,7 @@
   --toaster-warning-color: #eab308;
   --toaster-error-color: #dc2626;
 
-  --toaster-border-color: #fff;
+  --toaster-border-color: var(--bs-body-bg, #fff);
   --toaster-border-radius: 0.25rem;
   --toaster-border-width: 6px;
 

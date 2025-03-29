@@ -1,9 +1,9 @@
 .data-grid-container {
-  --data-grid-error-color: #dc3545;
+  --data-grid-error-color: var(--bs-danger, #dc3545)
   --data-grid-empty-color: #6c757d;
 
-  --data-size-options-color: #212529;
-  --data-size-options-bg: #fff;
+  --data-size-options-color: var(--bs-body-color, #212529);
+  --data-size-options-bg: var(--bs-body-bg, #fff);
 
   position: relative;
 }
