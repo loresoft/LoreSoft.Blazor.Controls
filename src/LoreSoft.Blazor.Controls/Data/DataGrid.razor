@@ -111,20 +111,21 @@
                                                                        ValueTemplate="@column.FilterTemplate" />
                                                 }
                                             </QueryFields>
+                                            <FooterTemplate>
+                                                <div class="filter-footer">
+                                                    <button type="submit"
+                                                            class="query-button">
+                                                        Apply
+                                                    </button>
+
+                                                    <button type="button"
+                                                            class="query-button"
+                                                            @onclick="ClearFilters">
+                                                        Clear
+                                                    </button>
+                                                </div>
+                                            </FooterTemplate>
                                         </QueryBuilder>
-
-                                        <div class="filter-footer">
-                                            <button type="submit"
-                                                    class="query-button">
-                                                Apply
-                                            </button>
-
-                                            <button type="button"
-                                                    class="query-button"
-                                                    @onclick="ClearFilters">
-                                                Clear
-                                            </button>
-                                        </div>
                                     </form>
                                 </div>
                             </td>

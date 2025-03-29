@@ -10,5 +10,9 @@
     }
     <div class="query-builder">
         <QueryBuilderGroup TItem="TItem" Group="RootQuery" />
+        @if (FooterTemplate != null)
+        {
+            @FooterTemplate
+        }
     </div>
 </CascadingValue>

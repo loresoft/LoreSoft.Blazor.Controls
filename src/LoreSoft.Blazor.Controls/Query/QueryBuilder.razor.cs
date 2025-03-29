@@ -14,6 +14,9 @@ public partial class QueryBuilder<TItem> : ComponentBase
     [Parameter]
     public EventCallback<QueryGroup> QueryChanged { get; set; }
 
+    [Parameter]
+    public RenderFragment FooterTemplate { get; set; }
+
 
     public List<QueryBuilderField<TItem>> Fields { get; } = [];
 
