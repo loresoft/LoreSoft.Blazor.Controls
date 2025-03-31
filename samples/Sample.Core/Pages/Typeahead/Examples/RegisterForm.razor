@@ -1,4 +1,4 @@
-﻿@using Sample.Core.Models
+@using Sample.Core.Models
 @using Sample.Core.Services
 <h3>Register Form</h3>
 
@@ -30,6 +30,8 @@
         <Typeahead SearchMethod="@SearchPeople"
                    Items="Data.PersonList"
                    @bind-Value="@Register.Manager"
+                   id="Manager"
+                   name="Manager"
                    Placeholder="Manager">
             <SelectedTemplate Context="user">
                 @user.FullName
@@ -43,7 +45,7 @@
     <div class="mb-3">
         <div class="form-check">
             <InputCheckbox id="Agree"
-                           @bind-Value="Register.Agree" 
+                           @bind-Value="Register.Agree"
                            class="form-check-input" />
             <label class="form-check-label" for="Agree">Agree to terms</label>
             <ValidationMessage For="@(() => Register.Agree)" />
@@ -60,7 +62,7 @@
 
 @code {
     public Register Register { get; set; } = new Register();
-    
+
     public async Task<IEnumerable<Person>> SearchPeople(string searchText)
     {
         var result = Data.PersonList

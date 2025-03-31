@@ -67,7 +67,6 @@
     border-style: solid;
     border-width: var(--typeahead-border-width);
     transition: all 100ms ease 0s;
-    outline: 0px !important;
 
     &.typeahead-active {
       z-index: var(--typeahead-control-zindex);
@@ -197,17 +196,15 @@
   .typeahead-menu {
     top: 100%;
     background-color: var(--typeahead-menu-bg-color);
-    box-shadow: #0000001a 0px 0px 0px 1px, #0000001a 0px 4px 11px;
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 0px 0px 1px, rgba(0, 0, 0, 0.1) 0px 4px 11px;
     margin-bottom: 8px;
     margin-top: 2px;
     position: absolute;
     width: 100%;
     z-index: var(--typeahead-menu-zindex);
     box-sizing: border-box;
-    border-color: var(--typeahead-menu-border-color);
+    border: var(--typeahead-menu-border-width) solid var(--typeahead-menu-border-color);
     border-radius: var(--typeahead-menu-border-radius);
-    border-style: solid;
-    border-width: var(--typeahead-menu-border-width);
 
     .typeahead-search-container {
       margin: 0;

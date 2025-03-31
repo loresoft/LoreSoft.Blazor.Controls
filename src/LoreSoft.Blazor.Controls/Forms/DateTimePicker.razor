@@ -4,7 +4,7 @@
 @using Microsoft.AspNetCore.Components.Forms
 @using Microsoft.AspNetCore.Components.Web
 
-<div class="datetimepicker @(IsDatePickerOpen ? "is-datepicker-open": IsTimePickerOpen ? "is-timepicker-open" : string.Empty)">
+<div class="datetimepicker @(IsDatePickerOpen ? "is-datepicker-open": null)">
     <div class="datetimepicker-value-container">
         <input type="text"
                autocomplete="off"
@@ -20,7 +20,7 @@
         {
             <button type="button"
                     class="datetimepicker-clear-button"
-                    title="Clear"
+                    title="Clear Value"
                     disabled="@Disabled"
                     @onclick="ClearValue">
                 <svg height="20"
@@ -34,43 +34,21 @@
                 </svg>
             </button>
         }
-        @if (Mode == DateTimePickerMode.Date || Mode == DateTimePickerMode.DateTime)
-        {
-            <button type="button"
-                    aria-hidden="true"
-                    class="datetimepicker-calendar-button"
-                    disabled="@Disabled"
-                    @onclick="ToggleDatePicker">
-                <svg height="20"
-                     width="20"
-                     viewBox="0 0 448 512"
-                     aria-hidden="true"
-                     focusable="false"
-                     role="img">
-                    <path fill="currentColor"
-                          d="M400 64h-48V8c0-4.4-3.6-8-8-8h-16c-4.4 0-8 3.6-8 8v56H128V8c0-4.4-3.6-8-8-8h-16c-4.4 0-8 3.6-8 8v56H48C21.5 64 0 85.5 0 112v352c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48V112c0-26.5-21.5-48-48-48zm16 400c0 8.8-7.2 16-16 16H48c-8.8 0-16-7.2-16-16V192h384v272zm0-304H32v-48c0-8.8 7.2-16 16-16h352c8.8 0 16 7.2 16 16v48zM112 384h96c8.8 0 16-7.2 16-16v-96c0-8.8-7.2-16-16-16h-96c-8.8 0-16 7.2-16 16v96c0 8.8 7.2 16 16 16zm16-96h64v64h-64v-64z"></path>
-                </svg>
-            </button>
-        }
-        @if (Mode == DateTimePickerMode.Time || Mode == DateTimePickerMode.DateTime)
-        {
-            <button type="button"
-                    aria-hidden="true"
-                    class="datetimepicker-time-button"
-                    disabled="@Disabled"
-                    @onclick="ToggleTimePicker">
-                <svg width="20"
-                     height="20"
-                     viewBox="0 0 512 512"
-                     aria-hidden="true"
-                     focusable="false"
-                     role="img">
-                    <path fill="currentColor"
-                          d="M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8zm216 248c0 118.7-96.1 216-216 216-118.7 0-216-96.1-216-216 0-118.7 96.1-216 216-216 118.7 0 216 96.1 216 216zm-148.9 88.3l-81.2-59c-3.1-2.3-4.9-5.9-4.9-9.7V116c0-6.6 5.4-12 12-12h14c6.6 0 12 5.4 12 12v146.3l70.5 51.3c5.4 3.9 6.5 11.4 2.6 16.8l-8.2 11.3c-3.9 5.3-11.4 6.5-16.8 2.6z">
-                    </path>
-                </svg>
-            </button>
-        }
+        <button type="button"
+                class="datetimepicker-calendar-button"
+                title="Show Picker"
+                disabled="@Disabled"
+                @onclick="ToggleDatePicker">
+            <svg height="20"
+                 width="20"
+                 viewBox="0 0 448 512"
+                 aria-hidden="true"
+                 focusable="false"
+                 role="img">
+                <path fill="currentColor"
+                      d="M400 64h-48V8c0-4.4-3.6-8-8-8h-16c-4.4 0-8 3.6-8 8v56H128V8c0-4.4-3.6-8-8-8h-16c-4.4 0-8 3.6-8 8v56H48C21.5 64 0 85.5 0 112v352c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48V112c0-26.5-21.5-48-48-48zm16 400c0 8.8-7.2 16-16 16H48c-8.8 0-16-7.2-16-16V192h384v272zm0-304H32v-48c0-8.8 7.2-16 16-16h352c8.8 0 16 7.2 16 16v48zM112 384h96c8.8 0 16-7.2 16-16v-96c0-8.8-7.2-16-16-16h-96c-8.8 0-16 7.2-16 16v96c0 8.8 7.2 16 16 16zm16-96h64v64h-64v-64z"></path>
+            </svg>
+        </button>
     </div>
 
     @if (IsDatePickerOpen)
@@ -79,104 +57,109 @@
              @onclick="CloseDatePicker"></div>
 
         <div class="datepicker-modal">
-            <div class="datepicker-navigation">
-                <button type="button"
-                        class="datepicker-previous-button"
-                        title="Previous Month"
-                        @onclick="PreviousMonth">
-                    <svg width="17"
-                         height="17"
-                         viewBox="0 0 8 8"
-                         aria-hidden="true"
-                         focusable="false"
-                         role="img">
-                        <path fill="currentColor"
-                              d="M5.25 0l-4 4 4 4 1.5-1.5L4.25 4l2.5-2.5L5.25 0z" />
-                    </svg>
-                </button>
-                <button type="button"
-                        class="datepicker-today-button"
-                        title="Today"
-                        @onclick="ShowToday">
-                    <svg width="18"
-                         height="18"
-                         viewBox="0 0 448 512"
-                         aria-hidden="true"
-                         focusable="false"
-                         role="img">
-                        <path fill="currentColor"
-                              d="M400 64h-48V8c0-4.4-3.6-8-8-8h-16c-4.4 0-8 3.6-8 8v56H128V8c0-4.4-3.6-8-8-8h-16c-4.4 0-8 3.6-8 8v56H48C21.5 64 0 85.5 0 112v352c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48V112c0-26.5-21.5-48-48-48zm16 400c0 8.8-7.2 16-16 16H48c-8.8 0-16-7.2-16-16V192h384v272zm0-304H32v-48c0-8.8 7.2-16 16-16h352c8.8 0 16 7.2 16 16v48zM112 384h96c8.8 0 16-7.2 16-16v-96c0-8.8-7.2-16-16-16h-96c-8.8 0-16 7.2-16 16v96c0 8.8 7.2 16 16 16zm16-96h64v64h-64v-64z" />
-                    </svg>
-                </button>
-                <select class="datepicker-select-month"
-                        title="Select Month"
-                        @bind="Month">
-                    @for (var index = 0; index < DateTimeFormatInfo.MonthNames.Length - 1; index++)
-                    {
-                        var month = DateTimeFormatInfo.MonthNames[index];
-                        var number = index + 1;
-                        <option value="@number">@month</option>
-                    }
-                </select>
-                <input type="number"
-                       class="datepicker-input-year"
-                       placeholder="Year"
-                       @bind="Year" />
-                <button type="button"
-                        class="datepicker-next-button"
-                        title="Next Month"
-                        @onclick="NextMonth">
-                    <svg width="17"
-                         height="17"
-                         viewBox="0 0 8 8"
-                         aria-hidden="true"
-                         focusable="false">
-                        <path fill="currentColor"
-                              d="M2.75 0l-1.5 1.5L3.75 4l-2.5 2.5L2.75 8l4-4-4-4z" />
-                    </svg>
-                </button>
-            </div>
-            <section class="datepicker-table">
-                <header class="datepicker-header">
-                    @foreach (var header in Headers)
-                    {
-                        <div class="datepicker-header-cell">@header</div>
-                    }
-                </header>
-                <div class="datepicker-body">
-                    @foreach (var row in Rows)
-                    {
-                        <div class="datepicker-row">
-                            @foreach (var cell in row.Cells)
+            @if (Mode == DateTimePickerMode.Date || Mode == DateTimePickerMode.DateTime)
+            {
+                <div class="datepicker-container">
+                    <div class="datepicker-navigation">
+                        <button type="button"
+                                class="datepicker-previous-button"
+                                title="Previous Month"
+                                @onclick="PreviousMonth">
+                            <svg width="17"
+                                 height="17"
+                                 viewBox="0 0 8 8"
+                                 aria-hidden="true"
+                                 focusable="false"
+                                 role="img">
+                                <path fill="currentColor"
+                                      d="M5.25 0l-4 4 4 4 1.5-1.5L4.25 4l2.5-2.5L5.25 0z" />
+                            </svg>
+                        </button>
+                        <button type="button"
+                                class="datepicker-today-button"
+                                title="Today"
+                                @onclick="ShowToday">
+                            <svg width="18"
+                                 height="18"
+                                 viewBox="0 0 448 512"
+                                 aria-hidden="true"
+                                 focusable="false"
+                                 role="img">
+                                <path fill="currentColor"
+                                      d="M400 64h-48V8c0-4.4-3.6-8-8-8h-16c-4.4 0-8 3.6-8 8v56H128V8c0-4.4-3.6-8-8-8h-16c-4.4 0-8 3.6-8 8v56H48C21.5 64 0 85.5 0 112v352c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48V112c0-26.5-21.5-48-48-48zm16 400c0 8.8-7.2 16-16 16H48c-8.8 0-16-7.2-16-16V192h384v272zm0-304H32v-48c0-8.8 7.2-16 16-16h352c8.8 0 16 7.2 16 16v48zM112 384h96c8.8 0 16-7.2 16-16v-96c0-8.8-7.2-16-16-16h-96c-8.8 0-16 7.2-16 16v96c0 8.8 7.2 16 16 16zm16-96h64v64h-64v-64z" />
+                            </svg>
+                        </button>
+                        <select class="datepicker-select-month"
+                                title="Select Month"
+                                @bind="Month">
+                            @for (var index = 0; index < DateTimeFormatInfo.MonthNames.Length - 1; index++)
                             {
-                                <span role="button"
-                                      tabindex="0"
-                                      disabled="@cell.IsDisabled"
-                                      class="@cell.CssClass"
-                                      @onclick="() => SelectDate(cell)"
-                                      @onkeydown="e => DateCellKeyDown(e, cell)">@cell.Day</span>
-                                }
+                                var month = DateTimeFormatInfo.MonthNames[index];
+                                var number = index + 1;
+                                <option @key="index" value="@number">@month</option>
+                            }
+                        </select>
+                        <input type="number"
+                               class="datepicker-input-year"
+                               title="Year"
+                               placeholder="Year"
+                               @bind="Year" />
+                        <button type="button"
+                                class="datepicker-next-button"
+                                title="Next Month"
+                                @onclick="NextMonth">
+                            <svg width="17"
+                                 height="17"
+                                 viewBox="0 0 8 8"
+                                 aria-hidden="true"
+                                 focusable="false">
+                                <path fill="currentColor"
+                                      d="M2.75 0l-1.5 1.5L3.75 4l-2.5 2.5L2.75 8l4-4-4-4z" />
+                            </svg>
+                        </button>
+                    </div>
+                    <section class="datepicker-table">
+                        <header class="datepicker-header">
+                            @foreach (var header in Headers)
+                            {
+                                <div @key="@header" class="datepicker-header-cell">@header</div>
+                            }
+                        </header>
+                        <div class="datepicker-body">
+                            @foreach (var row in Rows)
+                            {
+                                <div @key="@row.Key" class="datepicker-row">
+                                    @foreach (var cell in row.Cells)
+                                    {
+                                        <span @key="@cell.Date"
+                                              role="button"
+                                              tabindex="0"
+                                              disabled="@cell.IsDisabled"
+                                              class="@DateCellClass(cell)"
+                                              @onclick="() => SelectDate(cell)"
+                                              @onkeydown="e => DateCellKeyDown(e, cell)">@cell.Day</span>
+                                    }
+                                </div>
+                            }
+                        </div>
+                    </section>
+                </div>
+            }
+            @if (Mode == DateTimePickerMode.Time || Mode == DateTimePickerMode.DateTime)
+            {
+                <div class="timepicker-container">
+                    @foreach (var segment in Segments)
+                    {
+                        <div @key="@segment.Date"
+                             role="button"
+                             tabindex="0"
+                             disabled="@segment.IsDisabled"
+                             class="@TimeSegmentClass(segment)"
+                             @onclick="() => SelectTime(segment)"
+                             @onkeydown="e => TimeCellKeyDown(e, segment)">
+                            @segment.Text
                         </div>
                     }
-                </div>
-            </section>
-        </div>
-    }
-    else if (IsTimePickerOpen)
-    {
-        <div class="datetimepicker-background"
-             @onclick="CloseTimePicker"></div>
-
-        <div class="timepicker-modal">
-            @foreach (var segment in Segments)
-            {
-                <div role="button"
-                     tabindex="0"
-                     disabled="@segment.IsDisabled"
-                     class="@segment.CssClass"
-                     @onclick="() => SelectTime(segment)"
-                     @onkeydown="e => TimeCellKeyDown(e, segment)">
-                    @segment.Text
                 </div>
             }
         </div>

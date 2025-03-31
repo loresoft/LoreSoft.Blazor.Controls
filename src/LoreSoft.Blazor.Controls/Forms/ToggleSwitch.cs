@@ -69,24 +69,23 @@ public partial class ToggleSwitch<TValue> : ComponentBase
             ? EditContext.FieldCssClass(FieldIdentifier)
             : string.Empty;
 
-        var className = new CssBuilder("toggle-switch")
-            .MergeClass(Attributes)
-            .AddClass(fieldClass, v => v.HasValue())
-            .ToString();
-
         builder.OpenElement(0, "label");
-        builder.AddAttribute(1, "class", className);
-        builder.AddMultipleAttributes(2, Attributes);
+        builder.AddAttribute(1, "class", "toggle-switch");
 
-        builder.OpenElement(3, "input");
+        builder.OpenElement(2, "input");
+        builder.AddMultipleAttributes(3, Attributes);
         builder.AddAttribute(4, "type", "checkbox");
         builder.AddAttribute(5, "checked", BindConverter.FormatValue(CurrentValue));
         builder.AddAttribute(6, "onchange", EventCallback.Factory.CreateBinder(this, v => CurrentValue = v, CurrentValue));
         builder.SetUpdatesAttributeName("checked");
         builder.CloseElement(); // input
 
+        var sliderClass = CssBuilder.Default("toggle-slider")
+            .AddClass(fieldClass, fieldClass.HasValue())
+            .ToString();
+
         builder.OpenElement(7, "span");
-        builder.AddAttribute(8, "class", "toggle-slider");
+        builder.AddAttribute(8, "class", sliderClass);
         builder.CloseComponent(); // slider
 
         builder.CloseElement(); //label

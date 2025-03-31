@@ -1,4 +1,4 @@
-﻿@using Sample.Core.Models
+@using Sample.Core.Models
 @using Sample.Core.Services
 <h3>Register Form</h3>
 
@@ -42,7 +42,10 @@
     </div>
     <div class="mb-3">
         <label for="Birthday">Birthday *</label>
-        <DateTimePicker @bind-Value="Register.Birthday" placeholder="Select Birthday"></DateTimePicker>
+        <DateTimePicker @bind-Value="Register.Birthday"
+                        id="Birthday"
+                        name="Birthday"
+                        placeholder="Select Birthday" />
         <ValidationMessage For="@(() => Register.Birthday)" />
     </div>
     <div class="mb-3">
@@ -57,11 +60,11 @@
 
 </EditForm>
 
-<p><br/></p>
+<p><br /></p>
 
 @code {
     public Register Register { get; set; } = new Register();
-    
+
     public async Task<IEnumerable<Person>> SearchPeople(string searchText)
     {
         var result = Data.PersonList

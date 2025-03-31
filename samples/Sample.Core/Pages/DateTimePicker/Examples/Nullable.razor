@@ -1,8 +1,10 @@
-﻿<h3>Nullable</h3>
+<h3>Nullable</h3>
 
 <p>Example of binding to a nullable DateTime property.</p>
 
-<DateTimePicker @bind-Value="SelectedDate"></DateTimePicker>
+<DateTimePicker @bind-Value="SelectedDate"
+                name="SelectedDate"
+                placeholder="Select Date" />
 
 <p>Bound Value: @SelectedDate</p>
 

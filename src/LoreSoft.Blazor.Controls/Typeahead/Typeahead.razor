@@ -4,10 +4,12 @@
 
 @using Microsoft.AspNetCore.Components.Web
 
-<div @attributes="AdditionalAttributes"
-     class="typeahead @ValidationClass()">
-    <div class="typeahead-control @(SearchMode ? "typeahead-active" : null)"
+<div class="typeahead">
+    <div class="@ControlClass()"
          tabindex="0"
+         role="textbox"
+         title="@Placeholder"
+         @attributes="AdditionalAttributes"
          @onfocus="ShowMenu">
         <div class="typeahead-value-container">
             @if (IsMultiselect() && Values != null && Values.Count > 0)
@@ -94,7 +96,7 @@
                        @onkeydown="HandleKeydown"
                        @onkeydown:preventDefault="PreventKey"
                        class="typeahead-search-input"
-                       type="text"
+                       type="search"
                        placeholder="@SearchPlaceholder"
                        autocomplete="off" />
             </div>

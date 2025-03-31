@@ -1,6 +1,8 @@
 using System.Globalization;
 using System.Linq.Expressions;
 
+using LoreSoft.Blazor.Controls.Utilities;
+
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Components.Web;
@@ -21,9 +23,9 @@ public partial class DateTimePicker<TValue> : ComponentBase, IDisposable
         DateTimeFormatInfo = DateTimeFormatInfo.CurrentInfo;
         DateFormat = "M/d/yyyy";
         TimeFormat = "h:mm tt";
-        Headers = new List<string>();
-        Rows = new List<DatePickerRow>();
-        Segments = new List<TimePickerSegment>();
+        Headers = [];
+        Rows = [];
+        Segments = [];
         AllowClear = true;
         Mode = DateTimePickerMode.Date;
         TimeScale = 30;
@@ -175,8 +177,6 @@ public partial class DateTimePicker<TValue> : ComponentBase, IDisposable
 
     public bool IsDatePickerOpen { get; set; }
 
-    public bool IsTimePickerOpen { get; set; }
-
 
     protected override void OnInitialized()
     {
@@ -226,6 +226,7 @@ public partial class DateTimePicker<TValue> : ComponentBase, IDisposable
         PreventKey = (args.Key == "Enter");
     }
 
+
     protected void BuildGrid()
     {
         Headers.Clear();
@@ -250,15 +251,12 @@ public partial class DateTimePicker<TValue> : ComponentBase, IDisposable
         //always build 6 rows
         for (int r = 0; r < 6; r++)
         {
-            var row = new DatePickerRow
-            {
-                Cells = new List<DatePickerCell>()
-            };
+            var row = new DatePickerRow();
 
             // for all days of week
             for (int c = 0; c < DateTimeFormatInfo.DayNames.Length; c++)
             {
-                var cell = CreateCell(workingDate);
+                var cell = new DatePickerCell(workingDate);
                 row.Cells.Add(cell);
 
                 // create headers if first row
@@ -309,9 +307,9 @@ public partial class DateTimePicker<TValue> : ComponentBase, IDisposable
     {
         SyncDate(Value);
         BuildGrid();
+        BuildTimeSegments();
 
         IsDatePickerOpen = true;
-        IsTimePickerOpen = false;
     }
 
     protected void CloseDatePicker()
@@ -355,8 +353,6 @@ public partial class DateTimePicker<TValue> : ComponentBase, IDisposable
             case TimeSpan timeSpanValue:
                 break;
         }
-
-        CloseDatePicker();
     }
 
     protected void DateCellKeyDown(KeyboardEventArgs args, DatePickerCell cell)
@@ -374,47 +370,12 @@ public partial class DateTimePicker<TValue> : ComponentBase, IDisposable
 
         while (workingDate < nextDate)
         {
-            var segment = new TimePickerSegment
-            {
-                Hour = workingDate.Hour,
-                Minute = workingDate.Minute,
-                Text = workingDate.ToString(TimeFormat),
-                IsSelected = IsTimeSelected(workingDate),
-                CssClass = "timepicker-cell"
-            };
-
-            if (segment.IsSelected)
-                segment.CssClass += " is-selected";
-
-            if (segment.IsDisabled)
-                segment.CssClass += " is-disabled";
-
+            var segment = new TimePickerSegment(workingDate, workingDate.ToString(TimeFormat));
 
             Segments.Add(segment);
 
             workingDate = workingDate.AddMinutes(TimeScale);
         }
-    }
-
-    protected void ToggleTimePicker()
-    {
-        if (IsTimePickerOpen)
-            CloseTimePicker();
-        else
-            ShowTimePicker();
-    }
-
-    protected void ShowTimePicker()
-    {
-        BuildTimeSegments();
-
-        IsDatePickerOpen = false;
-        IsTimePickerOpen = true;
-    }
-
-    protected void CloseTimePicker()
-    {
-        IsTimePickerOpen = false;
     }
 
     protected void SelectTime(TimePickerSegment segment)
@@ -452,8 +413,6 @@ public partial class DateTimePicker<TValue> : ComponentBase, IDisposable
 
                 break;
         }
-
-        CloseTimePicker();
     }
 
     protected void TimeCellKeyDown(KeyboardEventArgs args, TimePickerSegment segment)
@@ -466,10 +425,7 @@ public partial class DateTimePicker<TValue> : ComponentBase, IDisposable
 
     protected void DateTimeFocus()
     {
-        if (Mode == DateTimePickerMode.Time)
-            ShowTimePicker();
-        else
-            ShowDatePicker();
+        ShowDatePicker();
     }
 
     protected void ClearValue()
@@ -521,75 +477,54 @@ public partial class DateTimePicker<TValue> : ComponentBase, IDisposable
         BuildGrid();
     }
 
-    private DatePickerCell CreateCell(DateTime workingDate)
-    {
-        var cell = new DatePickerCell
-        {
-            Month = workingDate.Month,
-            Year = workingDate.Year,
-            Day = workingDate.Day,
-            IsToday = workingDate == DateTime.Today,
-            IsPrimaryMonth = workingDate.Month == Month,
-            IsSecondaryMonth = workingDate.Month != Month,
-            IsSelected = IsDateSelected(workingDate),
-            CssClass = "datepicker-cell"
-        };
-
-
-
-        if (cell.IsPrimaryMonth)
-            cell.CssClass += " is-primary-month";
-
-        if (cell.IsSecondaryMonth)
-            cell.CssClass += " is-secondary-month";
-
-        if (cell.IsToday)
-            cell.CssClass += " is-today";
-
-        if (cell.IsSelected)
-            cell.CssClass += " is-selected";
-
-        if (cell.IsDisabled)
-            cell.CssClass += " is-disabled";
-
-        return cell;
-    }
 
     private bool IsDateSelected(DateTime workingDate)
     {
         TValue value = Value;
 
-        switch (value)
+        return value switch
         {
-            case DateTime dateTimeValue:
-                return workingDate.Date == dateTimeValue.Date;
-            case DateTimeOffset dateTimeOffsetValue:
-                return workingDate.Date == dateTimeOffsetValue.Date;
-            default:
-                return false;
-        }
+            DateTime dateTimeValue => workingDate.Date == dateTimeValue.Date,
+            DateTimeOffset dateTimeOffsetValue => workingDate.Date == dateTimeOffsetValue.Date,
+            _ => false,
+        };
     }
 
     private bool IsTimeSelected(DateTime workingDate)
     {
         TValue value = Value;
 
-        switch (value)
+        return value switch
         {
-            case DateTime dateTimeValue:
-                return workingDate.Hour == dateTimeValue.Hour
-                    && workingDate.Minute == dateTimeValue.Minute;
-            case DateTimeOffset dateTimeOffsetValue:
-                return workingDate.Hour == dateTimeOffsetValue.Hour
-                       && workingDate.Minute == dateTimeOffsetValue.Minute;
-            case TimeSpan timeSpanValue:
-                return workingDate.Hour == timeSpanValue.Hours
-                       && workingDate.Minute == timeSpanValue.Minutes;
-            default:
-                return false;
-        }
-
+            DateTime dateTimeValue => workingDate.Hour == dateTimeValue.Hour && workingDate.Minute == dateTimeValue.Minute,
+            DateTimeOffset dateTimeOffsetValue => workingDate.Hour == dateTimeOffsetValue.Hour && workingDate.Minute == dateTimeOffsetValue.Minute,
+            TimeSpan timeSpanValue => workingDate.Hour == timeSpanValue.Hours && workingDate.Minute == timeSpanValue.Minutes,
+            _ => false,
+        };
     }
+
+
+    private string DateCellClass(DatePickerCell datePickerCell)
+    {
+        return CssBuilder
+            .Default("datepicker-cell")
+            .AddClass("is-primary-month", datePickerCell.IsPrimaryMonth)
+            .AddClass("is-secondary-month", datePickerCell.IsSecondaryMonth)
+            .AddClass("is-today", datePickerCell.IsToday)
+            .AddClass("is-selected", IsDateSelected(datePickerCell.Date))
+            .AddClass("is-disabled", datePickerCell.IsDisabled)
+            .ToString();
+    }
+
+    private string TimeSegmentClass(TimePickerSegment timePickerSegment)
+    {
+        return CssBuilder
+            .Default("timepicker-cell")
+            .AddClass("is-selected", IsTimeSelected(timePickerSegment.Date))
+            .AddClass("is-disabled", timePickerSegment.IsDisabled)
+            .ToString();
+    }
+
 
     private string FormatValueAsString(TValue value)
     {
@@ -643,7 +578,7 @@ public partial class DateTimePicker<TValue> : ComponentBase, IDisposable
         return false;
     }
 
-    private bool TryParseDateTime(string value, out TValue result)
+    private static bool TryParseDateTime(string value, out TValue result)
     {
         var success = DateTime.TryParse(value, out var parsedValue);
 
@@ -652,7 +587,7 @@ public partial class DateTimePicker<TValue> : ComponentBase, IDisposable
         return success;
     }
 
-    private bool TryParseDateTimeOffset(string value, out TValue result)
+    private static bool TryParseDateTimeOffset(string value, out TValue result)
     {
         var success = DateTimeOffset.TryParse(value, out var parsedValue);
 
@@ -661,7 +596,7 @@ public partial class DateTimePicker<TValue> : ComponentBase, IDisposable
         return success;
     }
 
-    private bool TryParseTimeSpan(string value, out TValue result)
+    private static bool TryParseTimeSpan(string value, out TValue result)
     {
         var success = TimeSpan.TryParse(value, out var parsedValue);
         if (success)
@@ -680,7 +615,7 @@ public partial class DateTimePicker<TValue> : ComponentBase, IDisposable
         return success;
     }
 
-    private string GetShortestDayName(DayOfWeek dayOfWeek)
+    private static string GetShortestDayName(DayOfWeek dayOfWeek)
     {
         switch (dayOfWeek)
         {
@@ -707,45 +642,7 @@ public partial class DateTimePicker<TValue> : ComponentBase, IDisposable
     {
         if (EditContext != null)
             EditContext.OnValidationStateChanged -= _validationStateChangedHandler;
+
+        GC.SuppressFinalize(this);
     }
-}
-
-public enum DateTimePickerMode
-{
-    Date,
-    DateTime,
-    Time
-}
-
-public class DatePickerRow
-{
-    public List<DatePickerCell> Cells { get; set; }
-}
-
-public class DatePickerCell
-{
-    public string CssClass { get; set; }
-
-    public int Year { get; set; }
-    public int Month { get; set; }
-    public int Day { get; set; }
-
-    public bool IsDisabled { get; set; }
-    public bool IsSelected { get; set; }
-    public bool IsToday { get; set; }
-    public bool IsPrimaryMonth { get; set; }
-    public bool IsSecondaryMonth { get; set; }
-}
-
-public class TimePickerSegment
-{
-    public string CssClass { get; set; }
-
-    public int Hour { get; set; }
-    public int Minute { get; set; }
-
-    public string Text { get; set; }
-
-    public bool IsDisabled { get; set; }
-    public bool IsSelected { get; set; }
 }

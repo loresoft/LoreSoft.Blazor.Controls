@@ -2,6 +2,9 @@ using System.Linq.Expressions;
 using System.Net;
 using System.Timers;
 
+using LoreSoft.Blazor.Controls.Extensions;
+using LoreSoft.Blazor.Controls.Utilities;
+
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.AspNetCore.Components.Web;
@@ -327,11 +330,17 @@ public partial class Typeahead<TItem, TValue> : ComponentBase, IDisposable
             : string.Empty;
     }
 
-    public string ValidationClass()
+    public string ControlClass()
     {
-        return EditContext != null
+        var validationClass = EditContext != null
             ? EditContext.FieldCssClass(FieldIdentifier)
             : string.Empty;
+
+        return CssBuilder
+            .Default("typeahead-control")
+            .AddClass("typeahead-active", SearchMode)
+            .AddClass(validationClass, validationClass.HasValue())
+            .ToString();
     }
 
 
