@@ -1,4 +1,4 @@
-// Ignore Spelling: queryable Toolbar Virtualize Overscan
+// Ignore Spelling: Queryable Toolbar Virtualize Overscan
 
 using System.ComponentModel;
 

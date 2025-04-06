@@ -73,6 +73,9 @@ public partial class Typeahead<TItem, TValue> : ComponentBase, IDisposable
     public IReadOnlyCollection<TItem>? Items { get; set; }
 
     [Parameter]
+    public Func<Task<IEnumerable<TItem>>>? ItemLoader { get; set; }
+
+    [Parameter]
     public Func<string, Task<IEnumerable<TItem>>> SearchMethod { get; set; } = null!;
 
     [Parameter]
@@ -181,6 +184,14 @@ public partial class Typeahead<TItem, TValue> : ComponentBase, IDisposable
         }
 
         _debounceTimer.Interval = Debounce;
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        if (ItemLoader != null)
+            _pending.Enqueue(LoadItems);
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -350,6 +361,22 @@ public partial class Typeahead<TItem, TValue> : ComponentBase, IDisposable
             .ToString();
     }
 
+
+    public async Task LoadItems()
+    {
+        if (ItemLoader == null)
+            return;
+
+        Loading = true;
+        StateHasChanged();
+
+        var result = await ItemLoader();
+
+        Items = result?.ToList() ?? [];
+
+        Loading = false;
+        StateHasChanged();
+    }
 
     public void Dispose()
     {
