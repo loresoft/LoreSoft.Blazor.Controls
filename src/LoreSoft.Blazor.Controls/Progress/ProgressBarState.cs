@@ -2,7 +2,7 @@ namespace LoreSoft.Blazor.Controls;
 
 public class ProgressBarState
 {
-    public event Action OnChange;
+    public event Action? OnChange;
 
     public int Count { get; private set; }
 

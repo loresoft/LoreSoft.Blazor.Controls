@@ -11,10 +11,10 @@ namespace LoreSoft.Blazor.Controls;
 public class DataPager : ComponentBase, IDisposable
 {
     [CascadingParameter(Name = "PagerState")]
-    protected DataPagerState PagerState { get; set; }
+    protected DataPagerState PagerState { get; set; } = new();
 
     [Parameter(CaptureUnmatchedValues = true)]
-    public Dictionary<string, object> Attributes { get; set; }
+    public Dictionary<string, object>? AdditionalAttributes { get; set; }
 
 
     [Parameter]
@@ -139,7 +139,7 @@ public class DataPager : ComponentBase, IDisposable
 
         builder.OpenElement(0, "div");
         builder.AddAttribute(1, "role", "navigation");
-        builder.AddMultipleAttributes(2, Attributes);
+        builder.AddMultipleAttributes(2, AdditionalAttributes);
 
         RenderPagination(builder);
 
@@ -198,7 +198,7 @@ public class DataPager : ComponentBase, IDisposable
         RenderPageLink(builder, page, PreviousText, "Go to previous page", disabledClass);
     }
 
-    private void RenderPageLink(RenderTreeBuilder builder, int page, string text, string title, string disabledClass = null)
+    private void RenderPageLink(RenderTreeBuilder builder, int page, string text, string title, string? disabledClass = null)
     {
         if (!ShowPage)
             return;
@@ -291,7 +291,7 @@ public class DataPager : ComponentBase, IDisposable
     }
 
 
-    private void OnStatePropertyChange(object sender, PropertyChangedEventArgs e)
+    private void OnStatePropertyChange(object? sender, PropertyChangedEventArgs e)
     {
         InvokeAsync(() =>
         {

@@ -1,3 +1,5 @@
+// Ignore Spelling: Debounce Keydown Multiselect
+
 using System.Linq.Expressions;
 using System.Net;
 using System.Timers;
@@ -13,78 +15,84 @@ namespace LoreSoft.Blazor.Controls;
 
 public partial class Typeahead<TItem, TValue> : ComponentBase, IDisposable
 {
-    private System.Timers.Timer _debounceTimer;
+    private readonly System.Timers.Timer _debounceTimer;
     private readonly Queue<Func<Task>> _pending;
 
     public Typeahead()
     {
-        Items = new List<TItem>();
+        Items = [];
         AllowClear = true;
         Loading = false;
         SearchMode = false;
         SelectedIndex = 0;
-        SearchResults = new List<TItem>();
+        SearchResults = [];
         SearchPlaceholder = "Search ...";
+
+        _searchText = string.Empty;
+
+        _debounceTimer = new System.Timers.Timer();
+        _debounceTimer.AutoReset = false;
+        _debounceTimer.Elapsed += (s, e) => InvokeAsync(() => Search(s, e));
 
         _pending = new Queue<Func<Task>>();
     }
 
     [CascadingParameter]
-    protected EditContext EditContext { get; set; }
+    protected EditContext? EditContext { get; set; }
 
     [Parameter(CaptureUnmatchedValues = true)]
-    public IReadOnlyDictionary<string, object> AdditionalAttributes { get; set; }
+    public Dictionary<string, object>? AdditionalAttributes { get; set; }
 
     [Parameter]
-    public TValue Value { get; set; }
+    public TValue? Value { get; set; }
 
     [Parameter]
     public EventCallback<TValue> ValueChanged { get; set; }
 
     [Parameter]
-    public Expression<Func<TValue>> ValueExpression { get; set; }
+    public Expression<Func<TValue>>? ValueExpression { get; set; }
 
 
     [Parameter]
-    public IList<TValue> Values { get; set; }
+    public IList<TValue>? Values { get; set; }
 
     [Parameter]
     public EventCallback<IList<TValue>> ValuesChanged { get; set; }
 
     [Parameter]
-    public Expression<Func<IList<TValue>>> ValuesExpression { get; set; }
+    public Expression<Func<IList<TValue>>>? ValuesExpression { get; set; }
 
 
     [Parameter]
-    public string Placeholder { get; set; }
+    public string? Placeholder { get; set; }
 
     [Parameter]
-    public string SearchPlaceholder { get; set; }
+    public string? SearchPlaceholder { get; set; }
 
     [Parameter]
-    public IReadOnlyCollection<TItem> Items { get; set; }
+    public IReadOnlyCollection<TItem>? Items { get; set; }
 
     [Parameter]
-    public Func<string, Task<IEnumerable<TItem>>> SearchMethod { get; set; }
+    public Func<string, Task<IEnumerable<TItem>>> SearchMethod { get; set; } = null!;
 
     [Parameter]
-    public Func<TItem, TValue> ConvertMethod { get; set; }
+    public Func<TItem, TValue?> ConvertMethod { get; set; } = null!;
 
 
     [Parameter]
-    public RenderFragment NoRecordsTemplate { get; set; }
+    public RenderFragment? NoRecordsTemplate { get; set; }
 
     [Parameter]
-    public RenderFragment LoadingTemplate { get; set; }
+    public RenderFragment? LoadingTemplate { get; set; }
 
     [Parameter]
-    public RenderFragment<TItem> ResultTemplate { get; set; }
+    public RenderFragment<TItem> ResultTemplate { get; set; } = null!;
 
     [Parameter]
-    public RenderFragment<TValue> SelectedTemplate { get; set; }
+    public RenderFragment<TValue> SelectedTemplate { get; set; } = null!;
 
     [Parameter]
-    public RenderFragment FooterTemplate { get; set; }
+    public RenderFragment? FooterTemplate { get; set; }
 
 
     [Parameter]
@@ -166,15 +174,13 @@ public partial class Typeahead<TItem, TValue> : ComponentBase, IDisposable
 
         if (FieldIdentifier.Equals(default))
         {
-            FieldIdentifier = IsMultiselect()
-                ? FieldIdentifier.Create(ValuesExpression)
-                : FieldIdentifier.Create(ValueExpression);
+            if (ValuesExpression != null)
+                FieldIdentifier = FieldIdentifier.Create(ValuesExpression);
+            else if (ValueExpression != null)
+                FieldIdentifier = FieldIdentifier.Create(ValueExpression);
         }
 
-        _debounceTimer = new System.Timers.Timer();
         _debounceTimer.Interval = Debounce;
-        _debounceTimer.AutoReset = false;
-        _debounceTimer.Elapsed += (s, e) => InvokeAsync(() => Search(s, e));
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -186,16 +192,14 @@ public partial class Typeahead<TItem, TValue> : ComponentBase, IDisposable
         }
     }
 
-    public async void Search(object source, ElapsedEventArgs e)
+    public async void Search(object? source, ElapsedEventArgs e)
     {
         Loading = true;
         StateHasChanged();
 
         var result = await SearchMethod(_searchText);
 
-        SearchResults = result == null
-            ? new List<TItem>()
-            : result.ToList();
+        SearchResults = result?.ToList() ?? [];
 
         Loading = false;
         StateHasChanged();
@@ -204,13 +208,13 @@ public partial class Typeahead<TItem, TValue> : ComponentBase, IDisposable
     public async Task SelectResult(TItem item)
     {
         var value = ConvertMethod(item);
+        if (value == null)
+            return;
 
         if (IsMultiselect())
         {
-            var valueList = Values ?? new List<TValue>();
-            if (valueList.Contains(value))
-                valueList.Remove(value);
-            else
+            var valueList = Values ?? [];
+            if (!valueList.Remove(value))
                 valueList.Add(value);
 
             await ValuesChanged.InvokeAsync(valueList);
@@ -226,9 +230,8 @@ public partial class Typeahead<TItem, TValue> : ComponentBase, IDisposable
 
     public async Task RemoveValue(TValue item)
     {
-        var valueList = Values ?? new List<TValue>();
-        if (valueList.Contains(item))
-            valueList.Remove(item);
+        var valueList = Values ?? [];
+        valueList.Remove(item);
 
         await ValuesChanged.InvokeAsync(valueList);
         EditContext?.NotifyFieldChanged(FieldIdentifier);
@@ -237,7 +240,7 @@ public partial class Typeahead<TItem, TValue> : ComponentBase, IDisposable
     public async Task Clear()
     {
         if (IsMultiselect())
-            await ValuesChanged.InvokeAsync(new List<TValue>());
+            await ValuesChanged.InvokeAsync([]);
         else
             await ValueChanged.InvokeAsync(default);
 
@@ -305,7 +308,7 @@ public partial class Typeahead<TItem, TValue> : ComponentBase, IDisposable
 
     public bool HasValue()
     {
-        return Value != null || (Values != null && Values.Count > 0);
+        return Value != null || Values?.Count > 0;
     }
 
     public string ResultClass(TItem item, int index)
@@ -315,12 +318,16 @@ public partial class Typeahead<TItem, TValue> : ComponentBase, IDisposable
         if (index == SelectedIndex)
             return resultClass;
 
-        TValue value = ConvertMethod(item);
+        var value = ConvertMethod(item);
+        if (value == null)
+            return string.Empty;
 
         if (!IsMultiselect())
+        {
             return Equals(value, Value)
                 ? resultClass
                 : string.Empty;
+        }
 
         if (Values == null || Values.Count == 0)
             return string.Empty;
@@ -347,6 +354,7 @@ public partial class Typeahead<TItem, TValue> : ComponentBase, IDisposable
     public void Dispose()
     {
         _debounceTimer?.Dispose();
+        GC.SuppressFinalize(this);
     }
 
 
@@ -365,10 +373,10 @@ public partial class Typeahead<TItem, TValue> : ComponentBase, IDisposable
 
     private void ShowItems()
     {
-        if (Items == null || Items.Count <= 0 || SearchResults.Count != 0)
+        if (Items == null || Items.Count == 0 || SearchResults.Count != 0)
             return;
 
-        SearchResults = new List<TItem>(Items);
+        SearchResults = [.. Items];
     }
 
 }

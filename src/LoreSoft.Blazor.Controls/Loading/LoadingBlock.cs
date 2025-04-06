@@ -1,4 +1,5 @@
 using LoreSoft.Blazor.Controls.Extensions;
+using LoreSoft.Blazor.Controls.Utilities;
 
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
@@ -7,6 +8,9 @@ namespace LoreSoft.Blazor.Controls;
 
 public class LoadingBlock : ComponentBase
 {
+    [Parameter(CaptureUnmatchedValues = true)]
+    public Dictionary<string, object>? AdditionalAttributes { get; set; }
+
     [Parameter]
     public bool IsLoading { get; set; }
 
@@ -14,11 +18,12 @@ public class LoadingBlock : ComponentBase
     public bool ShowSpinner { get; set; } = true;
 
     [Parameter]
-    public string LoadingText { get; set; }
+    public string? LoadingText { get; set; }
 
     [Parameter]
-    public RenderFragment ChildTemplate { get; set; }
+    public RenderFragment? ChildTemplate { get; set; }
 
+    protected string? ClassName { get; set; }
 
     protected override void BuildRenderTree(RenderTreeBuilder builder)
     {
@@ -26,15 +31,16 @@ public class LoadingBlock : ComponentBase
             return;
 
         builder.OpenElement(0, "div");
-        builder.AddAttribute(1, "class", "loading-block-overlay");
+        builder.AddMultipleAttributes(1, AdditionalAttributes);
+        builder.AddAttribute(2, "class", ClassName);
 
         if (ShowSpinner)
         {
-            builder.OpenElement(2, "div");
-            builder.AddAttribute(3, "class", "loading-block-spinner");
+            builder.OpenElement(3, "div");
+            builder.AddAttribute(4, "class", "loading-block-spinner");
 
-            builder.OpenElement(4, "div");
-            builder.AddAttribute(5, "class", "loading-block-spinner-icon");
+            builder.OpenElement(5, "div");
+            builder.AddAttribute(6, "class", "loading-block-spinner-icon");
             builder.CloseElement(); // div
 
             builder.CloseElement(); // div
@@ -42,11 +48,11 @@ public class LoadingBlock : ComponentBase
 
         if (LoadingText.HasValue())
         {
-            builder.OpenElement(6, "div");
-            builder.AddAttribute(7, "class", "loading-block-text");
+            builder.OpenElement(7, "div");
+            builder.AddAttribute(8, "class", "loading-block-text");
 
-            builder.OpenElement(8, "h4");
-            builder.AddContent(9, LoadingText);
+            builder.OpenElement(9, "h4");
+            builder.AddContent(10, LoadingText);
             builder.CloseElement(); // h4
 
             builder.CloseElement(); // div
@@ -54,10 +60,20 @@ public class LoadingBlock : ComponentBase
 
         if (ChildTemplate != null)
         {
-            builder.AddContent(10, ChildTemplate);
+            builder.AddContent(11, ChildTemplate);
         }
 
         builder.CloseElement(); // div
 
+    }
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+
+        ClassName = CssBuilder
+            .Default("loading-block-overlay")
+            .MergeClass(AdditionalAttributes)
+            .ToString();
     }
 }

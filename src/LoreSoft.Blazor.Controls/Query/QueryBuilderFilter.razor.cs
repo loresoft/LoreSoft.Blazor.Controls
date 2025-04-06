@@ -13,10 +13,10 @@ public partial class QueryBuilderFilter<TItem>
     public QueryFilter Filter { get; set; } = new();
 
     [Parameter]
-    public QueryGroup Parent { get; set; }
+    public QueryGroup? Parent { get; set; }
 
 
-    protected QueryBuilderField<TItem> Field { get; set; }
+    protected QueryBuilderField<TItem>? Field { get; set; }
 
     protected List<QueryBuilderField<TItem>> Fields => QueryBuilder.Fields;
 
@@ -54,14 +54,14 @@ public partial class QueryBuilderFilter<TItem>
         QueryBuilder.Refresh();
     }
 
-    protected string GetValue()
+    protected string? GetValue()
     {
         return Binding.Format(Filter.Value);
     }
 
     protected void SetValue(ChangeEventArgs args)
     {
-        Filter.Value = Binding.Convert(args.Value, Field.Type);
+        Filter.Value = Field != null ? Binding.Convert(args.Value, Field.Type ?? typeof(object)) : args.Value;
         QueryBuilder.Refresh();
     }
 }

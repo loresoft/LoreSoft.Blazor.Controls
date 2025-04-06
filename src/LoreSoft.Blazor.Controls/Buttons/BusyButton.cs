@@ -18,29 +18,26 @@ public class BusyButton : ComponentBase
     public string BusyText { get; set; } = "Processing";
 
     [Parameter]
-    public RenderFragment BusyTemplate { get; set; }
+    public RenderFragment? BusyTemplate { get; set; }
 
     [Parameter]
-    public RenderFragment ChildContent { get; set; }
+    public RenderFragment? ChildContent { get; set; }
 
     [Parameter(CaptureUnmatchedValues = true)]
-    public Dictionary<string, object> Attributes { get; set; } = [];
+    public Dictionary<string, object> AdditionalAttributes { get; set; } = [];
 
     [Parameter]
     public EventCallback Trigger { get; set; }
 
     private bool Executing { get; set; }
 
-    /// <inheritdoc />
+    protected string? ClassName { get; set; }
+
     protected override void BuildRenderTree(RenderTreeBuilder builder)
     {
-        var className = new CssBuilder("busy-button")
-            .MergeClass(Attributes)
-            .ToString();
-
         builder.OpenElement(0, "button");
-        builder.AddMultipleAttributes(1, Attributes);
-        builder.AddAttribute(2, "class", className);
+        builder.AddMultipleAttributes(1, AdditionalAttributes);
+        builder.AddAttribute(2, "class", ClassName);
         builder.AddAttribute(3, "disabled", Disabled || IsBusy);
 
         if (Trigger.HasDelegate)
@@ -61,11 +58,13 @@ public class BusyButton : ComponentBase
         builder.CloseElement(); // button
     }
 
-
-    /// <inheritdoc />
     protected override void OnParametersSet()
     {
         base.OnParametersSet();
+
+        ClassName = new CssBuilder("busy-button")
+            .MergeClass(AdditionalAttributes)
+            .ToString();
 
         BusyTemplate ??= builder => {
             builder.AddContent(0, BusyText);

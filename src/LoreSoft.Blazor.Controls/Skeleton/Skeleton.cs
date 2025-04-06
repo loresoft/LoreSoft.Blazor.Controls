@@ -11,20 +11,20 @@ namespace LoreSoft.Blazor.Controls;
 public class Skeleton : ComponentBase
 {
     [Parameter]
-    public string Width { set; get; }
+    public string? Width { set; get; }
 
     [Parameter]
-    public string Height { set; get; }
+    public string? Height { set; get; }
 
     [Parameter]
     public SkeletonType Type { set; get; } = SkeletonType.Text;
 
     [Parameter(CaptureUnmatchedValues = true)]
-    public Dictionary<string, object> Attributes { get; set; } = [];
+    public Dictionary<string, object>? AdditionalAttributes { get; set; }
 
-    protected string ClassName { get; set; }
+    protected string ClassName { get; set; } = null!;
 
-    protected string Style { get; set; }
+    protected string Style { get; set; } = null!;
 
     protected override void OnParametersSet()
     {
@@ -34,11 +34,11 @@ public class Skeleton : ComponentBase
         ClassName = new CssBuilder("skeleton")
             .AddClass("skeleton-wave")
             .AddClass($"skeleton-{type}")
-            .MergeClass(Attributes)
+            .MergeClass(AdditionalAttributes)
             .ToString();
 
         Style = new StyleBuilder()
-            .MergeStyle(Attributes)
+            .MergeStyle(AdditionalAttributes)
             .AddStyle("width", Width, (v) => v.HasValue())
             .AddStyle("height", Height, (v) => v.HasValue())
             .ToString();
@@ -49,7 +49,7 @@ public class Skeleton : ComponentBase
         builder.OpenElement(0, "span");
         builder.AddAttribute(1, "class", ClassName);
         builder.AddAttribute(2, "style", Style);
-        builder.AddMultipleAttributes(3, Attributes);
+        builder.AddMultipleAttributes(3, AdditionalAttributes);
         builder.CloseElement(); // span
     }
 }

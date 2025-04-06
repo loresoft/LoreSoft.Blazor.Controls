@@ -6,7 +6,7 @@
 @using Microsoft.AspNetCore.Components.Web.Virtualization
 
 <CascadingValue IsFixed="true" Value="this" Name="Grid">
-    <div class="@ClassName" @attributes="@Attributes">
+    <div class="@ClassName" @attributes="@AdditionalAttributes">
         @if (DataToolbar != null)
         {
             @DataToolbar(this)

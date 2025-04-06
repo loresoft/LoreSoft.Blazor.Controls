@@ -8,7 +8,7 @@ namespace LoreSoft.Blazor.Controls.Utilities;
 
 public static class Binding
 {
-    public static string Format(object value)
+    public static string? Format(object? value)
     {
         return value switch
         {
@@ -29,14 +29,14 @@ public static class Binding
         };
     }
 
-    public static object Convert(object value, Type type)
+    public static object? Convert(object? value, Type type)
     {
         var stringValue = value as string;
 
         return ConvertExtensions.SafeConvert(type, stringValue);
     }
 
-    public static object Convert<T>(object value)
+    public static object? Convert<T>(object? value)
     {
         return Convert(value, typeof(T));
     }

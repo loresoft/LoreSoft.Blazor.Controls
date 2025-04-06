@@ -1,3 +1,5 @@
+// Ignore Spelling: Gravatar
+
 using System.Text;
 
 using Microsoft.AspNetCore.Components;
@@ -8,10 +10,10 @@ namespace LoreSoft.Blazor.Controls;
 public class Gravatar : ComponentBase, IDisposable
 {
     [Parameter(CaptureUnmatchedValues = true)]
-    public Dictionary<string, object> Attributes { get; set; }
+    public Dictionary<string, object>? AdditionalAttributes { get; set; }
 
-    [Parameter]
-    public string Email { get; set; }
+    [Parameter, EditorRequired]
+    public required string Email { get; set; }
 
     [Parameter]
     public GravatarMode Mode { get; set; } = GravatarMode.Mm;
@@ -31,7 +33,7 @@ public class Gravatar : ComponentBase, IDisposable
         builder.OpenElement(0, "img");
         builder.AddAttribute(1, "src", url);
         builder.AddAttribute(2, "alt", Email);
-        builder.AddMultipleAttributes(3, Attributes);
+        builder.AddMultipleAttributes(3, AdditionalAttributes);
         builder.CloseElement(); // img
     }
 

@@ -39,9 +39,12 @@
                     @bind:after="@OperatorChanged"
                     class="query-filter-operators">
                 <option value="">- Operator -</option>
-                @foreach (var item in Field.CurrentOperators)
+                @if (Field.CurrentOperators != null)
                 {
-                    <option @key="item" value="@item">@item</option>
+                    @foreach (var item in Field.CurrentOperators)
+                    {
+                        <option @key="item" value="@item">@item</option>
+                    }
                 }
             </select>
         }

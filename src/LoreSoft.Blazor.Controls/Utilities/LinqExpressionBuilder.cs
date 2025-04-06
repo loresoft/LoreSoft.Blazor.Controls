@@ -1,7 +1,5 @@
-#nullable enable
+// Ignore Spelling: Linq
 
-using System.Data;
-using System.Linq;
 using System.Text;
 
 using LoreSoft.Blazor.Controls.Extensions;
@@ -145,7 +143,7 @@ public class LinqExpressionBuilder
             return;
 
         // default comparison equal
-        string comparison = filter.Operator;
+        var comparison = filter.Operator;
         if (comparison.IsNullOrEmpty())
             comparison = QueryOperators.Equal;
 
@@ -188,7 +186,7 @@ public class LinqExpressionBuilder
         builder
             .AppendIf("!", negation)
             .Append(field)
-            .Append(".")
+            .Append('.')
             .Append(method)
             .Append("(@")
             .Append(index)

@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Rendering;
 
 namespace LoreSoft.Blazor.Controls;
@@ -9,13 +9,13 @@ public class Conditional : ComponentBase
     public bool Condition { get; set; }
 
     [Parameter]
-    public RenderFragment ChildContent { get; set; }
+    public RenderFragment? ChildContent { get; set; }
 
     [Parameter]
-    public RenderFragment Passed { get; set; }
+    public RenderFragment? Passed { get; set; }
 
     [Parameter]
-    public RenderFragment Failed { get; set; }
+    public RenderFragment? Failed { get; set; }
 
     /// <inheritdoc />
     protected override void BuildRenderTree(RenderTreeBuilder builder)

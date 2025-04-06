@@ -11,7 +11,7 @@ public partial class QueryBuilderGroup<TItem>
     public required QueryGroup Group { get; set; } = new();
 
     [Parameter]
-    public QueryGroup Parent { get; set; }
+    public QueryGroup? Parent { get; set; }
 
     protected void DeleteGroup()
     {

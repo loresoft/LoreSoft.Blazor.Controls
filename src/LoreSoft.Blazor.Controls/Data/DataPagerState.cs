@@ -10,7 +10,7 @@ public class DataPagerState
     private int _total;
 
 
-    public event PropertyChangedEventHandler PropertyChanged;
+    public event PropertyChangedEventHandler? PropertyChanged;
 
 
     public int Page
@@ -65,7 +65,7 @@ public class DataPagerState
     }
 
 
-    protected void SetProperty<T>(ref T field, T value, [CallerMemberName] string propertyName = null)
+    protected void SetProperty<T>(ref T field, T value, [CallerMemberName] string? propertyName = null)
     {
         if (EqualityComparer<T>.Default.Equals(field, value))
             return;
@@ -74,7 +74,7 @@ public class DataPagerState
         RaisePropertyChanged(propertyName);
     }
 
-    protected virtual void RaisePropertyChanged(string propertyName)
+    protected virtual void RaisePropertyChanged(string? propertyName)
     {
         var handler = PropertyChanged;
         handler?.Invoke(this, new PropertyChangedEventArgs(propertyName));

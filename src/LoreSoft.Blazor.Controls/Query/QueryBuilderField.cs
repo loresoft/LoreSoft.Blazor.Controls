@@ -11,40 +11,40 @@ namespace LoreSoft.Blazor.Controls;
 public class QueryBuilderField<TItem> : ComponentBase
 {
     [CascadingParameter(Name = "QueryBuilder")]
-    protected QueryBuilder<TItem> QueryBuilder { get; set; }
+    protected QueryBuilder<TItem> QueryBuilder { get; set; } = null!;
+
+    [Parameter, EditorRequired]
+    public required Expression<Func<TItem, object>> Field { get; set; }
 
     [Parameter]
-    public Expression<Func<TItem, object>> Field { get; set; }
+    public List<string>? Operators { get; set; }
 
     [Parameter]
-    public List<string> Operators { get; set; }
+    public string? InputType { get; set; }
 
     [Parameter]
-    public string InputType { get; set; }
-
-    [Parameter]
-    public string Title { get; set; }
+    public string? Title { get; set; }
 
 
     [Parameter]
-    public RenderFragment<QueryFilter> ValueTemplate { get; set; }
+    public RenderFragment<QueryFilter>? ValueTemplate { get; set; }
 
     [Parameter]
-    public RenderFragment<QueryFilter> OperatorTemplate { get; set; }
+    public RenderFragment<QueryFilter>? OperatorTemplate { get; set; }
 
 
-    public string Name { get; set; }
+    public string? Name { get; set; }
 
-    public string Column { get; set; }
+    public string? Column { get; set; }
 
-    public Type Type { get; set; }
+    public Type? Type { get; set; }
 
 
-    public List<string> CurrentOperators { get; set; }
+    public List<string>? CurrentOperators { get; set; }
 
-    public string CurrentInputType { get; set; }
+    public string? CurrentInputType { get; set; }
 
-    public string CurrentTitle { get; set; }
+    public string? CurrentTitle { get; set; }
 
 
     protected override void OnInitialized()
@@ -125,7 +125,7 @@ public class QueryBuilderField<TItem> : ComponentBase
 
     private void UpdateProperty()
     {
-        MemberInfo memberInfo = null;
+        MemberInfo? memberInfo = null;
 
         if (Field?.Body is MemberExpression memberExpression)
             memberInfo = memberExpression.Member;
@@ -144,17 +144,20 @@ public class QueryBuilderField<TItem> : ComponentBase
         }
         else
         {
-            Name = memberInfo.Name;
+            Name = memberInfo?.Name;
             Type = typeof(object);
         }
 
-        var columnAttribute = memberInfo.GetCustomAttribute<ColumnAttribute>(true);
+        var columnAttribute = memberInfo?.GetCustomAttribute<ColumnAttribute>(true);
         Column = columnAttribute != null ? columnAttribute.Name : Name;
     }
 
 
-    private bool IsComparableType(Type targetType)
+    private bool IsComparableType(Type? targetType)
     {
+        if (targetType == null)
+            return false;
+
         var type = targetType.GetUnderlyingType();
 
         if (type == typeof(int))
@@ -183,8 +186,11 @@ public class QueryBuilderField<TItem> : ComponentBase
         return false;
     }
 
-    private string GetInputType(Type targetType)
+    private string GetInputType(Type? targetType)
     {
+        if (targetType == null)
+            return "text";
+
         var type = targetType.GetUnderlyingType();
 
         if (type == typeof(int))

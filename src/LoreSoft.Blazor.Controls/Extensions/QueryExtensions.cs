@@ -1,5 +1,3 @@
-#nullable enable
-
 using System.Linq.Dynamic.Core;
 using System.Text;
 
@@ -22,8 +20,7 @@ public static class QueryExtensions
         if (sorts?.Any() != true)
             return query;
 
-        if (query is null)
-            throw new ArgumentNullException(nameof(query));
+        ArgumentNullException.ThrowIfNull(query);
 
         // Create ordering expression e.g. Field1 asc, Field2 desc
         var builder = new StringBuilder();
@@ -42,13 +39,12 @@ public static class QueryExtensions
         return query.OrderBy(builder.ToString());
     }
 
-    public static IQueryable<T> Filter<T>(this IQueryable<T> query, QueryRule filter)
+    public static IQueryable<T> Filter<T>(this IQueryable<T> query, QueryRule? filter)
     {
         if (filter is null)
             return query;
 
-        if (query is null)
-            throw new ArgumentNullException(nameof(query));
+        ArgumentNullException.ThrowIfNull(query);
 
         var builder = new LinqExpressionBuilder();
         builder.Build(filter);
@@ -65,6 +61,9 @@ public static class QueryExtensions
 
     public static DataResult<T> DataQuery<T>(this IQueryable<T> query, DataRequest request)
     {
+        ArgumentNullException.ThrowIfNull(query);
+        ArgumentNullException.ThrowIfNull(request);
+
         var filterQuery = query.Filter(request.Query);
 
         var total = filterQuery.Count();

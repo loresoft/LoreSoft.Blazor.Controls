@@ -11,11 +11,24 @@ namespace LoreSoft.Blazor.Controls;
 
 public class ProgressBar : ComponentBase, IDisposable
 {
-    private Timer _progressTimer;
-    private Timer _completeTimer;
+    private readonly Timer _progressTimer;
+    private readonly Timer _completeTimer;
+
+    public ProgressBar()
+    {
+        _progressTimer = new Timer();
+        _progressTimer.Interval = IncrementDuration;
+        _progressTimer.AutoReset = true;
+        _progressTimer.Elapsed += OnIncrement;
+
+        _completeTimer = new Timer();
+        _completeTimer.Interval = AnimationDuration;
+        _completeTimer.AutoReset = false;
+        _completeTimer.Elapsed += OnComplete;
+    }
 
     [Inject]
-    protected ProgressBarState State { get; set; }
+    public required ProgressBarState State { get; set; }
 
     [Parameter]
     public string Color { get; set; } = "#29d";
@@ -37,7 +50,7 @@ public class ProgressBar : ComponentBase, IDisposable
 
     protected double Progress { get; set; }
 
-    protected string ClassName { get; set; }
+    protected string? ClassName { get; set; }
 
     protected string ContainerStyle => $"opacity: {Opacity}; transition: opacity {AnimationDuration}ms linear 0s;";
 
@@ -52,16 +65,8 @@ public class ProgressBar : ComponentBase, IDisposable
     {
         State.OnChange += OnProgressStateChange;
 
-        _progressTimer = new Timer();
         _progressTimer.Interval = IncrementDuration;
-        _progressTimer.AutoReset = true;
-        _progressTimer.Elapsed += OnIncrement;
-
-        _completeTimer = new Timer();
         _completeTimer.Interval = AnimationDuration;
-        _completeTimer.AutoReset = false;
-        _completeTimer.Elapsed += OnComplete;
-
     }
 
     protected override void OnParametersSet()
@@ -103,7 +108,7 @@ public class ProgressBar : ComponentBase, IDisposable
         builder.CloseElement(); // container
     }
 
-    private void OnComplete(object sender, ElapsedEventArgs e)
+    private void OnComplete(object? sender, ElapsedEventArgs e)
     {
         InvokeAsync(() =>
         {
@@ -112,7 +117,7 @@ public class ProgressBar : ComponentBase, IDisposable
         });
     }
 
-    private void OnIncrement(object sender, ElapsedEventArgs e)
+    private void OnIncrement(object? sender, ElapsedEventArgs e)
     {
         InvokeAsync(() =>
         {
@@ -134,7 +139,7 @@ public class ProgressBar : ComponentBase, IDisposable
                 // timer to progress bar
                 _progressTimer.Start();
             }
-            else if (State.Loading == false)
+            else if (!State.Loading)
             {
                 // progress to 100%
                 _progressTimer.Stop();
@@ -151,7 +156,10 @@ public class ProgressBar : ComponentBase, IDisposable
     public void Dispose()
     {
         State.OnChange -= OnProgressStateChange;
+
         _progressTimer?.Dispose();
         _completeTimer?.Dispose();
+
+        GC.SuppressFinalize(this);
     }
 }

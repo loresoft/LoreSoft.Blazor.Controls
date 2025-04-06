@@ -1,3 +1,5 @@
+// Ignore Spelling: queryable Toolbar Virtualize Overscan
+
 using System.ComponentModel;
 
 using Microsoft.AspNetCore.Components;
@@ -6,35 +8,35 @@ namespace LoreSoft.Blazor.Controls;
 
 public abstract class DataComponentBase<TItem> : ComponentBase, IDisposable
 {
-    private DataProviderDelegate<TItem> _dataProvider;
-    private CancellationTokenSource _refreshCancellation;
-    private IEnumerable<TItem> _data;
+    private DataProviderDelegate<TItem>? _dataProvider;
+    private CancellationTokenSource? _refreshCancellation;
+    private IEnumerable<TItem>? _data;
     private bool _isLoading;
 
     [Parameter]
-    public IEnumerable<TItem> Data { get; set; }
+    public IEnumerable<TItem>? Data { get; set; }
 
     [Parameter]
-    public DataProviderDelegate<TItem> DataProvider { get; set; }
+    public DataProviderDelegate<TItem>? DataProvider { get; set; }
 
     [Parameter]
-    public Func<Task<IEnumerable<TItem>>> DataLoader { get; set; }
+    public Func<Task<IEnumerable<TItem>>>? DataLoader { get; set; }
 
 
     [Parameter]
-    public RenderFragment<DataComponentBase<TItem>> DataToolbar { get; set; }
+    public RenderFragment<DataComponentBase<TItem>>? DataToolbar { get; set; }
 
     [Parameter]
-    public RenderFragment<DataComponentBase<TItem>> DataPagination { get; set; }
+    public RenderFragment<DataComponentBase<TItem>>? DataPagination { get; set; }
 
     [Parameter]
-    public RenderFragment LoadingTemplate { get; set; }
+    public RenderFragment? LoadingTemplate { get; set; }
 
     [Parameter]
-    public RenderFragment<Exception> ErrorTemplate { get; set; }
+    public RenderFragment<Exception>? ErrorTemplate { get; set; }
 
     [Parameter]
-    public RenderFragment EmptyTemplate { get; set; }
+    public RenderFragment? EmptyTemplate { get; set; }
 
 
     [Parameter]
@@ -62,9 +64,9 @@ public abstract class DataComponentBase<TItem> : ComponentBase, IDisposable
 
     public DataPagerState Pager { get; } = new();
 
-    protected ICollection<TItem> View { get; private set; }
+    protected ICollection<TItem>? View { get; private set; }
 
-    protected Exception DataError { get; private set; }
+    protected Exception? DataError { get; private set; }
 
 
     public virtual async Task RefreshAsync(bool resetPager = false, bool forceReload = false)
@@ -151,6 +153,9 @@ public abstract class DataComponentBase<TItem> : ComponentBase, IDisposable
 
         try
         {
+            if (_dataProvider == null)
+                throw new InvalidOperationException("Invalid Data Provider");
+
             if (_dataProvider == DefaultProvider)
             {
                 _refreshCancellation = null;
@@ -244,7 +249,7 @@ public abstract class DataComponentBase<TItem> : ComponentBase, IDisposable
     }
 
 
-    private void OnStatePropertyChange(object sender, PropertyChangedEventArgs e)
+    private void OnStatePropertyChange(object? sender, PropertyChangedEventArgs e)
     {
         switch (e.PropertyName)
         {

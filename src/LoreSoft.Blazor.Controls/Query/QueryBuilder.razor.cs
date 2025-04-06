@@ -6,16 +6,16 @@ namespace LoreSoft.Blazor.Controls;
 public partial class QueryBuilder<TItem> : ComponentBase
 {
     [Parameter]
-    public RenderFragment QueryFields { get; set; }
+    public RenderFragment? QueryFields { get; set; }
 
     [Parameter]
-    public QueryGroup Query { get; set; }
+    public QueryGroup? Query { get; set; }
 
     [Parameter]
     public EventCallback<QueryGroup> QueryChanged { get; set; }
 
     [Parameter]
-    public RenderFragment FooterTemplate { get; set; }
+    public RenderFragment? FooterTemplate { get; set; }
 
 
     public List<QueryBuilderField<TItem>> Fields { get; } = [];
@@ -26,7 +26,7 @@ public partial class QueryBuilder<TItem> : ComponentBase
         StateHasChanged();
     }
 
-    protected QueryGroup RootQuery
+    protected QueryGroup? RootQuery
     {
         get => Query;
         set

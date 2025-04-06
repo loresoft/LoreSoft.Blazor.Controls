@@ -14,7 +14,7 @@ namespace LoreSoft.Blazor.Controls;
 
 internal sealed class MD5Managed : HashAlgorithm
 {
-    private byte[] _data;
+    private byte[] _data = new byte[64];
     private ABCDStruct _abcd;
     private long _totalLength;
     private int _dataSize;
@@ -27,7 +27,6 @@ internal sealed class MD5Managed : HashAlgorithm
 
     public override void Initialize()
     {
-        _data = new byte[64];
         _dataSize = 0;
         _totalLength = 0;
         _abcd = new ABCDStruct();

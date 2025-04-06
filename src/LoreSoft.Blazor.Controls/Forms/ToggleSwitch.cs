@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using System.Linq.Expressions;
 
 using LoreSoft.Blazor.Controls.Extensions;
@@ -24,34 +22,33 @@ public partial class ToggleSwitch<TValue> : ComponentBase
     public Dictionary<string, object> Attributes { get; set; } = [];
 
     [Parameter]
-    public TValue Value { get; set; }
+    public TValue? Value { get; set; }
 
     [Parameter]
     public EventCallback<TValue> ValueChanged { get; set; }
 
     [Parameter]
-    public Expression<Func<TValue>> ValueExpression { get; set; }
+    public Expression<Func<TValue>>? ValueExpression { get; set; }
 
     [CascadingParameter]
-    public EditContext EditContext { get; set; }
+    public EditContext? EditContext { get; set; }
 
     [Parameter]
     public FieldIdentifier FieldIdentifier { get; set; }
 
 
-    protected bool CurrentValue
+    protected TValue? CurrentValue
     {
-        get => ConvertToBoolean(Value);
+        get => Value;
         set
         {
-            TValue current = ConvertFromBoolean(value);
-            var isEqual = EqualityComparer<TValue>.Default.Equals(current, Value);
+            var isEqual = EqualityComparer<TValue>.Default.Equals(value, Value);
 
             if (isEqual)
                 return;
 
-            Value = current;
-            ValueChanged.InvokeAsync(current);
+            Value = value;
+            ValueChanged.InvokeAsync(Value);
             EditContext?.NotifyFieldChanged(FieldIdentifier);
         }
     }
@@ -59,7 +56,7 @@ public partial class ToggleSwitch<TValue> : ComponentBase
 
     protected override void OnInitialized()
     {
-        if (FieldIdentifier.Equals(default))
+        if (FieldIdentifier.Equals(default) && ValueExpression != null)
             FieldIdentifier = FieldIdentifier.Create(ValueExpression);
     }
 
@@ -90,24 +87,4 @@ public partial class ToggleSwitch<TValue> : ComponentBase
 
         builder.CloseElement(); //label
     }
-
-
-    private bool ConvertToBoolean(TValue value)
-    {
-        if (value is bool boolValue)
-            return boolValue;
-
-        return false;
-    }
-
-    private TValue ConvertFromBoolean(bool value)
-    {
-        var targetType = Nullable.GetUnderlyingType(typeof(TValue)) ?? typeof(TValue);
-
-        if (targetType == typeof(bool))
-            return (TValue)(object)value;
-
-        return default;
-    }
-
 }

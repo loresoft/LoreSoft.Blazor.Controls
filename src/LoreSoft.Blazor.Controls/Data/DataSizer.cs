@@ -11,13 +11,13 @@ public class DataSizer : ComponentBase, IDisposable
     protected DataPagerState PagerState { get; set; } = new();
 
     [Parameter(CaptureUnmatchedValues = true)]
-    public Dictionary<string, object> Attributes { get; set; }
+    public Dictionary<string, object>? AdditionalAttributes { get; set; }
 
     [Parameter]
     public int? PageSize { get; set; }
 
     [Parameter]
-    public int[] PageSizeOptions { get; set; } = { 10, 25, 50, 100 };
+    public int[] PageSizeOptions { get; set; } = [10, 25, 50, 100];
 
     [Parameter]
     public bool IncludeAllOption { get; set; }
@@ -28,6 +28,7 @@ public class DataSizer : ComponentBase, IDisposable
     public void Dispose()
     {
         PagerState.PropertyChanged -= OnStatePropertyChange;
+        GC.SuppressFinalize(this);
     }
 
     protected override void OnInitialized()
@@ -48,7 +49,7 @@ public class DataSizer : ComponentBase, IDisposable
     {
         builder.OpenElement(0, "div");
         builder.AddAttribute(1, "class", "data-page-size-options");
-        builder.AddMultipleAttributes(2, Attributes);
+        builder.AddMultipleAttributes(2, AdditionalAttributes);
 
         builder.OpenElement(3, "select");
         builder.AddAttribute(4, "value", PagerState.PageSize);
@@ -90,7 +91,7 @@ public class DataSizer : ComponentBase, IDisposable
         PagerState.PageSize = pageSize;
     }
 
-    private void OnStatePropertyChange(object sender, PropertyChangedEventArgs e)
+    private void OnStatePropertyChange(object? sender, PropertyChangedEventArgs e)
     {
         if (e.PropertyName != nameof(DataPagerState.PageSize))
             return;

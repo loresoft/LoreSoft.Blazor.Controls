@@ -1,5 +1,8 @@
+// Ignore Spelling: Keydown
+
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
-using System.Linq.Expressions;
 
 using LoreSoft.Blazor.Controls.Utilities;
 
@@ -9,43 +12,44 @@ using Microsoft.AspNetCore.Components.Web;
 
 namespace LoreSoft.Blazor.Controls;
 
-public partial class DateTimePicker<TValue> : ComponentBase, IDisposable
+public partial class DateTimePicker<TValue> : InputBase<TValue>
 {
-    private readonly EventHandler<ValidationStateChangedEventArgs> _validationStateChangedHandler;
-    private bool _previousParsingAttemptFailed;
-    private ValidationMessageStore _parsingValidationMessages;
-    private Type _nullableUnderlyingType;
+    private const string DateFormat = "yyyy-MM-dd";                     // Compatible with HTML 'date' inputs
+    private const string DateTimeLocalFormat = "yyyy-MM-ddTHH:mm:ss";   // Compatible with HTML 'datetime-local' inputs
+    private const string TimeFormat = "HH:mm:ss";                       // Compatible with HTML 'time' inputs
+
+    private string _parsingErrorMessage = default!;
+
     private int _month;
     private int _year;
 
     public DateTimePicker()
     {
         DateTimeFormatInfo = DateTimeFormatInfo.CurrentInfo;
-        DateFormat = "M/d/yyyy";
-        TimeFormat = "h:mm tt";
         Headers = [];
         Rows = [];
         Segments = [];
         AllowClear = true;
-        Mode = DateTimePickerMode.Date;
         TimeScale = 30;
 
-        _validationStateChangedHandler = (sender, eventArgs) => StateHasChanged();
+        var type = Nullable.GetUnderlyingType(typeof(TValue)) ?? typeof(TValue);
+        if (type == typeof(DateTime) || type == typeof(DateTimeOffset) || type == typeof(DateOnly))
+        {
+            Mode = DateTimePickerMode.Date;
+            InputType = "date";
+            ValueFormat = DateFormat;
+        }
+        else if (type == typeof(TimeOnly) || type == typeof(TimeSpan))
+        {
+            Mode = DateTimePickerMode.Time;
+            InputType = "time";
+            ValueFormat = TimeFormat;
+        }
+        else
+        {
+            throw new InvalidOperationException($"Unsupported {GetType()} type param '{type}'.");
+        }
     }
-
-
-    [Parameter(CaptureUnmatchedValues = true)]
-    public IReadOnlyDictionary<string, object> AdditionalAttributes { get; set; }
-
-
-    [Parameter]
-    public TValue Value { get; set; }
-
-    [Parameter]
-    public EventCallback<TValue> ValueChanged { get; set; }
-
-    [Parameter]
-    public Expression<Func<TValue>> ValueExpression { get; set; }
 
 
     [Parameter]
@@ -55,16 +59,10 @@ public partial class DateTimePicker<TValue> : ComponentBase, IDisposable
     public DateTimeFormatInfo DateTimeFormatInfo { get; set; }
 
     [Parameter]
-    public string DateFormat { get; set; }
-
-    [Parameter]
-    public string TimeFormat { get; set; }
-
-    [Parameter]
     public bool AllowClear { get; set; }
 
     [Parameter]
-    public bool Disabled { get; set; } = false;
+    public bool Disabled { get; set; }
 
     [Parameter]
     public DateTimePickerMode Mode { get; set; }
@@ -73,10 +71,7 @@ public partial class DateTimePicker<TValue> : ComponentBase, IDisposable
     public int TimeScale { get; set; }
 
     [Parameter]
-    public FieldIdentifier FieldIdentifier { get; set; }
-
-    [CascadingParameter]
-    public EditContext EditContext { get; set; }
+    public string ParsingErrorMessage { get; set; } = string.Empty;
 
 
     protected List<string> Headers { get; set; }
@@ -86,71 +81,25 @@ public partial class DateTimePicker<TValue> : ComponentBase, IDisposable
     protected List<TimePickerSegment> Segments { get; set; }
 
 
-    protected string CurrentValueString
-    {
-        get => FormatValueAsString(Value);
-        set
-        {
-            _parsingValidationMessages?.Clear();
-
-            bool parsingFailed;
-
-            if (_nullableUnderlyingType != null && string.IsNullOrEmpty(value))
-            {
-                parsingFailed = false;
-                SetValue(default);
-            }
-            else if (TryParseValueFromString(value, out var parsedValue, out var validationErrorMessage))
-            {
-                parsingFailed = false;
-                SetValue(parsedValue);
-            }
-            else if (EditContext != null)
-            {
-                parsingFailed = true;
-
-                if (_parsingValidationMessages == null)
-                    _parsingValidationMessages = new ValidationMessageStore(EditContext);
-
-                _parsingValidationMessages.Add(FieldIdentifier, validationErrorMessage);
-
-                EditContext?.NotifyFieldChanged(FieldIdentifier);
-            }
-            else
-            {
-                parsingFailed = true;
-            }
-
-            SyncDate(Value);
-            BuildGrid();
-
-            if (!parsingFailed && !_previousParsingAttemptFailed)
-                return;
-
-            EditContext?.NotifyValidationStateChanged();
-            _previousParsingAttemptFailed = parsingFailed;
-        }
-    }
-
     protected ElementReference DateTimeInput { get; set; }
 
-    protected string ValidationClass
-        => EditContext?.FieldCssClass(FieldIdentifier) ?? string.Empty;
+    protected string PickerClass => CssBuilder
+        .Default("datetimepicker")
+        .AddClass("is-datepicker-open", IsDatePickerOpen)
+        .ToString();
 
-    protected string CssClass
-    {
-        get
-        {
-            if (AdditionalAttributes != null &&
-                AdditionalAttributes.TryGetValue("class", out var cssClss) &&
-                !string.IsNullOrEmpty(Convert.ToString(cssClss)))
-            {
-                return $"{cssClss} {ValidationClass}";
-            }
+    protected string? ValidationClass
+        => EditContext?.FieldCssClass(FieldIdentifier);
 
-            return ValidationClass; // Never null or empty
-        }
-    }
+    protected string InputClass => CssBuilder
+        .Default("datetimepicker-input")
+        .MergeClass(AdditionalAttributes)
+        .AddClass(ValidationClass, v => !string.IsNullOrWhiteSpace(v))
+        .ToString();
+
+    protected string InputType { get; set; }
+
+    protected string ValueFormat { get; set; }
 
     protected bool PreventKey { get; set; }
 
@@ -178,41 +127,24 @@ public partial class DateTimePicker<TValue> : ComponentBase, IDisposable
     public bool IsDatePickerOpen { get; set; }
 
 
-    protected override void OnInitialized()
-    {
-        if (FieldIdentifier.Equals(default))
-            FieldIdentifier = FieldIdentifier.Create(ValueExpression);
-
-        _nullableUnderlyingType = Nullable.GetUnderlyingType(typeof(TValue));
-    }
-
-    protected void SetValue(TValue value)
-    {
-        var isEqual = EqualityComparer<TValue>.Default.Equals(value, Value);
-        if (isEqual)
-            return;
-
-        Value = value;
-        ValueChanged.InvokeAsync(value);
-
-        _parsingValidationMessages?.Clear();
-
-        EditContext?.NotifyFieldChanged(FieldIdentifier);
-        EditContext?.NotifyValidationStateChanged();
-    }
-
-    protected TValue GetValueOrToday()
+    protected TValue? GetValueOrToday()
     {
         if (!EqualityComparer<TValue>.Default.Equals(Value, default))
             return Value;
 
         var targetType = Nullable.GetUnderlyingType(typeof(TValue)) ?? typeof(TValue);
 
+        if (targetType == typeof(DateOnly))
+            return (TValue)(object)DateOnly.FromDateTime(DateTime.Now);
+
         if (targetType == typeof(DateTime))
             return (TValue)(object)DateTime.Now.Date;
 
         if (targetType == typeof(DateTimeOffset))
             return (TValue)(object)DateTimeOffset.Now.Date;
+
+        if (targetType == typeof(TimeOnly))
+            return (TValue)(object)TimeOnly.MinValue;
 
         if (targetType == typeof(TimeSpan))
             return (TValue)(object)TimeSpan.Zero;
@@ -223,7 +155,50 @@ public partial class DateTimePicker<TValue> : ComponentBase, IDisposable
     public void HandleKeydown(KeyboardEventArgs args)
     {
         // prevent form submit on enter
-        PreventKey = (args.Key == "Enter");
+        PreventKey = args.Key == "Enter";
+    }
+
+
+    protected override void OnParametersSet()
+    {
+        (InputType, ValueFormat, var formatDescription) = Mode switch
+        {
+            DateTimePickerMode.Date => ("date", DateFormat, "date"),
+            DateTimePickerMode.DateTime => ("datetime-local", DateTimeLocalFormat, "date and time"),
+            DateTimePickerMode.Time => ("time", TimeFormat, "time"),
+            _ => throw new InvalidOperationException($"Unsupported {nameof(DateTimePickerMode)} '{Mode}'.")
+        };
+
+        _parsingErrorMessage = string.IsNullOrEmpty(ParsingErrorMessage)
+            ? $"The {{0}} field must be a {formatDescription}."
+            : ParsingErrorMessage;
+    }
+
+    protected override string FormatValueAsString(TValue? value)
+    {
+        return value switch
+        {
+            DateTime dateTimeValue => BindConverter.FormatValue(dateTimeValue, ValueFormat, CultureInfo.InvariantCulture),
+            DateTimeOffset dateTimeOffsetValue => BindConverter.FormatValue(dateTimeOffsetValue, ValueFormat, CultureInfo.InvariantCulture),
+            DateOnly dateOnlyValue => BindConverter.FormatValue(dateOnlyValue, ValueFormat, CultureInfo.InvariantCulture),
+            TimeOnly timeOnlyValue => BindConverter.FormatValue(timeOnlyValue, ValueFormat, CultureInfo.InvariantCulture),
+            _ => string.Empty, // Handles null for Nullable<DateTime>, etc.
+        };
+    }
+
+    protected override bool TryParseValueFromString(string? value, [MaybeNullWhen(false)] out TValue result, [NotNullWhen(false)] out string? validationErrorMessage)
+    {
+        if (BindConverter.TryConvertTo(value, CultureInfo.InvariantCulture, out result))
+        {
+            Debug.Assert(result != null);
+            validationErrorMessage = null;
+            return true;
+        }
+        else
+        {
+            validationErrorMessage = string.Format(CultureInfo.InvariantCulture, _parsingErrorMessage, DisplayName ?? FieldIdentifier.FieldName);
+            return false;
+        }
     }
 
 
@@ -295,6 +270,7 @@ public partial class DateTimePicker<TValue> : ComponentBase, IDisposable
         AdjustMonth(1);
     }
 
+
     protected void ToggleDatePicker()
     {
         if (IsDatePickerOpen)
@@ -305,10 +281,7 @@ public partial class DateTimePicker<TValue> : ComponentBase, IDisposable
 
     protected void ShowDatePicker()
     {
-        SyncDate(Value);
-        BuildGrid();
-        BuildTimeSegments();
-
+        RefreshDatePicker();
         IsDatePickerOpen = true;
     }
 
@@ -317,12 +290,29 @@ public partial class DateTimePicker<TValue> : ComponentBase, IDisposable
         IsDatePickerOpen = false;
     }
 
+    protected void RefreshDatePicker()
+    {
+        SyncDate(Value);
+        BuildGrid();
+        BuildTimeSegments();
+    }
+
     protected void SelectDate(DatePickerCell cell)
     {
-        TValue value = GetValueOrToday();
+        var value = GetValueOrToday();
 
         switch (value)
         {
+            case DateOnly:
+            {
+                var date = new DateOnly(
+                    cell.Year,
+                    cell.Month,
+                    cell.Day);
+
+                CurrentValue = (TValue)(object)date;
+                break;
+            }
             case DateTime dateTimeValue:
             {
                 var dateTime = new DateTime(
@@ -333,7 +323,7 @@ public partial class DateTimePicker<TValue> : ComponentBase, IDisposable
                     dateTimeValue.Minute,
                     0);
 
-                SetValue((TValue)(object)dateTime);
+                CurrentValue = (TValue)(object)dateTime;
                 break;
             }
             case DateTimeOffset dateTimeOffsetValue:
@@ -347,17 +337,17 @@ public partial class DateTimePicker<TValue> : ComponentBase, IDisposable
                     dateTimeOffsetValue.Second,
                     dateTimeOffsetValue.Offset);
 
-                SetValue((TValue)(object)dateTimeOffset);
+                CurrentValue = (TValue)(object)dateTimeOffset;
                 break;
             }
-            case TimeSpan timeSpanValue:
+            case TimeSpan:
                 break;
         }
     }
 
     protected void DateCellKeyDown(KeyboardEventArgs args, DatePickerCell cell)
     {
-        if ((args.Key == "Enter"))
+        if (args.Key == "Enter")
             SelectDate(cell);
     }
 
@@ -370,7 +360,7 @@ public partial class DateTimePicker<TValue> : ComponentBase, IDisposable
 
         while (workingDate < nextDate)
         {
-            var segment = new TimePickerSegment(workingDate, workingDate.ToString(TimeFormat));
+            var segment = new TimePickerSegment(workingDate, workingDate.ToString("h:mm tt"));
 
             Segments.Add(segment);
 
@@ -380,7 +370,7 @@ public partial class DateTimePicker<TValue> : ComponentBase, IDisposable
 
     protected void SelectTime(TimePickerSegment segment)
     {
-        TValue value = GetValueOrToday();
+        var value = GetValueOrToday();
 
         switch (value)
         {
@@ -393,7 +383,7 @@ public partial class DateTimePicker<TValue> : ComponentBase, IDisposable
                     segment.Minute,
                     0);
 
-                SetValue((TValue)(object)dateTime);
+                CurrentValue = (TValue)(object)dateTime;
                 break;
             case DateTimeOffset dateTimeOffsetValue:
                 var dateTimeOffset = new DateTimeOffset(
@@ -405,11 +395,16 @@ public partial class DateTimePicker<TValue> : ComponentBase, IDisposable
                     0,
                     dateTimeOffsetValue.Offset);
 
-                SetValue((TValue)(object)dateTimeOffset);
+                CurrentValue = (TValue)(object)dateTimeOffset;
                 break;
-            case TimeSpan timeSpanValue:
+            case TimeSpan:
                 var timeSpan = new TimeSpan(segment.Hour, segment.Minute, 0);
-                SetValue((TValue)(object)timeSpan);
+                CurrentValue = (TValue)(object)timeSpan;
+
+                break;
+            case TimeOnly:
+                var timeOnly = new TimeOnly(segment.Hour, segment.Minute, 0);
+                CurrentValue = (TValue)(object)timeOnly;
 
                 break;
         }
@@ -430,7 +425,7 @@ public partial class DateTimePicker<TValue> : ComponentBase, IDisposable
 
     protected void ClearValue()
     {
-        SetValue(default);
+        CurrentValue = default;
     }
 
     protected bool CanClear()
@@ -439,12 +434,18 @@ public partial class DateTimePicker<TValue> : ComponentBase, IDisposable
     }
 
 
-    private void SyncDate(TValue value)
+    private void SyncDate(TValue? value)
     {
         bool isDefault;
 
         switch (value)
         {
+            case DateOnly dateOnly:
+                isDefault = dateOnly == DateOnly.MinValue;
+                _year = isDefault ? DateTime.Now.Year : dateOnly.Year;
+                _month = isDefault ? DateTime.Now.Month : dateOnly.Month;
+
+                break;
             case DateTime dateTimeValue:
                 isDefault = dateTimeValue == DateTime.MinValue;
                 _year = isDefault ? DateTime.Now.Year : dateTimeValue.Year;
@@ -480,10 +481,11 @@ public partial class DateTimePicker<TValue> : ComponentBase, IDisposable
 
     private bool IsDateSelected(DateTime workingDate)
     {
-        TValue value = Value;
+        var value = Value;
 
         return value switch
         {
+            DateOnly dateOnly => DateOnly.FromDateTime(workingDate.Date) == dateOnly,
             DateTime dateTimeValue => workingDate.Date == dateTimeValue.Date,
             DateTimeOffset dateTimeOffsetValue => workingDate.Date == dateTimeOffsetValue.Date,
             _ => false,
@@ -492,12 +494,13 @@ public partial class DateTimePicker<TValue> : ComponentBase, IDisposable
 
     private bool IsTimeSelected(DateTime workingDate)
     {
-        TValue value = Value;
+        var value = Value;
 
         return value switch
         {
             DateTime dateTimeValue => workingDate.Hour == dateTimeValue.Hour && workingDate.Minute == dateTimeValue.Minute,
             DateTimeOffset dateTimeOffsetValue => workingDate.Hour == dateTimeOffsetValue.Hour && workingDate.Minute == dateTimeOffsetValue.Minute,
+            TimeOnly timeOnly => workingDate.Hour == timeOnly.Hour && workingDate.Minute == timeOnly.Minute,
             TimeSpan timeSpanValue => workingDate.Hour == timeSpanValue.Hours && workingDate.Minute == timeSpanValue.Minutes,
             _ => false,
         };
@@ -526,123 +529,18 @@ public partial class DateTimePicker<TValue> : ComponentBase, IDisposable
     }
 
 
-    private string FormatValueAsString(TValue value)
-    {
-        // show empty with default value
-        if (EqualityComparer<TValue>.Default.Equals(default, Value))
-            return string.Empty;
-
-        string format;
-        if (Mode == DateTimePickerMode.DateTime)
-            format = $"{DateFormat} {TimeFormat}";
-        else if (Mode == DateTimePickerMode.Time)
-            format = TimeFormat;
-        else
-            format = DateFormat;
-
-        switch (value)
-        {
-            case DateTime dateTime:
-                return BindConverter.FormatValue(dateTime, format, CultureInfo.InvariantCulture);
-            case DateTimeOffset dateTimeOffset:
-                return BindConverter.FormatValue(dateTimeOffset, format, CultureInfo.InvariantCulture);
-            case TimeSpan timeSpan:
-                var date = new DateTime(2000, 1, 1, timeSpan.Hours, timeSpan.Minutes, 0);
-                return BindConverter.FormatValue(date, format, CultureInfo.InvariantCulture);
-            default:
-                return string.Empty; // Handles null for Nullable<DateTime>, etc.
-        }
-    }
-
-    private bool TryParseValueFromString(string value, out TValue result, out string validationErrorMessage)
-    {
-
-        var targetType = Nullable.GetUnderlyingType(typeof(TValue)) ?? typeof(TValue);
-
-        validationErrorMessage = null;
-
-        bool success;
-        if (targetType == typeof(DateTime))
-            success = TryParseDateTime(value, out result);
-        else if (targetType == typeof(DateTimeOffset))
-            success = TryParseDateTimeOffset(value, out result);
-        else if (targetType == typeof(TimeSpan))
-            success = TryParseTimeSpan(value, out result);
-        else
-            throw new InvalidOperationException($"The type '{targetType}' is not a supported date type.");
-
-        if (success)
-            return true;
-
-        validationErrorMessage = $"The {FieldIdentifier.FieldName} field must be a date.";
-        return false;
-    }
-
-    private static bool TryParseDateTime(string value, out TValue result)
-    {
-        var success = DateTime.TryParse(value, out var parsedValue);
-
-        result = success ? (TValue)(object)parsedValue : default;
-
-        return success;
-    }
-
-    private static bool TryParseDateTimeOffset(string value, out TValue result)
-    {
-        var success = DateTimeOffset.TryParse(value, out var parsedValue);
-
-        result = success ? (TValue)(object)parsedValue : default;
-
-        return success;
-    }
-
-    private static bool TryParseTimeSpan(string value, out TValue result)
-    {
-        var success = TimeSpan.TryParse(value, out var parsedValue);
-        if (success)
-        {
-            result = (TValue)(object)parsedValue;
-            return true;
-        }
-
-        // try parsing as datetime
-        success = DateTime.TryParse(value, out var dateTime);
-        if (success)
-            parsedValue = new TimeSpan(dateTime.Hour, dateTime.Minute, 0);
-
-        result = success ? (TValue)(object)parsedValue : default;
-
-        return success;
-    }
-
     private static string GetShortestDayName(DayOfWeek dayOfWeek)
     {
-        switch (dayOfWeek)
+        return dayOfWeek switch
         {
-            case DayOfWeek.Sunday:
-                return "Su";
-            case DayOfWeek.Monday:
-                return "Mo";
-            case DayOfWeek.Tuesday:
-                return "Tu";
-            case DayOfWeek.Wednesday:
-                return "We";
-            case DayOfWeek.Thursday:
-                return "Th";
-            case DayOfWeek.Friday:
-                return "Fr";
-            case DayOfWeek.Saturday:
-                return "Sa";
-        }
-
-        return string.Empty;
-    }
-
-    void IDisposable.Dispose()
-    {
-        if (EditContext != null)
-            EditContext.OnValidationStateChanged -= _validationStateChangedHandler;
-
-        GC.SuppressFinalize(this);
+            DayOfWeek.Sunday => "Su",
+            DayOfWeek.Monday => "Mo",
+            DayOfWeek.Tuesday => "Tu",
+            DayOfWeek.Wednesday => "We",
+            DayOfWeek.Thursday => "Th",
+            DayOfWeek.Friday => "Fr",
+            DayOfWeek.Saturday => "Sa",
+            _ => string.Empty,
+        };
     }
 }

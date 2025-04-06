@@ -1,43 +1,47 @@
+// Ignore Spelling: Css
+
+using LoreSoft.Blazor.Controls.Extensions;
+
 namespace LoreSoft.Blazor.Controls.Utilities;
 
-public struct CssBuilder
+public struct CssBuilder(string? value)
 {
-    private string _buffer;
+    private string _buffer = value ?? string.Empty;
 
-    public static CssBuilder Default(string value) => new(value);
+    public static CssBuilder Default(string? value = null) => new(value);
 
     public static CssBuilder Empty() => new();
 
-    public CssBuilder(string value) => _buffer = value;
-
-    public CssBuilder AddClass(string value)
+    public CssBuilder AddClass(string? value)
     {
-        _buffer += $" {value}";
+        if (value.HasValue())
+            _buffer += $" {value}";
+
         return this;
     }
 
-    public CssBuilder AddClass(string value, bool when)
-        => when ? this.AddClass(value) : this;
+    public CssBuilder AddClass(string? value, bool when)
+        => when ? AddClass(value) : this;
 
-    public CssBuilder AddClass(string value, Func<bool> when)
-        => this.AddClass(value, when());
+    public CssBuilder AddClass(string? value, Func<bool> when)
+        => AddClass(value, when());
 
-    public CssBuilder AddClass(string value, Func<string, bool> when)
-        => this.AddClass(value, when(value));
+    public CssBuilder AddClass(string? value, Func<string?, bool> when)
+        => AddClass(value, when(value));
 
-    public CssBuilder AddClass(Func<string> value, bool when)
-        => when ? this.AddClass(value()) : this;
+    public CssBuilder AddClass(Func<string?> value, bool when)
+        => when ? AddClass(value()) : this;
 
-    public CssBuilder AddClass(Func<string> value, Func<bool> when)
-        => this.AddClass(value, when());
+    public CssBuilder AddClass(Func<string?> value, Func<bool> when)
+        => AddClass(value, when());
 
     public CssBuilder AddClass(CssBuilder builder, bool when)
-        => when ? this.AddClass(builder.ToString()) : this;
+        => when ? AddClass(builder.ToString()) : this;
 
     public CssBuilder AddClass(CssBuilder builder, Func<bool> when)
-        => this.AddClass(builder, when());
+        => AddClass(builder, when());
 
-    public CssBuilder MergeClass(IDictionary<string, object> attributes)
+    public CssBuilder MergeClass(IReadOnlyDictionary<string, object>? attributes)
     {
         if (attributes == null)
             return this;
@@ -45,16 +49,12 @@ public struct CssBuilder
         if (!attributes.TryGetValue("class", out var value))
             return this;
 
-        // remove so it doesn't overwrite
-        attributes.Remove("class");
+        if (attributes is IDictionary<string, object> dictionary)
+            dictionary.Remove("class");
 
-        return AddClass(value.ToString());
+        return AddClass(value?.ToString());
     }
 
     public override readonly string ToString()
-    {
-        var value = _buffer?.Trim();
-        return string.IsNullOrEmpty(value) ? null : value;
-    }
-
+        => _buffer.Trim();
 }

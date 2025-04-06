@@ -1,41 +1,42 @@
 namespace LoreSoft.Blazor.Controls.Utilities;
 
 
-public struct StyleBuilder
+public struct StyleBuilder(string prop, string value)
 {
-    private string _buffer;
+    private string _buffer = $"{prop}:{value};";
 
-    public static StyleBuilder Default(string prop, string value) => new(prop, value);
+    public static StyleBuilder Default(string prop, string value)
+        => new(prop, value);
 
-    public static StyleBuilder Default(string style) => Empty().AddStyle(style);
+    public static StyleBuilder Default(string style)
+        => Empty().AddStyle(style);
 
     public static StyleBuilder Empty() => new();
 
-    public StyleBuilder(string prop, string value)
-        => _buffer = $"{prop}:{value};";
-
-    public StyleBuilder AddStyle(string style)
+    public StyleBuilder AddStyle(string? style)
         => !string.IsNullOrWhiteSpace(style) ? AddRaw($"{style};") : this;
 
-    private StyleBuilder AddRaw(string style)
+    private StyleBuilder AddRaw(string? style)
     {
-        _buffer += style;
+        if (!string.IsNullOrWhiteSpace(style))
+            _buffer += style;
+
         return this;
     }
 
-    public StyleBuilder AddStyle(string prop, string value)
+    public StyleBuilder AddStyle(string prop, string? value)
         => AddRaw($"{prop}:{value};");
 
-    public StyleBuilder AddStyle(string prop, string value, bool when)
+    public StyleBuilder AddStyle(string prop, string? value, bool when)
         => when ? AddStyle(prop, value) : this;
 
     public StyleBuilder AddStyle(string prop, Func<string> value, bool when)
         => when ? AddStyle(prop, value()) : this;
 
-    public StyleBuilder AddStyle(string prop, string value, Func<bool> when)
+    public StyleBuilder AddStyle(string prop, string? value, Func<bool> when)
         => AddStyle(prop, value, when());
 
-    public StyleBuilder AddStyle(string prop, string value, Func<string, bool> when)
+    public StyleBuilder AddStyle(string prop, string? value, Func<string?, bool> when)
         => AddStyle(prop, value, when(value));
 
     public StyleBuilder AddStyle(string prop, Func<string> value, Func<bool> when)
@@ -50,7 +51,7 @@ public struct StyleBuilder
     public StyleBuilder AddStyle(StyleBuilder builder, Func<bool> when)
         => AddStyle(builder, when());
 
-    public StyleBuilder MergeStyle(IDictionary<string, object> attributes)
+    public StyleBuilder MergeStyle(IDictionary<string, object>? attributes)
     {
         if (attributes == null)
             return this;
@@ -61,12 +62,9 @@ public struct StyleBuilder
         // remove so it doesn't overwrite
         attributes.Remove("style");
 
-        return AddRaw(c.ToString());
+        return AddRaw(c?.ToString() ?? string.Empty);
     }
 
     public override readonly string ToString()
-    {
-        var value = _buffer?.Trim();
-        return string.IsNullOrEmpty(value) ? null : value;
-    }
+        => _buffer?.Trim() ?? string.Empty;
 }

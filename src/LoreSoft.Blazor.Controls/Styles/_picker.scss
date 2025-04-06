@@ -111,6 +111,12 @@
   min-width: 0;
 }
 
+.datetimepicker-input::-webkit-inner-spin-button,
+.datetimepicker-input::-webkit-calendar-picker-indicator {
+  display: none;
+  -webkit-appearance: none;
+}
+
 .datetimepicker-background {
   bottom: 0;
   left: 0;

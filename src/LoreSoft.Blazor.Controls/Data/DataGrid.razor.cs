@@ -1,3 +1,5 @@
+// Ignore Spelling: queryable Groupable Deselect
+
 using LoreSoft.Blazor.Controls.Extensions;
 using LoreSoft.Blazor.Controls.Utilities;
 
@@ -9,20 +11,20 @@ namespace LoreSoft.Blazor.Controls;
 [CascadingTypeParameter(nameof(TItem))]
 public partial class DataGrid<TItem> : DataComponentBase<TItem>
 {
-    private HashSet<TItem> _expandedItems = [];
-    private HashSet<string> _expandedGroups = [];
+    private readonly HashSet<TItem> _expandedItems = [];
+    private readonly HashSet<string> _expandedGroups = [];
 
-    private QueryGroup _query;
+    private QueryGroup? _initialQuery;
 
     [Parameter(CaptureUnmatchedValues = true)]
-    public Dictionary<string, object> TableAttributes { get; set; }
+    public Dictionary<string, object>? TableAttributes { get; set; }
 
 
     [Parameter]
-    public RenderFragment DataColumns { get; set; }
+    public RenderFragment? DataColumns { get; set; }
 
     [Parameter]
-    public RenderFragment<TItem> DetailTemplate { get; set; }
+    public RenderFragment<TItem>? DetailTemplate { get; set; }
 
 
     [Parameter]
@@ -41,13 +43,13 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
     public string TableClass { get; set; } = "table";
 
     [Parameter]
-    public string RowClass { get; set; }
+    public string? RowClass { get; set; }
 
     [Parameter]
-    public Func<TItem, string> RowStyle { get; set; }
+    public Func<TItem, string>? RowStyle { get; set; }
 
     [Parameter]
-    public Func<TItem, Dictionary<string, object>> RowAttributes { get; set; }
+    public Func<TItem, Dictionary<string, object>>? RowAttributes { get; set; }
 
     [Parameter]
     public IEnumerable<TItem> SelectedItems { get; set; } = [];
@@ -59,9 +61,9 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
     public EventCallback<TItem> RowDoubleClick { get; set; }
 
     [Parameter]
-    public QueryGroup Query { get; set; }
+    public QueryGroup? Query { get; set; }
 
-    public QueryGroup RootQuery { get; set; }
+    public QueryGroup RootQuery { get; set; } = new();
 
 
     public List<DataColumn<TItem>> Columns { get; } = [];
@@ -204,6 +206,9 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
             return;
 
         var column = Columns.Find(c => c.ColumnName == columnName);
+        if (column == null)
+            return;
+
         await SortByAsync(column);
     }
 
@@ -230,10 +235,10 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
         base.OnParametersSet();
 
         // only update RootQuery if Query changed
-        if (_query != Query)
+        if (_initialQuery != Query)
         {
-            _query = Query;
-            RootQuery = Query;
+            _initialQuery = Query;
+            RootQuery = Query ?? new QueryGroup();
         }
 
         RootQuery ??= new QueryGroup();

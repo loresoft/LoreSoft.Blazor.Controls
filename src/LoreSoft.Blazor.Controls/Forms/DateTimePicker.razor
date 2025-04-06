@@ -1,21 +1,22 @@
+@inherits InputBase<TValue>
 @typeparam TValue
 @namespace LoreSoft.Blazor.Controls
 
 @using Microsoft.AspNetCore.Components.Forms
 @using Microsoft.AspNetCore.Components.Web
 
-<div class="datetimepicker @(IsDatePickerOpen ? "is-datepicker-open": null)">
+<div class="@PickerClass">
     <div class="datetimepicker-value-container">
-        <input type="text"
-               autocomplete="off"
-               class="datetimepicker-input @CssClass"
+        <input @attributes="AdditionalAttributes"
+               type="@InputType"
+               class="@InputClass"
                disabled="@Disabled"
                @ref="DateTimeInput"
-               @bind="CurrentValueString"
+               @bind="CurrentValueAsString"
+               @bind:after="RefreshDatePicker"
                @onfocus="DateTimeFocus"
                @onkeydown="HandleKeydown"
-               @onkeydown:preventDefault="PreventKey"
-               @attributes="AdditionalAttributes" />
+               @onkeydown:preventDefault="PreventKey" />
         @if (CanClear())
         {
             <button type="button"

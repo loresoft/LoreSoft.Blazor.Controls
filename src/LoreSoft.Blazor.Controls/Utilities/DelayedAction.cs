@@ -2,8 +2,6 @@
 
 namespace LoreSoft.Blazor.Controls.Utilities;
 
-#nullable enable
-
 // https://www.meziantou.net/debouncing-throttling-javascript-events-in-a-blazor-application.htm
 public static class DelayedAction
 {
@@ -28,6 +26,7 @@ public static class DelayedAction
         };
     }
 
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Roslynator", "RCS1047:Non-asynchronous method name should not end with 'Async'", Justification = "Delegate function")]
     public static Func<Task> DebounceAsync(this Func<Task> action, TimeSpan? interval = null)
     {
         ArgumentNullException.ThrowIfNull(action);
@@ -65,6 +64,7 @@ public static class DelayedAction
         };
     }
 
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Roslynator", "RCS1047:Non-asynchronous method name should not end with 'Async'", Justification = "Delegate function")]
     public static Func<T, Task> DebounceAsync<T>(this Func<T, Task> action, TimeSpan? interval = null)
     {
         ArgumentNullException.ThrowIfNull(action);
