@@ -104,7 +104,7 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
     }
 
 
-    public async Task QuickSearch(string searchText, bool clearFilter = false)
+    public async Task QuickSearch(string? searchText, bool clearFilter = false)
     {
         if (clearFilter)
             RootQuery.Filters.Clear();
