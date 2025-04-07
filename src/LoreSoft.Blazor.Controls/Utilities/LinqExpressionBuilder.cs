@@ -184,6 +184,8 @@ public class LinqExpressionBuilder
         };
 
         builder
+            .Append(field)
+            .Append(" != NULL && ")
             .AppendIf("!", negation)
             .Append(field)
             .Append('.')
