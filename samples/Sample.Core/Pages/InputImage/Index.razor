@@ -1,0 +1,27 @@
+@page "/inputimage/index"
+
+<h1>InputImage</h1>
+
+<p>Image Input Control</p>
+
+<Instructions></Instructions>
+
+<h2 class="mb-3">Examples</h2>
+
+<h3>Basic</h3>
+
+<p>Example of using InputImage</p>
+
+<div>
+    <InputImage @bind-Value="ImageFile"
+                DisplayName="Input Image"
+                DisplayHeight="100" />
+</div>
+
+<br />
+
+<ProfileForm />
+
+@code {
+    public string ImageFile { get; set; }
+}

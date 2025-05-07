@@ -1,0 +1,52 @@
+@using Sample.Core.Models
+@using Sample.Core.Services
+<h3>Profile Form</h3>
+
+<EditForm Model="Profile" OnValidSubmit="@HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="mb-3">
+        <label for="DisplayName">Display Name *</label>
+        <InputText @bind-Value="Profile.DisplayName"
+                   class="form-control"
+                   placeholder="Display Name" />
+        <ValidationMessage For="@(() => Profile.DisplayName)" />
+    </div>
+    <div class="mb-3">
+        <label for="EmailAddress">EmailAddress *</label>
+        <InputText id="EmailAddress"
+                   name="EmailAddress"
+                   type="email"
+                   @bind-Value="Profile.EmailAddress"
+                   class="form-control"
+                   placeholder="Email Address" />
+        <ValidationMessage For="@(() => Profile.EmailAddress)" />
+    </div>
+    <div class="mb-3">
+        <label for="ProfileImage">Profile Image *</label>
+        <InputImage id="ProfileImage"
+                    name="ProfileImage"
+                    @bind-Value="Profile.ProfileImage"
+                    DisplayName="Profile Image"
+                    DisplayHeight="100" />
+        <ValidationMessage For="@(() => Profile.ProfileImage)" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">
+        Submit
+    </button>
+
+</EditForm>
+
+<p><br/></p>
+
+@code {
+    public Profile Profile { get; set; } = new();
+
+    private void HandleValidSubmit()
+    {
+        Console.WriteLine("Form Submitted Successfully!");
+    }
+
+}

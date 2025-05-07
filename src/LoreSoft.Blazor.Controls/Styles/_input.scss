@@ -1,0 +1,36 @@
+.input-image {
+  --input-image-color: #ccc;
+  --input-image-clear-color: var(--bs-danger, #dc3545);
+
+  position: relative;
+
+  .input-image-label {
+    cursor: pointer;
+    position: relative;
+
+    &:hover .input-image-clear {
+      display: flex;
+    }
+  }
+
+  .input-image-icon {
+  }
+
+  .input-image-clear {
+    color: var(--input-image-color);
+    display: none;
+    box-sizing: border-box;
+    padding: 0.125rem;
+    transition: color 150ms ease 0s;
+    background-color: transparent;
+    border: 0;
+    outline: none;
+    position: absolute;
+    right: 0;
+    top: 0;
+
+    &:hover {
+      color: var(--input-image-clear-color);
+    }
+  }
+}

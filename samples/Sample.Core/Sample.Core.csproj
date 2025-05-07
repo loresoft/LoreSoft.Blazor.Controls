@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Razor">
+﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
     <IsPackable>false</IsPackable>
@@ -7,10 +7,7 @@
     <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Bogus" Version="35.6.2" />
-    <PackageReference Include="System.Net.Http.Json" Version="9.0.3" />
-    <PackageReference Include="Microsoft.AspNetCore.Components" Version="9.0.3" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="9.0.3" />
+    <PackageReference Include="Bogus" Version="35.6.3" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\LoreSoft.Blazor.Controls\LoreSoft.Blazor.Controls.csproj" />
