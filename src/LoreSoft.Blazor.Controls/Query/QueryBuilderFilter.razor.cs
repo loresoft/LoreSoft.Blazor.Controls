@@ -31,6 +31,7 @@ public partial class QueryBuilderFilter<TItem>
     {
         Field = Fields.FirstOrDefault(f => f.Column == Filter.Field);
         QueryBuilder.Refresh();
+        StateHasChanged();
     }
 
     protected void OperatorChanged()
@@ -39,6 +40,7 @@ public partial class QueryBuilderFilter<TItem>
             Filter.Value = null;
 
         QueryBuilder.Refresh();
+        StateHasChanged();
     }
 
     protected bool ShowValueInput
@@ -52,6 +54,7 @@ public partial class QueryBuilderFilter<TItem>
         Parent.Filters.Remove(Filter);
 
         QueryBuilder.Refresh();
+        StateHasChanged();
     }
 
     protected string? GetValue()
@@ -63,5 +66,6 @@ public partial class QueryBuilderFilter<TItem>
     {
         Filter.Value = Field != null ? Binding.Convert(args.Value, Field.Type ?? typeof(object)) : args.Value;
         QueryBuilder.Refresh();
+        StateHasChanged();
     }
 }

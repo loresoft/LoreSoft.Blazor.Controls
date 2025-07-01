@@ -41,8 +41,9 @@
         <DataColumn TItem="Person" Property="p => p.FirstName" SortIndex="1" ColumnStyle="min-width: 200px" />
         <DataColumn TItem="Person" Property="p => p.LastName" SortIndex="0" ColumnStyle="min-width: 200px"/>
         <DataColumn TItem="Person" Property="p => p.Score" Width="120px" Style="@SoreStyle" />
-        <DataColumn TItem="Person" Property="p => p.Location" ColumnStyle="min-width: 200px" Sortable="false" />
+        <DataColumn TItem="Person" Property="p => p.Location" ColumnStyle="min-width: 200px" Sortable="false" FilterValues="Locations" />
         <DataColumn TItem="Person" Property="p => p.Birthday" Width="110px" Format="d" />
+        <DataColumn TItem="Person" Property="p => p.FullName" Visible="false" />
     </DataColumns>
     <DataPagination Context="grid">
         <DataPager PageSize="10" />
@@ -69,6 +70,8 @@
     private DataGrid<Person> DataGrid { get; set; }
 
     protected DebounceValue<string> SearchText { get; set; }
+
+    protected List<string> Locations { get; set; } = ["North", "South", "East", "West"];
 
     protected override void OnInitialized()
     {

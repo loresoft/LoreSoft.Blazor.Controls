@@ -72,12 +72,23 @@
         {
             <input id="value-@Filter.Id"
                    name="value-@Filter.Id"
+                   list="@(Field.CurrentValues?.Count > 0 ? $"list-{Filter.Id}" : null)"
                    title="Enter Filter Value"
                    value="@GetValue()"
                    autocomplete="off"
                    @onchange="SetValue"
                    type="@Field.CurrentInputType"
                    class="query-filter-value" />
+
+            if (Field.CurrentValues?.Count > 0)
+            {
+                <datalist id="list-@Filter.Id">
+                    @foreach (var value in Field.CurrentValues)
+                    {
+                        <option @key="value" value="@value"></option>
+                    }
+                </datalist>
+            }
         }
     }
 

@@ -106,8 +106,10 @@
                                             <QueryFields>
                                                 @foreach (var column in Columns.Where(c => c.Filterable))
                                                 {
-                                                    <QueryBuilderField Field="column.Property"
+                                                    <QueryBuilderField @key="column"
+                                                                       Field="column.Property"
                                                                        Title="@column.HeaderTitle()"
+                                                                       Values="@column.FilterValues"
                                                                        ValueTemplate="@column.FilterTemplate" />
                                                 }
                                             </QueryFields>

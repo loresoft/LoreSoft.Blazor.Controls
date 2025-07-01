@@ -27,7 +27,7 @@
                 </select>
             </ValueTemplate>
         </QueryBuilderField>
-        <QueryBuilderField Field="p => p.RoutingNumber" />
+        <QueryBuilderField Field="p => p.RoutingNumber" Values="@RoutingNumbers" />
         <QueryBuilderField Field="p => p.SwiftBIC" />
         <QueryBuilderField Field="p => p.IsActive" />
         <QueryBuilderField Field="p => p.Created" />
@@ -39,6 +39,8 @@
 <pre style="max-height: 400px; max-width: calc(100vw - 4em);"><code class="language-json">@Serialize(Query)</code></pre>
 
 @code {
+    public List<string> RoutingNumbers { get; set; } = ["111920765", "111305115", "051000017", "125200057", "122100024"];
+
     protected QueryGroup Query { get; set; } = new()
         {
             Filters = new List<QueryRule>

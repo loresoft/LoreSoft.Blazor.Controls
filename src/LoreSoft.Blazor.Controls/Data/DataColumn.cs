@@ -96,6 +96,9 @@ public class DataColumn<TItem> : ComponentBase
     [Parameter]
     public RenderFragment<QueryFilter>? FilterTemplate { get; set; }
 
+    [Parameter]
+    public List<string>? FilterValues { get; set; }
+
     public string PropertyName { get; set; } = null!;
 
     public string ColumnName { get; set; } = null!;

@@ -25,6 +25,8 @@ public class QueryBuilderField<TItem> : ComponentBase
     [Parameter]
     public string? Title { get; set; }
 
+    [Parameter]
+    public List<string>? Values { get; set; }
 
     [Parameter]
     public RenderFragment<QueryFilter>? ValueTemplate { get; set; }
@@ -45,6 +47,8 @@ public class QueryBuilderField<TItem> : ComponentBase
     public string? CurrentInputType { get; set; }
 
     public string? CurrentTitle { get; set; }
+
+    public List<string>? CurrentValues { get; set; }
 
 
     protected override void OnInitialized()
@@ -67,8 +71,19 @@ public class QueryBuilderField<TItem> : ComponentBase
         UpdateOperators();
         UpdateInputType();
         UpdateTitle();
+        UpdateValues();
     }
 
+    private void UpdateValues()
+    {
+        if (Values?.Count > 0)
+        {
+            CurrentValues = Values;
+            return;
+        }
+
+        CurrentValues = [];
+    }
 
     private void UpdateTitle()
     {

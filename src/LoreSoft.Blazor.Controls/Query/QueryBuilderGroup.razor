@@ -47,11 +47,11 @@
         {
             if (query is QueryGroup queryGroup)
             {
-                <QueryBuilderGroup TItem="TItem" Group="queryGroup" Parent="Group" />
+                <QueryBuilderGroup @key="query.Id" TItem="TItem" Group="queryGroup" Parent="Group" />
             }
             else if (query is QueryFilter queryFilter)
             {
-                <QueryBuilderFilter TItem="TItem" Filter="queryFilter" Parent="Group" />
+                <QueryBuilderFilter @key="query.Id" TItem="TItem" Filter="queryFilter" Parent="Group" />
             }
         }
     </div>
