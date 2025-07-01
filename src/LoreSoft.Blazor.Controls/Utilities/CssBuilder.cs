@@ -4,13 +4,13 @@ using LoreSoft.Blazor.Controls.Extensions;
 
 namespace LoreSoft.Blazor.Controls.Utilities;
 
-public struct CssBuilder(string? value)
+public struct CssBuilder(string value)
 {
     private string _buffer = value ?? string.Empty;
 
-    public static CssBuilder Default(string? value = null) => new(value);
+    public static CssBuilder Default(string? value = null) => new(value ?? string.Empty);
 
-    public static CssBuilder Empty() => new();
+    public static CssBuilder Empty() => new(string.Empty);
 
     public CssBuilder AddClass(string? value)
     {
