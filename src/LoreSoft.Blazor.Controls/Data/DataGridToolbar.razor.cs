@@ -59,9 +59,6 @@ public partial class DataGridToolbar<TItem> : ComponentBase
         base.OnParametersSet();
 
         CurrentGrid = DataGrid ?? ParentGrid;
-
-        if (CurrentGrid == null)
-            throw new InvalidOperationException("DataGridToolbar must be a child of DataGrid or have DataGrid parameter set.");
     }
 
     protected DebounceValue<string> SearchText { get; }
