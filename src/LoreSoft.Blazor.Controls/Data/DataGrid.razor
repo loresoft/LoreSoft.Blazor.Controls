@@ -6,7 +6,7 @@
 @using Microsoft.AspNetCore.Components.Web
 @using Microsoft.AspNetCore.Components.Web.Virtualization
 
-<CascadingValue IsFixed="true" Value="this" Name="Grid">
+<CascadingValue Value="this" Name="Grid">
     <div class="data-grid-container">
         @if (DataToolbar != null)
         {
@@ -76,7 +76,7 @@
                                     @if (column.Sortable && column.CurrentSortIndex >= 0)
                                     {
                                         <div class="data-grid-header-sort">
-                                            <span class="@(column.CurrentSortDescending ? "data-grid-header-sort-desc" : "data-grid-header-sort-asc" )"></span>
+                                            <span class="@(column.CurrentSortDescending ? "data-grid-header-sort-desc" : "data-grid-header-sort-asc")"></span>
                                         </div>
                                     }
 
@@ -86,7 +86,7 @@
                                                 class="data-grid-header-filter"
                                                 title="Show Filter Dialog"
                                                 @onclick="ShowFilter">
-                                            <span class="@(IsFilterActive() ? "data-grid-header-filter-active" : "data-grid-header-filter-icon" )"></span>
+                                            <span class="@(IsFilterActive() ? "data-grid-header-filter-active" : "data-grid-header-filter-icon")"></span>
                                         </button>
                                     }
                                 </div>
@@ -129,6 +129,35 @@
                                             </FooterTemplate>
                                         </QueryBuilder>
                                     </form>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                    @if (ColumnPickerOpen)
+                    {
+                        <tr>
+                            <td colspan="@CellCount" class="column-picker-row">
+                                <div class="column-picker">
+                                    <div class="column-picker-background"
+                                         @onclick="CloseColumnPicker"></div>
+                                    <div class="column-picker-container">
+                                        <div class="column-picker-list">
+                                            @foreach (var column in Columns)
+                                            {
+                                                <label @key="column"
+                                                       title="Toggle '@column.HeaderTitle()' Visibility"
+                                                       class="column-picker-label">
+                                                    <input class="column-picker-checkbox"
+                                                           type="checkbox"
+                                                           checked="@column.CurrentVisible"
+                                                           @onchange="() => ToggleVisible(column)" />
+                                                    <span class="column-picker-text">
+                                                        @column.HeaderTitle()
+                                                    </span>
+                                                </label>
+                                            }
+                                        </div>
+                                    </div>
                                 </div>
                             </td>
                         </tr>
@@ -212,7 +241,7 @@
                                     <button type="button"
                                             @onclick="() => ToggleGroupRow(groupKey)"
                                             title="Show Group"
-                                            class="data-grid-group-button @(IsGroupExpanded(groupKey) ? "data-grid-group-button-expanded" : "data-grid-group-button-collapsed" )"></button>
+                                            class="data-grid-group-button @(IsGroupExpanded(groupKey) ? "data-grid-group-button-expanded" : "data-grid-group-button-collapsed")"></button>
                                 </td>
                                 @if (Selectable)
                                 {
@@ -326,7 +355,7 @@
                     <button type="button"
                             @onclick="() => ToggleDetailRow(item)"
                             title="Show Details"
-                            class="data-grid-hierarchy-button @(IsRowExpanded(item) ? "data-grid-hierarchy-button-expanded" : "data-grid-hierarchy-button-collapsed" )"></button>
+                            class="data-grid-hierarchy-button @(IsRowExpanded(item) ? "data-grid-hierarchy-button-expanded" : "data-grid-hierarchy-button-collapsed")"></button>
                 </td>
             }
             else if (HasGrouping)
@@ -366,7 +395,7 @@
         </tr>
         @if (DetailTemplate != null && IsRowExpanded(item))
         {
-            <tr @key="new {item, i = 1}" class="data-grid-detail-row">
+            <tr @key="new { item, i = 1 }" class="data-grid-detail-row">
                 <td colspan="@CellCount" class="data-grid-detail-cell">
                     @DetailTemplate(item)
                 </td>

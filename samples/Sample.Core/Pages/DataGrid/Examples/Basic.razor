@@ -7,23 +7,6 @@
 <button class="btn btn-secondary" @onclick="@(() => DataGrid.Pager.PageSize = 25)">Page Size 25</button>
 <button class="btn btn-secondary" @onclick="ApplyFilter">Filter High Score</button>
 
-<div class="d-flex justify-content-end p-1">
-    <div class="w-25">
-        <div class="input-group input-group-sm">
-            <span class="input-group-text bg-body border-end-0">
-                <i class="fas fa-search"></i>
-            </span>
-            <input type="search"
-                   class="form-control border-start-0"
-                   placeholder="Search"
-                   @bind-value="SearchText.Value"
-                   @bind-value:event="oninput" />
-        </div>
-    </div>
-</div>
-
-
-
 <DataGrid Data="People"
           TItem="Person"
           Filterable="true"
@@ -32,6 +15,9 @@
           @bind-SelectedItems="Selected"
           @ref="DataGrid"
           class="table table-hover">
+    <DataToolbar>
+        <DataGridToolbar Title="Sample Grid" />
+    </DataToolbar>
     <DataColumns>
         <DataColumn TItem="Person" Property="p => p.Id" Width="90px">
             <Template Context="item">
@@ -39,7 +25,7 @@
             </Template>
         </DataColumn>
         <DataColumn TItem="Person" Property="p => p.FirstName" SortIndex="1" ColumnStyle="min-width: 200px" />
-        <DataColumn TItem="Person" Property="p => p.LastName" SortIndex="0" ColumnStyle="min-width: 200px"/>
+        <DataColumn TItem="Person" Property="p => p.LastName" SortIndex="0" ColumnStyle="min-width: 200px" />
         <DataColumn TItem="Person" Property="p => p.Score" Width="120px" Style="@SoreStyle" />
         <DataColumn TItem="Person" Property="p => p.Location" ColumnStyle="min-width: 200px" Sortable="false" FilterValues="Locations" />
         <DataColumn TItem="Person" Property="p => p.Birthday" Width="110px" Format="d" />

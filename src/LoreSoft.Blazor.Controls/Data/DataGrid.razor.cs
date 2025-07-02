@@ -1,9 +1,12 @@
 // Ignore Spelling: queryable Groupable Deselect
 
+using System.Text;
+
 using LoreSoft.Blazor.Controls.Extensions;
 using LoreSoft.Blazor.Controls.Utilities;
 
 using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 
 // ReSharper disable once CheckNamespace
 namespace LoreSoft.Blazor.Controls;
@@ -15,6 +18,9 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
     private readonly HashSet<string> _expandedGroups = [];
 
     private QueryGroup? _initialQuery;
+
+    [Inject]
+    public required IJSRuntime JavaScript { get; set; }
 
     [Parameter(CaptureUnmatchedValues = true)]
     public Dictionary<string, object>? TableAttributes { get; set; }
@@ -101,6 +107,27 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
     {
         FilterOpen = false;
         await RefreshAsync(true);
+    }
+
+
+    protected bool ColumnPickerOpen { get; set; }
+
+    public void ShowColumnPicker()
+    {
+        ColumnPickerOpen = true;
+        StateHasChanged();
+    }
+
+    public void CloseColumnPicker()
+    {
+        ColumnPickerOpen = false;
+        StateHasChanged();
+    }
+
+    public void ToggleColumnPicker()
+    {
+        ColumnPickerOpen = !ColumnPickerOpen;
+        StateHasChanged();
     }
 
 
@@ -213,9 +240,42 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
     }
 
 
-    protected List<DataColumn<TItem>> VisibleColumns => Columns.Where(c => c.Visible).ToList();
+    public virtual async Task ExportAsync(string? fileName = null, CancellationToken cancellationToken = default)
+    {
+        if (CurrentDataProvider == null)
+            throw new InvalidOperationException("Invalid Data Provider");
 
-    protected int CellCount => (Columns?.Count(c => c.Visible) ?? 0)
+        var request = CreateDataRequest(cancellationToken);
+
+        // clear paging for export
+        request = request with { Page = 0, PageSize = 0 };
+
+        var result = await CurrentDataProvider(request);
+
+        await using var memoryStream = new MemoryStream();
+
+        await CsvWriter.WriteAsync(
+            stream: memoryStream,
+            headers: Columns.Where(c => c.Exportable).Select(c => c.ExportName()),
+            rows: result.Items,
+            selector: item => Columns.Where(c => c.Exportable).Select(c => c.CellValue(item)),
+            encoding: Encoding.UTF8,
+            cancellationToken: cancellationToken);
+
+        // need to reset stream position
+        memoryStream.Seek(0, SeekOrigin.Begin);
+
+        using var streamReference = new DotNetStreamReference(memoryStream, true);
+
+        var downloadFile = fileName ?? $"Export {DateTime.Now:yyyy-MM-dd-HH-mm-ss}.csv";
+
+        await JavaScript.InvokeVoidAsync("downloadFileStream", downloadFile, streamReference);
+    }
+
+
+    protected List<DataColumn<TItem>> VisibleColumns => Columns.Where(c => c.CurrentVisible).ToList();
+
+    protected int CellCount => (Columns?.Count(c => c.CurrentVisible) ?? 0)
         + (DetailTemplate != null || (Groupable && Columns?.Any(c => c.Grouping) == true) ? 1 : 0)
         + (Selectable ? 1 : 0);
 
@@ -331,6 +391,15 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
     {
         SelectedItems = items;
         await SelectedItemsChanged.InvokeAsync(SelectedItems);
+    }
+
+
+    protected void ToggleVisible(DataColumn<TItem> column)
+    {
+        var value = !column.CurrentVisible;
+        column.UpdateVisible(value);
+
+        StateHasChanged();
     }
 
 

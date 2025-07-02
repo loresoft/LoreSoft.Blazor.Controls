@@ -72,6 +72,13 @@ public class DataColumn<TItem> : ComponentBase
 
 
     [Parameter]
+    public bool Exportable { get; set; } = true;
+
+    [Parameter]
+    public string? ExportHeader { get; set; }
+
+
+    [Parameter]
     public bool Groupable { get; set; } = true;
 
     [Parameter]
@@ -111,6 +118,8 @@ public class DataColumn<TItem> : ComponentBase
 
     internal string? CurrentColumnStyle { get; set; }
 
+    internal bool CurrentVisible { get; set; }
+
     protected override void OnInitialized()
     {
         if (Grid == null)
@@ -121,6 +130,7 @@ public class DataColumn<TItem> : ComponentBase
 
         CurrentSortIndex = SortIndex;
         CurrentSortDescending = SortDescending;
+        CurrentVisible = Visible;
 
         // register with parent grid
         Grid.AddColumn(this);
@@ -172,10 +182,23 @@ public class DataColumn<TItem> : ComponentBase
             : string.Format(CultureInfo.CurrentCulture, $"{{0:{Format}}}", value);
     }
 
+    internal string ExportName()
+    {
+        if (!string.IsNullOrEmpty(ExportHeader))
+            return ExportHeader;
+
+        return PropertyName;
+    }
+
     internal void UpdateSort(int index, bool descending)
     {
         CurrentSortIndex = index;
         CurrentSortDescending = descending;
+    }
+
+    internal void UpdateVisible(bool value)
+    {
+        CurrentVisible = value;
     }
 
     private void UpdateProperty()

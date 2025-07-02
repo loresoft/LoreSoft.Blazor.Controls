@@ -8,7 +8,6 @@ namespace LoreSoft.Blazor.Controls;
 
 public abstract class DataComponentBase<TItem> : ComponentBase, IDisposable
 {
-    private DataProviderDelegate<TItem>? _dataProvider;
     private CancellationTokenSource? _refreshCancellation;
     private IEnumerable<TItem>? _data;
     private bool _isLoading;
@@ -68,6 +67,8 @@ public abstract class DataComponentBase<TItem> : ComponentBase, IDisposable
 
     protected Exception? DataError { get; private set; }
 
+    protected DataProviderDelegate<TItem>? CurrentDataProvider { get; set; }
+
 
     public virtual async Task RefreshAsync(bool resetPager = false, bool forceReload = false)
     {
@@ -105,11 +106,11 @@ public abstract class DataComponentBase<TItem> : ComponentBase, IDisposable
                     $"Do not supply both '{nameof(Data)}' and '{nameof(DataProvider)}'.");
             }
 
-            _dataProvider = DataProvider;
+            CurrentDataProvider = DataProvider;
         }
         else if (Data != null)
         {
-            _dataProvider = DefaultProvider;
+            CurrentDataProvider = DefaultProvider;
 
             // if Data was replaces, refresh
             if (_data != Data)
@@ -120,7 +121,7 @@ public abstract class DataComponentBase<TItem> : ComponentBase, IDisposable
         }
         else if (DataLoader != null)
         {
-            _dataProvider = DefaultProvider;
+            CurrentDataProvider = DefaultProvider;
         }
         else
         {
@@ -153,10 +154,10 @@ public abstract class DataComponentBase<TItem> : ComponentBase, IDisposable
 
         try
         {
-            if (_dataProvider == null)
+            if (CurrentDataProvider == null)
                 throw new InvalidOperationException("Invalid Data Provider");
 
-            if (_dataProvider == DefaultProvider)
+            if (CurrentDataProvider == DefaultProvider)
             {
                 _refreshCancellation = null;
                 cancellationToken = CancellationToken.None;
@@ -169,7 +170,7 @@ public abstract class DataComponentBase<TItem> : ComponentBase, IDisposable
 
             var request = CreateDataRequest(cancellationToken);
 
-            var result = await _dataProvider(request);
+            var result = await CurrentDataProvider(request);
 
             if (!cancellationToken.IsCancellationRequested)
             {

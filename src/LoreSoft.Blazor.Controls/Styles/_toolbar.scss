@@ -1,0 +1,119 @@
+.data-grid-toolbar {
+  --data-grid-toolbar-color: var(--bs-body-color, #212529);
+  --data-grid-toolbar-bg: var(--bs-body-bg, #fff);
+  --data-grid-toolbar-border-color: var(--bs-border-color, #dee2e6);
+  --data-grid-toolbar-border-width: 1px;
+  --data-grid-toolbar-border-radius: var(--bs-border-radius, 0.375rem);
+  --data-grid-toolbar-hover-color: #000;
+  --data-grid-toolbar-hover-border-color: #6c757d;
+  --data-grid-toolbar-invalid-border-color: var(--bs-danger, #dc3545);
+  --data-grid-toolbar-button-margin: 0.125rem;
+  display: flex;
+  align-items: center;
+
+  .toolbar-title {
+    margin-left: 0.25rem;
+    margin-right: auto;
+
+    .toolbar-title-text {
+      margin: 0;
+    }
+  }
+
+  select,
+  button,
+  input,
+  .toolbar-button {
+    color: var(--data-grid-toolbar-color);
+    background-color: var(--data-grid-toolbar-bg);
+    border: var(--data-grid-toolbar-border-width) solid var(--data-grid-toolbar-border-color);
+    border-radius: var(--data-grid-toolbar-border-radius);
+    font-weight: 400;
+    padding: 0.25rem 0.75rem;
+    margin: 0.125rem;
+    font-size: 1rem;
+  }
+
+  select,
+  button,
+  .toolbar-button {
+    cursor: pointer;
+  }
+
+  select:hover,
+  button:hover,
+  input:hover,
+  .toolbar-button:hover {
+    border: var(--data-grid-toolbar-border-width) solid var(--data-grid-toolbar-hover-border-color);
+    color: var(--data-grid-toolbar-hover-color);
+  }
+
+  select:invalid,
+  input:invalid,
+  .toolbar-button:invalid {
+    border: var(--data-grid-toolbar-border-width) solid var(--data-grid-toolbar-invalid-border-color);
+  }
+
+  .toolbar-search-box {
+    margin-right: var(--data-grid-toolbar-button-margin);
+    margin-left: var(--data-grid-toolbar-button-margin);
+
+    .toolbar-search-input {
+      appearance: none;
+      background-clip: padding-box;
+      display: block;
+      font-size: 1rem;
+      line-height: 1.5;
+      transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+      width: 100%;
+      outline-offset: 0;
+    }
+  }
+
+  .toolbar-button {
+    margin-right: var(--data-grid-toolbar-button-margin);
+    margin-left: var(--data-grid-toolbar-button-margin);
+  }
+
+  .toolbar-icon {
+    &::before {
+      display: inline-block;
+      content: "";
+      vertical-align: -0.125em;
+      background-repeat: no-repeat;
+      width: 16px;
+      height: 16px;
+      opacity: 0.5;
+    }
+  }
+
+  .toolbar-refresh-icon {
+    &::before {
+      background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2z"/><path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466"/></svg>');
+    }
+  }
+
+  .toolbar-export-icon {
+    &::before {
+      background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5"/><path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708z"/></svg>');
+    }
+  }
+
+  .toolbar-filter-icon {
+    &::before {
+      background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.334L10 8.692V13.5a.5.5 0 0 1-.342.474l-3 1A.5.5 0 0 1 6 14.5V8.692L1.628 3.834A.5.5 0 0 1 1.5 3.5zm1 .5v1.308l4.372 4.858A.5.5 0 0 1 7 8.5v5.306l2-.666V8.5a.5.5 0 0 1 .128-.334L13.5 3.308V2z"/></svg>');
+    }
+  }
+
+  .toolbar-filter-active-icon {
+    &::before {
+      background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.334L10 8.692V13.5a.5.5 0 0 1-.342.474l-3 1A.5.5 0 0 1 6 14.5V8.692L1.628 3.834A.5.5 0 0 1 1.5 3.5z"/></svg>');
+    }
+  }
+
+  .toolbar-column-picker-icon {
+    &::before {
+      background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M0 1.5A1.5 1.5 0 0 1 1.5 0h13A1.5 1.5 0 0 1 16 1.5v13a1.5 1.5 0 0 1-1.5 1.5h-13A1.5 1.5 0 0 1 0 14.5zM1.5 1a.5.5 0 0 0-.5.5v13a.5.5 0 0 0 .5.5H5V1zM10 15V1H6v14zm1 0h3.5a.5.5 0 0 0 .5-.5v-13a.5.5 0 0 0-.5-.5H11z"/></svg>');
+    }
+  }
+}

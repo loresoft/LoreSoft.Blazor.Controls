@@ -11,6 +11,9 @@ public class LazyValue<TKey, TValue> : ComponentBase
     [Parameter, EditorRequired]
     public required TKey? Key { get; set; }
 
+    [Parameter]
+    public RenderFragment<TValue?>? ChildTemplate { get; set; }
+
     public TValue? Value { get; set; }
 
     protected override async Task OnParametersSetAsync()
@@ -23,6 +26,9 @@ public class LazyValue<TKey, TValue> : ComponentBase
 
     protected override void BuildRenderTree(RenderTreeBuilder builder)
     {
-        builder.AddContent(0, Value);
+        if (ChildTemplate != null)
+            builder.AddContent(0, ChildTemplate, Value);
+        else
+            builder.AddContent(1, Value);
     }
 }

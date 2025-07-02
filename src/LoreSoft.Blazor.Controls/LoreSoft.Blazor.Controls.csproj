@@ -34,14 +34,11 @@
     </EmbeddedResource>
   </ItemGroup>
 
-  <Target Name="SassCheck" BeforeTargets="PreBuild">
-    <Exec Command="sass --version" ContinueOnError="true">
-      <Output TaskParameter="ExitCode" PropertyName="ErrorCodeSass" />
-    </Exec>
-    <Error Condition="'$(ErrorCodeSass)' != '0'" Text="dart-sass is required for this project. install globally with 'npm i -g sass' " />
+  <Target Name="NpmInstall" Inputs="package.json" Outputs="node_modules/.install-stamp">
+    <Exec Command="npm install" />
+    <Touch Files="node_modules/.install-stamp" AlwaysCreate="true" />
   </Target>
-
-  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
-    <Exec Command="sass Styles/controls.scss:wwwroot/BlazorControls.css --style compressed --load-path=Styles" />
+  <Target Name="NpmRunBuild" DependsOnTargets="NpmInstall" BeforeTargets="BeforeBuild">
+    <Exec Command="npm run build" />
   </Target>
 </Project>

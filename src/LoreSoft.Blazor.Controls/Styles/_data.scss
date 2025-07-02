@@ -1,10 +1,8 @@
 .data-grid-container {
   --data-grid-error-color: var(--bs-danger, #dc3545);
   --data-grid-empty-color: #6c757d;
-
   --data-size-options-color: var(--bs-body-color, #212529);
   --data-size-options-bg: var(--bs-body-bg, #fff);
-
   position: relative;
 }
 
@@ -170,6 +168,7 @@ button.data-grid-header-filter {
       outline: 0;
       box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
     }
+
     &:disabled {
       opacity: 0.5;
     }
@@ -279,17 +278,17 @@ button.data-grid-header-filter {
 
 .filter-container {
   background-color: #ffffff;
+  border: 1px solid #bfbfbf;
+  border-radius: 4px;
   box-shadow: rgba(0, 0, 0, 0.1) 0px 0px 0px 1px, rgba(0, 0, 0, 0.1) 0px 4px 11px;
+  box-sizing: border-box;
   margin-bottom: 8px;
   margin-top: 2px;
+  min-height: 150px;
+  padding: 0.75em;
   position: absolute;
   width: 100%;
   z-index: 1050;
-  box-sizing: border-box;
-  border: 1px solid #bfbfbf;
-  border-radius: 4px;
-  min-height: 150px;
-  padding: 0.75em;
 }
 
 .filter-row {
@@ -300,3 +299,6 @@ button.data-grid-header-filter {
 .filter-footer {
   margin-top: 1em;
 }
+
+
+
