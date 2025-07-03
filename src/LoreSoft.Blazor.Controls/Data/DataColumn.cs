@@ -92,6 +92,10 @@ public class DataColumn<TItem> : ComponentBase
     public bool Visible { get; set; } = true;
 
     [Parameter]
+    public bool Hidable { get; set; } = true;
+
+
+    [Parameter]
     public RenderFragment? HeaderTemplate { get; set; }
 
     [Parameter]

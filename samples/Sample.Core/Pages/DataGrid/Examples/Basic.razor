@@ -19,7 +19,7 @@
         <DataGridToolbar Title="Sample Grid" />
     </DataToolbar>
     <DataColumns>
-        <DataColumn TItem="Person" Property="p => p.Id" Width="90px">
+        <DataColumn TItem="Person" Property="p => p.Id" Width="90px" Hidable="false">
             <Template Context="item">
                 <a href="#" class="d-block" title="@item.FullName">@item.Id</a>
             </Template>

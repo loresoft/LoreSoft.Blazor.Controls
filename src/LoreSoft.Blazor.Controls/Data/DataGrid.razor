@@ -149,6 +149,7 @@
                                                        class="column-picker-label">
                                                     <input class="column-picker-checkbox"
                                                            type="checkbox"
+                                                           disabled="@(!column.Hidable)"
                                                            checked="@column.CurrentVisible"
                                                            @onchange="() => ToggleVisible(column)" />
                                                     <span class="column-picker-text">
