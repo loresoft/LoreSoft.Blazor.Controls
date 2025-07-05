@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Components;
 
 namespace LoreSoft.Blazor.Controls;
 
+[CascadingTypeParameter(nameof(TItem))]
 public class DataColumn<TItem> : ComponentBase
 {
     private Func<TItem, object>? _propertyAccessor;
@@ -92,7 +93,7 @@ public class DataColumn<TItem> : ComponentBase
     public bool Visible { get; set; } = true;
 
     [Parameter]
-    public bool Hidable { get; set; } = true;
+    public bool Hideable { get; set; } = true;
 
 
     [Parameter]
