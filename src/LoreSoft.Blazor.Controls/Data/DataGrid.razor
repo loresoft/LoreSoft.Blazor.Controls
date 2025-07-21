@@ -381,7 +381,7 @@
             {
                 <td @key="column"
                     class="@column.ClassName"
-                    style="@(column.Style?.Invoke(item))"
+                    style="@(column.ComputeStyle(item))"
                     @attributes="@(column.ComputeAttributes(item))">
                     @if (column.Template != null)
                     {

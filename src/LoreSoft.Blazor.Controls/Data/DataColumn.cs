@@ -32,8 +32,16 @@ public class DataColumn<TItem> : ComponentBase
     [Parameter]
     public string? Title { get; set; }
 
+
     [Parameter]
     public string? Width { get; set; }
+
+    [Parameter]
+    public string? MinWidth { get; set; }
+
+    [Parameter]
+    public string? MaxWidth { get; set; }
+
 
     [Parameter]
     public string? Format { get; set; }
@@ -97,6 +105,13 @@ public class DataColumn<TItem> : ComponentBase
 
 
     [Parameter]
+    public bool Tooltip { get; set; } = true;
+
+    [Parameter]
+    public bool MultiLine { get; set; } = true;
+
+
+    [Parameter]
     public RenderFragment? HeaderTemplate { get; set; }
 
     [Parameter]
@@ -111,11 +126,13 @@ public class DataColumn<TItem> : ComponentBase
     [Parameter]
     public List<string>? FilterValues { get; set; }
 
+
     public string PropertyName { get; set; } = null!;
 
     public string ColumnName { get; set; } = null!;
 
     public Type PropertyType { get; set; } = null!;
+
 
     internal int CurrentSortIndex { get; set; } = -1;
 
@@ -241,6 +258,17 @@ public class DataColumn<TItem> : ComponentBase
     internal Dictionary<string, object> ComputeAttributes(TItem data)
     {
         var attributes = new Dictionary<string, object>();
+
+        if (Tooltip)
+        {
+            var value = CellValue(data);
+            if (!string.IsNullOrEmpty(value))
+            {
+                attributes["title"] = value;
+                attributes["aria-label"] = value;
+            }
+        }
+
         if (CellAttributes != null)
         {
             var computed = CellAttributes(data);
@@ -258,5 +286,17 @@ public class DataColumn<TItem> : ComponentBase
         }
 
         return attributes;
+    }
+
+    internal string ComputeStyle(TItem data)
+    {
+        return StyleBuilder.Default(Style?.Invoke(data) ?? string.Empty)
+            .AddStyle("width", Width, (v) => v.HasValue())
+            .AddStyle("min-width", MinWidth, (v) => v.HasValue())
+            .AddStyle("max-width", MaxWidth, (v) => v.HasValue())
+            .AddStyle("overflow", "hidden", !MultiLine)
+            .AddStyle("text-overflow", "ellipsis", !MultiLine)
+            .AddStyle("white-space", "nowrap", !MultiLine)
+            .ToString();
     }
 }
