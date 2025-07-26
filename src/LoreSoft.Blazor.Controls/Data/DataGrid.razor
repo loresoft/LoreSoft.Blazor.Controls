@@ -55,7 +55,9 @@
                         }
                         @foreach (var column in VisibleColumns)
                         {
-                            <th @key="column" class="@column.HeaderClass">
+                            <th @key="column"
+                                class="@column.HeaderClass"
+                                style="@column.ComputeHeaderStyle()">
                                 <div class="data-grid-header">
                                     @if (Sortable && column.Sortable)
                                     {

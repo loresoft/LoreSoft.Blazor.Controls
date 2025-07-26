@@ -1,24 +1,45 @@
-downloadFileStream = async (fileName, streamReference) => {
-  const arrayBuffer = await streamReference.arrayBuffer();
-  const blob = new Blob([arrayBuffer]);
-  const url = URL.createObjectURL(blob);
-  const anchorElement = document.createElement('a');
+window.BlazorControls = {
+  downloadFileStream: async (streamReference, fileName, mimeType) => {
+    if (!streamReference) {
+      console.error('streamReference is null or undefined.');
+      return;
+    }
 
-  anchorElement.href = url;
-  anchorElement.download = fileName ?? '';
+    const arrayBuffer = await streamReference.arrayBuffer();
+    const blob = new Blob([arrayBuffer], { type: mimeType || '' });
+    const url = URL.createObjectURL(blob);
 
-  anchorElement.click();
-  anchorElement.remove();
+    try {
+      const anchorElement = document.createElement('a');
+      anchorElement.style.display = 'none';
+      anchorElement.href = url;
+      anchorElement.download = fileName || '';
 
-  URL.revokeObjectURL(url);
-}
+      document.body.appendChild(anchorElement);
 
-triggerFileDownload = (fileName, url) => {
-  const anchorElement = document.createElement('a');
+      anchorElement.click();
 
-  anchorElement.href = url;
-  anchorElement.download = fileName ?? '';
+      document.body.removeChild(anchorElement);
+    } finally {
+      URL.revokeObjectURL(url);
+    }
+  },
 
-  anchorElement.click();
-  anchorElement.remove();
+  triggerFileDownload: (url, fileName) => {
+    if (!url) {
+      console.error('url is null, undefined, or empty.');
+      return;
+    }
+
+    const anchorElement = document.createElement('a');
+    anchorElement.style.display = 'none';
+    anchorElement.href = url;
+    anchorElement.download = fileName || '';
+
+    document.body.appendChild(anchorElement);
+
+    anchorElement.click();
+
+    document.body.removeChild(anchorElement);
+  }
 }

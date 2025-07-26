@@ -7,6 +7,8 @@ public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddBlazorControls(this IServiceCollection services)
     {
+        services.TryAddScoped<DownloadService>();
+
         services.AddProgressBar();
         services.AddToaster();
 

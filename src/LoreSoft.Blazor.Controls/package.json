@@ -19,7 +19,7 @@
     }
   },
   "scripts": {
-    "build": "parcel build",
+    "build": "parcel build --no-cache",
     "watch": "parcel watch"
   },
   "devDependencies": {

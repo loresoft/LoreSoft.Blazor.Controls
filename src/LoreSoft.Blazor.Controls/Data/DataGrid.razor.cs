@@ -22,6 +22,9 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
     [Inject]
     public required IJSRuntime JavaScript { get; set; }
 
+    [Inject]
+    public required DownloadService DownloadService { get; set; }
+
     [Parameter(CaptureUnmatchedValues = true)]
     public Dictionary<string, object>? TableAttributes { get; set; }
 
@@ -265,11 +268,9 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
         // need to reset stream position
         memoryStream.Seek(0, SeekOrigin.Begin);
 
-        using var streamReference = new DotNetStreamReference(memoryStream, true);
-
         var downloadFile = fileName ?? $"Export {DateTime.Now:yyyy-MM-dd-HH-mm-ss}.csv";
 
-        await JavaScript.InvokeVoidAsync("downloadFileStream", downloadFile, streamReference);
+        await DownloadService.DownloadFileStream(memoryStream, downloadFile, "text/csv");
     }
 
 

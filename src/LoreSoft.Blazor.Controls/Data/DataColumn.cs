@@ -42,6 +42,8 @@ public class DataColumn<TItem> : ComponentBase
     [Parameter]
     public string? MaxWidth { get; set; }
 
+    [Parameter]
+    public TextAlign? Align { get; set; }
 
     [Parameter]
     public string? Format { get; set; }
@@ -53,7 +55,16 @@ public class DataColumn<TItem> : ComponentBase
     public Func<TItem, string>? Style { get; set; }
 
     [Parameter]
+    public TextAlign? HeaderAlign { get; set; }
+
+    [Parameter]
+    public string? HeaderStyle { get; set; }
+
+    [Parameter]
     public string? HeaderClass { get; set; }
+
+    [Parameter]
+    public string? FooterStyle { get; set; }
 
     [Parameter]
     public string? FooterClass { get; set; }
@@ -297,6 +308,22 @@ public class DataColumn<TItem> : ComponentBase
             .AddStyle("overflow", "hidden", !MultiLine)
             .AddStyle("text-overflow", "ellipsis", !MultiLine)
             .AddStyle("white-space", "nowrap", !MultiLine)
+            .AddStyle("text-align", "center", Align is TextAlign.Center)
+            .AddStyle("text-align", "left", Align is TextAlign.Left or TextAlign.Start)
+            .AddStyle("text-align", "right", Align is TextAlign.Right or TextAlign.End)
             .ToString();
     }
+
+    internal string ComputeHeaderStyle()
+    {
+        return StyleBuilder.Default(HeaderStyle ?? string.Empty)
+            .AddStyle("width", Width, (v) => v.HasValue())
+            .AddStyle("min-width", MinWidth, (v) => v.HasValue())
+            .AddStyle("max-width", MaxWidth, (v) => v.HasValue())
+            .AddStyle("text-align", "center", HeaderAlign is TextAlign.Center)
+            .AddStyle("text-align", "left", HeaderAlign is TextAlign.Left or TextAlign.Start)
+            .AddStyle("text-align", "right", HeaderAlign is TextAlign.Right or TextAlign.End)
+            .ToString();
+    }
+
 }
