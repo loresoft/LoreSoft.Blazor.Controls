@@ -200,9 +200,6 @@ public class DataPager : ComponentBase, IDisposable
 
     private void RenderPageLink(RenderTreeBuilder builder, int page, string text, string title, string? disabledClass = null)
     {
-        if (!ShowPage)
-            return;
-
         var enabled = string.IsNullOrEmpty(disabledClass);
 
         var itemClass = CssBuilder
