@@ -1,10 +1,12 @@
-﻿<h3>Basic</h3>
+<h3>Basic</h3>
 
 <p>Basic example of binding to a boolean property.</p>
 
 <ToggleSwitch @bind-Value="IsChecked"></ToggleSwitch>
 
 <p>Bound Value: @IsChecked</p>
+
+<BooleanSelect @bind-Value="IsChecked" class="form-select" />
 
 <pre><code class="language-markup">&lt;ToggleSwitch @@bind-Value="IsChecked"&gt;&lt;/ToggleSwitch&gt;</code></pre>
 
@@ -15,4 +17,5 @@
 
 @code {
     public bool IsChecked { get; set; }
+
 }

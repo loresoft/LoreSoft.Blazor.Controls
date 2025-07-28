@@ -1,4 +1,4 @@
-﻿@using Sample.Core.Models
+@using Sample.Core.Models
 @using Sample.Core.Services
 <h3>Register Form</h3>
 
@@ -46,17 +46,26 @@
         <ValidationMessage For="@(() => Register.Agree)" />
     </div>
 
+    <div class="mb-3">
+        <label for="AgreeSelect">Agree *</label>
+        <BooleanSelect @bind-Value="Register.Agree"
+                       id="AgreeSelect"
+                       name="AgreeSelect"
+                       class="form-select" />
+        <ValidationMessage For="@(() => Register.Agree)" />
+    </div>
+
     <button type="submit" class="btn btn-primary">
         Submit
     </button>
 
 </EditForm>
 
-<p><br/></p>
+<p><br /></p>
 
 @code {
     public Register Register { get; set; } = new Register();
-    
+
     public async Task<IEnumerable<Person>> SearchPeople(string searchText)
     {
         var result = Data.PersonList
