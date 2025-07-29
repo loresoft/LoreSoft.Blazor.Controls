@@ -11,6 +11,11 @@ using Microsoft.JSInterop;
 // ReSharper disable once CheckNamespace
 namespace LoreSoft.Blazor.Controls;
 
+/// <summary>
+/// Represents a data grid component for displaying, sorting, filtering, grouping, selecting, and exporting tabular data in Blazor.
+/// Supports advanced features such as column management, quick search, and customizable templates.
+/// </summary>
+/// <typeparam name="TItem">The type of the data item.</typeparam>
 [CascadingTypeParameter(nameof(TItem))]
 public partial class DataGrid<TItem> : DataComponentBase<TItem>
 {
@@ -19,67 +24,126 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
 
     private QueryGroup? _initialQuery;
 
+    /// <summary>
+    /// Gets or sets the JavaScript runtime for interop calls.
+    /// </summary>
     [Inject]
     public required IJSRuntime JavaScript { get; set; }
 
+    /// <summary>
+    /// Gets or sets the service used for downloading files.
+    /// </summary>
     [Inject]
     public required DownloadService DownloadService { get; set; }
 
+    /// <summary>
+    /// Gets or sets additional attributes to be applied to the table element.
+    /// </summary>
     [Parameter(CaptureUnmatchedValues = true)]
     public Dictionary<string, object>? TableAttributes { get; set; }
 
-
+    /// <summary>
+    /// Gets or sets the template for defining data columns.
+    /// </summary>
     [Parameter]
     public RenderFragment? DataColumns { get; set; }
 
+    /// <summary>
+    /// Gets or sets the template for rendering detail rows.
+    /// </summary>
     [Parameter]
     public RenderFragment<TItem>? DetailTemplate { get; set; }
 
-
+    /// <summary>
+    /// Gets or sets a value indicating whether row selection is enabled.
+    /// </summary>
     [Parameter]
     public bool Selectable { get; set; }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether sorting is enabled.
+    /// </summary>
     [Parameter]
     public bool Sortable { get; set; } = true;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether filtering is enabled.
+    /// </summary>
     [Parameter]
     public bool Filterable { get; set; }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether grouping is enabled.
+    /// </summary>
     [Parameter]
     public bool Groupable { get; set; }
 
+    /// <summary>
+    /// Gets or sets the CSS class for the table element.
+    /// </summary>
     [Parameter]
     public string TableClass { get; set; } = "table";
 
+    /// <summary>
+    /// Gets or sets the CSS class for each row.
+    /// </summary>
     [Parameter]
     public string? RowClass { get; set; }
 
+    /// <summary>
+    /// Gets or sets a function to compute the CSS style for each row.
+    /// </summary>
     [Parameter]
     public Func<TItem, string>? RowStyle { get; set; }
 
+    /// <summary>
+    /// Gets or sets a function to compute additional attributes for each row.
+    /// </summary>
     [Parameter]
     public Func<TItem, Dictionary<string, object>>? RowAttributes { get; set; }
 
+    /// <summary>
+    /// Gets or sets the collection of selected items.
+    /// </summary>
     [Parameter]
     public IEnumerable<TItem> SelectedItems { get; set; } = [];
 
+    /// <summary>
+    /// Gets or sets the callback invoked when the selected items change.
+    /// </summary>
     [Parameter]
     public EventCallback<IEnumerable<TItem>> SelectedItemsChanged { get; set; }
 
+    /// <summary>
+    /// Gets or sets the callback invoked when a row is double-clicked.
+    /// </summary>
     [Parameter]
     public EventCallback<TItem> RowDoubleClick { get; set; }
 
+    /// <summary>
+    /// Gets or sets the query group for filtering and searching.
+    /// </summary>
     [Parameter]
     public QueryGroup? Query { get; set; }
 
+    /// <summary>
+    /// Gets or sets the root query group for filtering and searching.
+    /// </summary>
     public QueryGroup RootQuery { get; set; } = new();
 
-
+    /// <summary>
+    /// Gets the list of columns defined for the grid.
+    /// </summary>
     public List<DataColumn<TItem>> Columns { get; } = [];
 
-
+    /// <summary>
+    /// Gets a value indicating whether the filter panel is open.
+    /// </summary>
     protected bool FilterOpen { get; set; }
 
+    /// <summary>
+    /// Shows the filter panel.
+    /// </summary>
     public void ShowFilter()
     {
         if (RootQuery.Filters.Count == 0)
@@ -89,51 +153,79 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
         StateHasChanged();
     }
 
+    /// <summary>
+    /// Closes the filter panel.
+    /// </summary>
     public void CloseFilter()
     {
         FilterOpen = false;
         StateHasChanged();
     }
 
+    /// <summary>
+    /// Toggles the filter panel open or closed.
+    /// </summary>
     public void ToggleFilter()
     {
         FilterOpen = !FilterOpen;
         StateHasChanged();
     }
 
+    /// <summary>
+    /// Determines whether the filter is active.
+    /// </summary>
+    /// <returns>True if the filter is active; otherwise, false.</returns>
     public bool IsFilterActive()
     {
         return LinqExpressionBuilder.IsValid(RootQuery);
     }
 
+    /// <summary>
+    /// Applies the current filters and refreshes the grid.
+    /// </summary>
     protected async Task ApplyFilters()
     {
         FilterOpen = false;
         await RefreshAsync(true);
     }
 
-
+    /// <summary>
+    /// Gets a value indicating whether the column picker panel is open.
+    /// </summary>
     protected bool ColumnPickerOpen { get; set; }
 
+    /// <summary>
+    /// Shows the column picker panel.
+    /// </summary>
     public void ShowColumnPicker()
     {
         ColumnPickerOpen = true;
         StateHasChanged();
     }
 
+    /// <summary>
+    /// Closes the column picker panel.
+    /// </summary>
     public void CloseColumnPicker()
     {
         ColumnPickerOpen = false;
         StateHasChanged();
     }
 
+    /// <summary>
+    /// Toggles the column picker panel open or closed.
+    /// </summary>
     public void ToggleColumnPicker()
     {
         ColumnPickerOpen = !ColumnPickerOpen;
         StateHasChanged();
     }
 
-
+    /// <summary>
+    /// Performs a quick search on all filterable string columns.
+    /// </summary>
+    /// <param name="searchText">The search text.</param>
+    /// <param name="clearFilter">Whether to clear existing filters.</param>
     public async Task QuickSearch(string? searchText, bool clearFilter = false)
     {
         if (clearFilter)
@@ -163,6 +255,9 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
         await RefreshAsync(true);
     }
 
+    /// <summary>
+    /// Clears all filters and refreshes the grid.
+    /// </summary>
     public async Task ClearFilters()
     {
         RootQuery.Filters.Clear();
@@ -170,6 +265,11 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
         await RefreshAsync(true);
     }
 
+    /// <summary>
+    /// Applies the specified filter rules to the grid.
+    /// </summary>
+    /// <param name="rules">The filter rules to apply.</param>
+    /// <param name="replace">Whether to replace existing filters.</param>
     public async Task ApplyFilters(IEnumerable<QueryRule> rules, bool replace = false)
     {
         if (replace)
@@ -181,6 +281,10 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
         await RefreshAsync(true);
     }
 
+    /// <summary>
+    /// Applies a single filter rule to the grid.
+    /// </summary>
+    /// <param name="rule">The filter rule to apply.</param>
     public async Task ApplyFilter(QueryRule rule)
     {
         if (rule == null)
@@ -193,19 +297,27 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
         await RefreshAsync(true);
     }
 
+    /// <summary>
+    /// Removes filters matching the specified predicate.
+    /// </summary>
+    /// <param name="match">The predicate to match filters.</param>
     public async Task RemoveFilters(Predicate<QueryRule> match)
     {
         RootQuery.Filters.RemoveAll(match);
         await RefreshAsync(true);
     }
 
+    /// <summary>
+    /// Removes filters with the specified ID.
+    /// </summary>
+    /// <param name="id">The filter ID to remove.</param>
     public async Task RemoveFilter(string id)
     {
         RootQuery.Filters.RemoveAll(f => f.Id == id);
         await RefreshAsync(true);
     }
 
-
+    /// <inheritdoc />
     public override async Task RefreshAsync(bool resetPager = false, bool forceReload = false)
     {
         // clear row flags on refresh
@@ -215,7 +327,10 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
         await base.RefreshAsync(resetPager, forceReload);
     }
 
-
+    /// <summary>
+    /// Sorts the grid by the specified column.
+    /// </summary>
+    /// <param name="column">The column to sort by.</param>
     public async Task SortByAsync(DataColumn<TItem> column)
     {
         if (column == null || !Sortable || !column.Sortable)
@@ -230,6 +345,10 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
         await RefreshAsync();
     }
 
+    /// <summary>
+    /// Sorts the grid by the column with the specified name.
+    /// </summary>
+    /// <param name="columnName">The name of the column to sort by.</param>
     public async Task SortByAsync(string columnName)
     {
         if (!Sortable)
@@ -242,7 +361,11 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
         await SortByAsync(column);
     }
 
-
+    /// <summary>
+    /// Exports the grid data to a CSV file.
+    /// </summary>
+    /// <param name="fileName">The name of the file to export.</param>
+    /// <param name="cancellationToken">A cancellation token.</param>
     public virtual async Task ExportAsync(string? fileName = null, CancellationToken cancellationToken = default)
     {
         if (CurrentDataProvider == null)
@@ -273,16 +396,24 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
         await DownloadService.DownloadFileStream(memoryStream, downloadFile, "text/csv");
     }
 
-
+    /// <summary>
+    /// Gets the list of currently visible columns.
+    /// </summary>
     protected List<DataColumn<TItem>> VisibleColumns => Columns.Where(c => c.CurrentVisible).ToList();
 
+    /// <summary>
+    /// Gets the total number of cells per row, including detail and selection columns.
+    /// </summary>
     protected int CellCount => (Columns?.Count(c => c.CurrentVisible) ?? 0)
         + (DetailTemplate != null || (Groupable && Columns?.Any(c => c.Grouping) == true) ? 1 : 0)
         + (Selectable ? 1 : 0);
 
-
+    /// <summary>
+    /// Gets a value indicating whether grouping is enabled and any column is grouped.
+    /// </summary>
     protected bool HasGrouping => Groupable && Columns.Any(c => c.Grouping);
 
+    /// <inheritdoc />
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender && (Columns == null || Columns.Count == 0)) // verify columns added
@@ -291,6 +422,7 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
         await base.OnAfterRenderAsync(firstRender);
     }
 
+    /// <inheritdoc />
     protected override void OnParametersSet()
     {
         base.OnParametersSet();
@@ -305,11 +437,20 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
         RootQuery ??= new QueryGroup();
     }
 
+    /// <summary>
+    /// Determines whether the specified row is expanded.
+    /// </summary>
+    /// <param name="item">The data item.</param>
+    /// <returns>True if the row is expanded; otherwise, false.</returns>
     protected bool IsRowExpanded(TItem item)
     {
         return _expandedItems.Contains(item);
     }
 
+    /// <summary>
+    /// Toggles the expanded state of the specified detail row.
+    /// </summary>
+    /// <param name="item">The data item.</param>
     protected void ToggleDetailRow(TItem item)
     {
         if (_expandedItems.Contains(item))
@@ -320,12 +461,20 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
         StateHasChanged();
     }
 
-
+    /// <summary>
+    /// Determines whether the specified group is expanded.
+    /// </summary>
+    /// <param name="key">The group key.</param>
+    /// <returns>True if the group is expanded; otherwise, false.</returns>
     protected bool IsGroupExpanded(string key)
     {
         return _expandedGroups.Contains(key);
     }
 
+    /// <summary>
+    /// Toggles the expanded state of the specified group row.
+    /// </summary>
+    /// <param name="key">The group key.</param>
     protected void ToggleGroupRow(string key)
     {
         if (_expandedGroups.Contains(key))
@@ -336,7 +485,10 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
         StateHasChanged();
     }
 
-
+    /// <summary>
+    /// Determines whether all rows are selected.
+    /// </summary>
+    /// <returns>True if all rows are selected; otherwise, false.</returns>
     protected bool IsAllSelected()
     {
         if (View == null || View.Count == 0)
@@ -345,6 +497,9 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
         return View.All(IsRowSelected);
     }
 
+    /// <summary>
+    /// Toggles selection of all rows.
+    /// </summary>
     protected void ToggleSelectAll()
     {
         if (IsAllSelected())
@@ -353,11 +508,20 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
             SelectAll();
     }
 
+    /// <summary>
+    /// Determines whether the specified row is selected.
+    /// </summary>
+    /// <param name="item">The data item.</param>
+    /// <returns>True if the row is selected; otherwise, false.</returns>
     protected bool IsRowSelected(TItem item)
     {
         return SelectedItems?.Contains(item) ?? false;
     }
 
+    /// <summary>
+    /// Toggles selection of the specified row.
+    /// </summary>
+    /// <param name="item">The data item.</param>
     protected void ToggleSelectRow(TItem item)
     {
         var list = new List<TItem>(SelectedItems ?? Enumerable.Empty<TItem>());
@@ -375,6 +539,9 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
         StateHasChanged();
     }
 
+    /// <summary>
+    /// Selects all rows in the current view.
+    /// </summary>
     protected void SelectAll()
     {
         var list = View?.ToList() ?? new List<TItem>();
@@ -382,19 +549,29 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
         StateHasChanged();
     }
 
+    /// <summary>
+    /// Deselects all rows.
+    /// </summary>
     protected void DeselectAll()
     {
         SetSelectedItems(new List<TItem>());
         StateHasChanged();
     }
 
+    /// <summary>
+    /// Sets the selected items and invokes the selection changed callback.
+    /// </summary>
+    /// <param name="items">The items to select.</param>
     protected async void SetSelectedItems(IEnumerable<TItem> items)
     {
         SelectedItems = items;
         await SelectedItemsChanged.InvokeAsync(SelectedItems);
     }
 
-
+    /// <summary>
+    /// Toggles the visibility of the specified column.
+    /// </summary>
+    /// <param name="column">The column to toggle.</param>
     protected void ToggleVisible(DataColumn<TItem> column)
     {
         var value = !column.CurrentVisible;
@@ -403,13 +580,20 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
         StateHasChanged();
     }
 
-
+    /// <summary>
+    /// Adds a column to the grid.
+    /// </summary>
+    /// <param name="column">The column to add.</param>
     internal void AddColumn(DataColumn<TItem> column)
     {
         Columns.Add(column);
     }
 
-
+    /// <summary>
+    /// Creates a data request for loading, sorting, and filtering data.
+    /// </summary>
+    /// <param name="cancellationToken">A cancellation token.</param>
+    /// <returns>The data request.</returns>
     public override DataRequest CreateDataRequest(CancellationToken cancellationToken = default)
     {
         var sorts = Columns
@@ -421,6 +605,12 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
         return new DataRequest(Pager.Page, Pager.PageSize, sorts, RootQuery, cancellationToken);
     }
 
+    /// <summary>
+    /// Applies filtering to the data source based on the current query.
+    /// </summary>
+    /// <param name="queryable">The data source.</param>
+    /// <param name="request">The data request.</param>
+    /// <returns>The filtered data source.</returns>
     protected override IQueryable<TItem> FilterData(IQueryable<TItem> queryable, DataRequest request)
     {
         if (!Filterable || !LinqExpressionBuilder.IsValid(RootQuery))
@@ -429,6 +619,12 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
         return queryable.Filter(request.Query);
     }
 
+    /// <summary>
+    /// Applies sorting to the data source based on the current sort settings.
+    /// </summary>
+    /// <param name="queryable">The data source.</param>
+    /// <param name="request">The data request.</param>
+    /// <returns>The sorted data source.</returns>
     protected override IQueryable<TItem> SortData(IQueryable<TItem> queryable, DataRequest request)
     {
         if (!Sortable || request.Sorts == null || request.Sorts.Length == 0)

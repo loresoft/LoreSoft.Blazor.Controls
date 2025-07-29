@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Components;
 namespace LoreSoft.Blazor.Controls;
 
 /// <summary>
-/// Base class for data-bound components in Blazor, providing data loading, virtualization, paging, sorting, and filtering support.
+/// Base class for data-bound components, providing data loading, virtualization, paging, sorting, and filtering support.
 /// </summary>
 /// <typeparam name="TItem">The type of the data item.</typeparam>
 public abstract class DataComponentBase<TItem> : ComponentBase, IDisposable

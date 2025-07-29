@@ -13,7 +13,7 @@ using Microsoft.AspNetCore.Components;
 namespace LoreSoft.Blazor.Controls;
 
 /// <summary>
-/// Represents a column definition for <see cref="DataGrid{TItem}"/> in Blazor.
+/// Represents a column definition for <see cref="DataGrid{TItem}"/>.
 /// Provides configuration for display, sorting, filtering, grouping, exporting, and templates.
 /// </summary>
 /// <typeparam name="TItem">The type of the data item.</typeparam>

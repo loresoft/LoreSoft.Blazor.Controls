@@ -3,8 +3,17 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace LoreSoft.Blazor.Controls;
 
+/// <summary>
+/// Extension methods for registering LoreSoft Blazor Controls services in the dependency injection container.
+/// </summary>
 public static class ServiceCollectionExtensions
 {
+    /// <summary>
+    /// Adds all LoreSoft Blazor Controls services to the specified <see cref="IServiceCollection"/>.
+    /// Registers <see cref="DownloadService"/>, progress bar, and toaster services.
+    /// </summary>
+    /// <param name="services">The service collection to add the services to.</param>
+    /// <returns>The updated <see cref="IServiceCollection"/>.</returns>
     public static IServiceCollection AddBlazorControls(this IServiceCollection services)
     {
         services.TryAddScoped<DownloadService>();
@@ -15,6 +24,12 @@ public static class ServiceCollectionExtensions
         return services;
     }
 
+    /// <summary>
+    /// Adds progress bar services to the specified <see cref="IServiceCollection"/>.
+    /// Registers <see cref="ProgressBarState"/> as singleton and <see cref="ProgressBarHandler"/> as transient.
+    /// </summary>
+    /// <param name="services">The service collection to add the services to.</param>
+    /// <returns>The updated <see cref="IServiceCollection"/>.</returns>
     public static IServiceCollection AddProgressBar(this IServiceCollection services)
     {
         services.TryAddSingleton<ProgressBarState>();
@@ -23,6 +38,12 @@ public static class ServiceCollectionExtensions
         return services;
     }
 
+    /// <summary>
+    /// Adds toaster notification services to the specified <see cref="IServiceCollection"/>.
+    /// Registers <see cref="IToaster"/> as singleton.
+    /// </summary>
+    /// <param name="services">The service collection to add the services to.</param>
+    /// <returns>The updated <see cref="IServiceCollection"/>.</returns>
     public static IServiceCollection AddToaster(this IServiceCollection services)
     {
         services.TryAddSingleton<IToaster, Toaster>();
