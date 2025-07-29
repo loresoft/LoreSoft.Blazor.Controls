@@ -1,0 +1,122 @@
+@page "/loading/index"
+@using Sample.Core.Models
+
+<h1>Loading</h1>
+
+<p>Blazor Loading Control</p>
+
+<Instructions></Instructions>
+
+
+<h2 class="mb-3">Examples</h2>
+
+<div class="mb-3">
+    <label for="IsLoading">Loading</label>
+    <ToggleSwitch @bind-Value="IsLoading"></ToggleSwitch>
+</div>
+
+
+<h3>Block Mode - No Content</h3>
+
+<LoadingBlock IsLoading="IsLoading"
+              LoadingText="Loading ..." />
+
+<h3>Block Mode - With Content</h3>
+
+<LoadingBlock IsLoading="IsLoading"
+              LoadingText="Loading ...">
+    <EditForm Model="Register">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div class="mb-3">
+            <label for="DisplayName">Display Name *</label>
+            <InputText id="DisplayName"
+                       name="DisplayName"
+                       @bind-Value="Register.DisplayName"
+                       class="form-control"
+                       placeholder="Display Name" />
+            <ValidationMessage For="@(() => Register.DisplayName)" />
+        </div>
+        <div class="mb-3">
+            <label for="EmailAddress">EmailAddress *</label>
+            <InputText id="EmailAddress"
+                       name="EmailAddress"
+                       type="email"
+                       @bind-Value="Register.EmailAddress"
+                       class="form-control"
+                       placeholder="Email Address" />
+            <ValidationMessage For="@(() => Register.EmailAddress)" />
+        </div>
+    </EditForm>
+</LoadingBlock>
+
+<h3>Overlay Mode - No Content</h3>
+
+<div class="position-relative">
+    <EditForm Model="Register">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+        <div class="mb-3">
+            <label for="DisplayName">Display Name *</label>
+            <InputText id="DisplayName"
+                       name="DisplayName"
+                       @bind-Value="Register.DisplayName"
+                       class="form-control"
+                       placeholder="Display Name" />
+            <ValidationMessage For="@(() => Register.DisplayName)" />
+        </div>
+        <div class="mb-3">
+            <label for="EmailAddress">EmailAddress *</label>
+            <InputText id="EmailAddress"
+                       name="EmailAddress"
+                       type="email"
+                       @bind-Value="Register.EmailAddress"
+                       class="form-control"
+                       placeholder="Email Address" />
+            <ValidationMessage For="@(() => Register.EmailAddress)" />
+        </div>
+    </EditForm>
+
+    <LoadingBlock IsLoading="IsLoading"
+                  LoadingText="Loading ..."
+                  ShowOverlay="true" />
+</div>
+
+
+<h3>Overlay Mode - With Content</h3>
+
+<LoadingBlock IsLoading="IsLoading"
+              LoadingText="Loading ..."
+              ShowOverlay="true">
+    <EditForm Model="Register">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+        <div class="mb-3">
+            <label for="DisplayName">Display Name *</label>
+            <InputText id="DisplayName"
+                       name="DisplayName"
+                       @bind-Value="Register.DisplayName"
+                       class="form-control"
+                       placeholder="Display Name" />
+            <ValidationMessage For="@(() => Register.DisplayName)" />
+        </div>
+        <div class="mb-3">
+            <label for="EmailAddress">EmailAddress *</label>
+            <InputText id="EmailAddress"
+                       name="EmailAddress"
+                       type="email"
+                       @bind-Value="Register.EmailAddress"
+                       class="form-control"
+                       placeholder="Email Address" />
+            <ValidationMessage For="@(() => Register.EmailAddress)" />
+        </div>
+    </EditForm>
+</LoadingBlock>
+
+
+@code {
+    public bool IsLoading { get; set; }
+
+    public Register Register { get; set; } = new Register();
+}
