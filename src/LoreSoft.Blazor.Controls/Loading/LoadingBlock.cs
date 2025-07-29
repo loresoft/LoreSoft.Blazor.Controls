@@ -31,16 +31,16 @@ public class LoadingBlock : ComponentBase
     public bool ShowOverlay { get; set; }
 
     /// <summary>
-    /// If true, displays a spinner in the loading indicator.
+    /// If true, displays a spinner in the loading indicator. Defaults to <see langword="true"/>.
     /// </summary>
     [Parameter]
     public bool ShowSpinner { get; set; } = true;
 
     /// <summary>
-    /// Optional text to display with the loading indicator.
+    /// Optional text to display with the loading indicator. Defaults to "Loading...".
     /// </summary>
     [Parameter]
-    public string? LoadingText { get; set; }
+    public string? LoadingText { get; set; } = "Loading...";
 
     /// <summary>
     /// Custom template to display while loading.

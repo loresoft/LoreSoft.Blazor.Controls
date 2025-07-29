@@ -12,17 +12,33 @@ using Microsoft.AspNetCore.Components.Web;
 
 namespace LoreSoft.Blazor.Controls;
 
+/// <summary>
+/// An input component for selecting dates and times, supporting <see cref="DateTime"/>, <see cref="DateTimeOffset"/>, <see cref="DateOnly"/>, <see cref="TimeOnly"/>, and <see cref="TimeSpan"/> types.
+/// </summary>
+/// <typeparam name="TValue">The value type for the picker. Must be a supported date/time type.</typeparam>
 public partial class DateTimePicker<TValue> : InputBase<TValue>
 {
-    private const string DateFormat = "yyyy-MM-dd";                     // Compatible with HTML 'date' inputs
-    private const string DateTimeLocalFormat = "yyyy-MM-ddTHH:mm:ss";   // Compatible with HTML 'datetime-local' inputs
-    private const string TimeFormat = "HH:mm:ss";                       // Compatible with HTML 'time' inputs
+    /// <summary>
+    /// The format string for HTML 'date' inputs.
+    /// </summary>
+    public const string DateFormat = "yyyy-MM-dd";
+    /// <summary>
+    /// The format string for HTML 'datetime-local' inputs.
+    /// </summary>
+    public const string DateTimeLocalFormat = "yyyy-MM-ddTHH:mm:ss";
+    /// <summary>
+    /// The format string for HTML 'time' inputs.
+    /// </summary>
+    public const string TimeFormat = "HH:mm:ss";
 
     private string _parsingErrorMessage = default!;
-
     private int _month;
     private int _year;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DateTimePicker{TValue}"/> class.
+    /// </summary>
+    /// <exception cref="InvalidOperationException">Thrown if <typeparamref name="TValue"/> is not a supported type.</exception>
     public DateTimePicker()
     {
         DateTimeFormatInfo = DateTimeFormatInfo.CurrentInfo;
@@ -51,59 +67,109 @@ public partial class DateTimePicker<TValue> : InputBase<TValue>
         }
     }
 
-
+    /// <summary>
+    /// Gets or sets the first day of the week for the date picker grid.
+    /// </summary>
     [Parameter]
     public DayOfWeek FirstDayOfWeek { get; set; }
 
+    /// <summary>
+    /// Gets or sets the <see cref="DateTimeFormatInfo"/> used for day and month names.
+    /// </summary>
     [Parameter]
     public DateTimeFormatInfo DateTimeFormatInfo { get; set; }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the picker allows clearing the value.
+    /// </summary>
     [Parameter]
     public bool AllowClear { get; set; }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the picker is disabled.
+    /// </summary>
     [Parameter]
     public bool Disabled { get; set; }
 
+    /// <summary>
+    /// Gets or sets the picker mode (date, time, or datetime).
+    /// </summary>
     [Parameter]
     public DateTimePickerMode Mode { get; set; }
 
+    /// <summary>
+    /// Gets or sets the time scale (in minutes) for time selection.
+    /// </summary>
     [Parameter]
     public int TimeScale { get; set; }
 
+    /// <summary>
+    /// Gets or sets the error message to display when parsing fails.
+    /// </summary>
     [Parameter]
     public string ParsingErrorMessage { get; set; } = string.Empty;
 
-
+    /// <summary>
+    /// Gets the list of day-of-week headers for the date picker grid.
+    /// </summary>
     protected List<string> Headers { get; set; }
 
+    /// <summary>
+    /// Gets the rows of date cells for the date picker grid.
+    /// </summary>
     protected List<DatePickerRow> Rows { get; set; }
 
+    /// <summary>
+    /// Gets the segments for time selection.
+    /// </summary>
     protected List<TimePickerSegment> Segments { get; set; }
 
-
+    /// <summary>
+    /// Gets the reference to the input element.
+    /// </summary>
     protected ElementReference DateTimeInput { get; set; }
 
+    /// <summary>
+    /// Gets the CSS class for the picker container.
+    /// </summary>
     protected string PickerClass => CssBuilder
         .Default("datetimepicker")
         .AddClass("is-datepicker-open", IsDatePickerOpen)
         .ToString();
 
+    /// <summary>
+    /// Gets the CSS class for validation state.
+    /// </summary>
     protected string? ValidationClass
         => EditContext?.FieldCssClass(FieldIdentifier);
 
+    /// <summary>
+    /// Gets the CSS class for the input element.
+    /// </summary>
     protected string InputClass => CssBuilder
         .Default("datetimepicker-input")
         .MergeClass(AdditionalAttributes)
         .AddClass(ValidationClass, v => !string.IsNullOrWhiteSpace(v))
         .ToString();
 
+    /// <summary>
+    /// Gets or sets the input type for the picker ("date", "time", or "datetime-local").
+    /// </summary>
     protected string InputType { get; set; }
 
+    /// <summary>
+    /// Gets or sets the format string for the value.
+    /// </summary>
     protected string ValueFormat { get; set; }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether to prevent key events (e.g., form submit on Enter).
+    /// </summary>
     protected bool PreventKey { get; set; }
 
-
+    /// <summary>
+    /// Gets or sets the current month displayed in the picker.
+    /// </summary>
     public int Month
     {
         get => _month;
@@ -114,6 +180,9 @@ public partial class DateTimePicker<TValue> : InputBase<TValue>
         }
     }
 
+    /// <summary>
+    /// Gets or sets the current year displayed in the picker.
+    /// </summary>
     public int Year
     {
         get => _year;
@@ -124,9 +193,15 @@ public partial class DateTimePicker<TValue> : InputBase<TValue>
         }
     }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the date picker popup is open.
+    /// </summary>
     public bool IsDatePickerOpen { get; set; }
 
-
+    /// <summary>
+    /// Gets the current value or today's date/time if the value is not set.
+    /// </summary>
+    /// <returns>The current value or a default value for the type.</returns>
     protected TValue? GetValueOrToday()
     {
         if (!EqualityComparer<TValue>.Default.Equals(Value, default))
@@ -152,13 +227,17 @@ public partial class DateTimePicker<TValue> : InputBase<TValue>
         throw new InvalidOperationException($"The type '{targetType}' is not a supported date type.");
     }
 
+    /// <summary>
+    /// Handles keydown events for the input, preventing form submission on Enter.
+    /// </summary>
+    /// <param name="args">The keyboard event arguments.</param>
     public void HandleKeydown(KeyboardEventArgs args)
     {
         // prevent form submit on enter
         PreventKey = args.Key == "Enter";
     }
 
-
+    /// <inheritdoc />
     protected override void OnParametersSet()
     {
         (InputType, ValueFormat, var formatDescription) = Mode switch
@@ -174,6 +253,7 @@ public partial class DateTimePicker<TValue> : InputBase<TValue>
             : ParsingErrorMessage;
     }
 
+    /// <inheritdoc />
     protected override string FormatValueAsString(TValue? value)
     {
         return value switch
@@ -186,6 +266,7 @@ public partial class DateTimePicker<TValue> : InputBase<TValue>
         };
     }
 
+    /// <inheritdoc />
     protected override bool TryParseValueFromString(string? value, [MaybeNullWhen(false)] out TValue result, [NotNullWhen(false)] out string? validationErrorMessage)
     {
         if (BindConverter.TryConvertTo(value, CultureInfo.InvariantCulture, out result))
@@ -201,7 +282,9 @@ public partial class DateTimePicker<TValue> : InputBase<TValue>
         }
     }
 
-
+    /// <summary>
+    /// Builds the date picker grid, including headers and rows.
+    /// </summary>
     protected void BuildGrid()
     {
         Headers.Clear();
@@ -250,6 +333,9 @@ public partial class DateTimePicker<TValue> : InputBase<TValue>
         }
     }
 
+    /// <summary>
+    /// Sets the picker to today's date and rebuilds the grid.
+    /// </summary>
     protected void ShowToday()
     {
         var workingDate = DateTime.Today;
@@ -260,17 +346,25 @@ public partial class DateTimePicker<TValue> : InputBase<TValue>
         BuildGrid();
     }
 
+    /// <summary>
+    /// Moves the picker to the previous month.
+    /// </summary>
     protected void PreviousMonth()
     {
         AdjustMonth(-1);
     }
 
+    /// <summary>
+    /// Moves the picker to the next month.
+    /// </summary>
     protected void NextMonth()
     {
         AdjustMonth(1);
     }
 
-
+    /// <summary>
+    /// Toggles the date picker popup open or closed.
+    /// </summary>
     protected void ToggleDatePicker()
     {
         if (IsDatePickerOpen)
@@ -279,17 +373,26 @@ public partial class DateTimePicker<TValue> : InputBase<TValue>
             ShowDatePicker();
     }
 
+    /// <summary>
+    /// Opens the date picker popup and refreshes its content.
+    /// </summary>
     protected void ShowDatePicker()
     {
         RefreshDatePicker();
         IsDatePickerOpen = true;
     }
 
+    /// <summary>
+    /// Closes the date picker popup.
+    /// </summary>
     protected void CloseDatePicker()
     {
         IsDatePickerOpen = false;
     }
 
+    /// <summary>
+    /// Refreshes the date picker grid and time segments.
+    /// </summary>
     protected void RefreshDatePicker()
     {
         SyncDate(Value);
@@ -297,6 +400,10 @@ public partial class DateTimePicker<TValue> : InputBase<TValue>
         BuildTimeSegments();
     }
 
+    /// <summary>
+    /// Selects the specified date cell and updates the picker value.
+    /// </summary>
+    /// <param name="cell">The date cell to select.</param>
     protected void SelectDate(DatePickerCell cell)
     {
         var value = GetValueOrToday();
@@ -345,13 +452,20 @@ public partial class DateTimePicker<TValue> : InputBase<TValue>
         }
     }
 
+    /// <summary>
+    /// Handles keydown events for a date cell, selecting the date on Enter.
+    /// </summary>
+    /// <param name="args">The keyboard event arguments.</param>
+    /// <param name="cell">The date cell.</param>
     protected void DateCellKeyDown(KeyboardEventArgs args, DatePickerCell cell)
     {
         if (args.Key == "Enter")
             SelectDate(cell);
     }
 
-
+    /// <summary>
+    /// Builds the time segments for time selection.
+    /// </summary>
     protected void BuildTimeSegments()
     {
         Segments.Clear();
@@ -368,6 +482,10 @@ public partial class DateTimePicker<TValue> : InputBase<TValue>
         }
     }
 
+    /// <summary>
+    /// Selects the specified time segment and updates the picker value.
+    /// </summary>
+    /// <param name="segment">The time segment to select.</param>
     protected void SelectTime(TimePickerSegment segment)
     {
         var value = GetValueOrToday();
@@ -410,30 +528,46 @@ public partial class DateTimePicker<TValue> : InputBase<TValue>
         }
     }
 
+    /// <summary>
+    /// Handles keydown events for a time segment, selecting the time on Enter.
+    /// </summary>
+    /// <param name="args">The keyboard event arguments.</param>
+    /// <param name="segment">The time segment.</param>
     protected void TimeCellKeyDown(KeyboardEventArgs args, TimePickerSegment segment)
     {
         if (args.Key == "Enter")
             SelectTime(segment);
-
     }
 
-
+    /// <summary>
+    /// Handles focus events for the input, opening the date picker.
+    /// </summary>
     protected void DateTimeFocus()
     {
         ShowDatePicker();
     }
 
+    /// <summary>
+    /// Clears the current value.
+    /// </summary>
     protected void ClearValue()
     {
         CurrentValue = default;
     }
 
+    /// <summary>
+    /// Determines whether the value can be cleared.
+    /// </summary>
+    /// <returns><c>true</c> if clearing is allowed and the value is not default; otherwise, <c>false</c>.</returns>
     protected bool CanClear()
     {
         return AllowClear && !EqualityComparer<TValue>.Default.Equals(default, Value);
     }
 
-
+    /// <summary>
+    /// Synchronizes the picker state with the current value.
+    /// </summary>
+    /// <param name="value">The value to sync.</param>
     private void SyncDate(TValue? value)
     {
         bool isDefault;
@@ -467,6 +601,10 @@ public partial class DateTimePicker<TValue> : InputBase<TValue>
         }
     }
 
+    /// <summary>
+    /// Adjusts the displayed month by the specified number of months.
+    /// </summary>
+    /// <param name="months">The number of months to adjust by.</param>
     private void AdjustMonth(int months)
     {
         var workingDate = new DateTime(Year, Month, 1);
@@ -478,7 +616,11 @@ public partial class DateTimePicker<TValue> : InputBase<TValue>
         BuildGrid();
     }
 
-
+    /// <summary>
+    /// Determines whether the specified date is selected.
+    /// </summary>
+    /// <param name="workingDate">The date to check.</param>
+    /// <returns><c>true</c> if the date is selected; otherwise, <c>false</c>.</returns>
     private bool IsDateSelected(DateTime workingDate)
     {
         var value = Value;
@@ -492,6 +634,11 @@ public partial class DateTimePicker<TValue> : InputBase<TValue>
         };
     }
 
+    /// <summary>
+    /// Determines whether the specified time is selected.
+    /// </summary>
+    /// <param name="workingDate">The time to check.</param>
+    /// <returns><c>true</c> if the time is selected; otherwise, <c>false</c>.</returns>
     private bool IsTimeSelected(DateTime workingDate)
     {
         var value = Value;
@@ -506,7 +653,11 @@ public partial class DateTimePicker<TValue> : InputBase<TValue>
         };
     }
 
-
+    /// <summary>
+    /// Gets the CSS class for a date cell based on its state.
+    /// </summary>
+    /// <param name="datePickerCell">The date cell.</param>
+    /// <returns>The CSS class string.</returns>
     private string DateCellClass(DatePickerCell datePickerCell)
     {
         return CssBuilder
@@ -519,6 +670,11 @@ public partial class DateTimePicker<TValue> : InputBase<TValue>
             .ToString();
     }
 
+    /// <summary>
+    /// Gets the CSS class for a time segment based on its state.
+    /// </summary>
+    /// <param name="timePickerSegment">The time segment.</param>
+    /// <returns>The CSS class string.</returns>
     private string TimeSegmentClass(TimePickerSegment timePickerSegment)
     {
         return CssBuilder
@@ -528,7 +684,11 @@ public partial class DateTimePicker<TValue> : InputBase<TValue>
             .ToString();
     }
 
-
+    /// <summary>
+    /// Gets the shortest day name for the specified <see cref="DayOfWeek"/>.
+    /// </summary>
+    /// <param name="dayOfWeek">The day of the week.</param>
+    /// <returns>The shortest day name string.</returns>
     private static string GetShortestDayName(DayOfWeek dayOfWeek)
     {
         return dayOfWeek switch

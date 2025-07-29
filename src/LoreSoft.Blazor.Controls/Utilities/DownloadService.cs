@@ -6,7 +6,7 @@ using Microsoft.JSInterop;
 namespace LoreSoft.Blazor.Controls;
 
 /// <summary>
-/// Provides methods for downloading files in Blazor applications using JavaScript interop.
+/// Provides methods for downloading files in applications using JavaScript interop.
 /// </summary>
 public class DownloadService(IJSRuntime javaScript)
 {

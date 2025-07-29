@@ -18,13 +18,11 @@
 
 <h3>Block Mode - No Content</h3>
 
-<LoadingBlock IsLoading="IsLoading"
-              LoadingText="Loading ..." />
+<LoadingBlock IsLoading="IsLoading" />
 
 <h3>Block Mode - With Content</h3>
 
-<LoadingBlock IsLoading="IsLoading"
-              LoadingText="Loading ...">
+<LoadingBlock IsLoading="IsLoading">
     <EditForm Model="Register">
         <DataAnnotationsValidator />
         <ValidationSummary />
@@ -79,7 +77,6 @@
     </EditForm>
 
     <LoadingBlock IsLoading="IsLoading"
-                  LoadingText="Loading ..."
                   ShowOverlay="true" />
 </div>
 
@@ -87,7 +84,6 @@
 <h3>Overlay Mode - With Content</h3>
 
 <LoadingBlock IsLoading="IsLoading"
-              LoadingText="Loading ..."
               ShowOverlay="true">
     <EditForm Model="Register">
         <DataAnnotationsValidator />

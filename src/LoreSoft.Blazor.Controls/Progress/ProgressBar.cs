@@ -9,11 +9,18 @@ using Timer = System.Timers.Timer;
 
 namespace LoreSoft.Blazor.Controls;
 
+/// <summary>
+/// A component that displays a progress bar with animated transitions.
+/// Progress is managed via a <see cref="ProgressBarState"/> service.
+/// </summary>
 public class ProgressBar : ComponentBase, IDisposable
 {
     private readonly Timer _progressTimer;
     private readonly Timer _completeTimer;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ProgressBar"/> class.
+    /// </summary>
     public ProgressBar()
     {
         _progressTimer = new Timer();
@@ -27,40 +34,80 @@ public class ProgressBar : ComponentBase, IDisposable
         _completeTimer.Elapsed += OnComplete;
     }
 
+    /// <summary>
+    /// Gets or sets the <see cref="ProgressBarState"/> used to control the progress bar.
+    /// </summary>
     [Inject]
     public required ProgressBarState State { get; set; }
 
+    /// <summary>
+    /// Gets or sets the color of the progress bar. Default is a shade of blue (#29d).
+    /// </summary>
     [Parameter]
     public string Color { get; set; } = "#29d";
 
+    /// <summary>
+    /// Gets or sets the interval (in milliseconds) between progress increments. Default is 800ms.
+    /// </summary>
     [Parameter]
     public int IncrementDuration { get; set; } = 800;
 
+    /// <summary>
+    /// Gets or sets the duration (in milliseconds) for progress bar animation transitions. Default is 200ms.
+    /// </summary>
     [Parameter]
     public int AnimationDuration { get; set; } = 200;
 
+    /// <summary>
+    /// Gets or sets the minimum progress value when the bar starts. Default is 0.05 (5%).
+    /// </summary>
     [Parameter]
     public double MinimumProgress { get; set; } = 0.05;
 
+    /// <summary>
+    /// Additional attributes to be applied to the root container element.
+    /// </summary>
     [Parameter(CaptureUnmatchedValues = true)]
     public Dictionary<string, object> Attributes { get; set; } = [];
 
-
+    /// <summary>
+    /// Gets or sets the opacity of the progress bar container.
+    /// </summary>
     protected int Opacity { get; set; }
 
+    /// <summary>
+    /// Gets or sets the current progress value (0.0 to 1.0).
+    /// </summary>
     protected double Progress { get; set; }
 
+    /// <summary>
+    /// Gets or sets the CSS class name for the container.
+    /// </summary>
     protected string? ClassName { get; set; }
 
+    /// <summary>
+    /// Gets the CSS style for the progress bar container.
+    /// </summary>
     protected string ContainerStyle => $"opacity: {Opacity}; transition: opacity {AnimationDuration}ms linear 0s;";
 
+    /// <summary>
+    /// Gets the CSS style for the progress bar.
+    /// </summary>
     protected string BarStyle => $"background: {Color}; margin-left: {(-1 + Progress) * 100}%; transition: margin-left {AnimationDuration}ms linear 0s";
 
+    /// <summary>
+    /// Gets the CSS style for the progress bar peg.
+    /// </summary>
     protected string PegStyle => $"box-shadow: 0 0 10px {Color}, 0 0 5px {Color};";
 
+    /// <summary>
+    /// Gets the CSS style for the spinner icon.
+    /// </summary>
     protected string IconStyle => $"border-color: {Color} transparent transparent {Color};";
 
-
+    /// <summary>
+    /// Initializes the component and subscribes to progress state changes.
+    /// </summary>
     protected override void OnInitialized()
     {
         State.OnChange += OnProgressStateChange;
@@ -69,6 +116,9 @@ public class ProgressBar : ComponentBase, IDisposable
         _completeTimer.Interval = AnimationDuration;
     }
 
+    /// <summary>
+    /// Updates the CSS class name after parameters are set.
+    /// </summary>
     protected override void OnParametersSet()
     {
         // update only after parameters are set
@@ -77,6 +127,10 @@ public class ProgressBar : ComponentBase, IDisposable
             .ToString();
     }
 
+    /// <summary>
+    /// Builds the render tree for the progress bar component.
+    /// </summary>
+    /// <param name="builder">The <see cref="RenderTreeBuilder"/> used to build the component's render tree.</param>
     protected override void BuildRenderTree(RenderTreeBuilder builder)
     {
         builder.OpenElement(0, "div");
@@ -108,6 +162,9 @@ public class ProgressBar : ComponentBase, IDisposable
         builder.CloseElement(); // container
     }
 
+    /// <summary>
+    /// Handles the completion of the progress bar animation.
+    /// </summary>
     private void OnComplete(object? sender, ElapsedEventArgs e)
     {
         InvokeAsync(() =>
@@ -117,6 +174,9 @@ public class ProgressBar : ComponentBase, IDisposable
         });
     }
 
+    /// <summary>
+    /// Handles progress increments for the bar animation.
+    /// </summary>
     private void OnIncrement(object? sender, ElapsedEventArgs e)
     {
         InvokeAsync(() =>
@@ -126,6 +186,9 @@ public class ProgressBar : ComponentBase, IDisposable
         });
     }
 
+    /// <summary>
+    /// Handles changes in the progress bar state.
+    /// </summary>
     private void OnProgressStateChange()
     {
         InvokeAsync(() =>
@@ -153,6 +216,9 @@ public class ProgressBar : ComponentBase, IDisposable
         });
     }
 
+    /// <summary>
+    /// Disposes timers and unsubscribes from state changes.
+    /// </summary>
     public void Dispose()
     {
         State.OnChange -= OnProgressStateChange;

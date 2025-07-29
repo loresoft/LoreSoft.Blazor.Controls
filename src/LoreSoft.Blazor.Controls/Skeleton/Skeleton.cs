@@ -8,24 +8,47 @@ using Microsoft.AspNetCore.Components.Rendering;
 
 namespace LoreSoft.Blazor.Controls;
 
+/// <summary>
+/// A component that displays a skeleton placeholder for loading content.
+/// Supports customizable width, height, and shape.
+/// </summary>
 public class Skeleton : ComponentBase
 {
+    /// <summary>
+    /// Gets or sets the CSS width of the skeleton placeholder.
+    /// </summary>
     [Parameter]
     public string? Width { set; get; }
 
+    /// <summary>
+    /// Gets or sets the CSS height of the skeleton placeholder.
+    /// </summary>
     [Parameter]
     public string? Height { set; get; }
 
+    /// <summary>
+    /// Gets or sets the type of skeleton shape to display. Default is <see cref="SkeletonType.Text"/>.
+    /// </summary>
     [Parameter]
     public SkeletonType Type { set; get; } = SkeletonType.Text;
 
+    /// <summary>
+    /// Gets or sets additional attributes to be applied to the root element.
+    /// </summary>
     [Parameter(CaptureUnmatchedValues = true)]
     public Dictionary<string, object>? AdditionalAttributes { get; set; }
 
+    /// <summary>
+    /// Gets the computed CSS class for the skeleton element.
+    /// </summary>
     protected string ClassName { get; set; } = null!;
 
+    /// <summary>
+    /// Gets the computed CSS style for the skeleton element.
+    /// </summary>
     protected string Style { get; set; } = null!;
 
+    /// <inheritdoc />
     protected override void OnParametersSet()
     {
         var type = Type.ToString().ToLowerInvariant();
@@ -44,6 +67,7 @@ public class Skeleton : ComponentBase
             .ToString();
     }
 
+    /// <inheritdoc />
     protected override void BuildRenderTree(RenderTreeBuilder builder)
     {
         builder.OpenElement(0, "span");
@@ -54,12 +78,24 @@ public class Skeleton : ComponentBase
     }
 }
 
+/// <summary>
+/// Specifies the shape of the skeleton placeholder.
+/// </summary>
 public enum SkeletonType
 {
+    /// <summary>
+    /// Displays a text-like skeleton.
+    /// </summary>
     [Description("text")]
     Text,
+    /// <summary>
+    /// Displays a circular skeleton.
+    /// </summary>
     [Description("circle")]
     Circle,
+    /// <summary>
+    /// Displays a rectangular skeleton.
+    /// </summary>
     [Description("rectangle")]
     Rectangle
 }

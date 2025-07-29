@@ -9,8 +9,16 @@ using Microsoft.AspNetCore.Components.Rendering;
 
 namespace LoreSoft.Blazor.Controls;
 
+/// <summary>
+/// A toggle switch component for boolean values, supporting two-way binding and validation.
+/// </summary>
+/// <typeparam name="TValue">The value type, must be <c>bool</c> or <c>bool?</c>.</typeparam>
 public partial class ToggleSwitch<TValue> : ComponentBase
 {
+    /// <summary>
+    /// Static constructor to validate the supported type.
+    /// </summary>
+    /// <exception cref="InvalidOperationException">Thrown if <typeparamref name="TValue"/> is not <c>bool</c> or <c>bool?</c>.</exception>
     static ToggleSwitch()
     {
         var targetType = Nullable.GetUnderlyingType(typeof(TValue)) ?? typeof(TValue);
@@ -18,25 +26,45 @@ public partial class ToggleSwitch<TValue> : ComponentBase
             throw new InvalidOperationException($"The type '{targetType}' is not supported by ToggleSwitch.");
     }
 
+    /// <summary>
+    /// Additional attributes to be applied to the input element.
+    /// </summary>
     [Parameter(CaptureUnmatchedValues = true)]
     public Dictionary<string, object> Attributes { get; set; } = [];
 
+    /// <summary>
+    /// Gets or sets the current value of the toggle switch.
+    /// </summary>
     [Parameter]
     public TValue? Value { get; set; }
 
+    /// <summary>
+    /// Event callback triggered when the value changes.
+    /// </summary>
     [Parameter]
     public EventCallback<TValue> ValueChanged { get; set; }
 
+    /// <summary>
+    /// Gets or sets the value expression for validation.
+    /// </summary>
     [Parameter]
     public Expression<Func<TValue>>? ValueExpression { get; set; }
 
+    /// <summary>
+    /// The <see cref="EditContext"/> for validation, provided via cascading parameter.
+    /// </summary>
     [CascadingParameter]
     public EditContext? EditContext { get; set; }
 
+    /// <summary>
+    /// The field identifier for validation.
+    /// </summary>
     [Parameter]
     public FieldIdentifier FieldIdentifier { get; set; }
 
-
+    /// <summary>
+    /// Gets or sets the current value of the toggle switch, and notifies value changes and validation.
+    /// </summary>
     protected TValue? CurrentValue
     {
         get => Value;
@@ -53,13 +81,19 @@ public partial class ToggleSwitch<TValue> : ComponentBase
         }
     }
 
-
+    /// <summary>
+    /// Initializes the component and sets the field identifier if not already set.
+    /// </summary>
     protected override void OnInitialized()
     {
         if (FieldIdentifier.Equals(default) && ValueExpression != null)
             FieldIdentifier = FieldIdentifier.Create(ValueExpression);
     }
 
+    /// <summary>
+    /// Builds the render tree for the toggle switch component.
+    /// </summary>
+    /// <param name="builder">The <see cref="RenderTreeBuilder"/> used to build the component's render tree.</param>
     protected override void BuildRenderTree(RenderTreeBuilder builder)
     {
         var fieldClass = EditContext != null

@@ -12,147 +12,274 @@ using Microsoft.AspNetCore.Components;
 
 namespace LoreSoft.Blazor.Controls;
 
+/// <summary>
+/// Represents a column definition for <see cref="DataGrid{TItem}"/> in Blazor.
+/// Provides configuration for display, sorting, filtering, grouping, exporting, and templates.
+/// </summary>
+/// <typeparam name="TItem">The type of the data item.</typeparam>
 [CascadingTypeParameter(nameof(TItem))]
 public class DataColumn<TItem> : ComponentBase
 {
     private Func<TItem, object>? _propertyAccessor;
 
+    /// <summary>
+    /// Gets or sets the parent <see cref="DataGrid{TItem}"/> component.
+    /// </summary>
     [CascadingParameter(Name = "Grid")]
     protected DataGrid<TItem>? Grid { get; set; }
 
+    /// <summary>
+    /// Gets or sets additional attributes to be applied to the column.
+    /// </summary>
     [Parameter(CaptureUnmatchedValues = true)]
     public Dictionary<string, object>? AdditionalAttributes { get; set; }
 
+    /// <summary>
+    /// Gets or sets a function to compute cell attributes for each data item.
+    /// </summary>
     [Parameter]
     public Func<TItem, Dictionary<string, object>>? CellAttributes { get; set; }
 
+    /// <summary>
+    /// Gets or sets the property expression for the column. Required.
+    /// </summary>
     [Parameter, EditorRequired]
     public required Expression<Func<TItem, object>> Property { get; set; }
 
+    /// <summary>
+    /// Gets or sets the column header title.
+    /// </summary>
     [Parameter]
     public string? Title { get; set; }
 
-
+    /// <summary>
+    /// Gets or sets the column width (CSS value).
+    /// </summary>
     [Parameter]
     public string? Width { get; set; }
 
+    /// <summary>
+    /// Gets or sets the minimum column width (CSS value).
+    /// </summary>
     [Parameter]
     public string? MinWidth { get; set; }
 
+    /// <summary>
+    /// Gets or sets the maximum column width (CSS value).
+    /// </summary>
     [Parameter]
     public string? MaxWidth { get; set; }
 
+    /// <summary>
+    /// Gets or sets the text alignment for cell content.
+    /// </summary>
     [Parameter]
     public TextAlign? Align { get; set; }
 
+    /// <summary>
+    /// Gets or sets the format string for cell values.
+    /// </summary>
     [Parameter]
     public string? Format { get; set; }
 
+    /// <summary>
+    /// Gets or sets the CSS class for the cell.
+    /// </summary>
     [Parameter]
     public string? ClassName { get; set; }
 
+    /// <summary>
+    /// Gets or sets a function to compute the cell style for each data item.
+    /// </summary>
     [Parameter]
     public Func<TItem, string>? Style { get; set; }
 
+    /// <summary>
+    /// Gets or sets the text alignment for the header.
+    /// </summary>
     [Parameter]
     public TextAlign? HeaderAlign { get; set; }
 
+    /// <summary>
+    /// Gets or sets the CSS style for the header.
+    /// </summary>
     [Parameter]
     public string? HeaderStyle { get; set; }
 
+    /// <summary>
+    /// Gets or sets the CSS class for the header.
+    /// </summary>
     [Parameter]
     public string? HeaderClass { get; set; }
 
+    /// <summary>
+    /// Gets or sets the CSS style for the footer.
+    /// </summary>
     [Parameter]
     public string? FooterStyle { get; set; }
 
+    /// <summary>
+    /// Gets or sets the CSS class for the footer.
+    /// </summary>
     [Parameter]
     public string? FooterClass { get; set; }
 
-
+    /// <summary>
+    /// Gets or sets the CSS class for the column.
+    /// </summary>
     [Parameter]
     public string? ColumnClass { get; set; }
 
+    /// <summary>
+    /// Gets or sets the CSS style for the column.
+    /// </summary>
     [Parameter]
     public string? ColumnStyle { get; set; }
 
-
+    /// <summary>
+    /// Gets or sets a value indicating whether the column is sortable.
+    /// </summary>
     [Parameter]
     public bool Sortable { get; set; } = true;
 
+    /// <summary>
+    /// Gets or sets the sort index for multi-column sorting.
+    /// </summary>
     [Parameter]
     public int SortIndex { get; set; } = -1;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the column is sorted in descending order.
+    /// </summary>
     [Parameter]
     public bool SortDescending { get; set; }
 
-
+    /// <summary>
+    /// Gets or sets a value indicating whether the column is filterable.
+    /// </summary>
     [Parameter]
     public bool Filterable { get; set; } = true;
 
-
+    /// <summary>
+    /// Gets or sets a value indicating whether the column is exportable.
+    /// </summary>
     [Parameter]
     public bool Exportable { get; set; } = true;
 
+    /// <summary>
+    /// Gets or sets the header text to use when exporting.
+    /// </summary>
     [Parameter]
     public string? ExportHeader { get; set; }
 
-
+    /// <summary>
+    /// Gets or sets a value indicating whether the column is groupable.
+    /// </summary>
     [Parameter]
     public bool Groupable { get; set; } = true;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether grouping is applied to this column.
+    /// </summary>
     [Parameter]
     public bool Grouping { get; set; }
 
+    /// <summary>
+    /// Gets or sets the template for rendering grouped rows.
+    /// </summary>
     [Parameter]
     public RenderFragment<IGrouping<string, TItem>>? GroupTemplate { get; set; }
 
-
+    /// <summary>
+    /// Gets or sets a value indicating whether the column is visible.
+    /// </summary>
     [Parameter]
     public bool Visible { get; set; } = true;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the column can be hidden.
+    /// </summary>
     [Parameter]
     public bool Hideable { get; set; } = true;
 
-
+    /// <summary>
+    /// Gets or sets a value indicating whether to show a tooltip for cell values.
+    /// </summary>
     [Parameter]
     public bool Tooltip { get; set; } = true;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether cell content can be multi-line.
+    /// </summary>
     [Parameter]
     public bool MultiLine { get; set; } = true;
 
-
+    /// <summary>
+    /// Gets or sets the template for the column header.
+    /// </summary>
     [Parameter]
     public RenderFragment? HeaderTemplate { get; set; }
 
+    /// <summary>
+    /// Gets or sets the template for cell content.
+    /// </summary>
     [Parameter]
     public RenderFragment<TItem>? Template { get; set; }
 
+    /// <summary>
+    /// Gets or sets the template for the column footer.
+    /// </summary>
     [Parameter]
     public RenderFragment<ICollection<TItem>>? FooterTemplate { get; set; }
 
+    /// <summary>
+    /// Gets or sets the template for the filter UI.
+    /// </summary>
     [Parameter]
     public RenderFragment<QueryFilter>? FilterTemplate { get; set; }
 
+    /// <summary>
+    /// Gets or sets the list of filter values for the column.
+    /// </summary>
     [Parameter]
     public List<string>? FilterValues { get; set; }
 
-
+    /// <summary>
+    /// Gets the property name for the column. Computed from the property expression.
+    /// </summary>
     public string PropertyName { get; set; } = null!;
 
+    /// <summary>
+    /// Gets the column name, which may be set by a <see cref="ColumnAttribute"/> on the property.
+    /// </summary>
     public string ColumnName { get; set; } = null!;
 
+    /// <summary>
+    /// Gets the type of the property for the column. Computed from the property expression.
+    /// </summary>
     public Type PropertyType { get; set; } = null!;
 
-
+    /// <summary>
+    /// Gets or sets the current sort index for the column.
+    /// </summary>
     internal int CurrentSortIndex { get; set; } = -1;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the column is currently sorted in descending order.
+    /// </summary>
     internal bool CurrentSortDescending { get; set; }
 
+    /// <summary>
+    /// Gets or sets the current computed style for the column.
+    /// </summary>
     internal string? CurrentColumnStyle { get; set; }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the column is currently visible.
+    /// </summary>
     internal bool CurrentVisible { get; set; }
 
+    /// <inheritdoc />
     protected override void OnInitialized()
     {
         if (Grid == null)
@@ -169,6 +296,7 @@ public class DataColumn<TItem> : ComponentBase
         Grid.AddColumn(this);
     }
 
+    /// <inheritdoc />
     protected override void OnParametersSet()
     {
         base.OnParametersSet();
@@ -181,6 +309,10 @@ public class DataColumn<TItem> : ComponentBase
         UpdateProperty();
     }
 
+    /// <summary>
+    /// Gets the header title for the column.
+    /// </summary>
+    /// <returns>The header title.</returns>
     internal string HeaderTitle()
     {
         if (!string.IsNullOrEmpty(Title))
@@ -189,6 +321,11 @@ public class DataColumn<TItem> : ComponentBase
         return PropertyName.ToTitle();
     }
 
+    /// <summary>
+    /// Gets the cell value for the specified data item.
+    /// </summary>
+    /// <param name="data">The data item.</param>
+    /// <returns>The cell value as a string.</returns>
     internal string CellValue(TItem data)
     {
         if (data == null || Property == null)
@@ -215,6 +352,10 @@ public class DataColumn<TItem> : ComponentBase
             : string.Format(CultureInfo.CurrentCulture, $"{{0:{Format}}}", value);
     }
 
+    /// <summary>
+    /// Gets the export name for the column.
+    /// </summary>
+    /// <returns>The export name.</returns>
     internal string ExportName()
     {
         if (!string.IsNullOrEmpty(ExportHeader))
@@ -223,17 +364,29 @@ public class DataColumn<TItem> : ComponentBase
         return PropertyName;
     }
 
+    /// <summary>
+    /// Updates the sort index and direction for the column.
+    /// </summary>
+    /// <param name="index">The sort index.</param>
+    /// <param name="descending">True if descending; otherwise, false.</param>
     internal void UpdateSort(int index, bool descending)
     {
         CurrentSortIndex = index;
         CurrentSortDescending = descending;
     }
 
+    /// <summary>
+    /// Updates the visibility of the column.
+    /// </summary>
+    /// <param name="value">True to show; false to hide.</param>
     internal void UpdateVisible(bool value)
     {
         CurrentVisible = value;
     }
 
+    /// <summary>
+    /// Updates the property metadata for the column.
+    /// </summary>
     private void UpdateProperty()
     {
         MemberInfo? memberInfo = null;
@@ -266,6 +419,11 @@ public class DataColumn<TItem> : ComponentBase
         ColumnName = columnAttribute?.Name ?? PropertyName;
     }
 
+    /// <summary>
+    /// Computes the attributes for a cell based on the data item.
+    /// </summary>
+    /// <param name="data">The data item.</param>
+    /// <returns>A dictionary of attributes.</returns>
     internal Dictionary<string, object> ComputeAttributes(TItem data)
     {
         var attributes = new Dictionary<string, object>();
@@ -299,6 +457,11 @@ public class DataColumn<TItem> : ComponentBase
         return attributes;
     }
 
+    /// <summary>
+    /// Computes the style for a cell based on the data item.
+    /// </summary>
+    /// <param name="data">The data item.</param>
+    /// <returns>The computed style string.</returns>
     internal string ComputeStyle(TItem data)
     {
         return StyleBuilder.Default(Style?.Invoke(data) ?? string.Empty)
@@ -314,6 +477,10 @@ public class DataColumn<TItem> : ComponentBase
             .ToString();
     }
 
+    /// <summary>
+    /// Computes the style for the column header.
+    /// </summary>
+    /// <returns>The computed header style string.</returns>
     internal string ComputeHeaderStyle()
     {
         return StyleBuilder.Default(HeaderStyle ?? string.Empty)

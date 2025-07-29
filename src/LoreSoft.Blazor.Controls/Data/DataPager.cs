@@ -8,68 +8,129 @@ using Microsoft.AspNetCore.Components.Web;
 
 namespace LoreSoft.Blazor.Controls;
 
+/// <summary>
+/// A component that provides paging controls for data navigation.
+/// Supports boundary, direction, and page navigation, and customizable appearance.
+/// </summary>
 public class DataPager : ComponentBase, IDisposable
 {
+    /// <summary>
+    /// Gets or sets the pager state, which tracks the current page, page size, and total items.
+    /// </summary>
     [CascadingParameter(Name = "PagerState")]
     protected DataPagerState PagerState { get; set; } = new();
 
+    /// <summary>
+    /// Gets or sets additional attributes to be applied to the pager container.
+    /// </summary>
     [Parameter(CaptureUnmatchedValues = true)]
     public Dictionary<string, object>? AdditionalAttributes { get; set; }
 
-
+    /// <summary>
+    /// Gets or sets the callback invoked when the page or page size changes.
+    /// </summary>
     [Parameter]
     public EventCallback<PageChangedEventArgs> PagerChanged { get; set; }
 
-
+    /// <summary>
+    /// Gets or sets the number of items per page. Default is 25.
+    /// </summary>
     [Parameter]
     public int PageSize { get; set; } = 25;
 
+    /// <summary>
+    /// Gets or sets the number of page links to display. Default is 5.
+    /// </summary>
     [Parameter]
     public int DisplaySize { get; set; } = 5;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether to show first and last page links. Default is true.
+    /// </summary>
     [Parameter]
     public bool ShowBoundary { get; set; } = true;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether to show previous and next page links. Default is true.
+    /// </summary>
     [Parameter]
     public bool ShowDirection { get; set; } = true;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether to show individual page links. Default is true.
+    /// </summary>
     [Parameter]
     public bool ShowPage { get; set; } = true;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether to show the pager when there are no pages. Default is true.
+    /// </summary>
     [Parameter]
     public bool ShowEmpty { get; set; } = true;
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the selected page is centered in the page links. Default is true.
+    /// </summary>
     [Parameter]
     public bool CenterSelected { get; set; } = true;
 
+    /// <summary>
+    /// Gets or sets the text for the previous page button. Default is "‹".
+    /// </summary>
     [Parameter]
     public string PreviousText { get; set; } = "‹";
 
+    /// <summary>
+    /// Gets or sets the text for the next page button. Default is "›".
+    /// </summary>
     [Parameter]
     public string NextText { get; set; } = "›";
 
+    /// <summary>
+    /// Gets or sets the text for the first page button. Default is "«".
+    /// </summary>
     [Parameter]
     public string FirstText { get; set; } = "«";
 
+    /// <summary>
+    /// Gets or sets the text for the last page button. Default is "»".
+    /// </summary>
     [Parameter]
     public string LastText { get; set; } = "»";
 
+    /// <summary>
+    /// Gets or sets the CSS class for the pager container. Default is "data-pager".
+    /// </summary>
     [Parameter]
     public string PagerClass { get; set; } = "data-pager";
 
+    /// <summary>
+    /// Gets or sets the CSS class for each page item. Default is "data-page-item".
+    /// </summary>
     [Parameter]
     public string ItemClass { get; set; } = "data-page-item";
 
+    /// <summary>
+    /// Gets or sets the CSS class for each page button. Default is "data-page-link".
+    /// </summary>
     [Parameter]
     public string ButtonClass { get; set; } = "data-page-link";
 
+    /// <summary>
+    /// Gets or sets the CSS class for the currently selected page. Default is "active".
+    /// </summary>
     [Parameter]
     public string CurrentClass { get; set; } = "active";
 
+    /// <summary>
+    /// Gets or sets the CSS class for disabled page links. Default is "disabled".
+    /// </summary>
     [Parameter]
     public string DisabledClass { get; set; } = "disabled";
 
-
+    /// <summary>
+    /// Navigates to the first page.
+    /// </summary>
     public void FirstPage()
     {
         if (PagerState.IsFirstPage)
@@ -78,6 +139,9 @@ public class DataPager : ComponentBase, IDisposable
         GoToPage(1);
     }
 
+    /// <summary>
+    /// Navigates to the previous page.
+    /// </summary>
     public void PreviousPage()
     {
         if (!PagerState.HasPreviousPage)
@@ -86,6 +150,9 @@ public class DataPager : ComponentBase, IDisposable
         GoToPage(PagerState.Page - 1);
     }
 
+    /// <summary>
+    /// Navigates to the next page.
+    /// </summary>
     public void NextPage()
     {
         if (!PagerState.HasNextPage)
@@ -94,6 +161,9 @@ public class DataPager : ComponentBase, IDisposable
         GoToPage(PagerState.Page + 1);
     }
 
+    /// <summary>
+    /// Navigates to the last page.
+    /// </summary>
     public void LastPage()
     {
         if (PagerState.IsLastPage)
@@ -102,6 +172,10 @@ public class DataPager : ComponentBase, IDisposable
         GoToPage(PagerState.PageCount);
     }
 
+    /// <summary>
+    /// Navigates to the specified page.
+    /// </summary>
+    /// <param name="page">The page number to navigate to.</param>
     public void GoToPage(int page)
     {
         page = Math.Min(page, PagerState.PageCount);
@@ -113,13 +187,16 @@ public class DataPager : ComponentBase, IDisposable
         PagerState.Page = page;
     }
 
-
+    /// <summary>
+    /// Releases resources used by the pager.
+    /// </summary>
     public void Dispose()
     {
         PagerState.PropertyChanged -= OnStatePropertyChange;
+        GC.SuppressFinalize(this);
     }
 
-
+    /// <inheritdoc />
     protected override void OnInitialized()
     {
         if (PagerState == null)
@@ -132,6 +209,7 @@ public class DataPager : ComponentBase, IDisposable
         PagerState.PropertyChanged += OnStatePropertyChange;
     }
 
+    /// <inheritdoc />
     protected override void BuildRenderTree(RenderTreeBuilder builder)
     {
         if (PagerState.PageCount == 0 && !ShowEmpty)
@@ -147,7 +225,10 @@ public class DataPager : ComponentBase, IDisposable
 
     }
 
-
+    /// <summary>
+    /// Renders the pagination controls.
+    /// </summary>
+    /// <param name="builder">The render tree builder.</param>
     private void RenderPagination(RenderTreeBuilder builder)
     {
         builder.OpenElement(3, "ul");
@@ -176,6 +257,10 @@ public class DataPager : ComponentBase, IDisposable
         builder.CloseElement(); // ul
     }
 
+    /// <summary>
+    /// Renders the first page link.
+    /// </summary>
+    /// <param name="builder">The render tree builder.</param>
     private void RenderFirstLink(RenderTreeBuilder builder)
     {
         if (!ShowBoundary)
@@ -187,6 +272,10 @@ public class DataPager : ComponentBase, IDisposable
         RenderPageLink(builder, page, FirstText, "Go to first page", disabledClass);
     }
 
+    /// <summary>
+    /// Renders the previous page link.
+    /// </summary>
+    /// <param name="builder">The render tree builder.</param>
     private void RenderPreviousLink(RenderTreeBuilder builder)
     {
         if (!ShowDirection)
@@ -198,6 +287,14 @@ public class DataPager : ComponentBase, IDisposable
         RenderPageLink(builder, page, PreviousText, "Go to previous page", disabledClass);
     }
 
+    /// <summary>
+    /// Renders a page link button or span.
+    /// </summary>
+    /// <param name="builder">The render tree builder.</param>
+    /// <param name="page">The page number.</param>
+    /// <param name="text">The display text.</param>
+    /// <param name="title">The tooltip/title text.</param>
+    /// <param name="disabledClass">The CSS class for disabled state.</param>
     private void RenderPageLink(RenderTreeBuilder builder, int page, string text, string title, string? disabledClass = null)
     {
         var enabled = string.IsNullOrEmpty(disabledClass);
@@ -232,6 +329,10 @@ public class DataPager : ComponentBase, IDisposable
         builder.CloseElement(); // li
     }
 
+    /// <summary>
+    /// Renders the next page link.
+    /// </summary>
+    /// <param name="builder">The render tree builder.</param>
     private void RenderNextLink(RenderTreeBuilder builder)
     {
         if (!ShowDirection)
@@ -243,6 +344,10 @@ public class DataPager : ComponentBase, IDisposable
         RenderPageLink(builder, page, NextText, "Go to next page", disabledClass);
     }
 
+    /// <summary>
+    /// Renders the last page link.
+    /// </summary>
+    /// <param name="builder">The render tree builder.</param>
     private void RenderLastLink(RenderTreeBuilder builder)
     {
         if (!ShowBoundary)
@@ -254,6 +359,10 @@ public class DataPager : ComponentBase, IDisposable
         RenderPageLink(builder, page, LastText, "Go to last page", disabledClass);
     }
 
+    /// <summary>
+    /// Calculates the start and end page numbers for the displayed page links.
+    /// </summary>
+    /// <returns>A tuple containing the start and end page numbers.</returns>
     private (int start, int end) GetPageEnds()
     {
         var start = 1;
@@ -279,7 +388,6 @@ public class DataPager : ComponentBase, IDisposable
             return (start, end);
         }
 
-
         int c = (int)Math.Ceiling(PagerState.Page / (double)DisplaySize);
 
         start = (c - 1) * DisplaySize + 1;
@@ -287,7 +395,11 @@ public class DataPager : ComponentBase, IDisposable
         return (start, end);
     }
 
-
+    /// <summary>
+    /// Handles property changes in the pager state and triggers UI updates and events.
+    /// </summary>
+    /// <param name="sender">The sender object.</param>
+    /// <param name="e">The property changed event arguments.</param>
     private void OnStatePropertyChange(object? sender, PropertyChangedEventArgs e)
     {
         InvokeAsync(() =>
@@ -303,4 +415,9 @@ public class DataPager : ComponentBase, IDisposable
 
 }
 
+/// <summary>
+/// Provides data for the page changed event.
+/// </summary>
+/// <param name="Page">The new page number.</param>
+/// <param name="PageSize">The page size.</param>
 public record PageChangedEventArgs(int Page, int PageSize);
