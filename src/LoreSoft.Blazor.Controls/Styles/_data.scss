@@ -251,7 +251,15 @@ button.data-grid-header-filter {
 }
 
 .data-list {
+  --data-list-error-color: var(--bs-danger, #dc3545);
   position: relative;
+}
+
+.data-list-error {
+  padding: 1.5rem !important;
+  color: var(--data-list-error-color) !important;
+  text-align: center;
+  font-weight: 600;
 }
 
 @media (max-width: 991.98px) {

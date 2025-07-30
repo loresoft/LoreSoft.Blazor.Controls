@@ -14,24 +14,34 @@
 
         @if (DataError != null)
         {
-            @if (ErrorTemplate != null)
-            {
-                @ErrorTemplate(DataError)
-            }
-            else
-            {
-                @DataError.Message
-            }
+            <div class="data-list-error">
+                @if (ErrorTemplate != null)
+                {
+                    @ErrorTemplate(DataError)
+                }
+                else
+                {
+                    @DataError.Message
+                }
+            </div>
         }
         else if (View == null)
         {
-            @if (LoadingTemplate == null)
+            for (int i = 0; i < 3; i++)
             {
-                <LoadingBlock IsLoading="true" />
-            }
-            else
-            {
-                @LoadingTemplate
+                <div style="display:flex;align-items:center;gap:10px;padding:0 1rem;">
+                    <div>
+                        <Skeleton Type="SkeletonType.Circle" Width="50px" Height="50px" />
+                    </div>
+                    <div style="flex-grow:1;">
+                        <div class="mb-1">
+                            <Skeleton Width="100%" Height="40px" />
+                        </div>
+                        <div class="mb-1">
+                            <Skeleton Width="100%" Height="20px" />
+                        </div>
+                    </div>
+                </div>
             }
         }
         else if (View.Count == 0)

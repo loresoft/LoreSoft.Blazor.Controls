@@ -1,4 +1,4 @@
-﻿<h3>Basic</h3>
+<h3>Basic</h3>
 
 <p>The component can take the shape of 3 different shapes.</p>
 
@@ -12,6 +12,20 @@
     <Skeleton Type="SkeletonType.Rectangle" Width="200px" Height="110px" />
 </div>
 
+
+<div style="display:flex;align-items:center;gap: 5px;">
+    <div>
+        <Skeleton Type="SkeletonType.Circle" Width="50px" Height="50px" />
+    </div>
+    <div style="flex-grow:1;">
+        <div class="mb-1">
+            <Skeleton Width="100%" Height="40px" />
+        </div>
+        <div class="mb-1">
+            <Skeleton Width="100%" Height="20px" />
+        </div>
+    </div>
+</div>
 @code {
 
 }
