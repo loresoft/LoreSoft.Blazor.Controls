@@ -64,7 +64,7 @@ jobs:
 
       - name: Upload Sample Web Site
         if: success() && github.event_name != 'pull_request' && (github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/v'))
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v4
         with:
           name: github-pages
           path: "${{env.BUILD_PATH}}/sample/wwwroot"
