@@ -1,0 +1,273 @@
+@page "/culture/index"
+@implements IDisposable
+
+<h1>LocalTime</h1>
+
+<p>Local Time Control - Renders date and time values in the user's local time zone.</p>
+
+<Instructions></Instructions>
+
+<h2 class="mb-3">Examples</h2>
+
+<h3>DateTime Usage</h3>
+
+<p>Basic example showing LocalTime with fixed DateTime values, displaying both original and converted local time with different DateTimeKind values.</p>
+
+<div class="m-3 p-3 border rounded">
+    <div class="row mb-3">
+        <div class="col-sm-3"><strong>Team Meeting (Local):</strong></div>
+        <div class="col-sm-9">
+            <div><span class="text-muted">Original:</span> @teamMeetingDateTime.ToString("yyyy-MM-dd HH:mm:ss") (@teamMeetingDateTime.Kind)</div>
+            <div><span class="text-muted">Local Time:</span> <LocalTime Value="@teamMeetingDateTime" /></div>
+            <div><span class="text-muted">Date Kind:</span> @teamMeetingDateTime.Kind</div>
+        </div>
+    </div>
+    <div class="row mb-3">
+        <div class="col-sm-3"><strong>Server Log Entry (UTC):</strong></div>
+        <div class="col-sm-9">
+            <div><span class="text-muted">Original:</span> @serverLogDateTime.ToString("yyyy-MM-dd HH:mm:ss") (@serverLogDateTime.Kind)</div>
+            <div><span class="text-muted">Local Time:</span> <LocalTime Value="@serverLogDateTime" /></div>
+            <div><span class="text-muted">Date Kind:</span> @serverLogDateTime.Kind</div>
+        </div>
+    </div>
+    <div class="row mb-3">
+        <div class="col-sm-3"><strong>Historical Event (Local):</strong></div>
+        <div class="col-sm-9">
+            <div><span class="text-muted">Original:</span> @historicalEventDateTime.ToString("yyyy-MM-dd HH:mm:ss") (@historicalEventDateTime.Kind)</div>
+            <div><span class="text-muted">Local Time:</span> <LocalTime Value="@historicalEventDateTime" /></div>
+            <div><span class="text-muted">Date Kind:</span> @historicalEventDateTime.Kind</div>
+        </div>
+    </div>
+    <div class="row mb-2">
+        <div class="col-sm-3"><strong>Scheduled Task (Local):</strong></div>
+        <div class="col-sm-9">
+            <div><span class="text-muted">Original:</span> @scheduledTaskDateTime.ToString("yyyy-MM-dd HH:mm:ss") (@scheduledTaskDateTime.Kind)</div>
+            <div><span class="text-muted">Local Time:</span> <LocalTime Value="@scheduledTaskDateTime" /></div>
+            <div><span class="text-muted">Date Kind:</span> @scheduledTaskDateTime.Kind</div>
+        </div>
+    </div>
+</div>
+
+<h3>DateTimeOffset Usage</h3>
+
+<p>Example using DateTimeOffset values with different time zones, showing the conversion from specific time zones to the user's local time.</p>
+
+<div class="m-3 p-3 border rounded">
+    <div class="row mb-3">
+        <div class="col-sm-3"><strong>Business Meeting (EST):</strong></div>
+        <div class="col-sm-9">
+            <div><span class="text-muted">Original:</span> @businessMeetingTime.ToString("yyyy-MM-dd HH:mm:ss zzz") (EST)</div>
+            <div><span class="text-muted">Local Time:</span> <LocalTime Value="@businessMeetingTime" /></div>
+            <div><span class="text-muted">UTC Offset:</span> @businessMeetingTime.Offset</div>
+        </div>
+    </div>
+    <div class="row mb-3">
+        <div class="col-sm-3"><strong>Conference Call (GMT):</strong></div>
+        <div class="col-sm-9">
+            <div><span class="text-muted">Original:</span> @conferenceCallTime.ToString("yyyy-MM-dd HH:mm:ss zzz") (GMT)</div>
+            <div><span class="text-muted">Local Time:</span> <LocalTime Value="@conferenceCallTime" /></div>
+            <div><span class="text-muted">UTC Offset:</span> @conferenceCallTime.Offset</div>
+        </div>
+    </div>
+    <div class="row mb-3">
+        <div class="col-sm-3"><strong>Tokyo Office Hours (JST):</strong></div>
+        <div class="col-sm-9">
+            <div><span class="text-muted">Original:</span> @tokyoOfficeTime.ToString("yyyy-MM-dd HH:mm:ss zzz") (JST)</div>
+            <div><span class="text-muted">Local Time:</span> <LocalTime Value="@tokyoOfficeTime" /></div>
+            <div><span class="text-muted">UTC Offset:</span> @tokyoOfficeTime.Offset</div>
+        </div>
+    </div>
+    <div class="row mb-2">
+        <div class="col-sm-3"><strong>Server Deploy (PST):</strong></div>
+        <div class="col-sm-9">
+            <div><span class="text-muted">Original:</span> @serverDeployTime.ToString("yyyy-MM-dd HH:mm:ss zzz") (PST)</div>
+            <div><span class="text-muted">Local Time:</span> <LocalTime Value="@serverDeployTime" /></div>
+            <div><span class="text-muted">UTC Offset:</span> @serverDeployTime.Offset</div>
+        </div>
+    </div>
+</div>
+
+<h3>Custom Display Formats</h3>
+
+<p>Examples showing different display and title formats with their corresponding format strings.</p>
+
+<div class="m-3 p-3 border rounded">
+    <div class="row mb-2">
+        <div class="col-sm-3"><strong>Short Date ("d"):</strong></div>
+        <div class="col-sm-9"><LocalTime Value="@teamMeetingDateTime" DisplayFormat="d" /></div>
+    </div>
+    <div class="row mb-2">
+        <div class="col-sm-3"><strong>Long Date ("D"):</strong></div>
+        <div class="col-sm-9"><LocalTime Value="@teamMeetingDateTime" DisplayFormat="D" /></div>
+    </div>
+    <div class="row mb-2">
+        <div class="col-sm-3"><strong>Short Time ("t"):</strong></div>
+        <div class="col-sm-9"><LocalTime Value="@teamMeetingDateTime" DisplayFormat="t" /></div>
+    </div>
+    <div class="row mb-2">
+        <div class="col-sm-3"><strong>Long Time ("T"):</strong></div>
+        <div class="col-sm-9"><LocalTime Value="@teamMeetingDateTime" DisplayFormat="T" /></div>
+    </div>
+    <div class="row mb-2">
+        <div class="col-sm-3"><strong>ISO 8601 ("o"):</strong></div>
+        <div class="col-sm-9"><LocalTime Value="@teamMeetingDateTime" DisplayFormat="o" /></div>
+    </div>
+    <div class="row mb-2">
+        <div class="col-sm-3"><strong>Custom Format:</strong></div>
+        <div class="col-sm-9">
+            <div><LocalTime Value="@teamMeetingDateTime" DisplayFormat="MMM dd, yyyy 'at' HH:mm" /></div>
+            <div><span class="text-muted">Format:</span> "MMM dd, yyyy 'at' HH:mm"</div>
+        </div>
+    </div>
+</div>
+
+<h3>Title Format Examples</h3>
+
+<p>Examples showing different title formats (hover over the times to see tooltips) with their corresponding format strings.</p>
+
+<div class="m-3 p-3 border rounded">
+    <div class="row mb-2">
+        <div class="col-sm-3"><strong>Default Title:</strong></div>
+        <div class="col-sm-9">
+            <div><LocalTime Value="@teamMeetingDateTime" /></div>
+            <div><span class="text-muted">Format:</span> (default)</div>
+        </div>
+    </div>
+    <div class="row mb-2">
+        <div class="col-sm-3"><strong>Full Date/Time ("F"):</strong></div>
+        <div class="col-sm-9">
+            <div><LocalTime Value="@teamMeetingDateTime" TitleFormat="F" /></div>
+            <div><span class="text-muted">Format:</span> "F"</div>
+        </div>
+    </div>
+    <div class="row mb-2">
+        <div class="col-sm-3"><strong>No Title (""):</strong></div>
+        <div class="col-sm-9">
+            <div><LocalTime Value="@teamMeetingDateTime" TitleFormat="" /></div>
+            <div><span class="text-muted">Format:</span> "" (empty string)</div>
+        </div>
+    </div>
+</div>
+
+<h3>Nullable Values</h3>
+
+<p>Examples showing behavior with nullable DateTime values.</p>
+
+<div class="m-3 p-3 border rounded">
+    <div class="row mb-2">
+        <div class="col-sm-3"><strong>Null DateTime:</strong></div>
+        <div class="col-sm-9">
+            <LocalTime TValue="DateTime?" Value="@nullDateTime" />
+            <span class="text-muted">(nothing rendered when null)</span>
+        </div>
+    </div>
+    <div class="row mb-2">
+        <div class="col-sm-3"><strong>Conditional Value:</strong></div>
+        <div class="col-sm-9">
+            <LocalTime TValue="DateTime?" Value="@(showConditional ? teamMeetingDateTime : null)" />
+            <button class="btn btn-sm btn-outline-primary ms-2" @onclick="ToggleConditional">
+                @(showConditional ? "Hide" : "Show")
+            </button>
+        </div>
+    </div>
+</div>
+
+<h3>Live Clock Example</h3>
+
+<p>A live updating clock using LocalTime component.</p>
+
+<div class="m-3 p-3 border rounded bg-light">
+    <div class="text-center">
+        <h4 class="mb-0">
+            <LocalTime Value="@liveTime" DisplayFormat="F" TitleFormat="o" />
+        </h4>
+        <small class="text-muted">Updates every second</small>
+    </div>
+</div>
+
+<h3>Data Table Example</h3>
+
+<p>Example showing LocalTime in a data table context.</p>
+
+<div class="m-3 p-3 border rounded">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Event</th>
+                <th>Created</th>
+                <th>Modified</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in sampleData)
+            {
+                <tr>
+                    <td>@item.Name</td>
+                    <td><LocalTime Value="@item.Created" DisplayFormat="g" /></td>
+                    <td><LocalTime Value="@item.Modified" DisplayFormat="g" /></td>
+                    <td>@item.Status</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@code {
+    // Fixed DateTime values for consistent examples
+    private DateTime teamMeetingDateTime = new DateTime(2024, 8, 15, 14, 30, 0, DateTimeKind.Local);
+    private DateTime serverLogDateTime = new DateTime(2024, 8, 15, 18, 30, 0, DateTimeKind.Utc);
+    private DateTime historicalEventDateTime = new DateTime(2024, 7, 16, 9, 15, 0, DateTimeKind.Local);
+    private DateTime scheduledTaskDateTime = new DateTime(2024, 9, 20, 16, 45, 0, DateTimeKind.Local);
+    private DateTime? nullDateTime = null;
+    private bool showConditional = true;
+    private DateTime liveTime = DateTime.Now;
+
+    // Fixed DateTimeOffset values with specific time zones for consistent examples
+    private DateTimeOffset businessMeetingTime = new DateTimeOffset(2024, 8, 15, 14, 30, 0, TimeSpan.FromHours(-5)); // EST (UTC-5)
+    private DateTimeOffset conferenceCallTime = new DateTimeOffset(2024, 8, 15, 19, 30, 0, TimeSpan.Zero); // GMT (UTC+0)
+    private DateTimeOffset tokyoOfficeTime = new DateTimeOffset(2024, 8, 16, 4, 30, 0, TimeSpan.FromHours(9)); // JST (UTC+9)
+    private DateTimeOffset serverDeployTime = new DateTimeOffset(2024, 8, 15, 11, 30, 0, TimeSpan.FromHours(-8)); // PST (UTC-8)
+
+    private List<SampleEvent> sampleData = new();
+    private Timer timer;
+
+    protected override void OnInitialized()
+    {
+        // Initialize sample data with fixed DateTime values
+        sampleData = new List<SampleEvent>
+        {
+            new SampleEvent { Name = "User Registration", Created = new DateTime(2024, 8, 15, 12, 30, 0), Modified = new DateTime(2024, 8, 15, 14, 00, 0), Status = "Completed" },
+            new SampleEvent { Name = "Order Processed", Created = new DateTime(2024, 8, 15, 9, 30, 0), Modified = new DateTime(2024, 8, 15, 13, 30, 0), Status = "Shipped" },
+            new SampleEvent { Name = "Data Import", Created = new DateTime(2024, 8, 13, 14, 30, 0), Modified = new DateTime(2024, 8, 13, 14, 30, 0), Status = "Pending" },
+            new SampleEvent { Name = "System Backup", Created = new DateTime(2024, 8, 14, 14, 30, 0), Modified = new DateTime(2024, 8, 15, 8, 30, 0), Status = "Success" }
+        };
+
+        // Start live clock timer
+        timer = new Timer(UpdateLiveTime, null, TimeSpan.Zero, TimeSpan.FromSeconds(1));
+    }
+
+    private void UpdateLiveTime(object state)
+    {
+        liveTime = DateTime.Now;
+        InvokeAsync(StateHasChanged);
+    }
+
+    private void ToggleConditional()
+    {
+        showConditional = !showConditional;
+    }
+
+    public void Dispose()
+    {
+        timer?.Dispose();
+    }
+
+    private class SampleEvent
+    {
+        public string Name { get; set; } = string.Empty;
+        public DateTime Created { get; set; }
+        public DateTime Modified { get; set; }
+        public string Status { get; set; } = string.Empty;
+    }
+}
