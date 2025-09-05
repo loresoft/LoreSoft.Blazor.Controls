@@ -135,7 +135,7 @@ public partial class DataGridToolbar<TItem> : ComponentBase
         if (CurrentGrid == null)
             return;
 
-        await CurrentGrid.RefreshAsync();
+        await CurrentGrid.RefreshAsync(forceReload: true);
     }
 
     /// <summary>
