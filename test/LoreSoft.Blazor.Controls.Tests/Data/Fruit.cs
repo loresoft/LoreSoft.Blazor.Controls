@@ -31,4 +31,9 @@ public class Fruit
             new Fruit{ Id = new Guid("98620233-75c5-4213-966c-9c6bfcf9e8d5"), Name = "Raspberry", Rank = 7 }
         };
     }
+
+    public static Task<Fruit?> GetByIdAsync(Guid id)
+    {
+        return Task.FromResult(Data().FirstOrDefault(f => f.Id == id));
+    }
 }

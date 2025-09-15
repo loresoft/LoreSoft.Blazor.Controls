@@ -19,6 +19,8 @@ namespace LoreSoft.Blazor.Controls;
 /// </summary>
 /// <typeparam name="TItem">The type of the item displayed in the dropdown.</typeparam>
 /// <typeparam name="TValue">The type of the value selected by the user.</typeparam>
+[CascadingTypeParameter(nameof(TItem))]
+[CascadingTypeParameter(nameof(TValue))]
 public partial class Typeahead<TItem, TValue> : ComponentBase, IDisposable
 {
     private readonly System.Timers.Timer _debounceTimer;

@@ -8,6 +8,8 @@ namespace LoreSoft.Blazor.Controls;
 /// </summary>
 /// <typeparam name="TKey">The type of the key used to load the value.</typeparam>
 /// <typeparam name="TValue">The type of the value to be loaded and displayed.</typeparam>
+[CascadingTypeParameter(nameof(TKey))]
+[CascadingTypeParameter(nameof(TValue))]
 public class LazyValue<TKey, TValue> : ComponentBase
 {
     /// <summary>
@@ -35,14 +37,28 @@ public class LazyValue<TKey, TValue> : ComponentBase
     public TValue? Value { get; set; }
 
     /// <summary>
+    /// Indicates whether the component is currently loading a value.
+    /// </summary>
+    public bool Loading { get; set; }
+
+    /// <summary>
     /// Called when component parameters are set. Loads the value asynchronously using <see cref="LoadMethod"/> and <see cref="Key"/>.
     /// </summary>
     protected override async Task OnParametersSetAsync()
     {
         await base.OnParametersSetAsync();
 
-        // load the value async
-        Value = await LoadMethod(Key);
+        Loading = true;
+        try
+        {
+            // load the value async
+            Value = await LoadMethod(Key);
+        }
+        finally
+        {
+            Loading = false;
+            StateHasChanged();
+        }
     }
 
     /// <summary>
@@ -51,9 +67,13 @@ public class LazyValue<TKey, TValue> : ComponentBase
     /// <param name="builder">The <see cref="RenderTreeBuilder"/> used to build the component's render tree.</param>
     protected override void BuildRenderTree(RenderTreeBuilder builder)
     {
-        if (ChildContent != null)
+        if (Loading)
+            builder.AddContent(0, Key);
+        else if (ChildContent != null)
             builder.AddContent(0, ChildContent, Value);
+        else if (Value == null)
+            builder.AddContent(0, Key);
         else
-            builder.AddContent(1, Value);
+            builder.AddContent(0, Value);
     }
 }
