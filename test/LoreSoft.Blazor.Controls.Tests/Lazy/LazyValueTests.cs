@@ -5,7 +5,7 @@ namespace LoreSoft.Blazor.Controls.Tests.Lazy;
 public class LazyValueTests : TestContext
 {
     [Fact]
-    public async Task Renders_Value_Using_LoadMethod_And_Key()
+    public void Renders_Value_Using_LoadMethod_And_Key()
     {
         // arrange
         var fruit = Fruit.Data().First();
@@ -25,7 +25,7 @@ public class LazyValueTests : TestContext
     }
 
     [Fact]
-    public async Task Renders_Value_Using_Custom_ChildContent_Template()
+    public void Renders_Value_Using_Custom_ChildContent_Template()
     {
         // arrange
         var fruit = Fruit.Data().First();
@@ -46,7 +46,7 @@ public class LazyValueTests : TestContext
     }
 
     [Fact]
-    public async Task Renders_Null_Value_When_Key_Not_Found()
+    public void Renders_Null_Value_When_Key_Not_Found()
     {
         // arrange
         var nonExistentKey = Guid.NewGuid();
@@ -65,7 +65,7 @@ public class LazyValueTests : TestContext
     }
 
     [Fact]
-    public async Task Renders_Null_Value_With_Custom_Template()
+    public void Renders_Null_Value_With_Custom_Template()
     {
         // arrange
         var nonExistentKey = Guid.NewGuid();
@@ -85,7 +85,7 @@ public class LazyValueTests : TestContext
     }
 
     [Fact]
-    public async Task Reloads_Value_When_Key_Changes()
+    public void Reloads_Value_When_Key_Changes()
     {
         // arrange
         var fruits = Fruit.Data().Take(2).ToArray();
@@ -118,7 +118,7 @@ public class LazyValueTests : TestContext
     }
 
     [Fact]
-    public async Task Renders_Complex_Object_With_Custom_Template()
+    public void Renders_Complex_Object_With_Custom_Template()
     {
         // arrange
         var fruit = Fruit.Data().First();
@@ -150,7 +150,7 @@ public class LazyValueTests : TestContext
     }
 
     [Fact]
-    public async Task Value_Property_Is_Set_After_Loading()
+    public void Value_Property_Is_Set_After_Loading()
     {
         // arrange
         var fruit = Fruit.Data().First();
@@ -174,7 +174,7 @@ public class LazyValueTests : TestContext
     }
 
     [Fact]
-    public async Task Value_Property_Is_Null_When_Not_Found()
+    public void Value_Property_Is_Null_When_Not_Found()
     {
         // arrange
         var nonExistentKey = Guid.NewGuid();
@@ -194,7 +194,7 @@ public class LazyValueTests : TestContext
     }
 
     [Fact]
-    public async Task Loads_Value_With_String_Key()
+    public void Loads_Value_With_String_Key()
     {
         // arrange
         static Task<string?> LoadStringAsync(string? key) => Task.FromResult(key?.ToUpper());
@@ -213,7 +213,7 @@ public class LazyValueTests : TestContext
     }
 
     [Fact]
-    public async Task Renders_Empty_String_Value()
+    public void Renders_Empty_String_Value()
     {
         // arrange
         static Task<string?> LoadEmptyStringAsync(string? key) => Task.FromResult<string?>("");
@@ -232,7 +232,7 @@ public class LazyValueTests : TestContext
     }
 
     [Fact]
-    public async Task Handles_Multiple_Rapid_Key_Changes()
+    public void Handles_Multiple_Rapid_Key_Changes()
     {
         // arrange
         var fruits = Fruit.Data().Take(3).ToArray();
@@ -267,7 +267,7 @@ public class LazyValueTests : TestContext
     }
 
     [Fact]
-    public async Task Handles_Same_Key_Set_Multiple_Times()
+    public void Handles_Same_Key_Set_Multiple_Times()
     {
         // arrange
         var fruit = Fruit.Data().First();
@@ -299,7 +299,7 @@ public class LazyValueTests : TestContext
     }
 
     [Fact]
-    public async Task Handles_Template_With_Null_Check()
+    public void Handles_Template_With_Null_Check()
     {
         // arrange
         var fruit = Fruit.Data().First();
