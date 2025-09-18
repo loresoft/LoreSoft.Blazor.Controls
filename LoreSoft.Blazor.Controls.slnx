@@ -1,0 +1,14 @@
+<Solution>
+  <Folder Name="/Build/">
+    <File Path=".github/workflows/dotnetcore.yml" />
+    <File Path="Directory.Build.props" />
+    <File Path="README.md" />
+  </Folder>
+  <Folder Name="/Samples/">
+    <Project Path="samples/Sample.ClientSide/Sample.ClientSide.csproj" />
+    <Project Path="samples/Sample.Core/Sample.Core.csproj" />
+    <Project Path="samples/Sample.ServerSide/Sample.ServerSide.csproj" />
+  </Folder>
+  <Project Path="src/LoreSoft.Blazor.Controls/LoreSoft.Blazor.Controls.csproj" />
+  <Project Path="test/LoreSoft.Blazor.Controls.Tests/LoreSoft.Blazor.Controls.Tests.csproj" />
+</Solution>

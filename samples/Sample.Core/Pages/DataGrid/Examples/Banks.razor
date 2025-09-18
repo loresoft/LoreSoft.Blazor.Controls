@@ -1,13 +1,17 @@
 @using Sample.Core.Services
 @using Sample.Core.Models
 
-@inject RandomDataClient RandomDataClient;
-
 <h3>Banks</h3>
 
-<button class="btn btn-secondary" @onclick="@(() => DataGrid.RefreshAsync(forceReload: true))">Reload</button>
-
-<DataGrid DataLoader="LoadData" class="table table-hover" @ref="DataGrid" RowAttributes="RowAttributes" Filterable="true" Groupable="true">
+<DataGrid DataLoader="LoadData"
+          class="table table-hover"
+          @ref="DataGrid"
+          RowAttributes="RowAttributes"
+          Filterable="true"
+          Groupable="true">
+    <DataToolbar>
+        <DataGridToolbar Title="Bank Accounts" />
+    </DataToolbar>
     <DataColumns>
         <DataColumn TItem="Bank" Property="p => p.BankName" Grouping="true" SortIndex="0" />
         <DataColumn TItem="Bank" Property="p => p.Id" Width="70px" data-test="testing" CellAttributes="CellAttributes" />
@@ -45,6 +49,8 @@
 
     private async Task<IEnumerable<Bank>> LoadData()
     {
-        return await RandomDataClient.GetBanks();
+        // Simulate a delay
+        await Task.Delay(500);
+        return Data.GenerateBanks(100);
     }
 }

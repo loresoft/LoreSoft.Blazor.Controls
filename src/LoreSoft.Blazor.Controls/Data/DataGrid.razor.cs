@@ -25,18 +25,6 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
     private QueryGroup? _initialQuery;
 
     /// <summary>
-    /// Gets or sets the JavaScript runtime for interop calls.
-    /// </summary>
-    [Inject]
-    public required IJSRuntime JavaScript { get; set; }
-
-    /// <summary>
-    /// Gets or sets the service used for downloading files.
-    /// </summary>
-    [Inject]
-    public required DownloadService DownloadService { get; set; }
-
-    /// <summary>
     /// Gets or sets additional attributes to be applied to the table element.
     /// </summary>
     [Parameter(CaptureUnmatchedValues = true)]
@@ -59,18 +47,6 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
     /// </summary>
     [Parameter]
     public bool Selectable { get; set; }
-
-    /// <summary>
-    /// Gets or sets a value indicating whether sorting is enabled.
-    /// </summary>
-    [Parameter]
-    public bool Sortable { get; set; } = true;
-
-    /// <summary>
-    /// Gets or sets a value indicating whether filtering is enabled.
-    /// </summary>
-    [Parameter]
-    public bool Filterable { get; set; }
 
     /// <summary>
     /// Gets or sets a value indicating whether grouping is enabled.
@@ -121,73 +97,9 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
     public EventCallback<TItem> RowDoubleClick { get; set; }
 
     /// <summary>
-    /// Gets or sets the query group for filtering and searching.
-    /// </summary>
-    [Parameter]
-    public QueryGroup? Query { get; set; }
-
-    /// <summary>
-    /// Gets or sets the root query group for filtering and searching.
-    /// </summary>
-    public QueryGroup RootQuery { get; set; } = new();
-
-    /// <summary>
     /// Gets the list of columns defined for the grid.
     /// </summary>
     public List<DataColumn<TItem>> Columns { get; } = [];
-
-    /// <summary>
-    /// Gets a value indicating whether the filter panel is open.
-    /// </summary>
-    protected bool FilterOpen { get; set; }
-
-    /// <summary>
-    /// Shows the filter panel.
-    /// </summary>
-    public void ShowFilter()
-    {
-        if (RootQuery.Filters.Count == 0)
-            RootQuery.Filters.Add(new QueryFilter());
-
-        FilterOpen = true;
-        StateHasChanged();
-    }
-
-    /// <summary>
-    /// Closes the filter panel.
-    /// </summary>
-    public void CloseFilter()
-    {
-        FilterOpen = false;
-        StateHasChanged();
-    }
-
-    /// <summary>
-    /// Toggles the filter panel open or closed.
-    /// </summary>
-    public void ToggleFilter()
-    {
-        FilterOpen = !FilterOpen;
-        StateHasChanged();
-    }
-
-    /// <summary>
-    /// Determines whether the filter is active.
-    /// </summary>
-    /// <returns>True if the filter is active; otherwise, false.</returns>
-    public bool IsFilterActive()
-    {
-        return LinqExpressionBuilder.IsValid(RootQuery);
-    }
-
-    /// <summary>
-    /// Applies the current filters and refreshes the grid.
-    /// </summary>
-    protected async Task ApplyFilters()
-    {
-        FilterOpen = false;
-        await RefreshAsync(true);
-    }
 
     /// <summary>
     /// Gets a value indicating whether the column picker panel is open.
@@ -237,6 +149,7 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
         {
             var quickSearch = new QueryGroup { Id = nameof(QuickSearch), Logic = QueryLogic.Or };
 
+
             // all filterable string columns
             foreach (var column in Columns.Where(c => c.Filterable && c.PropertyType == typeof(string)))
             {
@@ -255,68 +168,6 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
         await RefreshAsync(true);
     }
 
-    /// <summary>
-    /// Clears all filters and refreshes the grid.
-    /// </summary>
-    public async Task ClearFilters()
-    {
-        RootQuery.Filters.Clear();
-        FilterOpen = false;
-        await RefreshAsync(true);
-    }
-
-    /// <summary>
-    /// Applies the specified filter rules to the grid.
-    /// </summary>
-    /// <param name="rules">The filter rules to apply.</param>
-    /// <param name="replace">Whether to replace existing filters.</param>
-    public async Task ApplyFilters(IEnumerable<QueryRule> rules, bool replace = false)
-    {
-        if (replace)
-            RootQuery.Filters.Clear();
-
-        if (rules != null)
-            RootQuery.Filters.AddRange(rules);
-
-        await RefreshAsync(true);
-    }
-
-    /// <summary>
-    /// Applies a single filter rule to the grid.
-    /// </summary>
-    /// <param name="rule">The filter rule to apply.</param>
-    public async Task ApplyFilter(QueryRule rule)
-    {
-        if (rule == null)
-            return;
-
-        if (rule.Id.HasValue())
-            RootQuery.Filters.RemoveAll(f => f.Id == rule.Id);
-
-        RootQuery.Filters.Add(rule);
-        await RefreshAsync(true);
-    }
-
-    /// <summary>
-    /// Removes filters matching the specified predicate.
-    /// </summary>
-    /// <param name="match">The predicate to match filters.</param>
-    public async Task RemoveFilters(Predicate<QueryRule> match)
-    {
-        RootQuery.Filters.RemoveAll(match);
-        await RefreshAsync(true);
-    }
-
-    /// <summary>
-    /// Removes filters with the specified ID.
-    /// </summary>
-    /// <param name="id">The filter ID to remove.</param>
-    public async Task RemoveFilter(string id)
-    {
-        RootQuery.Filters.RemoveAll(f => f.Id == id);
-        await RefreshAsync(true);
-    }
-
     /// <inheritdoc />
     public override async Task RefreshAsync(bool resetPager = false, bool forceReload = false)
     {
@@ -331,16 +182,17 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
     /// Sorts the grid by the specified column.
     /// </summary>
     /// <param name="column">The column to sort by.</param>
-    public async Task SortByAsync(DataColumn<TItem> column)
+    /// <param name="descending">Whether to sort in descending order.</param>
+    public async Task SortByAsync(DataColumn<TItem> column, bool? descending = null)
     {
         if (column == null || !Sortable || !column.Sortable)
             return;
 
-        var descending = column.CurrentSortIndex >= 0 && !column.CurrentSortDescending;
+        descending ??= column.CurrentSortIndex >= 0 && !column.CurrentSortDescending;
 
         Columns.ForEach(c => c.UpdateSort(-1, false));
 
-        column.UpdateSort(0, descending);
+        column.UpdateSort(0, descending ?? false);
 
         await RefreshAsync();
     }
@@ -349,7 +201,8 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
     /// Sorts the grid by the column with the specified name.
     /// </summary>
     /// <param name="columnName">The name of the column to sort by.</param>
-    public async Task SortByAsync(string columnName)
+    /// <param name="descending">Whether to sort in descending order.</param>
+    public override async Task SortByAsync(string columnName, bool? descending = null)
     {
         if (!Sortable)
             return;
@@ -358,7 +211,7 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
         if (column == null)
             return;
 
-        await SortByAsync(column);
+        await SortByAsync(column, descending);
     }
 
     /// <summary>

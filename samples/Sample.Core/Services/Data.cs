@@ -75,6 +75,30 @@ public static class Data
         new("WY - Wyoming", "WY")
     };
 
+    private static readonly List<string> TopBankNames = new()
+    {
+        "JPMorgan Chase",
+        "Bank of America",
+        "Wells Fargo",
+        "Citibank",
+        "U.S. Bank",
+        "PNC Bank",
+        "Truist",
+        "Goldman Sachs",
+        "TD Bank",
+        "Capital One",
+        "HSBC",
+        "Fifth Third Bank",
+        "KeyBank",
+        "Regions Bank",
+        "BMO Harris Bank",
+        "M&T Bank",
+        "Citizens Bank",
+        "Morgan Stanley",
+        "Santander Bank",
+        "Ally Bank"
+    };
+
     public static IReadOnlyCollection<Person> GeneratePeople(int count = 100)
     {
         var generator = new Faker<Person>()
@@ -84,6 +108,22 @@ public static class Data
             .RuleFor(p => p.Score, f => f.Random.Int(1, 100))
             .RuleFor(p => p.Location, f => f.Address.City())
             .RuleFor(p => p.Birthday, f => f.Date.Past(60));
+
+        return generator.Generate(count);
+    }
+
+    public static IReadOnlyCollection<Bank> GenerateBanks(int count = 1000)
+    {
+        var generator = new Faker<Bank>()
+            .RuleFor(b => b.Id, f => f.IndexGlobal)
+            .RuleFor(b => b.Identifier, f => f.Random.Guid())
+            .RuleFor(b => b.BankName, f => f.Random.CollectionItem(TopBankNames))
+            .RuleFor(b => b.RoutingNumber, f => f.Finance.RoutingNumber())
+            .RuleFor(b => b.AccountNumber, f => f.Finance.Account())
+            .RuleFor(b => b.IBAN, f => f.Finance.Iban())
+            .RuleFor(b => b.SwiftBIC, f => f.Finance.Bic())
+            .RuleFor(b => b.IsActive, f => f.Random.Bool(0.8f))
+            .RuleFor(b => b.Created, f => f.Date.Past(10));
 
         return generator.Generate(count);
     }

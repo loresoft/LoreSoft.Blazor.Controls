@@ -27,10 +27,6 @@ public class Program
             .AddHttpClient<GitHubClient>()
             .AddHttpMessageHandler<ProgressBarHandler>();
 
-        services
-            .AddHttpClient<RandomDataClient>()
-            .AddHttpMessageHandler<ProgressBarHandler>();
-
         services.AddScoped(sp => sp
             .GetRequiredService<IHttpClientFactory>()
             .CreateClient("default")

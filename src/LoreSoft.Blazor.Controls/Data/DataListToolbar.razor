@@ -1,0 +1,89 @@
+@attribute [CascadingTypeParameter(nameof(TItem))]
+@typeparam TItem where TItem : class
+@namespace LoreSoft.Blazor.Controls
+
+@if (CurrentList != null)
+{
+    <div class="data-grid-toolbar">
+        <div class="toolbar-title">
+            @if (TitleTemplate != null)
+            {
+                @TitleTemplate(CurrentList)
+            }
+            else if (!string.IsNullOrEmpty(Title))
+            {
+                <h5 class="toolbar-title-text">@Title</h5>
+            }
+        </div>
+        @if (ShowSearch)
+        {
+            <div class="toolbar-search-box">
+                <input id="toolbar-search"
+                       type="search"
+                       class="input-search toolbar-search-input"
+                       placeholder="Search"
+                       @bind-value="SearchText.Value"
+                       @bind-value:event="oninput" />
+            </div>
+        }
+        @if (FilterTemplate != null)
+        {
+            @FilterTemplate(CurrentList)
+        }
+        @if (ShowRefresh)
+        {
+            <button id="refresh-button"
+                    title="Refresh Data"
+                    class="toolbar-button"
+                    type="button"
+                    @onclick="HandelRefresh">
+                <i class="toolbar-icon toolbar-refresh-icon"></i>
+            </button>
+        }
+        @if (ShowExport)
+        {
+            <button id="export-button"
+                    title="Export Data"
+                    class="toolbar-button"
+                    type="button"
+                    @onclick="HandelExport">
+                <i class="toolbar-icon toolbar-export-icon"></i>
+            </button>
+        }
+        @if (ShowFilter)
+        {
+            <button id="filter-button"
+                    title="Filter Data"
+                    class="toolbar-button"
+                    type="button"
+                    @onclick="ToggleFilter">
+                @if (CurrentList.IsFilterActive())
+                {
+                    <i class="toolbar-icon toolbar-filter-active-icon"></i>
+                }
+                else
+                {
+                    <i class="toolbar-icon toolbar-filter-icon"></i>
+                }
+            </button>
+        }
+        @if (ShowSortPicker)
+        {
+            <button id="sort-picker-button"
+                    title="Sort Picker"
+                    class="toolbar-button"
+                    type="button"
+                    @onclick="ToggleSortPicker">
+                <i class="toolbar-icon toolbar-sort-picker-icon"></i>
+            </button>
+        }
+
+        @if (ActionTemplate != null)
+        {
+            @ActionTemplate(CurrentList)
+        }
+    </div>
+}
+
+
+

@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Globalization;
 using System.Linq.Expressions;
 using System.Reflection;
 
@@ -15,6 +16,8 @@ namespace LoreSoft.Blazor.Controls;
 /// <typeparam name="TItem">The type of the data item being queried.</typeparam>
 public class QueryBuilderField<TItem> : ComponentBase
 {
+    private Func<TItem, object>? _propertyAccessor;
+
     /// <summary>
     /// Gets or sets the parent <see cref="QueryBuilder{TItem}"/> component.
     /// </summary>
@@ -65,6 +68,13 @@ public class QueryBuilderField<TItem> : ComponentBase
     /// </summary>
     [Parameter]
     public RenderFragment<QueryFilter>? OperatorTemplate { get; set; }
+
+    /// <summary>
+    /// Gets or sets the format string for values.
+    /// </summary>
+    [Parameter]
+    public string? Format { get; set; }
+
 
     /// <summary>
     /// Gets the name of the field (property name).
@@ -232,6 +242,32 @@ public class QueryBuilderField<TItem> : ComponentBase
 
         var columnAttribute = memberInfo?.GetCustomAttribute<ColumnAttribute>(true);
         Column = columnAttribute != null ? columnAttribute.Name : Name;
+    }
+
+    internal string FieldValue(TItem data)
+    {
+        if (data == null || Field == null)
+            return string.Empty;
+
+        _propertyAccessor ??= Field.Compile();
+
+        object? value = null;
+
+        try
+        {
+            value = _propertyAccessor.Invoke(data);
+        }
+        catch (NullReferenceException)
+        {
+
+        }
+
+        if (value == null)
+            return string.Empty;
+
+        return string.IsNullOrEmpty(Format)
+            ? value.ToString() ?? string.Empty
+            : string.Format(CultureInfo.CurrentCulture, $"{{0:{Format}}}", value);
     }
 
     /// <summary>

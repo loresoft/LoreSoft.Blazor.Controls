@@ -1,11 +1,23 @@
-﻿@using Sample.Core.Services
+@using Sample.Core.Services
 @using Sample.Core.Models
 <h3>Basic</h3>
 
 <button class="btn btn-secondary" @onclick="@(() => DataList.Pager.Page = 5)">Go to page 5</button>
 <button class="btn btn-secondary" @onclick="@(() => DataList.Pager.PageSize = 25)">Page Size 25</button>
 
-<DataList Data="People" @ref="DataList" class="list-group">
+<DataList Data="People" @ref="DataList" class="mt-2 list-group">
+    <DataToolbar>
+        <DataListToolbar Title="Sample Grid" />
+    </DataToolbar>
+    <QueryFields>
+        <QueryBuilderField Field="p => p.Id" />
+        <QueryBuilderField Field="p => p.FirstName" />
+        <QueryBuilderField Field="p => p.LastName" />
+        <QueryBuilderField Field="p => p.FullName" />
+        <QueryBuilderField Field="p => p.Score" />
+        <QueryBuilderField Field="p => p.Location" />
+        <QueryBuilderField Field="p => p.Birthday" />
+    </QueryFields>
     <RowTemplate Context="item">
         <a @key="item" href="#" class="list-group-item list-group-item-action">
             <div class="d-flex w-100 justify-content-between">
