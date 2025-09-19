@@ -15,7 +15,7 @@ namespace LoreSoft.Blazor.Controls;
 [CascadingTypeParameter(nameof(TItem))]
 public partial class DataList<TItem> : DataComponentBase<TItem>
 {
-    private readonly Lazy<PropertyInfo[]> _properties = new(() => typeof(TItem).GetProperties());
+    private readonly Lazy<PropertyInfo[]> _properties = new(() => typeof(TItem).GetProperties().OrderBy(p => p.Name).ToArray());
 
     /// <summary>
     /// Gets or sets additional attributes to be applied to the root element.
@@ -49,6 +49,18 @@ public partial class DataList<TItem> : DataComponentBase<TItem>
     public RenderFragment? QueryFields { get; set; }
 
     /// <summary>
+    /// Gets or sets the initial field to sort by.
+    /// </summary>
+    [Parameter]
+    public string SortField { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Gets or sets a initial value indicating whether to sort in descending order.
+    /// </summary>
+    [Parameter]
+    public bool SortDescending { get; set; }
+
+    /// <summary>
     /// Gets or sets a value indicating whether the sort picker is open.
     /// </summary>
     protected bool SortPickerOpen { get; set; }
@@ -63,26 +75,31 @@ public partial class DataList<TItem> : DataComponentBase<TItem>
     /// </summary>
     protected QueryBuilder<TItem>? QueryBuilder { get; set; }
 
-    protected string SortField { get; set; } = string.Empty;
+    protected string CurrentSortField { get; set; } = string.Empty;
 
-    protected string SortDirection { get; set; } = "asc";
+    protected string CurrentSortDirection { get; set; } = "asc";
 
     protected IEnumerable<PropertyInfo> Properties => _properties.Value;
 
     protected Task HandleSortChanged()
     {
-        var descending = SortDirection == "desc";
-        return SortByAsync(SortField, descending);
+        var descending = CurrentSortDirection == "desc";
+        return SortByAsync(CurrentSortField, descending);
     }
 
     /// <inheritdoc />
     protected override void OnParametersSet()
     {
-        base.OnParametersSet();
-
         ClassName = new CssBuilder("data-list")
-                    .MergeClass(AdditionalAttributes)
-                    .ToString();
+            .MergeClass(AdditionalAttributes)
+            .ToString();
+
+        CurrentSortField = SortField;
+        CurrentSortDirection = SortDescending ? "desc" : "asc";
+
+        SortBy(SortField, SortDescending);
+
+        base.OnParametersSet();
     }
 
     /// <summary>
@@ -202,8 +219,8 @@ public partial class DataList<TItem> : DataComponentBase<TItem>
 
     public override Task SortByAsync(string columnName, bool? descending = null)
     {
-        SortField = columnName;
-        SortDirection = descending == true ? "desc" : "asc";
+        CurrentSortField = columnName;
+        CurrentSortDirection = descending == true ? "desc" : "asc";
 
         return base.SortByAsync(columnName, descending);
     }

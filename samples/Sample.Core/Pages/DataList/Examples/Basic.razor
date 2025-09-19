@@ -5,7 +5,7 @@
 <button class="btn btn-secondary" @onclick="@(() => DataList.Pager.Page = 5)">Go to page 5</button>
 <button class="btn btn-secondary" @onclick="@(() => DataList.Pager.PageSize = 25)">Page Size 25</button>
 
-<DataList Data="People" @ref="DataList" class="mt-2 list-group">
+<DataList Data="People" @ref="DataList" class="mt-2 list-group" SortField="LastName">
     <DataToolbar>
         <DataListToolbar Title="Sample Grid" />
     </DataToolbar>

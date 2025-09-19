@@ -1,6 +1,7 @@
 // Ignore Spelling: Queryable Toolbar Virtualize Overscan
 
 using System.ComponentModel;
+using System.Globalization;
 using System.Text;
 
 using LoreSoft.Blazor.Controls.Extensions;
@@ -422,6 +423,7 @@ public abstract class DataComponentBase<TItem> : ComponentBase, IDisposable
         }
     }
 
+
     /// <summary>
     /// Sorts the grid by the column with the specified name.
     /// </summary>
@@ -432,15 +434,29 @@ public abstract class DataComponentBase<TItem> : ComponentBase, IDisposable
         if (!Sortable)
             return;
 
+        SortBy(columnName, descending);
+
+        await RefreshAsync();
+    }
+
+    /// <summary>
+    /// Sorts the grid by the column with the specified name.
+    /// </summary>
+    /// <param name="columnName">The name of the column to sort by.</param>
+    /// <param name="descending">Whether to sort in descending order.</param>
+    public virtual void SortBy(string columnName, bool? descending = null)
+    {
+        if (!Sortable)
+            return;
+
         if (string.IsNullOrWhiteSpace(columnName))
             _currentSort = null;
         else if (_currentSort == null || _currentSort.Property != columnName)
             _currentSort = new DataSort(columnName, descending ?? false);
         else
             _currentSort = new DataSort(columnName, descending ?? !_currentSort.Descending);
-
-        await RefreshAsync();
     }
+
 
     /// <summary>
     /// Creates a <see cref="DataRequest"/> for the current paging, sorting, and filtering state.

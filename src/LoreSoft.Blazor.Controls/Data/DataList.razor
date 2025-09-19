@@ -2,6 +2,7 @@
 @inherits DataComponentBase<TItem>
 @namespace LoreSoft.Blazor.Controls
 
+@using LoreSoft.Blazor.Controls.Extensions
 @using Microsoft.AspNetCore.Components.Web
 @using Microsoft.AspNetCore.Components.Web.Virtualization
 
@@ -19,28 +20,38 @@
                      @onclick="CloseFilter"></div>
 
                 <div class="filter-container">
-                    <form name="filter-builder-form"
-                          @onsubmit="ApplyFilters">
-                        <QueryBuilder @ref="QueryBuilder"
-                                      TItem="TItem"
-                                      QueryFields="QueryFields"
-                                      Query="RootQuery">
-                            <FooterTemplate>
-                                <div class="filter-footer">
-                                    <button type="submit"
-                                            class="query-button">
-                                        Apply
-                                    </button>
+                    <ErrorBoundary>
+                        <ChildContent>
+                            <form name="filter-builder-form"
+                                  @onsubmit="ApplyFilters">
+                                <QueryBuilder @ref="QueryBuilder"
+                                              TItem="TItem"
+                                              QueryFields="QueryFields"
+                                              Query="RootQuery">
+                                    <FooterTemplate>
+                                        <div class="filter-footer">
+                                            <button type="submit"
+                                                    class="query-button">
+                                                Apply
+                                            </button>
 
-                                    <button type="button"
-                                            class="query-button"
-                                            @onclick="ClearFilters">
-                                        Clear
-                                    </button>
-                                </div>
-                            </FooterTemplate>
-                        </QueryBuilder>
-                    </form>
+                                            <button type="button"
+                                                    class="query-button"
+                                                    @onclick="ClearFilters">
+                                                Clear
+                                            </button>
+                                        </div>
+                                    </FooterTemplate>
+                                </QueryBuilder>
+                            </form>
+                        </ChildContent>
+                        <ErrorContent>
+                            <div class="data-list-error">
+                                <div>An error occurred loading the filter builder.</div>
+                                <small>@context?.Message</small>
+                            </div>
+                        </ErrorContent>
+                    </ErrorBoundary>
                 </div>
             </div>
         }
@@ -56,7 +67,7 @@
                             <label for="sort-selection">Sort by</label>
                             <select id="sort-selection"
                                     name="sort-selection"
-                                    @bind="SortField"
+                                    @bind="CurrentSortField"
                                     @bind:after="HandleSortChanged"
                                     aria-label="Sort Field">
                                 <option value="">- select -</option>
@@ -65,14 +76,14 @@
                                     @foreach (var property in Properties)
                                     {
                                         <option value="@property.Name">
-                                            @property.Name
+                                            @property.Name.ToTitle()
                                         </option>
                                     }
                                 }
                             </select>
                             <select id="sort-direction"
                                     name="sort-direction"
-                                    @bind="SortDirection"
+                                    @bind="CurrentSortDirection"
                                     @bind:after="HandleSortChanged"
                                     aria-label="Sort Direction">
                                 <option value="asc">Ascending</option>

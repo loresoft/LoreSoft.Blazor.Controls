@@ -17,7 +17,8 @@
   border-collapse: collapse;
 }
 
-.data-grid-error {
+.data-grid-error,
+.data-list-error {
   padding: 1.5rem !important;
   color: var(--data-grid-error-color) !important;
   text-align: center;
@@ -256,12 +257,6 @@ button.data-grid-header-filter {
   opacity: 0.5;
 }
 
-.data-list-error {
-  padding: 1.5rem !important;
-  color: var(--data-list-error-color) !important;
-  text-align: center;
-  font-weight: 600;
-}
 
 @media (max-width: 991.98px) {
   .data-pagination {
