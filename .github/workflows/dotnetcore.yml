@@ -7,7 +7,6 @@ env:
   ASPNETCORE_ENVIRONMENT: github
   BUILD_PATH: "${{github.workspace}}/artifacts"
 
-
 on:
   push:
     branches:
