@@ -1,10 +1,9 @@
 .input-image {
   --input-image-color: #ccc;
   --input-image-clear-color: var(--bs-danger, #dc3545);
-
   position: relative;
 
-  .input-image-label {
+  & .input-image-label {
     cursor: pointer;
     position: relative;
 
@@ -13,10 +12,10 @@
     }
   }
 
-  .input-image-icon {
+  & .input-image-icon {
   }
 
-  .input-image-clear {
+  & .input-image-clear {
     color: var(--input-image-color);
     display: none;
     box-sizing: border-box;
@@ -40,5 +39,5 @@
   background-position: .5em center;
   background-repeat: no-repeat;
   background-size: 1em 1em;
-  padding-left: 1.85em !important
+  padding-left: 1.85em !important;
 }

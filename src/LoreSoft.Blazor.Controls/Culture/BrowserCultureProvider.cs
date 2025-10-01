@@ -8,9 +8,18 @@ namespace LoreSoft.Blazor.Controls;
 /// Provides functionality to retrieve and cache the browser's culture and time zone information.
 /// This service uses JavaScript interop to detect the user's language preference and local time zone from the browser.
 /// </summary>
-public class BrowserCultureProvider(IJSRuntime javaScript)
+public class BrowserCultureProvider : IAsyncDisposable
 {
-    private readonly IJSRuntime _javaScript = javaScript ?? throw new ArgumentNullException(nameof(javaScript));
+    private readonly IJSRuntime _javaScript;
+    private readonly Lazy<Task<IJSObjectReference>> _moduleTask;
+
+    public BrowserCultureProvider(IJSRuntime javaScript)
+    {
+        _javaScript = javaScript;
+        _moduleTask = new(() => _javaScript.InvokeAsync<IJSObjectReference>(
+           "import", "./_content/LoreSoft.Blazor.Controls/js/browser.js").AsTask());
+    }
+
 
     private TimeZoneInfo? _cachedTimeZone;
     private string? _cachedLanguage;
@@ -35,7 +44,10 @@ public class BrowserCultureProvider(IJSRuntime javaScript)
         if (!force && _cachedTimeZone is not null)
             return _cachedTimeZone;
 
-        var browserTimeZone = await _javaScript.InvokeAsync<string>("BlazorControls.browserTimeZone");
+        var module = await _moduleTask.Value;
+
+        var browserTimeZone = await module.InvokeAsync<string>("browserTimeZone");
+
         if (string.IsNullOrWhiteSpace(browserTimeZone))
         {
             _cachedTimeZone = TimeZoneInfo.Local;
@@ -73,10 +85,23 @@ public class BrowserCultureProvider(IJSRuntime javaScript)
         if (!force && _cachedLanguage is not null)
             return _cachedLanguage;
 
-        _cachedLanguage = await _javaScript.InvokeAsync<string>("BlazorControls.browserLanguage")
+        var module = await _moduleTask.Value;
+
+        _cachedLanguage = await module.InvokeAsync<string>("browserLanguage")
             ?? CultureInfo.CurrentUICulture.Name;
 
         return _cachedLanguage ?? string.Empty;
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (_moduleTask.IsValueCreated)
+        {
+            var module = await _moduleTask.Value;
+            await module.DisposeAsync();
+        }
+
+        GC.SuppressFinalize(this);
     }
 }
 

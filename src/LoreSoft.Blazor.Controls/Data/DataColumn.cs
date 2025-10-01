@@ -259,6 +259,16 @@ public class DataColumn<TItem> : ComponentBase
     /// </summary>
     public Type PropertyType { get; set; } = null!;
 
+    public string HeaderName { get; set; } = null!;
+
+    public string ExportName { get; set; } = null!;
+
+
+    internal string CurrentHeaderClass { get; set; } = null!;
+
+    internal string CurrentHeaderStyle { get; set; } = null!;
+
+
     /// <summary>
     /// Gets or sets the current sort index for the column.
     /// </summary>
@@ -269,15 +279,19 @@ public class DataColumn<TItem> : ComponentBase
     /// </summary>
     internal bool CurrentSortDescending { get; set; }
 
+    internal string CurrentSort { get; set; } = "none";
+
     /// <summary>
     /// Gets or sets the current computed style for the column.
     /// </summary>
+    [Obsolete]
     internal string? CurrentColumnStyle { get; set; }
 
     /// <summary>
     /// Gets or sets a value indicating whether the column is currently visible.
     /// </summary>
     internal bool CurrentVisible { get; set; }
+
 
     /// <inheritdoc />
     protected override void OnInitialized()
@@ -307,18 +321,7 @@ public class DataColumn<TItem> : ComponentBase
             .ToString();
 
         UpdateProperty();
-    }
-
-    /// <summary>
-    /// Gets the header title for the column.
-    /// </summary>
-    /// <returns>The header title.</returns>
-    internal string HeaderTitle()
-    {
-        if (!string.IsNullOrEmpty(Title))
-            return Title;
-
-        return PropertyName.ToTitle();
+        UpdateStyles();
     }
 
     /// <summary>
@@ -350,18 +353,6 @@ public class DataColumn<TItem> : ComponentBase
         return string.IsNullOrEmpty(Format)
             ? value.ToString() ?? string.Empty
             : string.Format(CultureInfo.CurrentCulture, $"{{0:{Format}}}", value);
-    }
-
-    /// <summary>
-    /// Gets the export name for the column.
-    /// </summary>
-    /// <returns>The export name.</returns>
-    internal string ExportName()
-    {
-        if (!string.IsNullOrEmpty(ExportHeader))
-            return ExportHeader;
-
-        return PropertyName;
     }
 
     /// <summary>
@@ -417,6 +408,28 @@ public class DataColumn<TItem> : ComponentBase
 
         var columnAttribute = memberInfo.GetCustomAttribute<ColumnAttribute>(true);
         ColumnName = columnAttribute?.Name ?? PropertyName;
+
+        // allow empty header, only default if null
+        HeaderName = Title ?? PropertyName.ToTitle();
+
+        ExportName = string.IsNullOrEmpty(ExportHeader) ? PropertyName : ExportHeader;
+    }
+
+    private void UpdateStyles()
+    {
+        CurrentHeaderClass = CssBuilder.Default("data-grid__header-cell")
+            .AddClass(HeaderClass, v => v.HasValue())
+            .AddClass("data-grid__header-cell--sortable", Sortable)
+            .ToString();
+
+        CurrentHeaderStyle = StyleBuilder.Default(HeaderStyle ?? string.Empty)
+            .AddStyle("width", Width, (v) => v.HasValue())
+            .AddStyle("min-width", MinWidth, (v) => v.HasValue())
+            .AddStyle("max-width", MaxWidth, (v) => v.HasValue())
+            .AddStyle("text-align", "center", HeaderAlign is TextAlign.Center)
+            .AddStyle("text-align", "left", HeaderAlign is TextAlign.Left or TextAlign.Start)
+            .AddStyle("text-align", "right", HeaderAlign is TextAlign.Right or TextAlign.End)
+            .ToString();
     }
 
     /// <summary>

@@ -7,7 +7,7 @@
   --loading-block-spinner-zindex: 1200;
   --loading-block-text-color: var(--bs-body-color, #212529);
 
-  .loading-mode-overlay {
+  & .loading-mode-overlay {
     background-color: var(--loading-block-bg);
     position: absolute;
     top: 0;
@@ -21,7 +21,7 @@
     flex-flow: column wrap;
   }
 
-  .loading-mode-block {
+  & .loading-mode-block {
     position: relative;
     padding: 1rem;
     display: flex;
@@ -30,13 +30,13 @@
     flex-direction: column;
   }
 
-  .loading-mode-overlay,
-  .loading-mode-block {
-    .loading-block-spinner {
+  & .loading-mode-overlay,
+  & .loading-mode-block {
+    & .loading-block-spinner {
       display: block;
       z-index: var(--loading-block-spinner-zindex);
 
-      .loading-block-spinner-icon {
+      & .loading-block-spinner-icon {
         animation: 400ms linear 0s infinite normal none running spinner-keyframe;
         border-color: var(--loading-block-spinner-color) transparent transparent var(--loading-block-spinner-color);
         border-width: var(--loading-block-spinner-size);
@@ -48,7 +48,7 @@
       }
     }
 
-    .loading-block-text {
+    & .loading-block-text {
       color: var(--loading-block-text-color);
       padding: .5rem;
       font-weight: 600;

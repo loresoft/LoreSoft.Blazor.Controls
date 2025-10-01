@@ -25,12 +25,6 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
     private QueryGroup? _initialQuery;
 
     /// <summary>
-    /// Gets or sets additional attributes to be applied to the table element.
-    /// </summary>
-    [Parameter(CaptureUnmatchedValues = true)]
-    public Dictionary<string, object>? TableAttributes { get; set; }
-
-    /// <summary>
     /// Gets or sets the template for defining data columns.
     /// </summary>
     [Parameter]
@@ -235,7 +229,7 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
 
         await CsvWriter.WriteAsync(
             stream: memoryStream,
-            headers: Columns.Where(c => c.Exportable).Select(c => c.ExportName()),
+            headers: Columns.Where(c => c.Exportable).Select(c => c.ExportName),
             rows: result.Items,
             selector: item => Columns.Where(c => c.Exportable).Select(c => c.CellValue(item)),
             encoding: Encoding.UTF8,

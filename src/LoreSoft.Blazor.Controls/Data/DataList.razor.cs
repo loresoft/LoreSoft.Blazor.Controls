@@ -18,12 +18,6 @@ public partial class DataList<TItem> : DataComponentBase<TItem>
     private readonly Lazy<PropertyInfo[]> _properties = new(() => typeof(TItem).GetProperties().OrderBy(p => p.Name).ToArray());
 
     /// <summary>
-    /// Gets or sets additional attributes to be applied to the root element.
-    /// </summary>
-    [Parameter(CaptureUnmatchedValues = true)]
-    public Dictionary<string, object>? AdditionalAttributes { get; set; }
-
-    /// <summary>
     /// Gets or sets the template used to render each row in the data list.
     /// </summary>
     [Parameter, EditorRequired]

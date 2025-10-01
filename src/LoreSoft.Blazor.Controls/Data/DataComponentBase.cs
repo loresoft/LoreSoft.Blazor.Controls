@@ -35,6 +35,11 @@ public abstract class DataComponentBase<TItem> : ComponentBase, IDisposable
     [Inject]
     public required DownloadService DownloadService { get; set; }
 
+    /// <summary>
+    /// Gets or sets additional attributes to be applied to the root element.
+    /// </summary>
+    [Parameter(CaptureUnmatchedValues = true)]
+    public Dictionary<string, object>? AdditionalAttributes { get; set; }
 
     /// <summary>
     /// Gets or sets the data items to display. Mutually exclusive with <see cref="DataProvider"/> and <see cref="DataLoader"/>.

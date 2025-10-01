@@ -8,6 +8,7 @@
   --data-grid-toolbar-hover-border-color: #6c757d;
   --data-grid-toolbar-invalid-border-color: var(--bs-danger, #dc3545);
   --data-grid-toolbar-button-margin: 0.125rem;
+
   display: flex;
   align-items: center;
 
@@ -64,7 +65,7 @@
       display: block;
       font-size: 1rem;
       line-height: 1.5;
-      transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+      transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
       width: 100%;
       outline-offset: 0;
     }

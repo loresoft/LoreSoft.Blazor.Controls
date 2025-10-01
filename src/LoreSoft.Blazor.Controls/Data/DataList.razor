@@ -15,7 +15,7 @@
 
         @if (FilterOpen)
         {
-            <div>
+            <div class="filter">
                 <div class="filter-background"
                      @onclick="CloseFilter"></div>
 
@@ -134,7 +134,7 @@
             }
             else
             {
-                <div class="data-grid-empty">No records to display</div>
+                <div class="data-list-empty">No records to display</div>
             }
         }
         else if (Virtualize)

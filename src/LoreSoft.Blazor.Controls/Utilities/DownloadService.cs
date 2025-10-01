@@ -8,9 +8,18 @@ namespace LoreSoft.Blazor.Controls;
 /// <summary>
 /// Provides methods for downloading files in applications using JavaScript interop.
 /// </summary>
-public class DownloadService(IJSRuntime javaScript)
+public class DownloadService : IAsyncDisposable
 {
-    private readonly IJSRuntime _javaScript = javaScript ?? throw new ArgumentNullException(nameof(javaScript));
+    private readonly IJSRuntime _javaScript;
+    private readonly Lazy<Task<IJSObjectReference>> _moduleTask;
+
+    public DownloadService(IJSRuntime javaScript)
+    {
+        _javaScript = javaScript;
+        _moduleTask = new(() => _javaScript.InvokeAsync<IJSObjectReference>(
+           "import", "./_content/LoreSoft.Blazor.Controls/js/download.js").AsTask());
+
+    }
 
     /// <summary>
     /// Downloads a file from a provided <see cref="Stream"/> to the user's device.
@@ -24,9 +33,12 @@ public class DownloadService(IJSRuntime javaScript)
     {
         ArgumentNullException.ThrowIfNull(stream);
 
+
         using var streamReference = new DotNetStreamReference(stream, true);
 
-        await _javaScript.InvokeVoidAsync("BlazorControls.downloadFileStream", streamReference, fileName, mimeType);
+        var module = await _moduleTask.Value;
+
+        await module.InvokeVoidAsync("downloadFileStream", streamReference, fileName, mimeType);
     }
 
     /// <summary>
@@ -61,6 +73,20 @@ public class DownloadService(IJSRuntime javaScript)
     {
         ArgumentNullException.ThrowIfNull(url);
 
-        await _javaScript.InvokeVoidAsync("BlazorControls.triggerFileDownload", url, fileName);
+        var module = await _moduleTask.Value;
+
+        await module.InvokeVoidAsync("triggerFileDownload", url, fileName);
+    }
+
+
+    public async ValueTask DisposeAsync()
+    {
+        if (_moduleTask.IsValueCreated)
+        {
+            var module = await _moduleTask.Value;
+            await module.DisposeAsync();
+        }
+
+        GC.SuppressFinalize(this);
     }
 }

@@ -17,8 +17,105 @@
             @DataColumns
         }
 
-        <div class="data-grid-table">
-            <table class="data-grid" @attributes="@TableAttributes">
+        <div class="data-grid-responsive">
+            <div class="data-grid data-grid--bordered"
+                 role="grid"
+                 @attributes="@AdditionalAttributes"
+                 aria-label="Data Grid">
+
+                <div class="data-grid__header"
+                     role="row">
+
+                    @if (Selectable)
+                    {
+                        <div class="data-grid__header-cell data-grid__cell--checkbox"
+                             role="columnheader">
+                            <input type="checkbox"
+                                   class="data-grid__checkbox"
+                                   name="select-all-grouped"
+                                   aria-label="Select all rows">
+                        </div>
+                    }
+
+                    @if (HasGrouping)
+                    {
+                        <div class="data-grid__header-cell data-grid__cell--expand"
+                             role="columnheader">
+                            <span class="sr-only">Expand</span>
+                        </div>
+                    }
+
+                    @foreach (var column in VisibleColumns)
+                    {
+                        @HeaderFragment(column)
+                    }
+                </div>
+
+                @if (DataError != null)
+                {
+                    <div class="data-grid__error">
+                        @if (ErrorTemplate != null)
+                        {
+                            @ErrorTemplate(DataError)
+                        }
+                        else
+                        {
+                            @DataError.Message
+                        }
+                    </div>
+                }
+                else if (View == null)
+                {
+                    <div class="data-grid__skeleton">
+                        @for (int i = 0; i < 5; i++)
+                        {
+                            <Skeleton @key="i" />
+                        }
+                    </div>
+                }
+                else if (View.Count == 0)
+                {
+                    <div class="data-grid__empty">
+                        @if (EmptyTemplate != null)
+                        {
+                            @EmptyTemplate
+                        }
+                        else
+                        {
+                            <span>No records to display</span>
+                        }
+                    </div>
+                }
+                else if (Virtualize)
+                {
+                    <Virtualize TItem="TItem"
+                                Items="View"
+                                Context="item"
+                                ItemSize="VirtualItemSize"
+                                OverscanCount="VirtualOverscan">
+                        @RowFragment(item)
+                    </Virtualize>
+                }
+                else if (HasGrouping)
+                {
+                    var groupColumn = Columns.FirstOrDefault(c => c.Grouping) ?? Columns.First();
+                    foreach (var group in View.GroupBy(groupColumn.CellValue))
+                    {
+                        @GroupFragment((groupColumn, group ))
+                    }
+                }
+                else
+                {
+                    @foreach (var item in View)
+                    {
+                        @RowFragment(item)
+                    }
+                }
+            </div>
+
+
+
+            <table class="data-grid" @attributes="@AdditionalAttributes">
                 <colgroup>
                     @if (DetailTemplate != null || HasGrouping)
                     {
@@ -63,7 +160,7 @@
                                     {
                                         <button type="button"
                                                 class="data-grid-header-title"
-                                                title="Sort by @column.HeaderTitle()"
+                                                title="Sort by @column.HeaderName"
                                                 @onclick="() => SortByAsync(column)">
                                             @HeaderFragment(column)
                                         </button>
@@ -99,38 +196,40 @@
                     {
                         <tr>
                             <td colspan="@CellCount" class="filter-row">
-                                <div class="filter-background"
-                                     @onclick="CloseFilter"></div>
+                                <div class="filter">
+                                    <div class="filter-background"
+                                         @onclick="CloseFilter"></div>
 
-                                <div class="filter-container">
-                                    <form name="filter-builder-form" @onsubmit="ApplyFilters">
-                                        <QueryBuilder TItem="TItem" Query="RootQuery">
-                                            <QueryFields>
-                                                @foreach (var column in Columns.Where(c => c.Filterable))
-                                                {
-                                                    <QueryBuilderField @key="column"
-                                                                       Field="column.Property"
-                                                                       Title="@column.HeaderTitle()"
-                                                                       Values="@column.FilterValues"
-                                                                       ValueTemplate="@column.FilterTemplate" />
-                                                }
-                                            </QueryFields>
-                                            <FooterTemplate>
-                                                <div class="filter-footer">
-                                                    <button type="submit"
-                                                            class="query-button">
-                                                        Apply
-                                                    </button>
+                                    <div class="filter-container">
+                                        <form name="filter-builder-form" @onsubmit="ApplyFilters">
+                                            <QueryBuilder TItem="TItem" Query="RootQuery">
+                                                <QueryFields>
+                                                    @foreach (var column in Columns.Where(c => c.Filterable))
+                                                    {
+                                                        <QueryBuilderField @key="column"
+                                                                           Field="column.Property"
+                                                                           Title="@column.HeaderName"
+                                                                           Values="@column.FilterValues"
+                                                                           ValueTemplate="@column.FilterTemplate" />
+                                                    }
+                                                </QueryFields>
+                                                <FooterTemplate>
+                                                    <div class="filter-footer">
+                                                        <button type="submit"
+                                                                class="query-button">
+                                                            Apply
+                                                        </button>
 
-                                                    <button type="button"
-                                                            class="query-button"
-                                                            @onclick="ClearFilters">
-                                                        Clear
-                                                    </button>
-                                                </div>
-                                            </FooterTemplate>
-                                        </QueryBuilder>
-                                    </form>
+                                                        <button type="button"
+                                                                class="query-button"
+                                                                @onclick="ClearFilters">
+                                                            Clear
+                                                        </button>
+                                                    </div>
+                                                </FooterTemplate>
+                                            </QueryBuilder>
+                                        </form>
+                                    </div>
                                 </div>
                             </td>
                         </tr>
@@ -147,7 +246,7 @@
                                             @foreach (var column in Columns)
                                             {
                                                 <label @key="column"
-                                                       title="Toggle '@column.HeaderTitle()' Visibility"
+                                                       title="Toggle '@column.HeaderName' Visibility"
                                                        class="column-picker-label">
                                                     <input class="column-picker-checkbox"
                                                            type="checkbox"
@@ -155,7 +254,7 @@
                                                            checked="@column.CurrentVisible"
                                                            @onchange="() => ToggleVisible(column)" />
                                                     <span class="column-picker-text">
-                                                        @column.HeaderTitle()
+                                                        @column.HeaderName
                                                     </span>
                                                 </label>
                                             }
@@ -308,6 +407,7 @@
                 }
             </table>
         </div>
+
         @if (DataPagination != null)
         {
             <CascadingValue IsFixed="true" Value="Pager" Name="PagerState">
@@ -334,14 +434,28 @@
 {
     protected RenderFragment<DataColumn<TItem>> HeaderFragment => column => __builder =>
     {
-        @if (column.HeaderTemplate != null)
-        {
-            @column.HeaderTemplate
-        }
-        else
-        {
-            @column.HeaderTitle()
-        }
+        <div @key="column"
+             class="@column.CurrentHeaderClass"
+             style="@column.CurrentHeaderStyle"
+             role="columnheader"
+             tabindex="0"
+             aria-sort="@column.CurrentSort">
+
+            @if (column.HeaderTemplate != null)
+            {
+                @column.HeaderTemplate
+            }
+            else
+            {
+                @column.HeaderName
+            }
+
+            @if (column.Sortable)
+            {
+                <span class="data-grid__sort-icon data-grid__sort-icon--@column.CurrentSort"
+                      aria-hidden="true"></span>
+            }
+        </div>
     };
 
     protected RenderFragment<TItem> RowFragment => item => __builder =>
@@ -403,6 +517,48 @@
                     @DetailTemplate(item)
                 </td>
             </tr>
+        }
+    };
+
+    protected RenderFragment<(DataColumn<TItem>, IGrouping<string, TItem>)> GroupFragment => item => __builder =>
+    {
+        var groupColumn = item.Item1;
+
+        var group = item.Item2;
+        var groupKey = group.Key;
+
+        <tr @key="groupKey" class="data-grid-group-row">
+            <td class="data-grid-hierarchy-cell">
+                <button type="button"
+                        @onclick="() => ToggleGroupRow(groupKey)"
+                        title="Show Group"
+                        class="data-grid-group-button @(IsGroupExpanded(groupKey) ? "data-grid-group-button-expanded" : "data-grid-group-button-collapsed")"></button>
+            </td>
+            @if (Selectable)
+            {
+                <td></td>
+            }
+            @foreach (var column in VisibleColumns)
+            {
+                <td @key="column">
+                    @if (column.GroupTemplate != null)
+                    {
+                        @column.GroupTemplate(group)
+                    }
+                    else if (column == groupColumn)
+                    {
+                        @groupKey
+                    }
+                </td>
+            }
+        </tr>
+
+        @if (IsGroupExpanded(groupKey))
+        {
+            @foreach (var item in group)
+            {
+                @RowFragment(item)
+            }
         }
     };
 }
