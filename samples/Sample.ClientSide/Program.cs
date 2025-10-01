@@ -8,13 +8,13 @@ using Sample.Core.Services;
 
 namespace Sample.ClientSide;
 
-public class Program
+public static class Program
 {
     public static async Task Main(string[] args)
     {
         var builder = WebAssemblyHostBuilder.CreateDefault(args);
 
-        builder.RootComponents.Add<App>("app");
+        builder.RootComponents.Add<Routes>("#app");
         builder.RootComponents.Add<HeadOutlet>("head::after");
 
         var services = builder.Services;

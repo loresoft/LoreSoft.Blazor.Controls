@@ -1,34 +1,43 @@
 using LoreSoft.Blazor.Controls;
 
+using Sample.Core;
 using Sample.Core.Services;
+using Sample.ServerSide.Components;
 
 namespace Sample.ServerSide;
 
-public class Program
+public static class Program
 {
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
 
-        builder.Logging.SetMinimumLevel(LogLevel.Trace);
-
         builder.Services
             .AddHttpClient<GitHubClient>()
             .AddHttpMessageHandler<ProgressBarHandler>();
 
-        builder.Services.AddRazorPages();
-        builder.Services.AddServerSideBlazor(config => { config.DetailedErrors = true; });
+        builder.Services
+            .AddRazorComponents()
+            .AddInteractiveServerComponents();
 
         builder.Services.AddBlazorControls();
 
         var app = builder.Build();
 
-        app.UseHttpsRedirection();
-        app.UseStaticFiles();
-        app.UseAntiforgery();
+        // Configure the HTTP request pipeline.
+        if (!app.Environment.IsDevelopment())
+        {
+            app.UseExceptionHandler("/Error");
+            app.UseHsts();
+        }
 
-        app.MapBlazorHub();
-        app.MapFallbackToPage("/_Host");
+        app.UseHttpsRedirection();
+        app.UseAntiforgery();
+        app.MapStaticAssets();
+
+        app.MapRazorComponents<App>()
+            .AddInteractiveServerRenderMode()
+            .AddAdditionalAssemblies(typeof(Routes).Assembly);
 
         app.Run();
     }

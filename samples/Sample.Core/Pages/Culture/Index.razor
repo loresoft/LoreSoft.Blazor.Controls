@@ -230,7 +230,7 @@
     private DateTimeOffset serverDeployTime = new DateTimeOffset(2024, 8, 15, 11, 30, 0, TimeSpan.FromHours(-8)); // PST (UTC-8)
 
     private List<SampleEvent> sampleData = new();
-    private Timer timer;
+    private Timer? timer;
 
     protected override void OnInitialized()
     {
@@ -247,7 +247,7 @@
         timer = new Timer(UpdateLiveTime, null, TimeSpan.Zero, TimeSpan.FromSeconds(1));
     }
 
-    private void UpdateLiveTime(object state)
+    private void UpdateLiveTime(object? state)
     {
         liveTime = DateTime.Now;
         InvokeAsync(StateHasChanged);

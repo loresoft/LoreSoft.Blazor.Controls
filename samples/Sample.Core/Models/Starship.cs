@@ -3,16 +3,16 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Sample.Core.Models;
 
-public class Starship
+public class StarShip
 {
     [Required]
     [StringLength(16, ErrorMessage = "Identifier too long (16 character limit).")]
-    public string Identifier { get; set; }
+    public string Identifier { get; set; } = null!;
 
-    public string Description { get; set; }
+    public string? Description { get; set; }
 
     [Required]
-    public string Classification { get; set; }
+    public string Classification { get; set; } = null!;
 
     [Range(1, 100000, ErrorMessage = "Accommodation invalid (1-100000).")]
     public int MaximumAccommodation { get; set; }
@@ -26,5 +26,5 @@ public class Starship
     public DateTime ProductionDate { get; set; }
 
     [Required]
-    public Person Captain { get; set; }
+    public Person Captain { get; set; } = new();
 }

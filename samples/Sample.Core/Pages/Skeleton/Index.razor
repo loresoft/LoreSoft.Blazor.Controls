@@ -1,4 +1,4 @@
-﻿@page "/skeleton/index"
+@page "/skeleton/index"
 @using Sample.Core.Pages.Skeleton.Examples
 
 @inject IJSRuntime JsRuntime;
@@ -16,9 +16,5 @@
 <Table />
 
 @code {
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        base.OnAfterRender(firstRender);
-        await JsRuntime.InvokeAsync<object>("Prism.highlightAll");
-    }
+
 }

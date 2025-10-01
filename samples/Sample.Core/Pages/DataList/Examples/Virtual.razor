@@ -1,4 +1,4 @@
-﻿@using Sample.Core.Services
+@using Sample.Core.Services
 @using Sample.Core.Models
 
 <h3>Virtual - No Paging</h3>
@@ -17,9 +17,9 @@
 
 
 @code {
-    public ICollection<Person> People { get; set; }
+    public ICollection<Person> People { get; set; } = [];
 
-    private DataList<Person> DataList { get; set; }
+    private DataList<Person>? DataList { get; set; }
 
     protected override void OnInitialized()
     {

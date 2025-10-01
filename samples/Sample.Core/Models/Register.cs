@@ -7,16 +7,16 @@ public class Register
 {
     [Required]
     [Display(Name = "Display Name")]
-    public string DisplayName { get; set; }
+    public string DisplayName { get; set; } = null!;
 
     [Required]
     [EmailAddress]
     [Display(Name = "Email Address")]
-    public string EmailAddress { get; set; }
+    public string EmailAddress { get; set; } = null!;
 
     [Required]
     [Display(Name = "Manager")]
-    public Person Manager { get; set; }
+    public Person Manager { get; set; } = null!;
 
     [Required]
     [Range(typeof(bool), "true", "true",

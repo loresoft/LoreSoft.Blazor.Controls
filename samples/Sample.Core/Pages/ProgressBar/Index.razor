@@ -58,7 +58,7 @@
     {
         <a href="@repo.HtmlUrl" class="list-group-item list-group-item-action" target="_blank">
             <div class="github-repository clearfix">
-                <div class="github-avatar"><img src="@repo.Owner.AvatarUrl"></div>
+                <div class="github-avatar"><img src="@repo.Owner?.AvatarUrl"></div>
                 <div class="github-meta">
                     <div class="github-title">@repo.FullName</div>
                     <div class="github-description">@repo.Description</div>
@@ -78,12 +78,6 @@
 
     public List<Repository> Items { get; set; } = new List<Repository>();
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        base.OnAfterRender(firstRender);
-        await JsRuntime.InvokeAsync<object>("Prism.highlightAll");
-    }
-
     protected async Task HandleValidSubmitAsync()
     {
         if (string.IsNullOrEmpty(NameSearch.Name))
@@ -94,7 +88,7 @@
 
         var result = await GitHubClient.SearchRepositories(NameSearch.Name);
 
-        Items = result.Items;
+        Items = result?.Items ?? [];
     }
 
     protected void Clear()

@@ -12,5 +12,5 @@ public class SearchResult<T>
     public bool IncompleteResults { get; set; }
 
     [JsonPropertyName("items")]
-    public List<T> Items { get; set; }
+    public List<T> Items { get; set; } = [];
 }

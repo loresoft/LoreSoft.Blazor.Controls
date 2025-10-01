@@ -6,6 +6,6 @@ public class NameSearch
 {
     [Required]
     [Display(Name = "Name")]
-    public string Name { get; set; }
+    public string Name { get; set; } = null!;
 
 }

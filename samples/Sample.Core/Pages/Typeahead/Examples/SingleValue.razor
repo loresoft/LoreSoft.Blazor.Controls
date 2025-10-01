@@ -1,4 +1,4 @@
-﻿@using Sample.Core.Models
+@using Sample.Core.Models
 @using Sample.Core.Services
 <h3>Basic Example</h3>
 
@@ -9,7 +9,7 @@
            @bind-Value="@SelectedState"
            Placeholder="State">
     <SelectedTemplate Context="state">
-        @state.Name
+        @state?.Name
     </SelectedTemplate>
     <ResultTemplate Context="state">
         @state.Name
@@ -44,7 +44,7 @@
 }</code></pre>
 
 @code {
-    public StateLocation SelectedState { get; set; }
+    public StateLocation? SelectedState { get; set; }
 
     public Task<IEnumerable<StateLocation>> SearchState(string searchText)
     {

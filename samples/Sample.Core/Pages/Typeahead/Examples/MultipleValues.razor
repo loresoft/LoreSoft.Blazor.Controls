@@ -1,4 +1,4 @@
-﻿@using Sample.Core.Models
+@using Sample.Core.Models
 @using Sample.Core.Services
 <h3>Multiselect Example</h3>
 
@@ -44,12 +44,12 @@
  }</code></pre>
 
 @code {
-    public IList<Person> SelectedPeople;
+    public IList<Person> SelectedPeople = [];
 
     public Task<IEnumerable<Person>> SearchPeople(string searchText)
     {
         var result = Data.PersonList
-            .Where(x => x.FullName.IndexOf(searchText, StringComparison.OrdinalIgnoreCase) >= 0)
+            .Where(x => x.FullName?.IndexOf(searchText, StringComparison.OrdinalIgnoreCase) >= 0)
             .ToList();
 
         return Task.FromResult<IEnumerable<Person>>(result);

@@ -1,4 +1,4 @@
-﻿@page "/toggleSwitch/index"
+@page "/toggleSwitch/index"
 @using Sample.Core.Pages.ToggleSwitch.Examples
 
 @inject IJSRuntime JsRuntime;
@@ -24,9 +24,5 @@
 <br />
 
 @code {
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        base.OnAfterRender(firstRender);
-        await JsRuntime.InvokeAsync<object>("Prism.highlightAll");
-    }
+
 }

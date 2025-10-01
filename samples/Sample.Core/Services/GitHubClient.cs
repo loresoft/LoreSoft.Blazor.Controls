@@ -21,8 +21,11 @@ public class GitHubClient
         HttpClient = httpClient;
     }
 
-    public async Task<SearchResult<Repository>> SearchRepositories(string text, int? page = null, int? pageSize = null)
+    public async Task<SearchResult<Repository>?> SearchRepositories(string text, int? page = null, int? pageSize = null)
     {
+        if (string.IsNullOrWhiteSpace(text))
+            return new();
+
         var encoded = Uri.EscapeDataString(text);
         var url = $"search/repositories?q={encoded}";
 
@@ -32,8 +35,6 @@ public class GitHubClient
         if (pageSize > 0)
             url += $"&per_page={pageSize}";
 
-        var result = await HttpClient.GetFromJsonAsync<SearchResult<Repository>>(url);
-
-        return result;
+        return await HttpClient.GetFromJsonAsync<SearchResult<Repository>>(url);
     }
 }

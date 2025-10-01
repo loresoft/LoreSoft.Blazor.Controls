@@ -11,7 +11,7 @@
     <RowTemplate Context="item">
         <a @key="item" href="#" class="list-group-item list-group-item-action">
             <div class="github-repository clearfix">
-                <div class="github-avatar"><img src="@item.Owner.AvatarUrl"></div>
+                <div class="github-avatar"><img src="@item.Owner?.AvatarUrl"></div>
                 <div class="github-meta">
                     <div class="github-title">@item.FullName</div>
                     <div class="github-description">@item.Description</div>
@@ -33,26 +33,32 @@
 
 
 @code {
-    private DataList<Repository> DataList { get; set; }
+    private DataList<Repository>? DataList { get; set; }
 
-    private DebounceValue<string> SearchText { get; set; }
+    protected DebounceValue<string> SearchText { get; }
+
+    public GitHub()
+    {
+        SearchText = new DebounceValue<string>(HandleSearch, DebounceValue<string>.DefaultDelay, "blazor");
+    }
 
     public async ValueTask<DataResult<Repository>> LoadData(DataRequest request)
     {
-        var value = SearchText.Value;
+        var value = SearchText?.Value ?? string.Empty;
+
+
         var result = await GitHubClient.SearchRepositories(value, request.Page, request.PageSize);
+        result ??= new();
 
         var response = new DataResult<Repository>(result.TotalCount, result.Items);
         return response;
     }
 
-    protected override void OnInitialized()
+    protected void HandleSearch(string? searchText)
     {
-        SearchText = new DebounceValue<string>(
-            (v) => InvokeAsync(() => DataList.RefreshAsync(true)),
-            DebounceValue<string>.DefaultDelay,
-            "blazor"
-        );
-    }
+        if (DataList == null)
+            return;
 
+        InvokeAsync(() => DataList.RefreshAsync(true));
+    }
 }

@@ -1,4 +1,4 @@
-﻿@using Sample.Core.Models.GitHub
+@using Sample.Core.Models.GitHub
 @using Sample.Core.Services
 
 @inject GitHubClient GitHubClient
@@ -12,11 +12,11 @@
            Placeholder="Repository"
            MinimumLength="3">
     <SelectedTemplate Context="repo">
-        @repo.FullName
+        @repo?.FullName
     </SelectedTemplate>
     <ResultTemplate Context="repo">
         <div class="github-repository clearfix">
-            <div class="github-avatar"><img src="@repo.Owner.AvatarUrl"></div>
+            <div class="github-avatar"><img src="@repo.Owner?.AvatarUrl"></div>
             <div class="github-meta">
                 <div class="github-title">@repo.FullName</div>
                 <div class="github-description">@repo.Description</div>
@@ -71,12 +71,12 @@
 
 
 @code {
-    public Repository SelectedRepository { get; set; }
+    public Repository? SelectedRepository { get; set; }
 
     public async Task<IEnumerable<Repository>> SearchGithub(string searchText)
     {
         var result = await GitHubClient.SearchRepositories(searchText);
 
-        return result.Items;
+        return result?.Items ?? [];
     }
 }

@@ -2,8 +2,8 @@
 @using Sample.Core.Models
 <h3>Basic</h3>
 
-<button class="btn btn-secondary" @onclick="@(() => DataList.Pager.Page = 5)">Go to page 5</button>
-<button class="btn btn-secondary" @onclick="@(() => DataList.Pager.PageSize = 25)">Page Size 25</button>
+<button class="btn btn-secondary" @onclick="@(() => SetPage(5))">Go to page 5</button>
+<button class="btn btn-secondary" @onclick="@(() => SetPageSize(25))">Page Size 25</button>
 
 <DataList Data="People" @ref="DataList" class="mt-2 list-group" SortField="LastName">
     <DataToolbar>
@@ -35,17 +35,16 @@
 </DataList>
 
 @code {
-    public ICollection<Person> People { get; set; }
+    public ICollection<Person> People { get; set; } = [];
 
-    private DataList<Person> DataList { get; set; }
+    private DataList<Person>? DataList { get; set; }
 
     protected override void OnInitialized()
     {
         People = Data.GeneratePeople(200).ToList();
     }
 
-
-    protected string SoreStyle(Person person)
+    protected string? SoreStyle(Person person)
     {
         if (person.Score > 75)
             return "background-color: #dc3545";
@@ -55,4 +54,15 @@
         return null;
     }
 
+    private void SetPage(int page)
+    {
+        if (DataList != null)
+            DataList.Pager.Page = page;
+    }
+
+    private void SetPageSize(int size)
+    {
+        if (DataList != null)
+            DataList.Pager.PageSize = size;
+    }
 }

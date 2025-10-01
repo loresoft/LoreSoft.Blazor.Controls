@@ -2,9 +2,9 @@
 @using Sample.Core.Models
 <h3>Basic</h3>
 
-<button class="btn btn-secondary" @onclick="@(() => DataGrid.SortByAsync("Id"))">Sort By Id</button>
-<button class="btn btn-secondary" @onclick="@(() => DataGrid.Pager.Page = 5)">Go to page 5</button>
-<button class="btn btn-secondary" @onclick="@(() => DataGrid.Pager.PageSize = 25)">Page Size 25</button>
+<button class="btn btn-secondary" @onclick="@(() => SetSort("Id"))">Sort By Id</button>
+<button class="btn btn-secondary" @onclick="@(() => SetPage(5))">Go to page 5</button>
+<button class="btn btn-secondary" @onclick="@(() => SetPageSize(25))">Page Size 25</button>
 <button class="btn btn-secondary" @onclick="ApplyFilter">Filter High Score</button>
 
 <DataGrid Data="People"
@@ -49,11 +49,16 @@
 </div>
 
 @code {
-    public ICollection<Person> People { get; set; }
+    public Basic()
+    {
+        SearchText = new DebounceValue<string>(HandleSearch);
+    }
+
+    public ICollection<Person> People { get; set; } = [];
 
     public IEnumerable<Person> Selected { get; set; } = new List<Person>();
 
-    private DataGrid<Person> DataGrid { get; set; }
+    private DataGrid<Person>? DataGrid { get; set; }
 
     protected DebounceValue<string> SearchText { get; set; }
 
@@ -61,12 +66,10 @@
 
     protected override void OnInitialized()
     {
-        SearchText = new DebounceValue<string>((value) => InvokeAsync(() => DataGrid.QuickSearch(value)));
         People = Data.GeneratePeople(200).ToList();
     }
 
-
-    protected string SoreStyle(Person person)
+    protected string? SoreStyle(Person person)
     {
         if (person.Score > 75)
             return "background-color: #dc3545";
@@ -78,6 +81,9 @@
 
     private async Task ApplyFilter()
     {
+        if (DataGrid == null)
+            return;
+
         var filters = new List<QueryRule>
         {
             new QueryFilter { Field = nameof(Person.Score), Operator = QueryOperators.GreaterThan, Value = 50 },
@@ -90,5 +96,37 @@
     private void HandleRowClick(Person person)
     {
         Console.WriteLine("Row Click: {0}", person.FullName);
+    }
+
+    protected void HandleSearch(string? searchText)
+    {
+        if (DataGrid == null)
+            return;
+
+        InvokeAsync(() => DataGrid.QuickSearch(searchText));
+    }
+
+    private void SetPage(int page)
+    {
+        if (DataGrid == null)
+            return;
+
+        DataGrid.Pager.Page = page;
+    }
+
+    private void SetPageSize(int size)
+    {
+        if (DataGrid == null)
+            return;
+
+        DataGrid.Pager.PageSize = size;
+    }
+
+    private Task SetSort(string column)
+    {
+        if (DataGrid == null)
+            return Task.CompletedTask;
+
+        return DataGrid.SortByAsync(column);
     }
 }

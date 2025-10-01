@@ -18,34 +18,15 @@ public class DebounceValue<T>
     private int _last = 0;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="DebounceValue{T}"/> class with the specified action and the default delay.
-    /// </summary>
-    /// <param name="action">The action to invoke after the debounce delay.</param>
-    public DebounceValue(Action<T?> action)
-        : this(action, DefaultDelay, default)
-    {
-    }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="DebounceValue{T}"/> class with the specified action and delay.
-    /// </summary>
-    /// <param name="action">The action to invoke after the debounce delay.</param>
-    /// <param name="delay">The delay to wait before invoking the action.</param>
-    public DebounceValue(Action<T?> action, TimeSpan delay)
-        : this(action, delay, default)
-    {
-    }
-
-    /// <summary>
     /// Initializes a new instance of the <see cref="DebounceValue{T}"/> class with the specified action, delay, and initial value.
     /// </summary>
     /// <param name="action">The action to invoke after the debounce delay.</param>
     /// <param name="delay">The delay to wait before invoking the action.</param>
     /// <param name="value">The initial value.</param>
-    public DebounceValue(Action<T?> action, TimeSpan delay, T? value)
+    public DebounceValue(Action<T?> action, TimeSpan? delay = null, T? value = default)
     {
         Action = action;
-        Delay = delay;
+        Delay = delay ?? DefaultDelay;
         _value = value;
     }
 

@@ -8,7 +8,7 @@
 
 <DataGrid DataProvider="LoadData" class="table" Sortable="false" Selectable="true" @ref="Grid">
     <DataToolbar Context="grid">
-        <form @onsubmit="() => Grid.RefreshAsync(true)">
+        <form @onsubmit="HandleSubmit">
             <div class="input-group input-group-sm mr-2">
                 <input type="search"
                        @bind="SearchText"
@@ -56,18 +56,27 @@
 
 
 @code {
-    private DataGrid<Repository> Grid { get; set; }
+    private DataGrid<Repository>? Grid { get; set; }
 
     private string SearchText { get; set; } = "Blazor";
 
-    public Repository SelectedRepository { get; set; }
+    public Repository? SelectedRepository { get; set; }
 
     public async ValueTask<DataResult<Repository>> LoadData(DataRequest request)
     {
         var value = SearchText;
         var result = await GitHubClient.SearchRepositories(value, request.Page, request.PageSize);
+        result ??= new();
 
         var response = new DataResult<Repository>(result.TotalCount, result.Items);
         return response;
+    }
+
+    private async Task HandleSubmit()
+    {
+        if (Grid == null)
+            return;
+
+        await Grid.RefreshAsync(true);
     }
 }

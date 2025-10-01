@@ -1,4 +1,4 @@
-﻿@page "/repeater/index"
+@page "/repeater/index"
 
 <h1>Repeater</h1>
 
@@ -60,7 +60,7 @@
 
     public List<Person> People = [new("Jim", "jim@email.com"), new("Bob", "bob@email.com")];
 
-    public string SelectedColor { get; set; }
+    public string? SelectedColor { get; set; }
 
     public string SelectedPerson { get; set; } = "bob@email.com";
 

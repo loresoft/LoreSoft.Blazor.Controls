@@ -1,4 +1,4 @@
-﻿@using Sample.Core.Services
+@using Sample.Core.Services
 @using Sample.Core.Models
 
 <h3>Virtual - No Paging</h3>
@@ -18,9 +18,9 @@
 </DataGrid>
 
 @code {
-    public ICollection<Person> People { get; set; }
+    public ICollection<Person> People { get; set; } = [];
 
-    private DataGrid<Person> Grid { get; set; }
+    private DataGrid<Person>? Grid { get; set; }
 
     protected override void OnInitialized()
     {

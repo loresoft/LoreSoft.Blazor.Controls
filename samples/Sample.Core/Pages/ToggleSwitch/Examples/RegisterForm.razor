@@ -69,7 +69,7 @@
     public async Task<IEnumerable<Person>> SearchPeople(string searchText)
     {
         var result = Data.PersonList
-            .Where(x => x.FullName.ToLower().Contains(searchText.ToLower()))
+            .Where(x => x.FullName != null && x.FullName.ToLower().Contains(searchText.ToLower()))
             .ToList();
 
         return await Task.FromResult(result);

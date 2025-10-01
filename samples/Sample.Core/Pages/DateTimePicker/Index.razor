@@ -1,4 +1,4 @@
-﻿@page "/datetimepicker/index"
+@page "/datetimepicker/index"
 @using Sample.Core.Pages.DateTimePicker.Examples
 
 @inject IJSRuntime JsRuntime;
@@ -28,9 +28,5 @@
 <br />
 
 @code {
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        base.OnAfterRender(firstRender);
-        await JsRuntime.InvokeAsync<object>("Prism.highlightAll");
-    }
+
 }
