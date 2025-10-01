@@ -1,0 +1,1329 @@
+﻿[assembly: System.Reflection.AssemblyMetadata("RepositoryUrl", "https://github.com/loresoft/LoreSoft.Blazor.Controls")]
+[assembly: System.Resources.NeutralResourcesLanguage("en-US")]
+[assembly: System.Runtime.Versioning.TargetFramework(".NETCoreApp,Version=v9.0", FrameworkDisplayName=".NET 9.0")]
+namespace LoreSoft.Blazor.Controls
+{
+    public class BooleanSelect<TValue> : Microsoft.AspNetCore.Components.Forms.InputSelect<TValue>
+    {
+        public BooleanSelect() { }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public string FalseLabel { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public string NullLabel { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public string TrueLabel { get; set; }
+        protected override string? FormatValueAsString(TValue? value) { }
+        protected override void OnParametersSet() { }
+        protected void RenderBooleanOptions(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder builder) { }
+    }
+    public class BrowserCultureProvider
+    {
+        public BrowserCultureProvider(Microsoft.JSInterop.IJSRuntime javaScript) { }
+        public System.Threading.Tasks.ValueTask<string> GetLanguage(bool force = false) { }
+        public System.Threading.Tasks.ValueTask<System.TimeZoneInfo> GetTimeZone(bool force = false) { }
+    }
+    public class BusyButton : Microsoft.AspNetCore.Components.ComponentBase
+    {
+        public BusyButton() { }
+        [Microsoft.AspNetCore.Components.Parameter(CaptureUnmatchedValues=true)]
+        public System.Collections.Generic.Dictionary<string, object> AdditionalAttributes { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public bool Busy { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public Microsoft.AspNetCore.Components.RenderFragment? BusyTemplate { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public string BusyText { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public Microsoft.AspNetCore.Components.RenderFragment? ChildContent { get; set; }
+        protected string? ClassName { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public bool Disabled { get; set; }
+        protected bool IsBusy { get; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public Microsoft.AspNetCore.Components.EventCallback Trigger { get; set; }
+        protected override void BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder builder) { }
+        protected override void OnParametersSet() { }
+    }
+    public class Conditional : Microsoft.AspNetCore.Components.ComponentBase
+    {
+        public Conditional() { }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public Microsoft.AspNetCore.Components.RenderFragment? ChildContent { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public bool Condition { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public Microsoft.AspNetCore.Components.RenderFragment? Failed { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public Microsoft.AspNetCore.Components.RenderFragment? Passed { get; set; }
+        protected override void BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder builder) { }
+        protected override void OnParametersSet() { }
+    }
+    [Microsoft.AspNetCore.Components.CascadingTypeParameter("TItem")]
+    public class DataColumn<TItem> : Microsoft.AspNetCore.Components.ComponentBase
+    {
+        public DataColumn() { }
+        [Microsoft.AspNetCore.Components.Parameter(CaptureUnmatchedValues=true)]
+        public System.Collections.Generic.Dictionary<string, object>? AdditionalAttributes { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public LoreSoft.Blazor.Controls.TextAlign? Align { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public System.Func<TItem, System.Collections.Generic.Dictionary<string, object>>? CellAttributes { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public string? ClassName { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public string? ColumnClass { get; set; }
+        public string ColumnName { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public string? ColumnStyle { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public string? ExportHeader { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public bool Exportable { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public Microsoft.AspNetCore.Components.RenderFragment<LoreSoft.Blazor.Controls.QueryFilter>? FilterTemplate { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public System.Collections.Generic.List<string>? FilterValues { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public bool Filterable { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public string? FooterClass { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public string? FooterStyle { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public Microsoft.AspNetCore.Components.RenderFragment<System.Collections.Generic.ICollection<TItem>>? FooterTemplate { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public string? Format { get; set; }
+        [Microsoft.AspNetCore.Components.CascadingParameter(Name="Grid")]
+        protected LoreSoft.Blazor.Controls.DataGrid<TItem>? Grid { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public Microsoft.AspNetCore.Components.RenderFragment<System.Linq.IGrouping<string, TItem>>? GroupTemplate { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public bool Groupable { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public bool Grouping { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public LoreSoft.Blazor.Controls.TextAlign? HeaderAlign { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public string? HeaderClass { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public string? HeaderStyle { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public Microsoft.AspNetCore.Components.RenderFragment? HeaderTemplate { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public bool Hideable { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public string? MaxWidth { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public string? MinWidth { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public bool MultiLine { get; set; }
+        [Microsoft.AspNetCore.Components.EditorRequired]
+        [Microsoft.AspNetCore.Components.Parameter]
+        public required System.Linq.Expressions.Expression<System.Func<TItem, object>> Property { get; set; }
+        public string PropertyName { get; set; }
+        public System.Type PropertyType { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public bool SortDescending { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public int SortIndex { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public bool Sortable { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public System.Func<TItem, string>? Style { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public Microsoft.AspNetCore.Components.RenderFragment<TItem>? Template { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public string? Title { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public bool Tooltip { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public bool Visible { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public string? Width { get; set; }
+        protected override void OnInitialized() { }
+        protected override void OnParametersSet() { }
+    }
+    public abstract class DataComponentBase<TItem> : Microsoft.AspNetCore.Components.ComponentBase, System.IDisposable
+    {
+        protected DataComponentBase() { }
+        protected LoreSoft.Blazor.Controls.DataProviderDelegate<TItem>? CurrentDataProvider { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public System.Collections.Generic.IEnumerable<TItem>? Data { get; set; }
+        protected System.Exception? DataError { get; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public System.Func<System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<TItem>>>? DataLoader { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public Microsoft.AspNetCore.Components.RenderFragment<LoreSoft.Blazor.Controls.DataComponentBase<TItem>>? DataPagination { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public LoreSoft.Blazor.Controls.DataProviderDelegate<TItem>? DataProvider { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public Microsoft.AspNetCore.Components.RenderFragment<LoreSoft.Blazor.Controls.DataComponentBase<TItem>>? DataToolbar { get; set; }
+        [Microsoft.AspNetCore.Components.Inject]
+        public required LoreSoft.Blazor.Controls.DownloadService DownloadService { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public Microsoft.AspNetCore.Components.RenderFragment? EmptyTemplate { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public Microsoft.AspNetCore.Components.RenderFragment<System.Exception>? ErrorTemplate { get; set; }
+        protected bool FilterOpen { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public bool Filterable { get; set; }
+        public bool IsLoading { get; set; }
+        [Microsoft.AspNetCore.Components.Inject]
+        public required Microsoft.JSInterop.IJSRuntime JavaScript { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public Microsoft.AspNetCore.Components.RenderFragment? LoadingTemplate { get; set; }
+        public LoreSoft.Blazor.Controls.DataPagerState Pager { get; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public LoreSoft.Blazor.Controls.QueryGroup? Query { get; set; }
+        public LoreSoft.Blazor.Controls.QueryGroup RootQuery { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public bool Sortable { get; set; }
+        protected System.Collections.Generic.ICollection<TItem>? View { get; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public float VirtualItemSize { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public int VirtualOverscan { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public bool Virtualize { get; set; }
+        public System.Threading.Tasks.Task ApplyFilter(LoreSoft.Blazor.Controls.QueryRule rule) { }
+        protected System.Threading.Tasks.Task ApplyFilters() { }
+        public System.Threading.Tasks.Task ApplyFilters(System.Collections.Generic.IEnumerable<LoreSoft.Blazor.Controls.QueryRule> rules, bool replace = false) { }
+        public System.Threading.Tasks.Task ClearFilters() { }
+        public void CloseFilter() { }
+        public virtual LoreSoft.Blazor.Controls.DataRequest CreateDataRequest(System.Threading.CancellationToken cancellationToken = default) { }
+        protected virtual System.Threading.Tasks.ValueTask<LoreSoft.Blazor.Controls.DataResult<TItem>> DefaultProvider(LoreSoft.Blazor.Controls.DataRequest request) { }
+        public void Dispose() { }
+        protected virtual System.Linq.IQueryable<TItem> FilterData(System.Linq.IQueryable<TItem> queryable, LoreSoft.Blazor.Controls.DataRequest request) { }
+        public bool IsFilterActive() { }
+        protected override System.Threading.Tasks.Task OnAfterRenderAsync(bool firstRender) { }
+        protected override void OnInitialized() { }
+        protected override System.Threading.Tasks.Task OnParametersSetAsync() { }
+        protected virtual System.Linq.IQueryable<TItem> PageData(System.Linq.IQueryable<TItem> queryable, LoreSoft.Blazor.Controls.DataRequest request) { }
+        public virtual System.Threading.Tasks.Task RefreshAsync(bool resetPager = false, bool forceReload = false) { }
+        protected virtual System.Threading.Tasks.ValueTask RefreshCoreAsync() { }
+        public System.Threading.Tasks.Task RemoveFilter(string id) { }
+        public System.Threading.Tasks.Task RemoveFilters(System.Predicate<LoreSoft.Blazor.Controls.QueryRule> match) { }
+        public void ShowFilter() { }
+        public virtual void SortBy(string columnName, bool? descending = default) { }
+        public virtual System.Threading.Tasks.Task SortByAsync(string columnName, bool? descending = default) { }
+        protected virtual System.Linq.IQueryable<TItem> SortData(System.Linq.IQueryable<TItem> queryable, LoreSoft.Blazor.Controls.DataRequest request) { }
+        public void ToggleFilter() { }
+    }
+    [Microsoft.AspNetCore.Components.CascadingTypeParameter("TItem")]
+    public class DataGridToolbar<TItem> : Microsoft.AspNetCore.Components.ComponentBase
+        where TItem :  class
+    {
+        public DataGridToolbar() { }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public Microsoft.AspNetCore.Components.RenderFragment<LoreSoft.Blazor.Controls.DataGrid<TItem>>? ActionTemplate { get; set; }
+        protected LoreSoft.Blazor.Controls.DataGrid<TItem>? CurrentGrid { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public LoreSoft.Blazor.Controls.DataGrid<TItem>? DataGrid { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public string? ExportName { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public Microsoft.AspNetCore.Components.RenderFragment<LoreSoft.Blazor.Controls.DataGrid<TItem>>? FilterTemplate { get; set; }
+        [Microsoft.AspNetCore.Components.Inject]
+        public required Microsoft.JSInterop.IJSRuntime JavaScript { get; set; }
+        [Microsoft.AspNetCore.Components.CascadingParameter(Name="Grid")]
+        protected LoreSoft.Blazor.Controls.DataGrid<TItem>? ParentGrid { get; set; }
+        protected LoreSoft.Blazor.Controls.DebounceValue<string> SearchText { get; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public bool ShowColumnPicker { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public bool ShowExport { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public bool ShowFilter { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public bool ShowRefresh { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public bool ShowSearch { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public string? Title { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public Microsoft.AspNetCore.Components.RenderFragment<LoreSoft.Blazor.Controls.DataGrid<TItem>>? TitleTemplate { get; set; }
+        protected override void BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder @__builder) { }
+        protected System.Threading.Tasks.Task HandelExport() { }
+        protected System.Threading.Tasks.Task HandelRefresh() { }
+        protected void HandleSearch(string? searchText) { }
+        protected override void OnParametersSet() { }
+        protected void ToggleColumnPicker() { }
+        protected void ToggleFilter() { }
+    }
+    [Microsoft.AspNetCore.Components.CascadingTypeParameter("TItem")]
+    public class DataGrid<TItem> : LoreSoft.Blazor.Controls.DataComponentBase<TItem>
+    {
+        public DataGrid() { }
+        protected int CellCount { get; }
+        protected bool ColumnPickerOpen { get; set; }
+        public System.Collections.Generic.List<LoreSoft.Blazor.Controls.DataColumn<TItem>> Columns { get; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public Microsoft.AspNetCore.Components.RenderFragment? DataColumns { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public Microsoft.AspNetCore.Components.RenderFragment<TItem>? DetailTemplate { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public bool Groupable { get; set; }
+        protected bool HasGrouping { get; }
+        protected Microsoft.AspNetCore.Components.RenderFragment<LoreSoft.Blazor.Controls.DataColumn<TItem>> HeaderFragment { get; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public System.Func<TItem, System.Collections.Generic.Dictionary<string, object>>? RowAttributes { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public string? RowClass { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public Microsoft.AspNetCore.Components.EventCallback<TItem> RowDoubleClick { get; set; }
+        protected Microsoft.AspNetCore.Components.RenderFragment<TItem> RowFragment { get; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public System.Func<TItem, string>? RowStyle { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public bool Selectable { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public System.Collections.Generic.IEnumerable<TItem> SelectedItems { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public Microsoft.AspNetCore.Components.EventCallback<System.Collections.Generic.IEnumerable<TItem>> SelectedItemsChanged { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter(CaptureUnmatchedValues=true)]
+        public System.Collections.Generic.Dictionary<string, object>? TableAttributes { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public string TableClass { get; set; }
+        protected System.Collections.Generic.List<LoreSoft.Blazor.Controls.DataColumn<TItem>> VisibleColumns { get; }
+        protected override void BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder @__builder) { }
+        public void CloseColumnPicker() { }
+        public override LoreSoft.Blazor.Controls.DataRequest CreateDataRequest(System.Threading.CancellationToken cancellationToken = default) { }
+        protected void DeselectAll() { }
+        public virtual System.Threading.Tasks.Task ExportAsync(string? fileName = null, System.Threading.CancellationToken cancellationToken = default) { }
+        protected override System.Linq.IQueryable<TItem> FilterData(System.Linq.IQueryable<TItem> queryable, LoreSoft.Blazor.Controls.DataRequest request) { }
+        protected bool IsAllSelected() { }
+        protected bool IsGroupExpanded(string key) { }
+        protected bool IsRowExpanded(TItem item) { }
+        protected bool IsRowSelected(TItem item) { }
+        protected override System.Threading.Tasks.Task OnAfterRenderAsync(bool firstRender) { }
+        protected override void OnParametersSet() { }
+        public System.Threading.Tasks.Task QuickSearch(string? searchText, bool clearFilter = false) { }
+        public override System.Threading.Tasks.Task RefreshAsync(bool resetPager = false, bool forceReload = false) { }
+        protected void SelectAll() { }
+        protected void SetSelectedItems(System.Collections.Generic.IEnumerable<TItem> items) { }
+        public void ShowColumnPicker() { }
+        public System.Threading.Tasks.Task SortByAsync(LoreSoft.Blazor.Controls.DataColumn<TItem> column, bool? descending = default) { }
+        public override System.Threading.Tasks.Task SortByAsync(string columnName, bool? descending = default) { }
+        protected override System.Linq.IQueryable<TItem> SortData(System.Linq.IQueryable<TItem> queryable, LoreSoft.Blazor.Controls.DataRequest request) { }
+        public void ToggleColumnPicker() { }
+        protected void ToggleDetailRow(TItem item) { }
+        protected void ToggleGroupRow(string key) { }
+        protected void ToggleSelectAll() { }
+        protected void ToggleSelectRow(TItem item) { }
+        protected void ToggleVisible(LoreSoft.Blazor.Controls.DataColumn<TItem> column) { }
+    }
+    [Microsoft.AspNetCore.Components.CascadingTypeParameter("TItem")]
+    public class DataListToolbar<TItem> : Microsoft.AspNetCore.Components.ComponentBase
+        where TItem :  class
+    {
+        public DataListToolbar() { }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public Microsoft.AspNetCore.Components.RenderFragment<LoreSoft.Blazor.Controls.DataList<TItem>>? ActionTemplate { get; set; }
+        protected LoreSoft.Blazor.Controls.DataList<TItem>? CurrentList { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public LoreSoft.Blazor.Controls.DataList<TItem>? DataList { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public string? ExportName { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public Microsoft.AspNetCore.Components.RenderFragment<LoreSoft.Blazor.Controls.DataList<TItem>>? FilterTemplate { get; set; }
+        [Microsoft.AspNetCore.Components.CascadingParameter(Name="Grid")]
+        protected LoreSoft.Blazor.Controls.DataList<TItem>? ParentList { get; set; }
+        protected LoreSoft.Blazor.Controls.DebounceValue<string> SearchText { get; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public bool ShowExport { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public bool ShowFilter { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public bool ShowRefresh { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public bool ShowSearch { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public bool ShowSortPicker { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public string? Title { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public Microsoft.AspNetCore.Components.RenderFragment<LoreSoft.Blazor.Controls.DataList<TItem>>? TitleTemplate { get; set; }
+        protected override void BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder @__builder) { }
+        protected System.Threading.Tasks.Task HandelExport() { }
+        protected System.Threading.Tasks.Task HandelRefresh() { }
+        protected void HandleSearch(string? searchText) { }
+        protected override void OnParametersSet() { }
+        protected void ToggleFilter() { }
+        protected void ToggleSortPicker() { }
+    }
+    [Microsoft.AspNetCore.Components.CascadingTypeParameter("TItem")]
+    public class DataList<TItem> : LoreSoft.Blazor.Controls.DataComponentBase<TItem>
+    {
+        public DataList() { }
+        [Microsoft.AspNetCore.Components.Parameter(CaptureUnmatchedValues=true)]
+        public System.Collections.Generic.Dictionary<string, object>? AdditionalAttributes { get; set; }
+        protected string? ClassName { get; set; }
+        protected string CurrentSortDirection { get; set; }
+        protected string CurrentSortField { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public Microsoft.AspNetCore.Components.RenderFragment? FooterTemplate { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public Microsoft.AspNetCore.Components.RenderFragment? HeaderTemplate { get; set; }
+        protected System.Collections.Generic.IEnumerable<System.Reflection.PropertyInfo> Properties { get; }
+        protected LoreSoft.Blazor.Controls.QueryBuilder<TItem>? QueryBuilder { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public Microsoft.AspNetCore.Components.RenderFragment? QueryFields { get; set; }
+        [Microsoft.AspNetCore.Components.EditorRequired]
+        [Microsoft.AspNetCore.Components.Parameter]
+        public required Microsoft.AspNetCore.Components.RenderFragment<TItem> RowTemplate { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public bool SortDescending { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public string SortField { get; set; }
+        protected bool SortPickerOpen { get; set; }
+        protected override void BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder @__builder) { }
+        public void CloseSortPicker() { }
+        public virtual System.Threading.Tasks.Task ExportAsync(string? fileName = null, System.Threading.CancellationToken cancellationToken = default) { }
+        protected System.Threading.Tasks.Task HandleSortChanged() { }
+        protected override void OnParametersSet() { }
+        public System.Threading.Tasks.Task QuickSearch(string? searchText, bool clearFilter = false) { }
+        public void ShowSortPicker() { }
+        public override System.Threading.Tasks.Task SortByAsync(string columnName, bool? descending = default) { }
+        public void ToggleSortPicker() { }
+    }
+    public class DataPager : Microsoft.AspNetCore.Components.ComponentBase, System.IDisposable
+    {
+        public DataPager() { }
+        [Microsoft.AspNetCore.Components.Parameter(CaptureUnmatchedValues=true)]
+        public System.Collections.Generic.Dictionary<string, object>? AdditionalAttributes { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public string ButtonClass { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public bool CenterSelected { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public string CurrentClass { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public string DisabledClass { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public int DisplaySize { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public string FirstText { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public string ItemClass { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public string LastText { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public string NextText { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public int PageSize { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public Microsoft.AspNetCore.Components.EventCallback<LoreSoft.Blazor.Controls.PageChangedEventArgs> PagerChanged { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public string PagerClass { get; set; }
+        [Microsoft.AspNetCore.Components.CascadingParameter(Name="PagerState")]
+        protected LoreSoft.Blazor.Controls.DataPagerState PagerState { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public string PreviousText { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public bool ShowBoundary { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public bool ShowDirection { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public bool ShowEmpty { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public bool ShowPage { get; set; }
+        protected override void BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder builder) { }
+        public void Dispose() { }
+        public void FirstPage() { }
+        public void GoToPage(int page) { }
+        public void LastPage() { }
+        public void NextPage() { }
+        protected override void OnInitialized() { }
+        public void PreviousPage() { }
+    }
+    public class DataPagerState
+    {
+        public DataPagerState() { }
+        public int EndItem { get; }
+        public bool HasNextPage { get; }
+        public bool HasPreviousPage { get; }
+        public bool IsFirstPage { get; }
+        public bool IsLastPage { get; }
+        public int Page { get; set; }
+        public int PageCount { get; }
+        public int PageSize { get; set; }
+        public int StartItem { get; }
+        public int Total { get; set; }
+        public event System.ComponentModel.PropertyChangedEventHandler? PropertyChanged;
+        protected virtual void RaisePropertyChanged(string? propertyName) { }
+        protected void SetProperty<T>(ref T field, T value, [System.Runtime.CompilerServices.CallerMemberName] string? propertyName = null) { }
+    }
+    public delegate System.Threading.Tasks.ValueTask<LoreSoft.Blazor.Controls.DataResult<TItem>> DataProviderDelegate<TItem>(LoreSoft.Blazor.Controls.DataRequest request);
+    public class DataRequest : System.IEquatable<LoreSoft.Blazor.Controls.DataRequest>
+    {
+        public DataRequest(int Page, int PageSize, LoreSoft.Blazor.Controls.DataSort[]? Sorts, LoreSoft.Blazor.Controls.QueryGroup? Query, System.Threading.CancellationToken CancellationToken) { }
+        public System.Threading.CancellationToken CancellationToken { get; init; }
+        public int Page { get; init; }
+        public int PageSize { get; init; }
+        public LoreSoft.Blazor.Controls.QueryGroup? Query { get; init; }
+        public LoreSoft.Blazor.Controls.DataSort[]? Sorts { get; init; }
+    }
+    public class DataResult<TItem> : System.IEquatable<LoreSoft.Blazor.Controls.DataResult<TItem>>
+    {
+        public DataResult(int Total, System.Collections.Generic.IEnumerable<TItem> Items) { }
+        public System.Collections.Generic.IEnumerable<TItem> Items { get; init; }
+        public int Total { get; init; }
+    }
+    public class DataSizer : Microsoft.AspNetCore.Components.ComponentBase, System.IDisposable
+    {
+        public DataSizer() { }
+        [Microsoft.AspNetCore.Components.Parameter(CaptureUnmatchedValues=true)]
+        public System.Collections.Generic.Dictionary<string, object>? AdditionalAttributes { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public string DescriptionLabel { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public bool IncludeAllOption { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public int? PageSize { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public int[] PageSizeOptions { get; set; }
+        [Microsoft.AspNetCore.Components.CascadingParameter(Name="PagerState")]
+        protected LoreSoft.Blazor.Controls.DataPagerState PagerState { get; set; }
+        protected override void BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder builder) { }
+        public void Dispose() { }
+        protected override void OnInitialized() { }
+    }
+    public class DataSort : System.IEquatable<LoreSoft.Blazor.Controls.DataSort>
+    {
+        public DataSort(string Property, bool Descending) { }
+        public bool Descending { get; init; }
+        public string Property { get; init; }
+    }
+    public class DatePickerCell
+    {
+        public DatePickerCell(System.DateTime date) { }
+        public System.DateTime Date { get; }
+        public int Day { get; }
+        public bool IsDisabled { get; set; }
+        public bool IsPrimaryMonth { get; }
+        public bool IsSecondaryMonth { get; }
+        public bool IsToday { get; }
+        public int Month { get; }
+        public int Year { get; }
+    }
+    public class DatePickerRow
+    {
+        public DatePickerRow() { }
+        public System.Collections.Generic.List<LoreSoft.Blazor.Controls.DatePickerCell> Cells { get; }
+        public string Key { get; }
+    }
+    public enum DateTimePickerMode
+    {
+        Date = 0,
+        DateTime = 1,
+        Time = 2,
+    }
+    public class DateTimePicker<TValue> : Microsoft.AspNetCore.Components.Forms.InputBase<TValue>
+    {
+        public const string DateFormat = "yyyy-MM-dd";
+        public const string DateTimeLocalFormat = "yyyy-MM-ddTHH:mm:ss";
+        public const string TimeFormat = "HH:mm:ss";
+        public DateTimePicker() { }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public bool AllowClear { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public System.Globalization.DateTimeFormatInfo DateTimeFormatInfo { get; set; }
+        protected Microsoft.AspNetCore.Components.ElementReference DateTimeInput { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public bool Disabled { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public System.DayOfWeek FirstDayOfWeek { get; set; }
+        protected System.Collections.Generic.List<string> Headers { get; set; }
+        protected string InputClass { get; }
+        protected string InputType { get; set; }
+        public bool IsDatePickerOpen { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public LoreSoft.Blazor.Controls.DateTimePickerMode Mode { get; set; }
+        public int Month { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public string ParsingErrorMessage { get; set; }
+        protected string PickerClass { get; }
+        protected bool PreventKey { get; set; }
+        protected System.Collections.Generic.List<LoreSoft.Blazor.Controls.DatePickerRow> Rows { get; set; }
+        protected System.Collections.Generic.List<LoreSoft.Blazor.Controls.TimePickerSegment> Segments { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public int TimeScale { get; set; }
+        protected string? ValidationClass { get; }
+        protected string ValueFormat { get; set; }
+        public int Year { get; set; }
+        protected void BuildGrid() { }
+        protected override void BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder @__builder) { }
+        protected void BuildTimeSegments() { }
+        protected bool CanClear() { }
+        protected void ClearValue() { }
+        protected void CloseDatePicker() { }
+        protected void DateCellKeyDown(Microsoft.AspNetCore.Components.Web.KeyboardEventArgs args, LoreSoft.Blazor.Controls.DatePickerCell cell) { }
+        protected void DateTimeFocus() { }
+        protected override string FormatValueAsString(TValue? value) { }
+        protected TValue? GetValueOrToday() { }
+        public void HandleKeydown(Microsoft.AspNetCore.Components.Web.KeyboardEventArgs args) { }
+        protected void NextMonth() { }
+        protected override void OnParametersSet() { }
+        protected void PreviousMonth() { }
+        protected void RefreshDatePicker() { }
+        protected void SelectDate(LoreSoft.Blazor.Controls.DatePickerCell cell) { }
+        protected void SelectTime(LoreSoft.Blazor.Controls.TimePickerSegment segment) { }
+        protected void ShowDatePicker() { }
+        protected void ShowToday() { }
+        protected void TimeCellKeyDown(Microsoft.AspNetCore.Components.Web.KeyboardEventArgs args, LoreSoft.Blazor.Controls.TimePickerSegment segment) { }
+        protected void ToggleDatePicker() { }
+        protected override bool TryParseValueFromString(string? value, [System.Diagnostics.CodeAnalysis.MaybeNullWhen(false)] out TValue result, [System.Diagnostics.CodeAnalysis.NotNullWhen(false)] out string? validationErrorMessage) { }
+    }
+    public class DebounceValue<T>
+    {
+        public static readonly System.TimeSpan DefaultDelay;
+        public DebounceValue(System.Action<T?> action) { }
+        public DebounceValue(System.Action<T?> action, System.TimeSpan delay) { }
+        public DebounceValue(System.Action<T?> action, System.TimeSpan delay, T? value) { }
+        public System.Action<T?> Action { get; }
+        public System.TimeSpan Delay { get; }
+        public T Value { get; set; }
+    }
+    public class DownloadService
+    {
+        public DownloadService(Microsoft.JSInterop.IJSRuntime javaScript) { }
+        public System.Threading.Tasks.Task DownloadFileStream(System.IO.Stream stream, string? fileName = null, string? mimeType = null) { }
+        public System.Threading.Tasks.Task DownloadFileText(string text, string? fileName = null, string? mimeType = null) { }
+        public System.Threading.Tasks.Task TriggerFileDownload(string url, string? fileName = null) { }
+    }
+    public class Gravatar : Microsoft.AspNetCore.Components.ComponentBase, System.IDisposable
+    {
+        public Gravatar() { }
+        [Microsoft.AspNetCore.Components.Parameter(CaptureUnmatchedValues=true)]
+        public System.Collections.Generic.Dictionary<string, object>? AdditionalAttributes { get; set; }
+        [Microsoft.AspNetCore.Components.EditorRequired]
+        [Microsoft.AspNetCore.Components.Parameter]
+        public required string Email { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public LoreSoft.Blazor.Controls.GravatarMode Mode { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public LoreSoft.Blazor.Controls.GravatarRating Rating { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public int Size { get; set; }
+        protected override void BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder builder) { }
+        public void Dispose() { }
+    }
+    public enum GravatarMode
+    {
+        [System.ComponentModel.DataAnnotations.Display(Name="404")]
+        NotFound = 0,
+        [System.ComponentModel.DataAnnotations.Display(Name="Mm")]
+        Mm = 1,
+        [System.ComponentModel.DataAnnotations.Display(Name="Identicon")]
+        Identicon = 2,
+        [System.ComponentModel.DataAnnotations.Display(Name="Monsterid")]
+        Monsterid = 3,
+        [System.ComponentModel.DataAnnotations.Display(Name="Wavatar")]
+        Wavatar = 4,
+        [System.ComponentModel.DataAnnotations.Display(Name="Retro")]
+        Retro = 5,
+        [System.ComponentModel.DataAnnotations.Display(Name="Blank")]
+        Blank = 6,
+    }
+    public enum GravatarRating
+    {
+        g = 0,
+        pg = 1,
+        r = 2,
+        x = 3,
+    }
+    public interface IToaster
+    {
+        event System.Action<LoreSoft.Blazor.Controls.ToastLevel?>? OnClear;
+        event System.Action<LoreSoft.Blazor.Controls.ToastLevel, Microsoft.AspNetCore.Components.RenderFragment, System.Action<LoreSoft.Blazor.Controls.ToastSettings>?> OnShow;
+        void Clear(LoreSoft.Blazor.Controls.ToastLevel? toastLevel = default);
+        void Show(LoreSoft.Blazor.Controls.ToastLevel level, Microsoft.AspNetCore.Components.RenderFragment message, System.Action<LoreSoft.Blazor.Controls.ToastSettings>? settings = null);
+    }
+    public class InputImage : Microsoft.AspNetCore.Components.Forms.InputBase<string>
+    {
+        public InputImage() { }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public string? Accept { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public bool Disabled { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public int? DisplayHeight { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public int? DisplayWidth { get; set; }
+        protected string? ImageStyle { get; set; }
+        protected string? ImageUrl { get; }
+        protected string InputIdentifier { get; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public long MaxFileSize { get; set; }
+        protected override void BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder @__builder) { }
+        protected void ClearImage() { }
+        protected System.Threading.Tasks.Task LoadFiles(Microsoft.AspNetCore.Components.Forms.InputFileChangeEventArgs e) { }
+        protected override void OnParametersSet() { }
+        protected override bool TryParseValueFromString(string? value, [System.Diagnostics.CodeAnalysis.MaybeNullWhen(false)] out string result, [System.Diagnostics.CodeAnalysis.NotNullWhen(false)] out string? validationErrorMessage) { }
+    }
+    public class JsonDisplay : Microsoft.AspNetCore.Components.ComponentBase
+    {
+        public JsonDisplay() { }
+        [Microsoft.AspNetCore.Components.Parameter(CaptureUnmatchedValues=true)]
+        public System.Collections.Generic.Dictionary<string, object>? Attributes { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public string? Json { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public System.Text.Json.JsonElement? JsonElement { get; set; }
+        protected override void BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder builder) { }
+    }
+    [Microsoft.AspNetCore.Components.CascadingTypeParameter("TKey")]
+    [Microsoft.AspNetCore.Components.CascadingTypeParameter("TValue")]
+    public class LazyValue<TKey, TValue> : Microsoft.AspNetCore.Components.ComponentBase
+    {
+        public LazyValue() { }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public Microsoft.AspNetCore.Components.RenderFragment<TValue?>? ChildContent { get; set; }
+        [Microsoft.AspNetCore.Components.EditorRequired]
+        [Microsoft.AspNetCore.Components.Parameter]
+        public required TKey Key { get; set; }
+        [Microsoft.AspNetCore.Components.EditorRequired]
+        [Microsoft.AspNetCore.Components.Parameter]
+        public required System.Func<TKey?, System.Threading.Tasks.Task<TValue?>> LoadMethod { get; set; }
+        public bool Loading { get; set; }
+        public TValue Value { get; set; }
+        protected override void BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder builder) { }
+        protected override System.Threading.Tasks.Task OnParametersSetAsync() { }
+    }
+    public class LoadingBlock : Microsoft.AspNetCore.Components.ComponentBase
+    {
+        public LoadingBlock() { }
+        [Microsoft.AspNetCore.Components.Parameter(CaptureUnmatchedValues=true)]
+        public System.Collections.Generic.Dictionary<string, object>? AdditionalAttributes { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public Microsoft.AspNetCore.Components.RenderFragment? ChildContent { get; set; }
+        protected string? ClassName { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public bool IsLoading { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public Microsoft.AspNetCore.Components.RenderFragment? LoadingTemplate { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public string? LoadingText { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public bool ShowOverlay { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public bool ShowSpinner { get; set; }
+        protected override void BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder builder) { }
+        protected override void OnParametersSet() { }
+    }
+    public class LocalTime<TValue> : Microsoft.AspNetCore.Components.ComponentBase
+    {
+        public LocalTime() { }
+        [Microsoft.AspNetCore.Components.Inject]
+        public required LoreSoft.Blazor.Controls.BrowserCultureProvider BrowserProvider { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public string? DisplayFormat { get; set; }
+        protected System.TimeZoneInfo LocalTimeZone { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public string? TitleFormat { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public TValue Value { get; set; }
+        protected override void BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder builder) { }
+        protected override System.Threading.Tasks.Task OnAfterRenderAsync(bool firstRender) { }
+    }
+    public class PageChangedEventArgs : System.IEquatable<LoreSoft.Blazor.Controls.PageChangedEventArgs>
+    {
+        public PageChangedEventArgs(int Page, int PageSize) { }
+        public int Page { get; init; }
+        public int PageSize { get; init; }
+    }
+    public class ProgressBar : Microsoft.AspNetCore.Components.ComponentBase, System.IDisposable
+    {
+        public ProgressBar() { }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public int AnimationDuration { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter(CaptureUnmatchedValues=true)]
+        public System.Collections.Generic.Dictionary<string, object> Attributes { get; set; }
+        protected string BarStyle { get; }
+        protected string? ClassName { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public string Color { get; set; }
+        protected string ContainerStyle { get; }
+        protected string IconStyle { get; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public int IncrementDuration { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public double MinimumProgress { get; set; }
+        protected int Opacity { get; set; }
+        protected string PegStyle { get; }
+        protected double Progress { get; set; }
+        [Microsoft.AspNetCore.Components.Inject]
+        public required LoreSoft.Blazor.Controls.ProgressBarState State { get; set; }
+        protected override void BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder builder) { }
+        public void Dispose() { }
+        protected override void OnInitialized() { }
+        protected override void OnParametersSet() { }
+    }
+    public class ProgressBarHandler : System.Net.Http.DelegatingHandler
+    {
+        public ProgressBarHandler(LoreSoft.Blazor.Controls.ProgressBarState progressState) { }
+        protected override System.Threading.Tasks.Task<System.Net.Http.HttpResponseMessage> SendAsync(System.Net.Http.HttpRequestMessage request, System.Threading.CancellationToken cancellationToken) { }
+    }
+    public class ProgressBarState
+    {
+        public ProgressBarState() { }
+        public int Count { get; }
+        public bool Loading { get; }
+        public event System.Action? OnChange;
+        public void Complete() { }
+        protected void NotifyStateChanged() { }
+        public void Reset() { }
+        public void Start() { }
+    }
+    public class QueryBuilderField<TItem> : Microsoft.AspNetCore.Components.ComponentBase
+    {
+        public QueryBuilderField() { }
+        public string? Column { get; set; }
+        public string? CurrentInputType { get; set; }
+        public System.Collections.Generic.List<string>? CurrentOperators { get; set; }
+        public string? CurrentTitle { get; set; }
+        public System.Collections.Generic.List<string>? CurrentValues { get; set; }
+        [Microsoft.AspNetCore.Components.EditorRequired]
+        [Microsoft.AspNetCore.Components.Parameter]
+        public required System.Linq.Expressions.Expression<System.Func<TItem, object>> Field { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public string? Format { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public string? InputType { get; set; }
+        public string? Name { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public Microsoft.AspNetCore.Components.RenderFragment<LoreSoft.Blazor.Controls.QueryFilter>? OperatorTemplate { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public System.Collections.Generic.List<string>? Operators { get; set; }
+        [Microsoft.AspNetCore.Components.CascadingParameter(Name="QueryBuilder")]
+        protected LoreSoft.Blazor.Controls.QueryBuilder<TItem> QueryBuilder { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public string? Title { get; set; }
+        public System.Type? Type { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public Microsoft.AspNetCore.Components.RenderFragment<LoreSoft.Blazor.Controls.QueryFilter>? ValueTemplate { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public System.Collections.Generic.List<string>? Values { get; set; }
+        protected override void OnInitialized() { }
+        protected override void OnParametersSet() { }
+    }
+    public class QueryBuilderFilter<TItem> : Microsoft.AspNetCore.Components.ComponentBase
+    {
+        public QueryBuilderFilter() { }
+        protected LoreSoft.Blazor.Controls.QueryBuilderField<TItem>? Field { get; set; }
+        protected System.Collections.Generic.List<LoreSoft.Blazor.Controls.QueryBuilderField<TItem>> Fields { get; }
+        [Microsoft.AspNetCore.Components.EditorRequired]
+        [Microsoft.AspNetCore.Components.Parameter]
+        public LoreSoft.Blazor.Controls.QueryFilter Filter { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public LoreSoft.Blazor.Controls.QueryGroup? Parent { get; set; }
+        [Microsoft.AspNetCore.Components.CascadingParameter(Name="QueryBuilder")]
+        public required LoreSoft.Blazor.Controls.QueryBuilder<TItem> QueryBuilder { get; set; }
+        protected bool ShowValueInput { get; }
+        protected override void BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder @__builder) { }
+        protected void DeleteFilter() { }
+        protected void FieldChanged() { }
+        protected string? GetValue() { }
+        protected override void OnInitialized() { }
+        protected void OperatorChanged() { }
+        protected void SetValue(Microsoft.AspNetCore.Components.ChangeEventArgs args) { }
+    }
+    public class QueryBuilderGroup<TItem> : Microsoft.AspNetCore.Components.ComponentBase
+    {
+        public QueryBuilderGroup() { }
+        [Microsoft.AspNetCore.Components.EditorRequired]
+        [Microsoft.AspNetCore.Components.Parameter]
+        public required LoreSoft.Blazor.Controls.QueryGroup Group { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public LoreSoft.Blazor.Controls.QueryGroup? Parent { get; set; }
+        [Microsoft.AspNetCore.Components.CascadingParameter(Name="QueryBuilder")]
+        public required LoreSoft.Blazor.Controls.QueryBuilder<TItem> QueryBuilder { get; set; }
+        protected void AddFilter() { }
+        protected void AddGroup() { }
+        protected override void BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder @__builder) { }
+        protected void DeleteGroup() { }
+    }
+    [Microsoft.AspNetCore.Components.CascadingTypeParameter("TItem")]
+    public class QueryBuilder<TItem> : Microsoft.AspNetCore.Components.ComponentBase
+    {
+        public QueryBuilder() { }
+        public System.Collections.Generic.List<LoreSoft.Blazor.Controls.QueryBuilderField<TItem>> Fields { get; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public Microsoft.AspNetCore.Components.RenderFragment? FooterTemplate { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public LoreSoft.Blazor.Controls.QueryGroup? Query { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public Microsoft.AspNetCore.Components.EventCallback<LoreSoft.Blazor.Controls.QueryGroup> QueryChanged { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public Microsoft.AspNetCore.Components.RenderFragment? QueryFields { get; set; }
+        protected LoreSoft.Blazor.Controls.QueryGroup? RootQuery { get; set; }
+        protected override void BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder @__builder) { }
+        protected override System.Threading.Tasks.Task OnAfterRenderAsync(bool firstRender) { }
+        protected override void OnParametersSet() { }
+        public void Refresh() { }
+    }
+    public class QueryFilter : LoreSoft.Blazor.Controls.QueryRule
+    {
+        public QueryFilter() { }
+        [System.Text.Json.Serialization.JsonPropertyName("field")]
+        public string? Field { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("operator")]
+        public string? Operator { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("value")]
+        public object? Value { get; set; }
+    }
+    public class QueryGroup : LoreSoft.Blazor.Controls.QueryRule
+    {
+        public QueryGroup() { }
+        [System.Text.Json.Serialization.JsonPropertyName("filters")]
+        public System.Collections.Generic.List<LoreSoft.Blazor.Controls.QueryRule> Filters { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("logic")]
+        public string? Logic { get; set; }
+    }
+    public static class QueryLogic
+    {
+        public const string And = "and";
+        public const string Or = "or";
+    }
+    public static class QueryOperators
+    {
+        public const string Contains = "contains";
+        public const string EndsWith = "ends with";
+        public const string Equal = "equal";
+        public const string GreaterThan = "greater than";
+        public const string GreaterThanOrEqual = "greater than or equal";
+        public const string IsNotNull = "is not null";
+        public const string IsNull = "is null";
+        public const string LessThan = "less than";
+        public const string LessThanOrEqual = "less than or equal";
+        public const string NotContains = "not contains";
+        public const string NotEndsWith = "not ends with";
+        public const string NotEqual = "not equal";
+        public const string NotStartsWith = "not starts with";
+        public const string StartsWith = "starts with";
+    }
+    [System.Text.Json.Serialization.JsonDerivedType(typeof(LoreSoft.Blazor.Controls.QueryFilter))]
+    [System.Text.Json.Serialization.JsonDerivedType(typeof(LoreSoft.Blazor.Controls.QueryGroup))]
+    public abstract class QueryRule
+    {
+        protected QueryRule() { }
+        [System.Text.Json.Serialization.JsonIgnore]
+        public string Id { get; set; }
+    }
+    public class Repeater<TItem> : Microsoft.AspNetCore.Components.ComponentBase
+    {
+        public Repeater() { }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public Microsoft.AspNetCore.Components.RenderFragment<TItem>? ChildContent { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public Microsoft.AspNetCore.Components.RenderFragment? Empty { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public System.Collections.Generic.IEnumerable<TItem>? Items { get; set; }
+        protected override void BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder builder) { }
+    }
+    public static class ServiceCollectionExtensions
+    {
+        public static Microsoft.Extensions.DependencyInjection.IServiceCollection AddBlazorControls(this Microsoft.Extensions.DependencyInjection.IServiceCollection services) { }
+        public static Microsoft.Extensions.DependencyInjection.IServiceCollection AddProgressBar(this Microsoft.Extensions.DependencyInjection.IServiceCollection services) { }
+        public static Microsoft.Extensions.DependencyInjection.IServiceCollection AddToaster(this Microsoft.Extensions.DependencyInjection.IServiceCollection services) { }
+    }
+    public class Skeleton : Microsoft.AspNetCore.Components.ComponentBase
+    {
+        public Skeleton() { }
+        [Microsoft.AspNetCore.Components.Parameter(CaptureUnmatchedValues=true)]
+        public System.Collections.Generic.Dictionary<string, object>? AdditionalAttributes { get; set; }
+        protected string ClassName { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public string? Height { get; set; }
+        protected string Style { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public LoreSoft.Blazor.Controls.SkeletonType Type { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public string? Width { get; set; }
+        protected override void BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder builder) { }
+        protected override void OnParametersSet() { }
+    }
+    public enum SkeletonType
+    {
+        [System.ComponentModel.Description("text")]
+        Text = 0,
+        [System.ComponentModel.Description("circle")]
+        Circle = 1,
+        [System.ComponentModel.Description("rectangle")]
+        Rectangle = 2,
+    }
+    public enum TextAlign
+    {
+        Start = 0,
+        Center = 1,
+        End = 2,
+        Left = 3,
+        Right = 4,
+    }
+    public class TimePickerSegment
+    {
+        public TimePickerSegment(System.DateTime date, string text) { }
+        public System.DateTime Date { get; }
+        public int Hour { get; }
+        public bool IsDisabled { get; set; }
+        public int Minute { get; }
+        public string Text { get; }
+    }
+    public class ToastContainer : Microsoft.AspNetCore.Components.ComponentBase, System.IDisposable
+    {
+        public ToastContainer() { }
+        [Microsoft.AspNetCore.Components.Parameter(CaptureUnmatchedValues=true)]
+        public System.Collections.Generic.Dictionary<string, object> Attributes { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public bool ClearOnNavigation { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public int MaxToast { get; set; }
+        [Microsoft.AspNetCore.Components.Inject]
+        protected Microsoft.AspNetCore.Components.NavigationManager NavigationManager { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public bool PauseProgressOnHover { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public LoreSoft.Blazor.Controls.ToastPosition Position { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public bool ShowCloseButton { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public bool ShowProgressBar { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public int Timeout { get; set; }
+        [Microsoft.AspNetCore.Components.Inject]
+        protected LoreSoft.Blazor.Controls.IToaster Toaster { get; set; }
+        protected override void BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder @__builder) { }
+        public void Dispose() { }
+        protected override void OnInitialized() { }
+        public void RemoveToast(System.Guid toastId) { }
+    }
+    public class ToastElement : Microsoft.AspNetCore.Components.ComponentBase, System.IDisposable
+    {
+        public ToastElement() { }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public LoreSoft.Blazor.Controls.ToastLevel? Level { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public Microsoft.AspNetCore.Components.RenderFragment? Message { get; set; }
+        [Microsoft.AspNetCore.Components.EditorRequired]
+        [Microsoft.AspNetCore.Components.Parameter]
+        public LoreSoft.Blazor.Controls.ToastSettings Settings { get; set; }
+        [Microsoft.AspNetCore.Components.EditorRequired]
+        [Microsoft.AspNetCore.Components.Parameter]
+        public System.Guid ToastId { get; set; }
+        protected override void BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder @__builder) { }
+        public void Close() { }
+        public void Dispose() { }
+        protected override System.Threading.Tasks.Task OnInitializedAsync() { }
+    }
+    public enum ToastLevel
+    {
+        Information = 0,
+        Success = 1,
+        Warning = 2,
+        Error = 3,
+    }
+    public enum ToastPosition
+    {
+        TopLeft = 0,
+        TopRight = 1,
+        TopCenter = 2,
+        BottomLeft = 3,
+        BottomRight = 4,
+        BottomCenter = 5,
+    }
+    public class ToastSettings
+    {
+        public ToastSettings() { }
+        public string? ClassName { get; set; }
+        public System.Action? OnClick { get; set; }
+        public bool? PauseProgressOnHover { get; set; }
+        public LoreSoft.Blazor.Controls.ToastPosition? Position { get; set; }
+        public bool? ShowCloseButton { get; set; }
+        public bool? ShowProgressBar { get; set; }
+        public int Timeout { get; set; }
+    }
+    public static class ToasterExtensions
+    {
+        public static void Show(this LoreSoft.Blazor.Controls.IToaster toaster, LoreSoft.Blazor.Controls.ToastLevel level, string message, System.Action<LoreSoft.Blazor.Controls.ToastSettings>? settings = null) { }
+        public static void ShowError(this LoreSoft.Blazor.Controls.IToaster toaster, Microsoft.AspNetCore.Components.RenderFragment message, System.Action<LoreSoft.Blazor.Controls.ToastSettings>? settings = null) { }
+        public static void ShowError(this LoreSoft.Blazor.Controls.IToaster toaster, string message, System.Action<LoreSoft.Blazor.Controls.ToastSettings>? settings = null) { }
+        public static void ShowInformation(this LoreSoft.Blazor.Controls.IToaster toaster, Microsoft.AspNetCore.Components.RenderFragment message, System.Action<LoreSoft.Blazor.Controls.ToastSettings>? settings = null) { }
+        public static void ShowInformation(this LoreSoft.Blazor.Controls.IToaster toaster, string message, System.Action<LoreSoft.Blazor.Controls.ToastSettings>? settings = null) { }
+        public static void ShowSuccess(this LoreSoft.Blazor.Controls.IToaster toaster, Microsoft.AspNetCore.Components.RenderFragment message, System.Action<LoreSoft.Blazor.Controls.ToastSettings>? settings = null) { }
+        public static void ShowSuccess(this LoreSoft.Blazor.Controls.IToaster toaster, string message, System.Action<LoreSoft.Blazor.Controls.ToastSettings>? settings = null) { }
+        public static void ShowWarning(this LoreSoft.Blazor.Controls.IToaster toaster, Microsoft.AspNetCore.Components.RenderFragment message, System.Action<LoreSoft.Blazor.Controls.ToastSettings>? settings = null) { }
+        public static void ShowWarning(this LoreSoft.Blazor.Controls.IToaster toaster, string message, System.Action<LoreSoft.Blazor.Controls.ToastSettings>? settings = null) { }
+    }
+    public class ToggleSwitch<TValue> : Microsoft.AspNetCore.Components.ComponentBase
+    {
+        public ToggleSwitch() { }
+        [Microsoft.AspNetCore.Components.Parameter(CaptureUnmatchedValues=true)]
+        public System.Collections.Generic.Dictionary<string, object> Attributes { get; set; }
+        protected TValue CurrentValue { get; set; }
+        [Microsoft.AspNetCore.Components.CascadingParameter]
+        public Microsoft.AspNetCore.Components.Forms.EditContext? EditContext { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public Microsoft.AspNetCore.Components.Forms.FieldIdentifier FieldIdentifier { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public TValue Value { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public Microsoft.AspNetCore.Components.EventCallback<TValue> ValueChanged { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public System.Linq.Expressions.Expression<System.Func<TValue>>? ValueExpression { get; set; }
+        protected override void BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder builder) { }
+        protected override void OnInitialized() { }
+    }
+    [Microsoft.AspNetCore.Components.CascadingTypeParameter("TItem")]
+    [Microsoft.AspNetCore.Components.CascadingTypeParameter("TValue")]
+    public class Typeahead<TItem, TValue> : Microsoft.AspNetCore.Components.ComponentBase, System.IDisposable
+    {
+        public Typeahead() { }
+        [Microsoft.AspNetCore.Components.Parameter(CaptureUnmatchedValues=true)]
+        public System.Collections.Generic.Dictionary<string, object>? AdditionalAttributes { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public bool AllowClear { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public System.Func<TItem, TValue?> ConvertMethod { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public int Debounce { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public bool Disabled { get; set; }
+        [Microsoft.AspNetCore.Components.CascadingParameter]
+        protected Microsoft.AspNetCore.Components.Forms.EditContext? EditContext { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public Microsoft.AspNetCore.Components.Forms.FieldIdentifier FieldIdentifier { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public Microsoft.AspNetCore.Components.RenderFragment? FooterTemplate { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public System.Func<System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<TItem>>>? ItemLoader { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public System.Collections.Generic.IReadOnlyCollection<TItem>? Items { get; set; }
+        protected bool Loading { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public Microsoft.AspNetCore.Components.RenderFragment? LoadingTemplate { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public int MinimumLength { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public Microsoft.AspNetCore.Components.RenderFragment? NoRecordsTemplate { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public string? Placeholder { get; set; }
+        protected bool PreventKey { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public Microsoft.AspNetCore.Components.RenderFragment<TItem> ResultTemplate { get; set; }
+        protected Microsoft.AspNetCore.Components.ElementReference SearchInput { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public System.Func<string, System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<TItem>>> SearchMethod { get; set; }
+        protected bool SearchMode { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public string? SearchPlaceholder { get; set; }
+        protected System.Collections.Generic.IList<TItem> SearchResults { get; set; }
+        protected string SearchText { get; set; }
+        protected int SelectedIndex { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public Microsoft.AspNetCore.Components.RenderFragment<TValue> SelectedTemplate { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public TValue Value { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public Microsoft.AspNetCore.Components.EventCallback<TValue> ValueChanged { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public System.Linq.Expressions.Expression<System.Func<TValue>>? ValueExpression { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public System.Collections.Generic.IList<TValue>? Values { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public Microsoft.AspNetCore.Components.EventCallback<System.Collections.Generic.IList<TValue>> ValuesChanged { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public System.Linq.Expressions.Expression<System.Func<System.Collections.Generic.IList<TValue>>>? ValuesExpression { get; set; }
+        protected override void BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder @__builder) { }
+        public System.Threading.Tasks.Task Clear() { }
+        public void CloseMenu() { }
+        public string ControlClass() { }
+        public void Dispose() { }
+        public System.Threading.Tasks.Task HandleKeydown(Microsoft.AspNetCore.Components.Web.KeyboardEventArgs args) { }
+        public bool HasSearchResult() { }
+        public bool HasValue() { }
+        public bool IsMultiselect() { }
+        public System.Threading.Tasks.Task LoadItems() { }
+        protected override System.Threading.Tasks.Task OnAfterRenderAsync(bool firstRender) { }
+        protected override System.Threading.Tasks.Task OnInitializedAsync() { }
+        protected override void OnParametersSet() { }
+        public System.Threading.Tasks.Task RemoveValue(TValue item) { }
+        public string ResultClass(TItem item, int index) { }
+        public void Search(object? source, System.Timers.ElapsedEventArgs e) { }
+        public System.Threading.Tasks.Task SelectResult(TItem item) { }
+        public void ShowMenu() { }
+        public void ToggleMenu() { }
+    }
+    public class _Imports
+    {
+        public _Imports() { }
+        protected void Execute() { }
+    }
+}
+namespace LoreSoft.Blazor.Controls.Extensions
+{
+    public static class ConvertExtensions
+    {
+        public static TValue? ConvertValue<TValue>(object? result, System.Func<object?, TValue>? convert = null) { }
+        public static object? SafeConvert(System.Type type, string? input) { }
+        public static bool ToBoolean(this string? value) { }
+        public static byte? ToByte(this string? value, System.IFormatProvider? provider = null) { }
+        public static System.DateOnly? ToDateOnly(this string? value) { }
+        public static System.DateTime? ToDateTime(this string? value, System.IFormatProvider? provider = null) { }
+        public static System.DateTimeOffset? ToDateTimeOffset(this string? value, System.IFormatProvider? provider = null) { }
+        public static decimal? ToDecimal(this string? value, System.IFormatProvider? provider = null) { }
+        public static double? ToDouble(this string? value, System.IFormatProvider? provider = null) { }
+        public static System.Guid? ToGuid(this string? value) { }
+        public static short? ToInt16(this string? value, System.IFormatProvider? provider = null) { }
+        public static int? ToInt32(this string? value, System.IFormatProvider? provider = null) { }
+        public static long? ToInt64(this string? value, System.IFormatProvider? provider = null) { }
+        public static float? ToSingle(this string? value, System.IFormatProvider? provider = null) { }
+        public static System.TimeOnly? ToTimeOnly(this string? value) { }
+        public static System.TimeSpan? ToTimeSpan(this string? value) { }
+        public static ushort? ToUInt16(this string? value, System.IFormatProvider? provider = null) { }
+        public static uint? ToUInt32(this string? value, System.IFormatProvider? provider = null) { }
+        public static ulong? ToUInt64(this string? value, System.IFormatProvider? provider = null) { }
+    }
+    public static class DateTimeExtensionMethods
+    {
+        public static System.DateTime ToTimeZone(this System.DateTime dateTime, System.TimeZoneInfo timeZoneInfo) { }
+        public static System.DateTimeOffset ToTimeZone(this System.DateTimeOffset dateTimeOffset, System.TimeZoneInfo timeZoneInfo) { }
+    }
+    public static class QueryExtensions
+    {
+        public static LoreSoft.Blazor.Controls.DataResult<T> DataQuery<T>(this System.Linq.IQueryable<T> query, LoreSoft.Blazor.Controls.DataRequest request) { }
+        public static System.Linq.IQueryable<T> Filter<T>(this System.Linq.IQueryable<T> query, LoreSoft.Blazor.Controls.QueryRule? filter) { }
+        public static System.Linq.IQueryable<T> Sort<T>(this System.Linq.IQueryable<T> query, LoreSoft.Blazor.Controls.DataSort? sort) { }
+        public static System.Linq.IQueryable<T> Sort<T>(this System.Linq.IQueryable<T> query, System.Collections.Generic.IEnumerable<LoreSoft.Blazor.Controls.DataSort>? sorts) { }
+    }
+    public static class StringBuilderExtensions
+    {
+        public static System.Text.StringBuilder AppendIf(this System.Text.StringBuilder sb, string text, bool condition) { }
+        public static System.Text.StringBuilder AppendIf(this System.Text.StringBuilder sb, string? text, System.Func<string?, bool>? condition = null) { }
+        public static System.Text.StringBuilder AppendLine(this System.Text.StringBuilder sb, [System.Diagnostics.CodeAnalysis.StringSyntax("CompositeFormat")] string format, params object[] args) { }
+        public static System.Text.StringBuilder AppendLineIf(this System.Text.StringBuilder sb, string text, System.Func<string, bool>? condition = null) { }
+        public static System.Text.StringBuilder AppendLineIf(this System.Text.StringBuilder sb, string text, bool condition) { }
+    }
+    public static class StringExtensions
+    {
+        [return: System.Diagnostics.CodeAnalysis.NotNullIfNotNull("first")]
+        [return: System.Diagnostics.CodeAnalysis.NotNullIfNotNull("second")]
+        public static string? Combine(this string? first, string? second, char separator = /) { }
+        public static bool HasValue([System.Diagnostics.CodeAnalysis.NotNullWhen(true)] this string? value) { }
+        public static bool IsNullOrEmpty([System.Diagnostics.CodeAnalysis.NotNullWhen(false)] this string? item) { }
+        public static bool IsNullOrWhiteSpace([System.Diagnostics.CodeAnalysis.NotNullWhen(false)] this string? item) { }
+        [return: System.Diagnostics.CodeAnalysis.NotNullIfNotNull("input")]
+        public static string? ToTitle(this string? input) { }
+        [return: System.Diagnostics.CodeAnalysis.NotNullIfNotNull("text")]
+        public static string? Truncate(this string? text, int keep, string? ellipsis = "...") { }
+    }
+    public static class TypeExtensions
+    {
+        public static object? Default(this System.Type type) { }
+        public static System.Type GetUnderlyingType(this System.Type type) { }
+        public static bool IsNullable(this System.Type type) { }
+    }
+}
+namespace LoreSoft.Blazor.Controls.Utilities
+{
+    public readonly struct AttributeBuilder
+    {
+        public AttributeBuilder(System.Collections.Generic.Dictionary<string, object> attributes) { }
+        public AttributeBuilder(string prop, object value) { }
+        public LoreSoft.Blazor.Controls.Utilities.AttributeBuilder AddAttribute(string prop, object value) { }
+        public LoreSoft.Blazor.Controls.Utilities.AttributeBuilder AddAttribute(string prop, System.Func<object> value, System.Func<bool> when) { }
+        public LoreSoft.Blazor.Controls.Utilities.AttributeBuilder AddAttribute(string prop, System.Func<object> value, bool when) { }
+        public LoreSoft.Blazor.Controls.Utilities.AttributeBuilder AddAttribute(string prop, object value, System.Func<bool> when) { }
+        public LoreSoft.Blazor.Controls.Utilities.AttributeBuilder AddAttribute(string prop, object value, bool when) { }
+        public System.Collections.Generic.Dictionary<string, object> Build() { }
+        public static LoreSoft.Blazor.Controls.Utilities.AttributeBuilder Default(string prop, object value) { }
+        public static LoreSoft.Blazor.Controls.Utilities.AttributeBuilder Empty() { }
+    }
+    public static class Binding
+    {
+        public static object? Convert(object? value, System.Type type) { }
+        public static object? Convert<T>(object? value) { }
+        public static string? Format(object? value) { }
+    }
+    public struct CssBuilder
+    {
+        public CssBuilder(string value) { }
+        public LoreSoft.Blazor.Controls.Utilities.CssBuilder AddClass(string? value) { }
+        public LoreSoft.Blazor.Controls.Utilities.CssBuilder AddClass(LoreSoft.Blazor.Controls.Utilities.CssBuilder builder, System.Func<bool> when) { }
+        public LoreSoft.Blazor.Controls.Utilities.CssBuilder AddClass(LoreSoft.Blazor.Controls.Utilities.CssBuilder builder, bool when) { }
+        public LoreSoft.Blazor.Controls.Utilities.CssBuilder AddClass(System.Func<string?> value, System.Func<bool> when) { }
+        public LoreSoft.Blazor.Controls.Utilities.CssBuilder AddClass(System.Func<string?> value, bool when) { }
+        public LoreSoft.Blazor.Controls.Utilities.CssBuilder AddClass(string? value, System.Func<bool> when) { }
+        public LoreSoft.Blazor.Controls.Utilities.CssBuilder AddClass(string? value, System.Func<string?, bool> when) { }
+        public LoreSoft.Blazor.Controls.Utilities.CssBuilder AddClass(string? value, bool when) { }
+        public LoreSoft.Blazor.Controls.Utilities.CssBuilder MergeClass(System.Collections.Generic.IReadOnlyDictionary<string, object>? attributes) { }
+        public override string ToString() { }
+        public static LoreSoft.Blazor.Controls.Utilities.CssBuilder Default(string? value = null) { }
+        public static LoreSoft.Blazor.Controls.Utilities.CssBuilder Empty() { }
+    }
+    public static class CsvWriter
+    {
+        public static System.Threading.Tasks.Task<string> WriteAsync<T>(System.Collections.Generic.IEnumerable<string>? headers, System.Collections.Generic.IEnumerable<T> rows, System.Func<T, System.Collections.Generic.IEnumerable<string?>> selector, System.Threading.CancellationToken cancellationToken = default) { }
+        public static System.Threading.Tasks.Task WriteAsync<T>(System.IO.TextWriter writer, System.Collections.Generic.IEnumerable<string>? headers, System.Collections.Generic.IEnumerable<T> rows, System.Func<T, System.Collections.Generic.IEnumerable<string?>> selector, System.Threading.CancellationToken cancellationToken = default) { }
+        public static System.Threading.Tasks.Task WriteAsync<T>(System.IO.Stream stream, System.Collections.Generic.IEnumerable<string>? headers, System.Collections.Generic.IEnumerable<T> rows, System.Func<T, System.Collections.Generic.IEnumerable<string?>> selector, System.Text.Encoding? encoding = null, System.Threading.CancellationToken cancellationToken = default) { }
+    }
+    public static class DelayedAction
+    {
+        public static readonly System.TimeSpan DefaultDelay;
+        public static System.Action Debounce(this System.Action action, System.TimeSpan? interval = default) { }
+        public static System.Action<T> Debounce<T>(this System.Action<T> action, System.TimeSpan? interval = default) { }
+        public static System.Func<System.Threading.Tasks.Task> DebounceAsync(this System.Func<System.Threading.Tasks.Task> action, System.TimeSpan? interval = default) { }
+        public static System.Func<T, System.Threading.Tasks.Task> DebounceAsync<T>(this System.Func<T, System.Threading.Tasks.Task> action, System.TimeSpan? interval = default) { }
+        public static System.Action Throttle(this System.Action action, System.TimeSpan? interval = default) { }
+        public static System.Action<T> Throttle<T>(this System.Action<T> action, System.TimeSpan? interval = default) { }
+    }
+    public readonly struct DisposableBag : System.IDisposable
+    {
+        public DisposableBag() { }
+        public T Create<T>()
+            where T : System.IDisposable, new () { }
+        public T Create<T>(System.Func<T> creator)
+            where T : System.IDisposable { }
+        public void Dispose() { }
+        public T Include<T>(T disposable)
+            where T : System.IDisposable { }
+    }
+    public class ExpandTracker<TItem>
+    {
+        public ExpandTracker() { }
+        public event System.Action? OnChange;
+        public virtual void Clear() { }
+        public bool IsExpanded(TItem item) { }
+        public void NotifyStateChanged() { }
+        public void Toggle(TItem item) { }
+    }
+    public class LinqExpressionBuilder
+    {
+        public LinqExpressionBuilder() { }
+        public string Expression { get; }
+        public System.Collections.Generic.IReadOnlyList<object?> Parameters { get; }
+        public void Build(LoreSoft.Blazor.Controls.QueryRule? queryRule) { }
+        public static bool IsValid(LoreSoft.Blazor.Controls.QueryFilter? queryFilter) { }
+        public static bool IsValid(LoreSoft.Blazor.Controls.QueryGroup? queryGroup) { }
+        public static bool IsValid(LoreSoft.Blazor.Controls.QueryRule? queryRule) { }
+        public static void RegisterWriter(string @operator, System.Action<System.Text.StringBuilder, System.Collections.Generic.List<object?>, LoreSoft.Blazor.Controls.QueryFilter> writer) { }
+    }
+    public struct StyleBuilder
+    {
+        public StyleBuilder(string prop, string value) { }
+        public LoreSoft.Blazor.Controls.Utilities.StyleBuilder AddStyle(LoreSoft.Blazor.Controls.Utilities.StyleBuilder builder) { }
+        public LoreSoft.Blazor.Controls.Utilities.StyleBuilder AddStyle(string? style) { }
+        public LoreSoft.Blazor.Controls.Utilities.StyleBuilder AddStyle(LoreSoft.Blazor.Controls.Utilities.StyleBuilder builder, System.Func<bool> when) { }
+        public LoreSoft.Blazor.Controls.Utilities.StyleBuilder AddStyle(LoreSoft.Blazor.Controls.Utilities.StyleBuilder builder, bool when) { }
+        public LoreSoft.Blazor.Controls.Utilities.StyleBuilder AddStyle(string prop, string? value) { }
+        public LoreSoft.Blazor.Controls.Utilities.StyleBuilder AddStyle(string prop, System.Func<string> value, System.Func<bool> when) { }
+        public LoreSoft.Blazor.Controls.Utilities.StyleBuilder AddStyle(string prop, System.Func<string> value, bool when) { }
+        public LoreSoft.Blazor.Controls.Utilities.StyleBuilder AddStyle(string prop, string? value, System.Func<bool> when) { }
+        public LoreSoft.Blazor.Controls.Utilities.StyleBuilder AddStyle(string prop, string? value, System.Func<string?, bool> when) { }
+        public LoreSoft.Blazor.Controls.Utilities.StyleBuilder AddStyle(string prop, string? value, bool when) { }
+        public LoreSoft.Blazor.Controls.Utilities.StyleBuilder MergeStyle(System.Collections.Generic.IDictionary<string, object>? attributes) { }
+        public override string ToString() { }
+        public static LoreSoft.Blazor.Controls.Utilities.StyleBuilder Default(string style) { }
+        public static LoreSoft.Blazor.Controls.Utilities.StyleBuilder Default(string prop, string value) { }
+        public static LoreSoft.Blazor.Controls.Utilities.StyleBuilder Empty() { }
+    }
+}
