@@ -7,116 +7,150 @@ h1:focus {
 }
 
 .valid.modified:not([type=checkbox]) {
-    outline: 1px solid #26b050;
+  outline: 1px solid #26b050;
 }
 
 .invalid {
-    outline: 1px solid #ff0000;
+  outline: 1px solid #ff0000;
 }
 
 .validation-message {
-    color: #ff0000;
+  color: #ff0000;
 }
 
 #blazor-error-ui {
-    background: lightyellow;
-    bottom: 0;
-    box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.2);
-    display: none;
-    left: 0;
-    padding: 0.6rem 1.25rem 0.7rem 1.25rem;
-    position: fixed;
-    width: 100%;
-    z-index: 1040;
+  background: lightyellow;
+  bottom: 0;
+  box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.2);
+  display: none;
+  left: 0;
+  padding: 0.6rem 1.25rem 0.7rem 1.25rem;
+  position: fixed;
+  width: 100%;
+  z-index: 1040;
 }
 
-#blazor-error-ui .dismiss {
+  #blazor-error-ui .dismiss {
     cursor: pointer;
     position: absolute;
     right: 0.75rem;
     top: 0.5rem;
+  }
+
+.loading-progress {
+  position: absolute;
+  display: block;
+  width: 8rem;
+  height: 8rem;
+  inset: 20vh 0 auto 0;
+  margin: 0 auto 0 auto;
 }
 
+  .loading-progress circle {
+    fill: none;
+    stroke: #e0e0e0;
+    stroke-width: 0.6rem;
+    transform-origin: 50% 50%;
+    transform: rotate(-90deg);
+  }
+
+    .loading-progress circle:last-child {
+      stroke: #1b6ec2;
+      stroke-dasharray: calc(3.141 * var(--blazor-load-percentage, 0%) * 0.8), 500%;
+      transition: stroke-dasharray 0.05s ease-in-out;
+    }
+
+.loading-progress-text {
+  position: absolute;
+  text-align: center;
+  font-weight: bold;
+  inset: calc(20vh + 3.25rem) 0 auto 0.2rem;
+}
+
+  .loading-progress-text:after {
+    content: var(--blazor-load-percentage-text, "Loading");
+  }
+
 .footer {
-    margin: 5rem 0;
-    width: 100%;
-    height: 40px;
-    line-height: 40px;
-    font-size: 85%;
+  margin: 5rem 0;
+  width: 100%;
+  height: 40px;
+  line-height: 40px;
+  font-size: 85%;
 }
 
 .wrapper {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 0 10%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 10%;
 }
 
 .loader {
-    border: 5px solid #f3f3f3;
-    -webkit-animation: spin 1s linear infinite;
-    animation: spin 1s linear infinite;
-    border-top: 5px solid #555;
-    border-radius: 50%;
-    width: 50px;
-    height: 50px;
+  border: 5px solid #f3f3f3;
+  -webkit-animation: spin 1s linear infinite;
+  animation: spin 1s linear infinite;
+  border-top: 5px solid #555;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
 }
 
 @keyframes spin {
-    0% {
-        transform: rotate(0deg);
-    }
+  0% {
+    transform: rotate(0deg);
+  }
 
-    100% {
-        transform: rotate(360deg);
-    }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 /* GitHub */
 .github-repository {
-    padding-top: 4px;
-    padding-bottom: 3px;
+  padding-top: 4px;
+  padding-bottom: 3px;
 }
 
 .github-avatar {
-    float: left;
-    width: 60px;
-    margin-right: 10px;
+  float: left;
+  width: 60px;
+  margin-right: 10px;
 }
 
-.github-avatar img {
+  .github-avatar img {
     width: 100%;
     height: auto;
     border-radius: 2px;
-}
+  }
 
 .github-meta {
-    margin-left: 70px;
+  margin-left: 70px;
 }
 
 .github-title {
-    color: black;
-    font-weight: 700;
-    word-wrap: break-word;
-    line-height: 1.1;
-    margin-bottom: 4px;
+  color: black;
+  font-weight: 700;
+  word-wrap: break-word;
+  line-height: 1.1;
+  margin-bottom: 4px;
 }
 
 .github-description {
-    font-size: 13px;
-    color: #777;
-    margin-top: 4px;
+  font-size: 13px;
+  color: #777;
+  margin-top: 4px;
 }
 
 .github-forks,
 .github-stargazers,
 .github-watchers {
-    display: inline-block;
-    color: #aaa;
-    font-size: 11px;
+  display: inline-block;
+  color: #aaa;
+  font-size: 11px;
 }
 
 .github-forks,
 .github-stargazers {
-    margin-right: 1em;
+  margin-right: 1em;
 }
