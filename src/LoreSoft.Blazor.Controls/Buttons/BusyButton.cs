@@ -136,7 +136,7 @@ public class BusyButton : ComponentBase
     /// </summary>
     private async Task ExecuteTrigger()
     {
-        if (!Trigger.HasDelegate)
+        if (!Trigger.HasDelegate || Executing)
             return;
 
         try

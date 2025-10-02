@@ -1,4 +1,4 @@
-using LoreSoft.Blazor.Controls.Tests.Data;
+using LoreSoft.Blazor.Controls.Tests.Models;
 
 namespace LoreSoft.Blazor.Controls.Tests.Lazy;
 

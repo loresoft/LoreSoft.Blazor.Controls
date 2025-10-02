@@ -1,19 +1,20 @@
 /* Import all component CSS files */
 @import url('css/busy-button.css');
 @import url('css/column-picker.css');
+@import url('css/data-filter.css');
 @import url('css/data-grid.css');
 @import url('css/data-list.css');
 @import url('css/data-pager.css');
+@import url('css/data-sizer.css');
 @import url('css/data-toolbar.css');
-@import url('css/data.css');
 @import url('css/datetime-picker.css');
-@import url('css/filter.css');
 @import url('css/input-image.css');
 @import url('css/json.css');
 @import url('css/loading-block.css');
 @import url('css/progress.css');
 @import url('css/query-builder.css');
 @import url('css/skeleton.css');
+@import url('css/sort-picker.css');
 @import url('css/toaster.css');
 @import url('css/toggle-switch.css');
 @import url('css/typeahead.css');

@@ -2,34 +2,77 @@
 @using Sample.Core.Models
 <h3>Basic</h3>
 
-<button class="btn btn-secondary" @onclick="@(() => SetSort("Id"))">Sort By Id</button>
-<button class="btn btn-secondary" @onclick="@(() => SetPage(5))">Go to page 5</button>
-<button class="btn btn-secondary" @onclick="@(() => SetPageSize(25))">Page Size 25</button>
-<button class="btn btn-secondary" @onclick="ApplyFilter">Filter High Score</button>
+<button class="btn btn-secondary"
+        @onclick="@(() => SetSort("Id"))">
+    Sort By Id
+</button>
+<button class="btn btn-secondary"
+        @onclick="@(() => SetPage(5))">
+    Go to page 5
+</button>
+<button class="btn btn-secondary"
+        @onclick="@(() => SetPageSize(25))">
+    Page Size 25
+</button>
+<button class="btn btn-secondary"
+        @onclick="ApplyFilter">
+    Filter High Score
+</button>
 
 <DataGrid Data="People"
           TItem="Person"
           Filterable="true"
           Selectable="true"
+          Borders="@Borders.All"
           RowDoubleClick="HandleRowClick"
           @bind-SelectedItems="Selected"
-          @ref="DataGrid"
-          class="table table-hover">
+          @ref="DataGrid">
     <DataToolbar>
         <DataGridToolbar Title="Sample Grid" />
     </DataToolbar>
     <DataColumns>
-        <DataColumn TItem="Person" Property="p => p.Id" Width="90px" Hideable="false">
+        <DataColumn TItem="Person"
+                    Property="p => p.Id"
+                    Width="90px"
+                    Hideable="false">
             <Template Context="item">
-                <a href="#" class="d-block" title="@item.FullName">@item.Id</a>
+                <a href="#"
+                   class="d-block"
+                   title="@item.FullName">@item.Id</a>
             </Template>
         </DataColumn>
-        <DataColumn TItem="Person" Property="p => p.FirstName" SortIndex="1" MinWidth="200px" />
-        <DataColumn TItem="Person" Property="p => p.LastName" SortIndex="0" ColumnStyle="min-width: 200px" />
-        <DataColumn TItem="Person" Property="p => p.Score" Width="120px" Style="@SoreStyle" Align="TextAlign.Right" />
-        <DataColumn TItem="Person" Property="p => p.Location" ColumnStyle="min-width: 200px" Sortable="false" FilterValues="Locations" />
-        <DataColumn TItem="Person" Property="p => p.Birthday" Width="110px" Format="d" Align="TextAlign.End" />
-        <DataColumn TItem="Person" Property="p => p.FullName" Visible="false" MultiLine="false" />
+        <DataColumn TItem="Person"
+                    Property="p => p.FirstName"
+                    SortIndex="1" />
+        <DataColumn TItem="Person"
+                    Property="p => p.LastName"
+                    SortIndex="0" />
+        <DataColumn TItem="Person"
+                    Property="p => p.Score"
+                    Width="120px"
+                    CellStyle="@SoreStyle"
+                    Align="TextAlign.Right">
+            <FooterTemplate Context="items">
+                <div>Avg: @String.Format("{0:N2}", items.Average(i => i.Score))</div>
+            </FooterTemplate>
+        </DataColumn>
+        <DataColumn TItem="Person"
+                    Property="p => p.Location"
+                    Sortable="true"
+                    FilterValues="Locations">
+            <HeaderTemplate>
+                <div style="color: darkblue"><i class="bi bi-geo-alt-fill"></i>Location</div>
+            </HeaderTemplate>
+        </DataColumn>
+        <DataColumn TItem="Person"
+                    Property="p => p.Birthday"
+                    Width="110px"
+                    Format="d"
+                    Align="TextAlign.End" />
+        <DataColumn TItem="Person"
+                    Property="p => p.FullName"
+                    Visible="false"
+                    MultiLine="false" />
     </DataColumns>
     <DataPagination Context="grid">
         <DataPager PageSize="10" />
@@ -73,6 +116,7 @@
     {
         if (person.Score > 75)
             return "background-color: #dc3545";
+
         if (person.Score > 50)
             return "background-color: #ffc107";
 
@@ -84,11 +128,10 @@
         if (DataGrid == null)
             return;
 
-        var filters = new List<QueryRule>
-        {
+        List<QueryRule> filters = [
             new QueryFilter { Field = nameof(Person.Score), Operator = QueryOperators.GreaterThan, Value = 50 },
             new QueryFilter { Field = nameof(Person.Birthday), Operator = QueryOperators.GreaterThan, Value = new DateTime(2000, 1, 1) }
-        };
+        ];
 
         await DataGrid.ApplyFilters(filters, true);
     }

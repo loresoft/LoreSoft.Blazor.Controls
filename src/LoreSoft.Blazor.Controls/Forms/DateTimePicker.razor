@@ -6,7 +6,7 @@
 @using Microsoft.AspNetCore.Components.Web
 
 <div class="@PickerClass">
-    <div class="datetimepicker-value-container">
+    <div class="datetime-picker-value-container">
         <input @attributes="AdditionalAttributes"
                type="@InputType"
                class="@InputClass"
@@ -20,7 +20,7 @@
         @if (CanClear())
         {
             <button type="button"
-                    class="datetimepicker-clear-button"
+                    class="datetime-picker-clear-button"
                     title="Clear Value"
                     disabled="@Disabled"
                     @onclick="ClearValue">
@@ -36,7 +36,7 @@
             </button>
         }
         <button type="button"
-                class="datetimepicker-calendar-button"
+                class="datetime-picker-calendar-button"
                 title="Show Picker"
                 disabled="@Disabled"
                 @onclick="ToggleDatePicker">
@@ -54,16 +54,16 @@
 
     @if (IsDatePickerOpen)
     {
-        <div class="datetimepicker-background"
+        <div class="datetime-picker-background"
              @onclick="CloseDatePicker"></div>
 
-        <div class="datepicker-modal">
+        <div class="date-picker-modal">
             @if (Mode == DateTimePickerMode.Date || Mode == DateTimePickerMode.DateTime)
             {
-                <div class="datepicker-container">
-                    <div class="datepicker-navigation">
+                <div class="date-picker-container">
+                    <div class="date-picker-navigation">
                         <button type="button"
-                                class="datepicker-previous-button"
+                                class="date-picker-previous-button"
                                 title="Previous Month"
                                 @onclick="PreviousMonth">
                             <svg width="17"
@@ -77,7 +77,7 @@
                             </svg>
                         </button>
                         <button type="button"
-                                class="datepicker-today-button"
+                                class="date-picker-today-button"
                                 title="Today"
                                 @onclick="ShowToday">
                             <svg width="18"
@@ -90,7 +90,7 @@
                                       d="M400 64h-48V8c0-4.4-3.6-8-8-8h-16c-4.4 0-8 3.6-8 8v56H128V8c0-4.4-3.6-8-8-8h-16c-4.4 0-8 3.6-8 8v56H48C21.5 64 0 85.5 0 112v352c0 26.5 21.5 48 48 48h352c26.5 0 48-21.5 48-48V112c0-26.5-21.5-48-48-48zm16 400c0 8.8-7.2 16-16 16H48c-8.8 0-16-7.2-16-16V192h384v272zm0-304H32v-48c0-8.8 7.2-16 16-16h352c8.8 0 16 7.2 16 16v48zM112 384h96c8.8 0 16-7.2 16-16v-96c0-8.8-7.2-16-16-16h-96c-8.8 0-16 7.2-16 16v96c0 8.8 7.2 16 16 16zm16-96h64v64h-64v-64z" />
                             </svg>
                         </button>
-                        <select class="datepicker-select-month"
+                        <select class="date-picker-select-month"
                                 title="Select Month"
                                 @bind="Month">
                             @for (var index = 0; index < DateTimeFormatInfo.MonthNames.Length - 1; index++)
@@ -101,12 +101,12 @@
                             }
                         </select>
                         <input type="number"
-                               class="datepicker-input-year"
+                               class="date-picker-input-year"
                                title="Year"
                                placeholder="Year"
                                @bind="Year" />
                         <button type="button"
-                                class="datepicker-next-button"
+                                class="date-picker-next-button"
                                 title="Next Month"
                                 @onclick="NextMonth">
                             <svg width="17"
@@ -119,17 +119,17 @@
                             </svg>
                         </button>
                     </div>
-                    <section class="datepicker-table">
-                        <header class="datepicker-header">
+                    <section class="date-picker-table">
+                        <header class="date-picker-header">
                             @foreach (var header in Headers)
                             {
-                                <div @key="@header" class="datepicker-header-cell">@header</div>
+                                <div @key="@header" class="date-picker-header-cell">@header</div>
                             }
                         </header>
-                        <div class="datepicker-body">
+                        <div class="date-picker-body">
                             @foreach (var row in Rows)
                             {
-                                <div @key="@row.Key" class="datepicker-row">
+                                <div @key="@row.Key" class="date-picker-row">
                                     @foreach (var cell in row.Cells)
                                     {
                                         <span @key="@cell.Date"
@@ -148,7 +148,7 @@
             }
             @if (Mode == DateTimePickerMode.Time || Mode == DateTimePickerMode.DateTime)
             {
-                <div class="timepicker-container">
+                <div class="time-picker-container">
                     @foreach (var segment in Segments)
                     {
                         <div @key="@segment.Date"

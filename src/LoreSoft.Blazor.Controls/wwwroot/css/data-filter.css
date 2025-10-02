@@ -1,0 +1,49 @@
+.filter {
+  /* Data Filter CSS Variables */
+  --df-bg-color: #ffffff;
+  --df-border-color: #bfbfbf;
+  /* Border */
+  --df-border-width: 1px;
+  --df-border-radius: 0;
+  --df-shadow: rgba(0, 0, 0, 0.1) 0px 0px 0px 1px, rgba(0, 0, 0, 0.1) 0px 4px 11px;
+  /* Z-Index values */
+  --df-z-background: 1040;
+  --df-z-container: 1050;
+  /* Sizing */
+  --df-width: 100%;
+  --df-height-min: 150px;
+  --df-padding: 0.75em;
+  --df-margin-bottom: 8px;
+  --df-margin-top: 0;
+  --df-footer-margin-top: 1em;
+}
+
+.filter .filter-background {
+  bottom: 0;
+  left: 0;
+  position: fixed;
+  right: 0;
+  top: 0;
+  background-color: transparent;
+  z-index: var(--df-z-background);
+  cursor: pointer;
+}
+
+.filter .filter-container {
+  background-color: var(--df-bg-color);
+  border: var(--df-border-width) solid var(--df-border-color);
+  border-radius: var(--df-border-radius);
+  box-shadow: var(--df-shadow);
+  box-sizing: border-box;
+  margin-bottom: var(--df-margin-bottom);
+  margin-top: var(--df-margin-top);
+  min-height: var(--df-height-min);
+  padding: var(--df-padding);
+  position: absolute;
+  width: var(--df-width);
+  z-index: var(--df-z-container);
+}
+
+.filter .filter-footer {
+  margin-top: var(--df-footer-margin-top);
+}

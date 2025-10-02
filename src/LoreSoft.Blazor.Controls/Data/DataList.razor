@@ -6,8 +6,10 @@
 @using Microsoft.AspNetCore.Components.Web
 @using Microsoft.AspNetCore.Components.Web.Virtualization
 
-<CascadingValue Value="this" Name="Grid">
-    <div class="@ClassName" @attributes="@AdditionalAttributes">
+<CascadingValue Value="this"
+                Name="Grid">
+    <div class="@ClassName"
+         @attributes="@AdditionalAttributes">
         @if (DataToolbar != null)
         {
             @DataToolbar(this)
@@ -65,8 +67,7 @@
                     <div class="column-picker-list">
                         <div class="sort-picker">
                             <label for="sort-selection">Sort by</label>
-                            <select id="sort-selection"
-                                    name="sort-selection"
+                            <select name="sort-selection"
                                     @bind="CurrentSortField"
                                     @bind:after="HandleSortChanged"
                                     aria-label="Sort Field">
@@ -81,8 +82,7 @@
                                     }
                                 }
                             </select>
-                            <select id="sort-direction"
-                                    name="sort-direction"
+                            <select name="sort-direction"
                                     @bind="CurrentSortDirection"
                                     @bind:after="HandleSortChanged"
                                     aria-label="Sort Direction">
@@ -113,14 +113,18 @@
             {
                 <div style="display:flex;align-items:center;gap:10px;padding:0 1rem;">
                     <div>
-                        <Skeleton Type="SkeletonType.Circle" Width="50px" Height="50px" />
+                        <Skeleton Type="SkeletonType.Circle"
+                                  Width="50px"
+                                  Height="50px" />
                     </div>
                     <div style="flex-grow:1;">
                         <div class="mb-1">
-                            <Skeleton Width="100%" Height="40px" />
+                            <Skeleton Width="100%"
+                                      Height="40px" />
                         </div>
                         <div class="mb-1">
-                            <Skeleton Width="100%" Height="20px" />
+                            <Skeleton Width="100%"
+                                      Height="20px" />
                         </div>
                     </div>
                 </div>
@@ -162,7 +166,9 @@
 
         @if (DataPagination != null)
         {
-            <CascadingValue IsFixed="true" Value="Pager" Name="PagerState">
+            <CascadingValue IsFixed="true"
+                            Value="Pager"
+                            Name="PagerState">
                 <div class="data-pagination">
                     @DataPagination(this)
                 </div>
@@ -173,7 +179,9 @@
         {
             @if (LoadingTemplate == null)
             {
-                <LoadingBlock IsLoading="true" ShowOverlay="true" LoadingText="" />
+                <LoadingBlock IsLoading="true"
+                              ShowOverlay="true"
+                              LoadingText="" />
             }
             else
             {

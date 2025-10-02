@@ -75,28 +75,29 @@ public class DataSizer : ComponentBase, IDisposable
     protected override void BuildRenderTree(RenderTreeBuilder builder)
     {
         builder.OpenElement(0, "div");
-        builder.AddAttribute(1, "class", "data-page-size-options");
+        builder.AddAttribute(1, "class", "data-sizer");
         builder.AddMultipleAttributes(2, AdditionalAttributes);
 
         builder.OpenElement(3, "select");
-        builder.AddAttribute(4, "value", PagerState.PageSize);
-        builder.AddAttribute(5, "title", "Select page size");
-        builder.AddAttribute(6, "onchange", EventCallback.Factory.Create<ChangeEventArgs>(this, e => SetPageSize(Convert.ToInt32(e.Value ?? 0))));
+        builder.AddAttribute(4, "name", "page-size");
+        builder.AddAttribute(5, "value", PagerState.PageSize);
+        builder.AddAttribute(6, "title", "Select page size");
+        builder.AddAttribute(7, "onchange", EventCallback.Factory.Create<ChangeEventArgs>(this, e => SetPageSize(Convert.ToInt32(e.Value ?? 0))));
 
         foreach (var pageSizeOption in PageSizeOptions)
         {
-            builder.OpenElement(7, "option");
-            builder.AddAttribute(8, "value", pageSizeOption);
+            builder.OpenElement(8, "option");
+            builder.AddAttribute(9, "value", pageSizeOption);
             builder.SetKey(pageSizeOption);
-            builder.AddContent(9, pageSizeOption);
+            builder.AddContent(10, pageSizeOption);
             builder.CloseElement(); // option
         }
 
         if (IncludeAllOption)
         {
-            builder.OpenElement(10, "option");
-            builder.AddAttribute(11, "value", 0);
-            builder.AddContent(12, "All");
+            builder.OpenElement(11, "option");
+            builder.AddAttribute(12, "value", 0);
+            builder.AddContent(13, "All");
             builder.CloseElement(); // option
         }
 
@@ -104,8 +105,8 @@ public class DataSizer : ComponentBase, IDisposable
 
         if (!string.IsNullOrEmpty(DescriptionLabel))
         {
-            builder.OpenElement(13, "span");
-            builder.AddContent(14, DescriptionLabel);
+            builder.OpenElement(14, "span");
+            builder.AddContent(15, DescriptionLabel);
             builder.CloseElement(); // span
         }
 

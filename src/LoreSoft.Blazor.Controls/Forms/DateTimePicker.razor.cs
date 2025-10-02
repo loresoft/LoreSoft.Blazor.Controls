@@ -133,8 +133,8 @@ public partial class DateTimePicker<TValue> : InputBase<TValue>
     /// Gets the CSS class for the picker container.
     /// </summary>
     protected string PickerClass => CssBuilder
-        .Default("datetimepicker")
-        .AddClass("is-datepicker-open", IsDatePickerOpen)
+        .Default("datetime-picker")
+        .AddClass("is-date-picker-open", IsDatePickerOpen)
         .ToString();
 
     /// <summary>
@@ -147,7 +147,7 @@ public partial class DateTimePicker<TValue> : InputBase<TValue>
     /// Gets the CSS class for the input element.
     /// </summary>
     protected string InputClass => CssBuilder
-        .Default("datetimepicker-input")
+        .Default("datetime-picker-input")
         .MergeClass(AdditionalAttributes)
         .AddClass(ValidationClass, v => !string.IsNullOrWhiteSpace(v))
         .ToString();
@@ -661,7 +661,7 @@ public partial class DateTimePicker<TValue> : InputBase<TValue>
     private string DateCellClass(DatePickerCell datePickerCell)
     {
         return CssBuilder
-            .Default("datepicker-cell")
+            .Default("date-picker-cell")
             .AddClass("is-primary-month", datePickerCell.IsPrimaryMonth)
             .AddClass("is-secondary-month", datePickerCell.IsSecondaryMonth)
             .AddClass("is-today", datePickerCell.IsToday)
@@ -678,7 +678,7 @@ public partial class DateTimePicker<TValue> : InputBase<TValue>
     private string TimeSegmentClass(TimePickerSegment timePickerSegment)
     {
         return CssBuilder
-            .Default("timepicker-cell")
+            .Default("time-picker-cell")
             .AddClass("is-selected", IsTimeSelected(timePickerSegment.Date))
             .AddClass("is-disabled", timePickerSegment.IsDisabled)
             .ToString();

@@ -4,7 +4,7 @@
 
 @if (CurrentList != null)
 {
-    <div class="data-grid-toolbar">
+    <div class="data-toolbar">
         <div class="toolbar-title">
             @if (TitleTemplate != null)
             {
@@ -18,7 +18,7 @@
         @if (ShowSearch)
         {
             <div class="toolbar-search-box">
-                <input id="toolbar-search"
+                <input name="toolbar-search"
                        type="search"
                        class="input-search toolbar-search-input"
                        placeholder="Search"
@@ -32,7 +32,7 @@
         }
         @if (ShowRefresh)
         {
-            <button id="refresh-button"
+            <button name="refresh-button"
                     title="Refresh Data"
                     class="toolbar-button"
                     type="button"
@@ -42,7 +42,7 @@
         }
         @if (ShowExport)
         {
-            <button id="export-button"
+            <button name="export-button"
                     title="Export Data"
                     class="toolbar-button"
                     type="button"
@@ -52,7 +52,7 @@
         }
         @if (ShowFilter)
         {
-            <button id="filter-button"
+            <button name="filter-button"
                     title="Filter Data"
                     class="toolbar-button"
                     type="button"
@@ -69,7 +69,7 @@
         }
         @if (ShowSortPicker)
         {
-            <button id="sort-picker-button"
+            <button name="sort-picker-button"
                     title="Sort Picker"
                     class="toolbar-button"
                     type="button"

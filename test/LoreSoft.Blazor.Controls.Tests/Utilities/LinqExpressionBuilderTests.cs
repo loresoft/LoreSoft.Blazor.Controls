@@ -1,6 +1,6 @@
 using System.Linq.Dynamic.Core;
 
-using LoreSoft.Blazor.Controls.Tests.Data;
+using LoreSoft.Blazor.Controls.Tests.Models;
 using LoreSoft.Blazor.Controls.Utilities;
 
 namespace LoreSoft.Blazor.Controls.Tests.Utilities;
@@ -183,7 +183,7 @@ public class LinqExpressionBuilderTests
         builder.Build(queryFilter);
 
         Assert.NotEmpty(builder.Expression);
-        Assert.Equal("Name != NULL && Name.Contains(@0, StringComparison.OrdinalIgnoreCase)", builder.Expression);
+        Assert.Equal("Name != NULL && Name.Contains(@0)", builder.Expression);
 
         Assert.Single(builder.Parameters);
         Assert.Equal("berry", builder.Parameters[0]);
@@ -212,7 +212,7 @@ public class LinqExpressionBuilderTests
         builder.Build(queryFilter);
 
         Assert.NotEmpty(builder.Expression);
-        Assert.Equal("Description != NULL && Description.Contains(@0, StringComparison.OrdinalIgnoreCase)", builder.Expression);
+        Assert.Equal("Description != NULL && Description.Contains(@0)", builder.Expression);
 
         Assert.Single(builder.Parameters);
         Assert.Equal("berry", builder.Parameters[0]);
@@ -293,7 +293,7 @@ public class LinqExpressionBuilderTests
         builder.Build(queryFilter);
 
         Assert.NotEmpty(builder.Expression);
-        Assert.Equal("Name != NULL && !Name.Contains(@0, StringComparison.OrdinalIgnoreCase)", builder.Expression);
+        Assert.Equal("Name != NULL && !Name.Contains(@0)", builder.Expression);
 
         Assert.Single(builder.Parameters);
         Assert.Equal("berry", builder.Parameters[0]);
@@ -322,7 +322,7 @@ public class LinqExpressionBuilderTests
         builder.Build(queryFilter);
 
         Assert.NotEmpty(builder.Expression);
-        Assert.Equal("Name != NULL && Name.StartsWith(@0, StringComparison.OrdinalIgnoreCase)", builder.Expression);
+        Assert.Equal("Name != NULL && Name.StartsWith(@0)", builder.Expression);
 
         Assert.Single(builder.Parameters);
         Assert.Equal("P", builder.Parameters[0]);
@@ -351,7 +351,7 @@ public class LinqExpressionBuilderTests
         builder.Build(queryFilter);
 
         Assert.NotEmpty(builder.Expression);
-        Assert.Equal("Name != NULL && !Name.StartsWith(@0, StringComparison.OrdinalIgnoreCase)", builder.Expression);
+        Assert.Equal("Name != NULL && !Name.StartsWith(@0)", builder.Expression);
 
         Assert.Single(builder.Parameters);
         Assert.Equal("P", builder.Parameters[0]);
@@ -379,7 +379,7 @@ public class LinqExpressionBuilderTests
         builder.Build(queryFilter);
 
         Assert.NotEmpty(builder.Expression);
-        Assert.Equal("Name != NULL && Name.EndsWith(@0, StringComparison.OrdinalIgnoreCase)", builder.Expression);
+        Assert.Equal("Name != NULL && Name.EndsWith(@0)", builder.Expression);
 
         Assert.Single(builder.Parameters);
         Assert.Equal("berry", builder.Parameters[0]);
@@ -407,7 +407,7 @@ public class LinqExpressionBuilderTests
         builder.Build(queryFilter);
 
         Assert.NotEmpty(builder.Expression);
-        Assert.Equal("Name != NULL && !Name.EndsWith(@0, StringComparison.OrdinalIgnoreCase)", builder.Expression);
+        Assert.Equal("Name != NULL && !Name.EndsWith(@0)", builder.Expression);
 
         Assert.Single(builder.Parameters);
         Assert.Equal("berry", builder.Parameters[0]);

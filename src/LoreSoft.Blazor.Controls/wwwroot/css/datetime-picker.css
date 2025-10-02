@@ -1,43 +1,43 @@
-.datetimepicker {
-  --picker-color: var(--bs-body-color, #212529);
-  --picker-bg-color: var(--bs-body-bg, #fff);
+.datetime-picker {
+  --dtp-text-color: var(--bs-body-color, #212529);
+  --dtp-bg-color: var(--bs-body-bg, #fff);
 
-  --picker-selected-bg-color: var(--bs-primary, #0d6efd);
-  --picker-selected-color: #fff;
+  --dtp-selected-bg-color: var(--bs-primary, #0d6efd);
+  --dtp-selected-text-color: #fff;
 
-  --picker-input-color: #4a4a4a;
+  --dtp-input-text-color: #4a4a4a;
 
-  --picker-border-color: var(--bs-border-color, #dee2e6);
-  --picker-border-width: var(--bs-border-width, 1px);
-  --picker-border-radius: var(--bs-border-radius, 0.375rem);
+  --dtp-border-color: var(--bs-border-color, #dee2e6);
+  --dtp-border-width: var(--bs-border-width, 1px);
+  --dtp-border-radius: var(--bs-border-radius, 0.375rem);
 
-  --picker-button-color: #ccc;
-  --picker-button-bg-color: #fff;
-  --picker-button-hover-color: #828282;
-  --picker-button-active-color: var(--bs-primary, #0d6efd);
+  --dtp-button-text-color: #ccc;
+  --dtp-button-bg-color: #fff;
+  --dtp-button-hover-text-color: #828282;
+  --dtp-button-active-text-color: var(--bs-primary, #0d6efd);
 
-  --picker-clear-color: var(--bs-danger, #dc3545);
+  --dtp-clear-color: var(--bs-danger, #dc3545);
 
-  --picker-modal-bg-color: var(--bs-body-bg, #fff);
-  --picker-modal-color: #e6e6e6;
-  --picker-modal-border-color: var(--bs-border-color, #dee2e6);
-  --picker-modal-border-width: 1px;
-  --picker-modal-border-radius: var(--bs-border-radius, 0.375rem);
+  --dtp-modal-bg-color: var(--bs-body-bg, #fff);
+  --dtp-modal-text-color: #e6e6e6;
+  --dtp-modal-border-color: var(--bs-border-color, #dee2e6);
+  --dtp-modal-border-width: 1px;
+  --dtp-modal-border-radius: var(--bs-border-radius, 0.375rem);
 
-  --picker-header-color: #7a7a7a;
-  --picker-cell-color: #4a4a4a;
-  --picker-cell-hover-color: #0a0a0a;
-  --picker-cell-hover-bg-color: var(--bs-tertiary-bg, #f8f9fa);
-  --picker-cell-disabled-color: #b5b5b5;
+  --dtp-header-text-color: #7a7a7a;
+  --dtp-cell-text-color: #4a4a4a;
+  --dtp-cell-hover-text-color: #0a0a0a;
+  --dtp-cell-hover-bg-color: var(--bs-tertiary-bg, #f8f9fa);
+  --dtp-cell-disabled-text-color: #b5b5b5;
 
-  --picker-today-border-width: 1px;
-  --picker-today-border-color: rgba(38, 132, 255, 0.5);
+  --dtp-today-border-width: 1px;
+  --dtp-today-border-color: rgba(38, 132, 255, 0.5);
 
-  --picker-time-size: 120px;
+  --dtp-time-width: 120px;
 
-  --picker-background-zindex: 1040;
-  --picker-control-zindex: 1045;
-  --picker-modal-zindex: 1050;
+  --dtp-z-background: 1040;
+  --dtp-z-control: 1045;
+  --dtp-z-modal: 1050;
 
   box-sizing: border-box;
   clear: both;
@@ -45,7 +45,7 @@
   text-align: left;
 }
 
-.datetimepicker-value-container {
+.datetime-picker-value-container {
   -webkit-box-align: center;
   align-items: center;
   display: flex;
@@ -54,69 +54,69 @@
   box-sizing: border-box;
   flex: 1 1 0%;
   width: 100%;
-  border: var(--picker-border-width) solid var(--picker-border-color);
-  border-radius: var(--picker-border-radius);
+  border: var(--dtp-border-width) solid var(--dtp-border-color);
+  border-radius: var(--dtp-border-radius);
 }
 
-.datetimepicker-clear-button,
-.datetimepicker-calendar-button,
-.datetimepicker-time-button {
-  color: var(--picker-button-color);
+.datetime-picker-clear-button,
+.datetime-picker-calendar-button,
+.datetime-picker-time-button {
+  color: var(--dtp-button-text-color);
   display: flex;
   align-items: center;
   box-sizing: border-box;
-  background-color: var(--picker-button-bg-color);
+  background-color: var(--dtp-button-bg-color);
   border: 0 none transparent;
   height: calc(1.5em + 0.75rem + 2px);
   padding: 1px 4px;
 }
 
-.datetimepicker-clear-button:hover {
-  color: var(--picker-clear-color);
+.datetime-picker-clear-button:hover {
+  color: var(--dtp-clear-color);
 }
 
-.datetimepicker-calendar-button:hover,
-.datetimepicker-time-button:hover {
-  color: var(--picker-button-hover-color);
+.datetime-picker-calendar-button:hover,
+.datetime-picker-time-button:hover {
+  color: var(--dtp-button-hover-text-color);
 }
 
-.datetimepicker-calendar-button,
-.datetimepicker-time-button {
-  border-top-right-radius: var(--picker-border-radius);
-  border-bottom-right-radius: var(--picker-border-radius);
+.datetime-picker-calendar-button,
+.datetime-picker-time-button {
+  border-top-right-radius: var(--dtp-border-radius);
+  border-bottom-right-radius: var(--dtp-border-radius);
 }
 
-.datetimepicker.is-datepicker-open .datetimepicker-calendar-button {
-  color: var(--picker-button-active-color);
+.datetime-picker.is-date-picker-open .datetime-picker-calendar-button {
+  color: var(--dtp-button-active-text-color);
 }
 
-.datetimepicker.is-datepicker-open .datetimepicker-value-container {
-  z-index: var(--picker-control-zindex);
+.datetime-picker.is-date-picker-open .datetime-picker-value-container {
+  z-index: var(--dtp-z-control);
 }
 
-.datetimepicker-input {
+.datetime-picker-input {
   display: block;
   width: 100%;
   height: calc(1.5em + 0.75rem + 2px);
   border: 0 none transparent;
-  border-top-left-radius: var(--picker-border-radius);
-  border-bottom-left-radius: var(--picker-border-radius);
+  border-top-left-radius: var(--dtp-border-radius);
+  border-bottom-left-radius: var(--dtp-border-radius);
   padding: 0.375rem 0.75rem;
   box-sizing: border-box;
-  background-color: var(--picker-bg-color);
+  background-color: var(--dtp-bg-color);
   position: relative;
   -ms-flex: 1 1 0%;
   flex: 1 1 0%;
   min-width: 0;
 }
 
-.datetimepicker-input::-webkit-inner-spin-button,
-.datetimepicker-input::-webkit-calendar-picker-indicator {
+.datetime-picker-input::-webkit-inner-spin-button,
+.datetime-picker-input::-webkit-calendar-picker-indicator {
   display: none;
   -webkit-appearance: none;
 }
 
-.datetimepicker-background {
+.datetime-picker-background {
   bottom: 0;
   left: 0;
   position: absolute;
@@ -124,100 +124,100 @@
   top: 0;
   position: fixed;
   background-color: transparent;
-  z-index: var(--picker-background-zindex);
+  z-index: var(--dtp-z-background);
   cursor: pointer;
 }
 
-.datepicker-modal {
+.date-picker-modal {
   display: flex;
   height: 310px;
-  background-color: var(--picker-modal-bg-color);
+  background-color: var(--dtp-modal-bg-color);
   box-shadow: rgba(0, 0, 0, 0.1) 0px 0px 0px 1px, rgba(0, 0, 0, 0.1) 0px 4px 11px;
   margin-bottom: 8px;
   margin-top: 2px;
   position: absolute;
-  z-index: var(--picker-modal-zindex);
+  z-index: var(--dtp-z-modal);
   box-sizing: border-box;
-  border: var(--picker-modal-border-width) solid var(--picker-modal-border-color);
-  border-radius: var(--picker-modal-border-radius);
+  border: var(--dtp-modal-border-width) solid var(--dtp-modal-border-color);
+  border-radius: var(--dtp-modal-border-radius);
 }
 
-.datepicker-table {
+.date-picker-table {
   display: table;
   margin: 0 auto;
 }
 
-.datepicker-header {
+.date-picker-header {
   display: table-header-group;
 }
 
-.datepicker-header-cell,
-.datepicker-cell {
+.date-picker-header-cell,
+.date-picker-cell {
   text-align: center;
   vertical-align: middle;
   display: table-cell;
   border-radius: 4px;
   padding: 0.45rem;
-  color: var(--picker-cell-color);
+  color: var(--dtp-cell-text-color);
   text-decoration: none;
   border: 0 none transparent;
   background-color: transparent;
 }
 
-.datepicker-header-cell {
-  color: var(--picker-header-color);
+.date-picker-header-cell {
+  color: var(--dtp-header-text-color);
   font-weight: 600;
 }
 
-.datepicker-body {
+.date-picker-body {
   display: table-row-group;
 }
 
-.datepicker-row {
+.date-picker-row {
   display: table-row;
 }
 
-.datepicker-cell:not(.is-disabled),
-.timepicker-cell:not(.is-disabled) {
+.date-picker-cell:not(.is-disabled),
+.time-picker-cell:not(.is-disabled) {
   cursor: pointer;
 }
 
-.datepicker-cell:hover:not(.is-selected),
-.timepicker-cell:hover:not(.is-selected) {
-  background-color: var(--picker-cell-hover-bg-color);
-  color: var(--picker-cell-hover-color);
+.date-picker-cell:hover:not(.is-selected),
+.time-picker-cell:hover:not(.is-selected) {
+  background-color: var(--dtp-cell-hover-bg-color);
+  color: var(--dtp-cell-hover-text-color);
 }
 
-.datepicker-cell.is-today {
-  border: var(--picker-today-border-width) solid var(--picker-today-border-color);
+.date-picker-cell.is-today {
+  border: var(--dtp-today-border-width) solid var(--dtp-today-border-color);
 }
 
-.datepicker-cell.is-secondary-month,
-.datepicker-cell.is-disabled,
-.timepicker-cell.is-disabled {
-  color: var(--picker-cell-disabled-color) !important;
+.date-picker-cell.is-secondary-month,
+.date-picker-cell.is-disabled,
+.time-picker-cell.is-disabled {
+  color: var(--dtp-cell-disabled-text-color) !important;
 }
 
-.datepicker-cell.is-selected,
-.timepicker-cell.is-selected {
-  background-color: var(--picker-selected-bg-color);
-  color: var(--picker-selected-color) !important;
+.date-picker-cell.is-selected,
+.time-picker-cell.is-selected {
+  background-color: var(--dtp-selected-bg-color);
+  color: var(--dtp-selected-text-color) !important;
 }
 
 .is-disabled {
   pointer-events: none;
 }
 
-.datepicker-navigation {
+.date-picker-navigation {
   display: flex;
   justify-content: space-between;
 }
 
-.datepicker-previous-button,
-.datepicker-next-button,
-.datepicker-today-button {
+.date-picker-previous-button,
+.date-picker-next-button,
+.date-picker-today-button {
   background-color: transparent;
-  color: var(--picker-button-color);
+  color: var(--dtp-button-text-color);
   display: flex;
   align-items: center;
   box-sizing: border-box;
@@ -226,13 +226,13 @@
   margin: 0.2rem 0.15rem;
 }
 
-.datepicker-today-button {
-  color: var(--picker-input-color);
+.date-picker-today-button {
+  color: var(--dtp-input-text-color);
 }
 
-.datepicker-select-month,
-.datepicker-input-year {
-  color: var(--picker-input-color);
+.date-picker-select-month,
+.date-picker-input-year {
+  color: var(--dtp-input-text-color);
   display: flex;
   box-sizing: border-box;
   padding: 1px 3px;
@@ -242,37 +242,37 @@
   cursor: pointer;
 }
 
-.datepicker-select-month {
+.date-picker-select-month {
   width: 100px;
   appearance: none;
   text-indent: 0.01px;
   text-overflow: "";
 }
 
-.datepicker-input-year {
+.date-picker-input-year {
   width: 60px;
   appearance: textfield;
 }
 
-.datepicker-input-year::-webkit-outer-spin-button,
-.datepicker-input-year::-webkit-inner-spin-button {
+.date-picker-input-year::-webkit-outer-spin-button,
+.date-picker-input-year::-webkit-inner-spin-button {
   appearance: none;
   margin: 0;
 }
 
-.timepicker-container {
-  border-left: var(--bs-border-width) solid var(--picker-border-color);
-  width: var(--picker-time-size);
+.time-picker-container {
+  border-left: var(--bs-border-width) solid var(--dtp-border-color);
+  width: var(--dtp-time-width);
   overflow-x: hidden;
   overflow-y: scroll;
   margin: .125rem;
 }
 
-.timepicker-cell {
+.time-picker-cell {
   text-align: left;
   vertical-align: middle;
   padding: 0.15rem 0.6rem;
-  color: var(--picker-cell-color);
+  color: var(--dtp-cell-text-color);
   text-decoration: none;
   border: 0 none transparent;
   background-color: transparent;

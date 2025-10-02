@@ -1,6 +1,6 @@
 .busy-button {
-  --busy-indicator-color: #ccc;
-  --busy-loading-color: #ccc;
+  --bb-indicator-color: #ccc;
+  --bb-dot-color: #ccc;
 }
 
 .busy-loading-indicator {
@@ -8,7 +8,7 @@
   background-color: transparent;
   border: 0;
   box-sizing: border-box;
-  color: var(--busy-indicator-color);
+  color: var(--bb-indicator-color);
   display: inline-block;
   font-size: 4px;
   line-height: 1;
@@ -23,7 +23,7 @@
 .busy-loading-dot-1,
 .busy-loading-dot-2,
 .busy-loading-dot-3 {
-  background-color: var(--busy-loading-color);
+  background-color: var(--bb-dot-color);
   border-radius: 1em;
   display: inline-block;
   height: 1em;

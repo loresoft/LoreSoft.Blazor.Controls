@@ -1,0 +1,36 @@
+.sort-picker {
+  --sp-text-color: var(--bs-body-color, #212529);
+  --sp-bg-color: var(--bs-body-bg, #fff);
+  --sp-border-width: var(--bs-border-width, 1px);
+  --sp-border-color: var(--bs-border-color, #dee2e6);
+  --sp-border-radius: 0;
+
+  --sp-padding: 0.25rem;
+  --sp-select-padding-y: 0.25rem;
+  --sp-select-padding-x: 0.75rem;
+  --sp-select-margin: 0.125rem;
+
+  --sp-label-font-weight: 600;
+  --sp-select-font-weight: 400;
+  --sp-select-font-size: 1rem;
+  --sp-width: 100%;
+
+  padding: var(--sp-padding);
+}
+
+.sort-picker label {
+  font-weight: var(--sp-label-font-weight);
+  width: var(--sp-width);
+}
+
+.sort-picker select {
+  color: var(--sp-text-color);
+  background-color: var(--sp-bg-color);
+  border: var(--sp-border-width) solid var(--sp-border-color);
+  border-radius: var(--sp-border-radius);
+  font-weight: var(--sp-select-font-weight);
+  padding: var(--sp-select-padding-y) var(--sp-select-padding-x);
+  margin: var(--sp-select-margin);
+  font-size: var(--sp-select-font-size);
+  width: var(--sp-width);
+}

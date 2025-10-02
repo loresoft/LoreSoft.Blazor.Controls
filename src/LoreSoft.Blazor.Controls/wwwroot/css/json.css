@@ -1,34 +1,37 @@
 :root {
   --json-border-width: var(--bs-border-width, 1px);
   --json-border-color: var(--bs-border-color, #dee2e6);
-  --json-object-color: var(--bs-body-color, #212529);
-  --json-name-color: inherit;
-  --json-name-bg: #f9f9f9;
-  --json-value-color: inherit;
-  --json-value-bg: var(--bs-body-bg, #fff);
+  --json-object-text-color: var(--bs-body-color, #212529);
+  --json-name-text-color: inherit;
+  --json-name-bg-color: #f9f9f9;
+  --json-value-text-color: inherit;
+  --json-value-bg-color: var(--bs-body-bg, #fff);
+  --json-cell-padding: 0.25rem;
+  --json-object-width: 100%;
+  --json-value-width: 100%;
 }
 
 .json-object {
   border: var(--json-border-width) solid var(--json-border-color);
   border-collapse: collapse;
-  width: 100%;
-  color: var(--json-object-color);
+  width: var(--json-object-width);
+  color: var(--json-object-text-color);
 }
 
 .json-name,
 .json-value {
   border: var(--json-border-width) solid var(--json-border-color);
-  padding: .25rem .25rem;
+  padding: var(--json-cell-padding);
 }
 
 .json-name {
-  background-color: var(--json-name-bg);
-  color: var(--json-name-color);
+  background-color: var(--json-name-bg-color);
+  color: var(--json-name-text-color);
   white-space: nowrap;
 }
 
 .json-value {
-  background-color: var(--json-value-bg);
-  color: var(--json-value-color);
-  width: 100%;
+  background-color: var(--json-value-bg-color);
+  color: var(--json-value-text-color);
+  width: var(--json-value-width);
 }

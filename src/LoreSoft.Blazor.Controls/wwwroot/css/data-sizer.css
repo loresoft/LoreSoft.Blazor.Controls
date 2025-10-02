@@ -1,0 +1,50 @@
+.data-sizer {
+  --ds-text-color: var(--bs-body-color, #212529);
+  --ds-bg-color: var(--bs-body-bg, #fff);
+  --ds-border-color: var(--bs-border-color, #dee2e6);
+  --ds-border-width: 0;
+
+  --ds-margin: 0.25rem;
+  --ds-select-padding: 0.375rem;
+  --ds-select-margin: 0.375rem;
+
+  --ds-select-font-size: 1rem;
+  --ds-select-font-weight: 400;
+  --ds-select-line-height: 1.5;
+
+  --ds-bg-position-right: 0.75rem;
+  --ds-bg-size-width: 16px;
+  --ds-bg-size-height: 12px;
+
+  --ds-focus-box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+  --ds-disabled-opacity: 0.5;
+
+  margin: var(--ds-margin);
+}
+
+.data-sizer select {
+  padding: var(--ds-select-padding);
+  font-size: var(--ds-select-font-size);
+  font-weight: var(--ds-select-font-weight);
+  line-height: var(--ds-select-line-height);
+  color: var(--ds-text-color);
+  background-color: var(--ds-bg-color);
+  border: var(--ds-border-width) none;
+  cursor: pointer;
+  margin: 0 var(--ds-select-margin);
+}
+
+.data-sizer select:focus {
+  outline: 0;
+  box-shadow: var(--ds-focus-box-shadow);
+}
+
+.data-sizer select:disabled {
+  opacity: var(--ds-disabled-opacity);
+}
+
+@media (max-width: 991.98px) {
+  .data-sizer {
+    display: none;
+  }
+}

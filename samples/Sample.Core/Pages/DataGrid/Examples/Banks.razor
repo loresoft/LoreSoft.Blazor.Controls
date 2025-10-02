@@ -4,22 +4,48 @@
 <h3>Banks</h3>
 
 <DataGrid DataLoader="LoadData"
-          class="table table-hover"
           @ref="DataGrid"
           RowAttributes="RowAttributes"
+          Borders="@Borders.All"
           Filterable="true"
+          Selectable="true"
           Groupable="true">
     <DataToolbar>
         <DataGridToolbar Title="Bank Accounts" />
     </DataToolbar>
     <DataColumns>
-        <DataColumn TItem="Bank" Property="p => p.BankName" Grouping="true" SortIndex="0" />
-        <DataColumn TItem="Bank" Property="p => p.Id" Width="70px" data-test="testing" CellAttributes="CellAttributes" />
-        <DataColumn TItem="Bank" Property="p => p.AccountNumber" Width="150px" Title="Account" />
-        <DataColumn TItem="Bank" Property="p => p.IBAN" Width="200px" />
-        <DataColumn TItem="Bank" Property="p => p.RoutingNumber" Width="200px" />
-        <DataColumn TItem="Bank" Property="p => p.SwiftBIC" Width="200px" />
+        <DataColumn TItem="Bank"
+                    Property="p => p.BankName"
+                    Grouping="true"
+                    SortIndex="0" />
+        <DataColumn TItem="Bank"
+                    Property="p => p.Id"
+                    Width="70px"
+                    data-test="testing"
+                    CellAttributes="CellAttributes" />
+        <DataColumn TItem="Bank"
+                    Property="p => p.AccountNumber"
+                    Width="120px"
+                    Title="Account" />
+        <DataColumn TItem="Bank"
+                    Property="p => p.IBAN"
+                    Width="220px" />
+        <DataColumn TItem="Bank"
+                    Property="p => p.RoutingNumber"
+                    Width="150px" />
+        <DataColumn TItem="Bank"
+                    Property="p => p.SwiftBIC"
+                    Width="150px" />
     </DataColumns>
+    <DetailTemplate Context="item">
+        <div class="bank-details">
+            <div><strong>Bank Name:</strong> @item.BankName</div>
+            <div><strong>Account Number:</strong> @item.AccountNumber</div>
+            <div><strong>IBAN:</strong> @item.IBAN</div>
+            <div><strong>Routing Number:</strong> @item.RoutingNumber</div>
+            <div><strong>Swift BIC:</strong> @item.SwiftBIC</div>
+        </div>
+    </DetailTemplate>
     <DataPagination Context="grid">
         <DataPager PageSize="100" />
         <DataSizer />
@@ -33,18 +59,19 @@
 
     private Dictionary<string, object> CellAttributes(Bank bank)
     {
-        return new Dictionary<string, object>
+        return new()
         {
-            { "data-key-" + bank.Id, "Test " + bank.BankName }
+            ["data-key-" + bank.Id] = "Test " + bank.BankName
         };
     }
 
     private Dictionary<string, object> RowAttributes(Bank bank)
     {
-        return new Dictionary<string, object>
+        return new()
         {
-            { "data-row-" + bank.Id, "Test " + bank.BankName }
+            ["data-row-" + bank.Id] = "Test " + bank.BankName
         };
+
     }
 
     private async Task<IEnumerable<Bank>> LoadData()

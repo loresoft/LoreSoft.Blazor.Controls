@@ -13,8 +13,8 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.NET.Test.Sdk" />
-    <PackageReference Include="PublicApiGenerator" Version="11.4.6" />
-    <PackageReference Include="Verify.Xunit" Version="30.19.1" />
+    <PackageReference Include="PublicApiGenerator" />
+    <PackageReference Include="Verify.Xunit" />
     <PackageReference Include="xunit" />
     <PackageReference Include="xunit.runner.visualstudio">
       <PrivateAssets>all</PrivateAssets>

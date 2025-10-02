@@ -1,4 +1,4 @@
-namespace LoreSoft.Blazor.Controls.Tests.Data;
+namespace LoreSoft.Blazor.Controls.Tests.Models;
 
 public class Fruit
 {

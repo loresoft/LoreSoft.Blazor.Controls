@@ -3,17 +3,29 @@
 
 <h3>Virtual - No Paging</h3>
 
-<DataGrid Data="People" Virtualize="true" @ref="Grid">
+<DataGrid Data="People"
+          Virtualize="true"
+          Borders="@Borders.None"
+          @ref="Grid">
     <DataColumns>
-        <DataColumn TItem="Person" Property="p => p.Id" Width="70px" SortIndex="0" />
-        <DataColumn TItem="Person" Property="p => p.FullName">
+        <DataColumn TItem="Person"
+                    Property="p => p.Id"
+                    Width="70px"
+                    SortIndex="0" />
+        <DataColumn TItem="Person"
+                    Property="p => p.FullName">
             <Template>
                 <a href="#">@context.FullName</a>
             </Template>
         </DataColumn>
-        <DataColumn TItem="Person" Property="p => p.Score" Width="100px" />
-        <DataColumn TItem="Person" Property="p => p.Location" />
-        <DataColumn TItem="Person" Property="p => p.Birthday" Format="d" />
+        <DataColumn TItem="Person"
+                    Property="p => p.Score"
+                    Width="100px" />
+        <DataColumn TItem="Person"
+                    Property="p => p.Location" />
+        <DataColumn TItem="Person"
+                    Property="p => p.Birthday"
+                    Format="d" />
     </DataColumns>
 </DataGrid>
 

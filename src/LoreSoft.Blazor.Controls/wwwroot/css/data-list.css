@@ -1,26 +1,26 @@
 .data-list {
-  --data-list-error-color: var(--bs-danger, #dc3545);
-  --data-list-empty-color: #6c757d;
-  --data-size-options-color: var(--bs-body-color, #212529);
-  --data-size-options-bg: var(--bs-body-bg, #fff);
-  --data-list-input-color: var(--bs-body-color, #212529);
-  --data-list-input-bg: var(--bs-body-bg, #fff);
-  --data-list-input-border-width: var(--bs-border-width, 1px);
-  --data-list-input-border-color: var(--bs-border-color, #dee2e6);
-  --data-list-input-border-radius: var(--bs-border-radius, 0.375rem);
+  --dl-error-color: var(--bs-danger, #dc3545);
+  --dl-empty-color: #6c757d;
+  --dl-size-text-color: var(--bs-body-color, #212529);
+  --dl-size-bg-color: var(--bs-body-bg, #fff);
+  --dl-input-text-color: var(--bs-body-color, #212529);
+  --dl-input-bg-color: var(--bs-body-bg, #fff);
+  --dl-input-border-width: var(--bs-border-width, 1px);
+  --dl-input-border-color: var(--bs-border-color, #dee2e6);
+  --dl-input-border-radius: var(--bs-border-radius, 0.375rem);
   position: relative;
 }
 
 .data-list-error {
   padding: 1.5rem !important;
-  color: var(--data-list-error-color) !important;
+  color: var(--dl-error-color) !important;
   text-align: center;
   font-weight: 600;
 }
 
 .data-list-empty {
   padding: 1.5rem !important;
-  color: var(--data-list-empty-color) !important;
+  color: var(--dl-empty-color) !important;
   text-align: center;
   font-weight: 600;
 }

@@ -1,10 +1,16 @@
+# LoreSoft Blazor Controls
+
+A comprehensive collection of high-quality Blazor components designed to enhance your web applications with rich user interface elements. This library provides everything from data visualization components to form controls, loading indicators, and utility components.
+
 ## Overview
 
-The LoreSoft Blazor Controls project contains a collection of Blazor user controls.
+The LoreSoft Blazor Controls project contains a collection of production-ready Blazor user controls that are easy to use, highly customizable, and built with performance in mind. Whether you need data grids, form inputs, loading indicators, or notification systems, this library has you covered.
 
-* Demo: [https://blazor.loresoft.com/](https://blazor.loresoft.com/ "LoreSoft Blazor Controls")
-* NuGet: [https://nuget.org/packages/LoreSoft.Blazor.Controls](https://nuget.org/packages/LoreSoft.Blazor.Controls "NuGet Package")
-* Source: [https://github.com/loresoft/LoreSoft.Blazor.Controls](https://github.com/loresoft/LoreSoft.Blazor.Controls "Project Source")
+### Quick Links
+
+* **Demo**: [https://blazor.loresoft.com/](https://blazor.loresoft.com/ "LoreSoft Blazor Controls")
+* **NuGet**: [https://nuget.org/packages/LoreSoft.Blazor.Controls](https://nuget.org/packages/LoreSoft.Blazor.Controls "NuGet Package")
+* **Source**: [https://github.com/loresoft/LoreSoft.Blazor.Controls](https://github.com/loresoft/LoreSoft.Blazor.Controls "Project Source")
 
 ## Installing
 
@@ -26,42 +32,190 @@ In the head tag add the following CSS.
 <link rel="stylesheet" href="_content/LoreSoft.Blazor.Controls/BlazorControls.css" />
 ```
 
+## Components
 
-## Typeahead Features
+This library provides a comprehensive set of Blazor components organized into the following categories:
 
-* Searching data by supplying a search function
-* Template for search result, selected value, and footer
-* Debounce support for smoother search
-* Character limit before searching
-* Multiselect support
-* Built in form validation support
+### Data Components
 
-## Typeahead Properties
+#### DataGrid
 
-### Required
+A powerful data grid component for displaying tabular data with advanced features:
 
-* **Value** - Bind to `Value` in single selection mode.  Mutually exclusive to `Values` property.
-* **Values** - Bind to `Values` in multiple selection mode.  Mutually exclusive to `Value` property.
-* **SearchMethod** - The method used to return search result
+* Column sorting (single and multi-column)
+* Filtering and searching
+* Row selection and grouping
+* Detail views and expandable rows
+* CSV export functionality
+* Customizable column templates
+* Built-in pagination support
 
-### Optional
+#### DataList
 
-* **AllowClear** - Allow the selected value to be cleared
-* **ConvertMethod** - The method used to convert search result type to the value type
-* **Debounce** - Time to wait, in milliseconds, after last key press before starting a search
-* **Items** - The initial list of items to show when there isn't any search text
-* **MinimumLength** - Minimum number of characters before starting a search
-* **Placeholder** - The placeholder text to show when nothing is selected
+A flexible list component for displaying data items using custom templates:
 
-### Templates
+* Query-based filtering
+* Field-based sorting
+* CSV export capabilities
+* Customizable row templates
+* Simple and lightweight alternative to DataGrid
 
-* **ResultTemplate** - User defined template for displaying a result in the results list
-* **SelectedTemplate** - User defined template for displaying the selected item(s)
-* **NoRecordsTemplate** - Template for when no items are found
-* **FooterTemplate** - Template displayed at the end of the results list
-* **LoadingTemplate** - Template displayed while searching
+### Form Components
 
-## Typeahead Examples
+#### DateTimePicker
+
+A comprehensive date and time input component supporting multiple data types:
+
+* Supports `DateTime`, `DateTimeOffset`, `DateOnly`, `TimeOnly`, and `TimeSpan`
+* Multiple picker modes (date, time, datetime)
+* Built-in validation support
+* Keyboard navigation
+* Customizable format strings
+
+#### InputImage
+
+An image upload component with preview functionality:
+
+* File upload with drag-and-drop support
+* Image preview with automatic resizing
+* Data URL conversion
+* File size validation
+* Configurable maximum file size
+
+#### ToggleSwitch
+
+A modern toggle switch component for boolean values:
+
+* Smooth animations
+* Two-way data binding
+* Form validation support
+* Customizable styling
+* Supports both `bool` and `bool?` types
+
+#### Typeahead
+
+An advanced autocomplete/search component with rich features:
+
+* Asynchronous search functionality
+* Debounced search input
+* Single and multi-select modes
+* Customizable templates for results and selections
+* Minimum character length configuration
+* Built-in form validation support
+
+### UI Components
+
+#### BusyButton
+
+A button component that shows loading state during operations:
+
+* Automatic disable during busy state
+* Customizable busy indicator
+* Built-in loading text
+* Smooth state transitions
+
+#### Conditional
+
+A utility component for conditional rendering:
+
+* Simple boolean-based content switching
+* Separate templates for true/false states
+* Clean alternative to `@if` statements in templates
+
+#### LoadingBlock
+
+A loading overlay component for indicating progress:
+
+* Overlay or replacement loading modes
+* Customizable loading template
+* Smooth fade transitions
+* Flexible positioning
+
+#### ProgressBar
+
+An animated progress bar with service-based state management:
+
+* Smooth animations with customizable duration
+* Service-based progress updates
+* Auto-hide on completion
+* Multiple progress operations support
+
+#### Skeleton
+
+A skeleton placeholder component for loading states:
+
+* Multiple shape types (text, rectangle, circle)
+* Customizable dimensions
+* Smooth loading animations
+* Responsive design support
+
+### Notification Components
+
+#### Toaster
+
+A comprehensive toast notification system:
+
+* Multiple notification levels (Info, Success, Warning, Error)
+* Configurable positioning
+* Auto-dismiss with custom timeouts
+* Custom templates and styling
+* Queue management for multiple toasts
+
+### Query Components
+
+#### QueryBuilder
+
+A visual query builder for complex filtering:
+
+* Dynamic field configuration
+* Nested group support
+* Multiple operators per field type
+* Real-time query updates
+* Export to various query formats
+
+### Utility Components
+
+#### Gravatar
+
+A component for displaying Gravatar images:
+
+* Automatic MD5 hash generation
+* Fallback image support
+* Multiple Gravatar modes
+* Configurable ratings and sizes
+
+#### LazyValue
+
+A component for asynchronously loading and displaying values:
+
+* Key-based value loading
+* Custom loading templates
+* Error handling support
+* Caching capabilities
+
+#### LocalTime
+
+A component for displaying dates and times in the user's local timezone:
+
+* Automatic timezone conversion
+* Supports `DateTime` and `DateTimeOffset`
+* Customizable display formats
+* Semantic HTML time elements
+
+#### Repeater
+
+A simple repeater component for rendering collections:
+
+* Custom item templates
+* Empty state templates
+* Clean alternative to `@foreach` loops
+* Strongly typed item context
+
+## Examples
+
+### Typeahead Component
+
+The Typeahead component provides powerful search and selection capabilities:
 
 ### Basic Example
 
