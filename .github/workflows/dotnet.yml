@@ -6,6 +6,7 @@ env:
   DOTNET_ENVIRONMENT: github
   ASPNETCORE_ENVIRONMENT: github
   BUILD_PATH: "${{github.workspace}}/artifacts"
+  COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
 
 on:
   push:
@@ -35,16 +36,21 @@ jobs:
         with:
           dotnet-version: 9.x
 
-      - name: Setup Node
-        uses: actions/setup-node@v5
-        with:
-          node-version: "22"
-
       - name: Restore Dependencies
         run: dotnet restore
 
       - name: Build Solution
         run: dotnet build --no-restore --configuration Release
+
+      - name: Run Test
+        run: dotnet test --no-build --configuration Release --collect:"XPlat Code Coverage" --settings coverlet.runsettings
+
+      - name: Report Coverage
+        if: success()
+        uses: coverallsapp/github-action@v2
+        with:
+          file: "${{github.workspace}}/test/*/TestResults/*/coverage.info"
+          format: lcov
 
       - name: Create Packages
         if: success() && github.event_name != 'pull_request'
