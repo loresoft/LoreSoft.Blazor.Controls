@@ -16,9 +16,17 @@ namespace LoreSoft.Blazor.Controls
         protected override void OnParametersSet() { }
         protected void RenderBooleanOptions(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder builder) { }
     }
-    public class BrowserCultureProvider
+    public enum Borders
+    {
+        None = 0,
+        All = 1,
+        Horizontal = 2,
+        Vertical = 3,
+    }
+    public class BrowserCultureProvider : System.IAsyncDisposable
     {
         public BrowserCultureProvider(Microsoft.JSInterop.IJSRuntime javaScript) { }
+        public System.Threading.Tasks.ValueTask DisposeAsync() { }
         public System.Threading.Tasks.ValueTask<string> GetLanguage(bool force = false) { }
         public System.Threading.Tasks.ValueTask<System.TimeZoneInfo> GetTimeZone(bool force = false) { }
     }
@@ -69,14 +77,17 @@ namespace LoreSoft.Blazor.Controls
         [Microsoft.AspNetCore.Components.Parameter]
         public System.Func<TItem, System.Collections.Generic.Dictionary<string, object>>? CellAttributes { get; set; }
         [Microsoft.AspNetCore.Components.Parameter]
-        public string? ClassName { get; set; }
+        public string? CellClass { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public System.Func<TItem, string>? CellStyle { get; set; }
         [Microsoft.AspNetCore.Components.Parameter]
         public string? ColumnClass { get; set; }
-        public string ColumnName { get; set; }
+        public string ColumnName { get; }
         [Microsoft.AspNetCore.Components.Parameter]
         public string? ColumnStyle { get; set; }
         [Microsoft.AspNetCore.Components.Parameter]
         public string? ExportHeader { get; set; }
+        public string ExportName { get; }
         [Microsoft.AspNetCore.Components.Parameter]
         public bool Exportable { get; set; }
         [Microsoft.AspNetCore.Components.Parameter]
@@ -90,7 +101,7 @@ namespace LoreSoft.Blazor.Controls
         [Microsoft.AspNetCore.Components.Parameter]
         public string? FooterStyle { get; set; }
         [Microsoft.AspNetCore.Components.Parameter]
-        public Microsoft.AspNetCore.Components.RenderFragment<System.Collections.Generic.ICollection<TItem>>? FooterTemplate { get; set; }
+        public Microsoft.AspNetCore.Components.RenderFragment<System.Collections.Generic.ICollection<TItem>?>? FooterTemplate { get; set; }
         [Microsoft.AspNetCore.Components.Parameter]
         public string? Format { get; set; }
         [Microsoft.AspNetCore.Components.CascadingParameter(Name="Grid")]
@@ -105,6 +116,7 @@ namespace LoreSoft.Blazor.Controls
         public LoreSoft.Blazor.Controls.TextAlign? HeaderAlign { get; set; }
         [Microsoft.AspNetCore.Components.Parameter]
         public string? HeaderClass { get; set; }
+        public string HeaderName { get; }
         [Microsoft.AspNetCore.Components.Parameter]
         public string? HeaderStyle { get; set; }
         [Microsoft.AspNetCore.Components.Parameter]
@@ -120,16 +132,14 @@ namespace LoreSoft.Blazor.Controls
         [Microsoft.AspNetCore.Components.EditorRequired]
         [Microsoft.AspNetCore.Components.Parameter]
         public required System.Linq.Expressions.Expression<System.Func<TItem, object>> Property { get; set; }
-        public string PropertyName { get; set; }
-        public System.Type PropertyType { get; set; }
+        public string PropertyName { get; }
+        public System.Type PropertyType { get; }
         [Microsoft.AspNetCore.Components.Parameter]
         public bool SortDescending { get; set; }
         [Microsoft.AspNetCore.Components.Parameter]
         public int SortIndex { get; set; }
         [Microsoft.AspNetCore.Components.Parameter]
         public bool Sortable { get; set; }
-        [Microsoft.AspNetCore.Components.Parameter]
-        public System.Func<TItem, string>? Style { get; set; }
         [Microsoft.AspNetCore.Components.Parameter]
         public Microsoft.AspNetCore.Components.RenderFragment<TItem>? Template { get; set; }
         [Microsoft.AspNetCore.Components.Parameter]
@@ -146,7 +156,9 @@ namespace LoreSoft.Blazor.Controls
     public abstract class DataComponentBase<TItem> : Microsoft.AspNetCore.Components.ComponentBase, System.IDisposable
     {
         protected DataComponentBase() { }
-        protected LoreSoft.Blazor.Controls.DataProviderDelegate<TItem>? CurrentDataProvider { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter(CaptureUnmatchedValues=true)]
+        public System.Collections.Generic.Dictionary<string, object>? AdditionalAttributes { get; set; }
+        protected LoreSoft.Blazor.Controls.DataProviderDelegate<TItem>? CurrentDataProvider { get; }
         [Microsoft.AspNetCore.Components.Parameter]
         public System.Collections.Generic.IEnumerable<TItem>? Data { get; set; }
         protected System.Exception? DataError { get; }
@@ -164,7 +176,7 @@ namespace LoreSoft.Blazor.Controls
         public Microsoft.AspNetCore.Components.RenderFragment? EmptyTemplate { get; set; }
         [Microsoft.AspNetCore.Components.Parameter]
         public Microsoft.AspNetCore.Components.RenderFragment<System.Exception>? ErrorTemplate { get; set; }
-        protected bool FilterOpen { get; set; }
+        protected bool FilterOpen { get; }
         [Microsoft.AspNetCore.Components.Parameter]
         public bool Filterable { get; set; }
         public bool IsLoading { get; set; }
@@ -175,7 +187,7 @@ namespace LoreSoft.Blazor.Controls
         public LoreSoft.Blazor.Controls.DataPagerState Pager { get; }
         [Microsoft.AspNetCore.Components.Parameter]
         public LoreSoft.Blazor.Controls.QueryGroup? Query { get; set; }
-        public LoreSoft.Blazor.Controls.QueryGroup RootQuery { get; set; }
+        public LoreSoft.Blazor.Controls.QueryGroup RootQuery { get; }
         [Microsoft.AspNetCore.Components.Parameter]
         public bool Sortable { get; set; }
         protected System.Collections.Generic.ICollection<TItem>? View { get; }
@@ -254,6 +266,8 @@ namespace LoreSoft.Blazor.Controls
     public class DataGrid<TItem> : LoreSoft.Blazor.Controls.DataComponentBase<TItem>
     {
         public DataGrid() { }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public LoreSoft.Blazor.Controls.Borders Borders { get; set; }
         protected int CellCount { get; }
         protected bool ColumnPickerOpen { get; set; }
         public System.Collections.Generic.List<LoreSoft.Blazor.Controls.DataColumn<TItem>> Columns { get; }
@@ -262,9 +276,13 @@ namespace LoreSoft.Blazor.Controls
         [Microsoft.AspNetCore.Components.Parameter]
         public Microsoft.AspNetCore.Components.RenderFragment<TItem>? DetailTemplate { get; set; }
         [Microsoft.AspNetCore.Components.Parameter]
+        public string? GridClass { get; set; }
+        protected Microsoft.AspNetCore.Components.RenderFragment<System.ValueTuple<LoreSoft.Blazor.Controls.DataColumn<TItem>, System.Linq.IGrouping<string, TItem>>> GroupFragment { get; }
+        [Microsoft.AspNetCore.Components.Parameter]
         public bool Groupable { get; set; }
         protected bool HasGrouping { get; }
         protected Microsoft.AspNetCore.Components.RenderFragment<LoreSoft.Blazor.Controls.DataColumn<TItem>> HeaderFragment { get; }
+        protected Microsoft.AspNetCore.Components.RenderFragment<LoreSoft.Blazor.Controls.DataColumn<TItem>> HeaderValue { get; }
         [Microsoft.AspNetCore.Components.Parameter]
         public System.Func<TItem, System.Collections.Generic.Dictionary<string, object>>? RowAttributes { get; set; }
         [Microsoft.AspNetCore.Components.Parameter]
@@ -280,10 +298,6 @@ namespace LoreSoft.Blazor.Controls
         public System.Collections.Generic.IEnumerable<TItem> SelectedItems { get; set; }
         [Microsoft.AspNetCore.Components.Parameter]
         public Microsoft.AspNetCore.Components.EventCallback<System.Collections.Generic.IEnumerable<TItem>> SelectedItemsChanged { get; set; }
-        [Microsoft.AspNetCore.Components.Parameter(CaptureUnmatchedValues=true)]
-        public System.Collections.Generic.Dictionary<string, object>? TableAttributes { get; set; }
-        [Microsoft.AspNetCore.Components.Parameter]
-        public string TableClass { get; set; }
         protected System.Collections.Generic.List<LoreSoft.Blazor.Controls.DataColumn<TItem>> VisibleColumns { get; }
         protected override void BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder @__builder) { }
         public void CloseColumnPicker() { }
@@ -355,8 +369,6 @@ namespace LoreSoft.Blazor.Controls
     public class DataList<TItem> : LoreSoft.Blazor.Controls.DataComponentBase<TItem>
     {
         public DataList() { }
-        [Microsoft.AspNetCore.Components.Parameter(CaptureUnmatchedValues=true)]
-        public System.Collections.Generic.Dictionary<string, object>? AdditionalAttributes { get; set; }
         protected string? ClassName { get; set; }
         protected string CurrentSortDirection { get; set; }
         protected string CurrentSortField { get; set; }
@@ -436,7 +448,7 @@ namespace LoreSoft.Blazor.Controls
         protected override void OnInitialized() { }
         public void PreviousPage() { }
     }
-    public class DataPagerState
+    public class DataPagerState : System.ComponentModel.INotifyPropertyChanged
     {
         public DataPagerState() { }
         public int EndItem { get; }
@@ -577,16 +589,15 @@ namespace LoreSoft.Blazor.Controls
     public class DebounceValue<T>
     {
         public static readonly System.TimeSpan DefaultDelay;
-        public DebounceValue(System.Action<T?> action) { }
-        public DebounceValue(System.Action<T?> action, System.TimeSpan delay) { }
-        public DebounceValue(System.Action<T?> action, System.TimeSpan delay, T? value) { }
+        public DebounceValue(System.Action<T?> action, System.TimeSpan? delay = default, T? value = default) { }
         public System.Action<T?> Action { get; }
         public System.TimeSpan Delay { get; }
         public T Value { get; set; }
     }
-    public class DownloadService
+    public class DownloadService : System.IAsyncDisposable
     {
         public DownloadService(Microsoft.JSInterop.IJSRuntime javaScript) { }
+        public System.Threading.Tasks.ValueTask DisposeAsync() { }
         public System.Threading.Tasks.Task DownloadFileStream(System.IO.Stream stream, string? fileName = null, string? mimeType = null) { }
         public System.Threading.Tasks.Task DownloadFileText(string text, string? fileName = null, string? mimeType = null) { }
         public System.Threading.Tasks.Task TriggerFileDownload(string url, string? fileName = null) { }
