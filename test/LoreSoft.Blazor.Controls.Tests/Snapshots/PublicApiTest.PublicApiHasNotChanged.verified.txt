@@ -23,6 +23,63 @@ namespace LoreSoft.Blazor.Controls
         Horizontal = 2,
         Vertical = 3,
     }
+    public class BreakpointChanged
+    {
+        public BreakpointChanged() { }
+        public string Current { get; set; }
+        public string? Previous { get; set; }
+        public int? Width { get; set; }
+    }
+    public class BreakpointProvider : Microsoft.AspNetCore.Components.ComponentBase, System.IAsyncDisposable
+    {
+        public BreakpointProvider() { }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public System.Collections.Generic.Dictionary<string, int>? Breakpoints { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public Microsoft.AspNetCore.Components.RenderFragment? ChildContent { get; set; }
+        public string Current { get; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public int Debounce { get; set; }
+        [Microsoft.AspNetCore.Components.Inject]
+        public required Microsoft.JSInterop.IJSRuntime JavaScript { get; set; }
+        protected override void BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder @__builder) { }
+        public System.Threading.Tasks.ValueTask DisposeAsync() { }
+        protected override System.Threading.Tasks.Task OnAfterRenderAsync(bool firstRender) { }
+        [Microsoft.JSInterop.JSInvokable]
+        public void OnBreakpointChanged(LoreSoft.Blazor.Controls.BreakpointChanged data) { }
+        public void Subscribe(System.Action<LoreSoft.Blazor.Controls.BreakpointChanged> callback) { }
+        public void Unsubscribe(System.Action<LoreSoft.Blazor.Controls.BreakpointChanged> callback) { }
+    }
+    public class BreakpointView : Microsoft.AspNetCore.Components.ComponentBase, System.IDisposable
+    {
+        public BreakpointView() { }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public Microsoft.AspNetCore.Components.RenderFragment? ExtraExtraLarge { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public Microsoft.AspNetCore.Components.RenderFragment? ExtraLarge { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public Microsoft.AspNetCore.Components.RenderFragment? ExtraSmall { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public Microsoft.AspNetCore.Components.RenderFragment? Large { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public Microsoft.AspNetCore.Components.RenderFragment? Medium { get; set; }
+        [Microsoft.AspNetCore.Components.CascadingParameter]
+        public LoreSoft.Blazor.Controls.BreakpointProvider? Provider { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public Microsoft.AspNetCore.Components.RenderFragment? Small { get; set; }
+        protected override void BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder builder) { }
+        public void Dispose() { }
+        protected override void OnInitialized() { }
+    }
+    public enum Breakpoints
+    {
+        xs = 0,
+        sm = 1,
+        md = 2,
+        lg = 3,
+        xl = 4,
+        xxl = 5,
+    }
     public class BrowserCultureProvider : System.IAsyncDisposable
     {
         public BrowserCultureProvider(Microsoft.JSInterop.IJSRuntime javaScript) { }
@@ -74,6 +131,8 @@ namespace LoreSoft.Blazor.Controls
         public System.Collections.Generic.Dictionary<string, object>? AdditionalAttributes { get; set; }
         [Microsoft.AspNetCore.Components.Parameter]
         public LoreSoft.Blazor.Controls.TextAlign? Align { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public LoreSoft.Blazor.Controls.Breakpoints? Breakpoint { get; set; }
         [Microsoft.AspNetCore.Components.Parameter]
         public System.Func<TItem, System.Collections.Generic.Dictionary<string, object>>? CellAttributes { get; set; }
         [Microsoft.AspNetCore.Components.Parameter]
@@ -204,7 +263,7 @@ namespace LoreSoft.Blazor.Controls
         public void CloseFilter() { }
         public virtual LoreSoft.Blazor.Controls.DataRequest CreateDataRequest(System.Threading.CancellationToken cancellationToken = default) { }
         protected virtual System.Threading.Tasks.ValueTask<LoreSoft.Blazor.Controls.DataResult<TItem>> DefaultProvider(LoreSoft.Blazor.Controls.DataRequest request) { }
-        public void Dispose() { }
+        public virtual void Dispose() { }
         protected virtual System.Linq.IQueryable<TItem> FilterData(System.Linq.IQueryable<TItem> queryable, LoreSoft.Blazor.Controls.DataRequest request) { }
         public bool IsFilterActive() { }
         protected override System.Threading.Tasks.Task OnAfterRenderAsync(bool firstRender) { }
@@ -303,6 +362,7 @@ namespace LoreSoft.Blazor.Controls
         public void CloseColumnPicker() { }
         public override LoreSoft.Blazor.Controls.DataRequest CreateDataRequest(System.Threading.CancellationToken cancellationToken = default) { }
         protected void DeselectAll() { }
+        public override void Dispose() { }
         public virtual System.Threading.Tasks.Task ExportAsync(string? fileName = null, System.Threading.CancellationToken cancellationToken = default) { }
         protected override System.Linq.IQueryable<TItem> FilterData(System.Linq.IQueryable<TItem> queryable, LoreSoft.Blazor.Controls.DataRequest request) { }
         protected bool IsAllSelected() { }
@@ -310,6 +370,7 @@ namespace LoreSoft.Blazor.Controls
         protected bool IsRowExpanded(TItem item) { }
         protected bool IsRowSelected(TItem item) { }
         protected override System.Threading.Tasks.Task OnAfterRenderAsync(bool firstRender) { }
+        protected override void OnInitialized() { }
         protected override void OnParametersSet() { }
         public System.Threading.Tasks.Task QuickSearch(string? searchText, bool clearFilter = false) { }
         public override System.Threading.Tasks.Task RefreshAsync(bool resetPager = false, bool forceReload = false) { }
