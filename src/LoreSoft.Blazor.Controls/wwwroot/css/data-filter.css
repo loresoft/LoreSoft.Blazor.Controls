@@ -37,7 +37,6 @@
   box-sizing: border-box;
   margin-bottom: var(--df-margin-bottom);
   margin-top: var(--df-margin-top);
-  min-height: var(--df-height-min);
   padding: var(--df-padding);
   position: absolute;
   width: var(--df-width);
