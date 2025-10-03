@@ -24,6 +24,7 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
     private readonly HashSet<string> _expandedGroups = [];
 
     private QueryGroup? _initialQuery;
+    private BreakpointProvider? _breakpointProvider;
 
     /// <summary>
     /// Gets or sets the template for defining data columns.
@@ -119,6 +120,12 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
     /// </summary>
     [Parameter]
     public EventCallback<TItem> RowDoubleClick { get; set; }
+
+    /// <summary>
+    /// Provides access to the current breakpoint information.
+    /// </summary>
+    [CascadingParameter]
+    private BreakpointProvider? BreakpointProvider { get; set; }
 
     /// <summary>
     /// Gets the list of columns defined for the grid.
@@ -354,6 +361,18 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
                 // We just track the initial query for change detection
             }
         }
+    }
+
+    /// <inheritdoc />
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+
+        _breakpointProvider = BreakpointProvider;
+        if (_breakpointProvider == null)
+            return;
+
+        _breakpointProvider.Subscribe(OnBreakpointChanged);
     }
 
     /// <summary>
@@ -654,10 +673,58 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
             .ToString();
     }
 
-    private bool? _hasFooter;
+    /// <summary>
+    /// Handles changes to the current breakpoint.
+    /// </summary>
+    /// <param name="breakpointChanged">The breakpoint change event.</param>
+    private void OnBreakpointChanged(BreakpointChanged breakpointChanged)
+    {
+        if (breakpointChanged == null || string.IsNullOrWhiteSpace(breakpointChanged.Current))
+            return;
+
+        if (!Enum.TryParse(breakpointChanged.Current, true, out Breakpoints breakpoint))
+            return;
+
+        foreach (var column in Columns)
+        {
+            // skip columns without breakpoint
+            if (!column.Breakpoint.HasValue)
+                continue;
+
+            // visible if current breakpoint is >= column breakpoint
+            var visible = breakpoint >= column.Breakpoint.Value;
+
+            // update only if changed
+            if (column.CurrentVisible != visible)
+                column.UpdateVisible(visible);
+        }
+
+        InvokeAsync(StateHasChanged);
+    }
+
+    /// <inheritdoc />
+    public override void Dispose()
+    {
+        _breakpointProvider?.Unsubscribe(OnBreakpointChanged);
+
+        base.Dispose();
+
+        GC.SuppressFinalize(this);
+    }
+
+    private (int, bool)? _hasFooter;
+
     private bool HasFooter()
     {
-        _hasFooter = Columns.Any(c => c.FooterTemplate != null);
-        return _hasFooter.Value;
+        // cache footer check since columns don't change often
+        if (_hasFooter != null && Columns.Count == _hasFooter.Value.Item1)
+            return _hasFooter.Value.Item2;
+
+        var count = Columns.Count;
+        var hasFooter = Columns.Any(c => c.FooterTemplate != null);
+
+        _hasFooter = (count, hasFooter);
+
+        return hasFooter;
     }
 }

@@ -383,7 +383,7 @@ public abstract class DataComponentBase<TItem> : ComponentBase, IDisposable
     /// This method cancels any pending data operations and unsubscribes from pager events
     /// to prevent memory leaks and ensure proper cleanup.
     /// </summary>
-    public void Dispose()
+    public virtual void Dispose()
     {
         _refreshCancellation?.Dispose();
         Pager.PropertyChanged -= OnStatePropertyChange;

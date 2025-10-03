@@ -1,0 +1,60 @@
+@page "/breakpoint/index"
+@using Microsoft.AspNetCore.Components
+@using Microsoft.AspNetCore.Components.Rendering
+
+<h1>Breakpoint Components</h1>
+
+<p>Responsive breakpoint controls that allow you to show different content based on the current viewport size. These components automatically detect screen size changes and display the appropriate content for each breakpoint.</p>
+
+<Instructions></Instructions>
+
+<h2 class="mb-3">Examples</h2>
+
+<h3>Responsive Content Display</h3>
+
+<p>This example demonstrates how to use the <code>BreakpointProvider</code> and <code>BreakpointView</code> components to display different content based on screen size breakpoints.</p>
+<p><strong>Try it:</strong> Resize your browser window or change device orientation to see how the content automatically adapts to different screen sizes. Each breakpoint corresponds to standard CSS media query breakpoints.</p>
+
+<BreakpointProvider>
+    <BreakpointView>
+        <ExtraSmall>
+            <div class="p-3 mb-2 bg-primary text-white rounded">
+                📱 Extra Small View (xs) - Mobile phones (&lt; 576px)
+                <br><small>Perfect for mobile-first responsive design</small>
+            </div>
+        </ExtraSmall>
+        <Small>
+            <div class="p-3 mb-2 bg-secondary text-white rounded">
+                📱 Small View (sm) - Small tablets (≥ 576px)
+                <br><small>Optimized for portrait tablet viewing</small>
+            </div>
+        </Small>
+        <Medium>
+            <div class="p-3 mb-2 bg-success text-white rounded">
+                💻 Medium View (md) - Tablets &amp; small laptops (≥ 768px)
+                <br><small>Great for landscape tablets and small screens</small>
+            </div>
+        </Medium>
+        <Large>
+            <div class="p-3 mb-2 bg-warning text-dark rounded">
+                🖥️ Large View (lg) - Desktops &amp; laptops (≥ 992px)
+                <br><small>Standard desktop and laptop displays</small>
+            </div>
+        </Large>
+        <ExtraLarge>
+            <div class="p-3 mb-2 bg-info text-white rounded">
+                🖥️ Extra Large View (xl) - Large desktops (≥ 1200px)
+                <br><small>Wide desktop monitors and large displays</small>
+            </div>
+        </ExtraLarge>
+        <ExtraExtraLarge>
+            <div class="p-3 mb-2 bg-dark text-white rounded">
+                🖥️ Extra Extra Large View (xxl) - Ultra-wide displays (≥ 1400px)
+                <br><small>Ultra-wide monitors and large desktop setups</small>
+            </div>
+        </ExtraExtraLarge>
+    </BreakpointView>
+</BreakpointProvider>
+
+@code {
+}

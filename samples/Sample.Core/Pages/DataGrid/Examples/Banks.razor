@@ -3,56 +3,59 @@
 
 <h3>Banks</h3>
 
-<DataGrid DataLoader="LoadData"
-          @ref="DataGrid"
-          RowAttributes="RowAttributes"
-          Borders="@Borders.All"
-          Filterable="true"
-          Selectable="true"
-          Groupable="true">
-    <DataToolbar>
-        <DataGridToolbar Title="Bank Accounts" />
-    </DataToolbar>
-    <DataColumns>
-        <DataColumn TItem="Bank"
-                    Property="p => p.BankName"
-                    Grouping="true"
-                    SortIndex="0" />
-        <DataColumn TItem="Bank"
-                    Property="p => p.Id"
-                    Width="70px"
-                    data-test="testing"
-                    CellAttributes="CellAttributes" />
-        <DataColumn TItem="Bank"
-                    Property="p => p.AccountNumber"
-                    Width="120px"
-                    Title="Account" />
-        <DataColumn TItem="Bank"
-                    Property="p => p.IBAN"
-                    Width="220px" />
-        <DataColumn TItem="Bank"
-                    Property="p => p.RoutingNumber"
-                    Width="150px" />
-        <DataColumn TItem="Bank"
-                    Property="p => p.SwiftBIC"
-                    Width="150px" />
-    </DataColumns>
-    <DetailTemplate Context="item">
-        <div class="bank-details">
-            <div><strong>Bank Name:</strong> @item.BankName</div>
-            <div><strong>Account Number:</strong> @item.AccountNumber</div>
-            <div><strong>IBAN:</strong> @item.IBAN</div>
-            <div><strong>Routing Number:</strong> @item.RoutingNumber</div>
-            <div><strong>Swift BIC:</strong> @item.SwiftBIC</div>
-        </div>
-    </DetailTemplate>
-    <DataPagination Context="grid">
-        <DataPager PageSize="100" />
-        <DataSizer />
-        <div>@grid.Pager.StartItem - @grid.Pager.EndItem of @grid.Pager.Total</div>
-    </DataPagination>
-</DataGrid>
-
+<BreakpointProvider>
+    <DataGrid DataLoader="LoadData"
+              @ref="DataGrid"
+              RowAttributes="RowAttributes"
+              Borders="@Borders.All"
+              Filterable="true"
+              Selectable="true"
+              Groupable="true">
+        <DataToolbar>
+            <DataGridToolbar Title="Bank Accounts" />
+        </DataToolbar>
+        <DataColumns>
+            <DataColumn TItem="Bank"
+                        Property="p => p.BankName"
+                        Grouping="true"
+                        SortIndex="0" />
+            <DataColumn TItem="Bank"
+                        Property="p => p.Id"
+                        Width="70px"
+                        data-test="testing"
+                        CellAttributes="CellAttributes" />
+            <DataColumn TItem="Bank"
+                        Property="p => p.AccountNumber"
+                        Width="120px"
+                        Title="Account" />
+            <DataColumn TItem="Bank"
+                        Property="p => p.IBAN"
+                        Breakpoint="Breakpoints.lg"
+                        Width="220px" />
+            <DataColumn TItem="Bank"
+                        Property="p => p.RoutingNumber"
+                        Width="150px" />
+            <DataColumn TItem="Bank"
+                        Property="p => p.SwiftBIC"
+                        Breakpoint="Breakpoints.lg"
+                        Width="150px" />
+        </DataColumns>
+        <DetailTemplate Context="item">
+            <div class="bank-details">
+                <div><strong>Bank Name:</strong> @item.BankName</div>
+                <div><strong>Account Number:</strong> @item.AccountNumber</div>
+                <div><strong>IBAN:</strong> @item.IBAN</div>
+                <div><strong>Routing Number:</strong> @item.RoutingNumber</div>
+                <div><strong>Swift BIC:</strong> @item.SwiftBIC</div>
+            </div>
+        </DetailTemplate>
+        <DataPagination Context="grid">
+            <DataPager PageSize="100" />
+            <DataSizer />
+            <div>@grid.Pager.StartItem - @grid.Pager.EndItem of @grid.Pager.Total</div>
+        </DataPagination>
+    </DataGrid>
+</BreakpointProvider>
 
 @code {
     private DataGrid<Bank>? DataGrid { get; set; }

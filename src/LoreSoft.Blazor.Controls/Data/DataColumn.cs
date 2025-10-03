@@ -283,6 +283,15 @@ public class DataColumn<TItem> : ComponentBase
     public List<string>? FilterValues { get; set; }
 
     /// <summary>
+    /// Gets or sets the responsive breakpoints for the column visibility.
+    /// When specified, the column will only be visible at the defined breakpoint sizes and larger.
+    /// This allows for responsive column management where columns can be hidden on smaller screens
+    /// and shown on larger devices to optimize the user experience across different screen sizes.
+    /// </summary>
+    [Parameter]
+    public Breakpoints? Breakpoint { get; set; }
+
+    /// <summary>
     /// Gets the property name for the column. Computed from the property expression.
     /// This is the actual property name from the data model.
     /// </summary>
