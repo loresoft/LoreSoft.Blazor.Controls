@@ -48,7 +48,6 @@
   font-size: var(--dg-font-size);
   line-height: 1.5;
   box-sizing: border-box;
-  min-height: 150px;
 }
 
   .data-grid *,

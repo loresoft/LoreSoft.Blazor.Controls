@@ -53,7 +53,14 @@
                     CellStyle="@SoreStyle"
                     Align="TextAlign.Right">
             <FooterTemplate Context="items">
-                <div>Avg: @String.Format("{0:N2}", items.Average(i => i.Score))</div>
+                @if (items != null && items.Count > 0)
+                {
+                    <div>Avg: @String.Format("{0:N2}", items.Average(i => i.Score))</div>
+                }
+                else
+                {
+                    <div>Avg: 0</div>
+                }
             </FooterTemplate>
         </DataColumn>
         <DataColumn TItem="Person"
