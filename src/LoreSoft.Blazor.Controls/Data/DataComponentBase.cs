@@ -1,8 +1,6 @@
 // Ignore Spelling: Queryable Toolbar Virtualize Overscan
 
 using System.ComponentModel;
-using System.Globalization;
-using System.Text;
 
 using LoreSoft.Blazor.Controls.Extensions;
 using LoreSoft.Blazor.Controls.Utilities;

@@ -2,8 +2,6 @@
 
 using System.Buffers;
 using System.Diagnostics.CodeAnalysis;
-using System.Text;
-using System.Text.RegularExpressions;
 
 namespace LoreSoft.Blazor.Controls.Extensions;
 

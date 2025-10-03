@@ -6,7 +6,6 @@ using LoreSoft.Blazor.Controls.Extensions;
 using LoreSoft.Blazor.Controls.Utilities;
 
 using Microsoft.AspNetCore.Components;
-using Microsoft.JSInterop;
 
 // ReSharper disable once CheckNamespace
 namespace LoreSoft.Blazor.Controls;
@@ -482,7 +481,7 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
     /// </summary>
     protected void SelectAll()
     {
-        var list = View?.ToList() ?? new List<TItem>();
+        var list = View?.ToList() ?? [];
         SetSelectedItems(list);
         StateHasChanged();
     }
