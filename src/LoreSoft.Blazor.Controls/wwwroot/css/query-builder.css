@@ -7,12 +7,12 @@
   --qb-hover-border-color: #6c757d;
   --qb-invalid-border-color: var(--bs-danger, #dc3545);
   --qb-group-header-bg-color: #f2f2f2;
-  --qb-padding-y: 0.25rem;
-  --qb-padding-x: 0.75rem;
+  --qb-padding-y: 0.125rem;
+  --qb-padding-x: 0.5rem;
   --qb-margin: 0.125rem;
   --qb-group-indent: 2.5rem;
   --qb-group-header-padding: 0.125rem;
-  --qb-font-size: 1rem;
+  --qb-font-size: 0.85rem;
   --qb-icon-size: 16px;
 
   position: relative;
@@ -57,12 +57,13 @@
 .query-group-header {
   background-color: var(--qb-group-header-bg-color);
   padding: var(--qb-group-header-padding);
+  align-items: center;
 }
 
 .query-button-delete::before {
   display: inline-block;
   content: "";
-  vertical-align: -0.125em;
+  vertical-align: -0.25em;
   background-repeat: no-repeat;
   width: var(--qb-icon-size);
   height: var(--qb-icon-size);
@@ -73,7 +74,7 @@
 .query-button-add::before {
   display: inline-block;
   content: "";
-  vertical-align: -0.125em;
+  vertical-align: -0.25em;
   background-repeat: no-repeat;
   width: var(--qb-icon-size);
   height: var(--qb-icon-size);
