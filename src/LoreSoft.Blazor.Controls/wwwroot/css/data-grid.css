@@ -25,6 +25,7 @@
   --dg-cell-padding: 0.5rem;
   --dg-cell-gap: 0.25rem;
   /* Rows */
+  --dg-row-bg-color: #ffffff;
   --dg-row-gap: 0;
   /* Group */
   --dg-group-header-bg-color: #f8f9fa;
@@ -41,7 +42,6 @@
   --dg-z-group-header: 1;
   /* Animation */
   --dg-transition-speed: 0.2s;
-
   /* Base styles */
   width: 100%;
   font-family: var(--dg-font-family);
@@ -143,7 +143,7 @@
   position: sticky;
   top: var(--dg-header-sticky-top);
   z-index: var(--dg-z-header);
-  background: var(--dg-header-bg-color);
+  background-color: var(--dg-header-bg-color);
 }
 
 .data-grid__header-cell {
@@ -246,6 +246,7 @@
 
 /* Row specific styles */
 .data-grid__row {
+  background-color: var(--dg-row-bg-color);
   transition: background-color var(--dg-transition-speed);
 }
 
