@@ -79,6 +79,10 @@ namespace LoreSoft.Blazor.Controls
         lg = 3,
         xl = 4,
         xxl = 5,
+        hd = 6,
+        fhd = 7,
+        qhd = 8,
+        uhd = 9,
     }
     public class BrowserCultureProvider : System.IAsyncDisposable
     {
