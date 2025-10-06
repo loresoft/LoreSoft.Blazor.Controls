@@ -441,6 +441,8 @@
     overflow: visible;
     text-overflow: unset;
     white-space: normal;
+    width: 100% !important;
+    max-width: 100% !important;
   }
 
   .data-grid__cell--no-wrap {

@@ -7,12 +7,16 @@
 class BreakpointMonitor {
   constructor(customBreakpoints = null, debounceDelay = 250) {
     this.breakpoints = customBreakpoints || {
-      xs: 0,
-      sm: 576,
-      md: 768,
-      lg: 992,
-      xl: 1200,
-      xxl: 1400
+      xs: 0,      // Extra small - Mobile portrait
+      sm: 576,    // Small - Mobile landscape
+      md: 768,    // Medium - Tablet portrait
+      lg: 992,    // Large - Tablet landscape
+      xl: 1200,   // Extra large - Desktop
+      xxl: 1400,  // Extra extra large - Large desktop
+      hd: 1600,   // HD - Wide desktop
+      fhd: 1920,  // Full HD - Full HD displays
+      qhd: 2560,  // QHD - 2K displays
+      uhd: 3200   // UHD - 4K displays
     };
 
     // Sort breakpoints once during initialization

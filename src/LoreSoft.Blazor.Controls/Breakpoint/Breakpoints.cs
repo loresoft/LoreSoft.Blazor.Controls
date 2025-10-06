@@ -16,6 +16,10 @@ namespace LoreSoft.Blazor.Controls;
 /// <item><description>lg: 992px - Large devices (desktops)</description></item>
 /// <item><description>xl: 1200px - Extra large devices (large desktops)</description></item>
 /// <item><description>xxl: 1400px - Extra extra large devices (larger desktops)</description></item>
+/// <item><description>hd: 1600px - HD wide desktop displays</description></item>
+/// <item><description>fhd: 1920px - Full HD displays</description></item>
+/// <item><description>qhd: 2560px - QHD 2K displays</description></item>
+/// <item><description>uhd: 3200px - UHD 4K displays</description></item>
 /// </list>
 /// </remarks>
 public enum Breakpoints
@@ -54,5 +58,29 @@ public enum Breakpoints
     /// Extra extra large breakpoint for devices with viewport width of 1400px and up.
     /// Typically represents very large desktop monitors and ultra-wide displays.
     /// </summary>
-    xxl = 5
+    xxl = 5,
+
+    /// <summary>
+    /// HD breakpoint for devices with viewport width of 1600px and up.
+    /// Typically represents wide desktop displays and HD monitors.
+    /// </summary>
+    hd = 6,
+
+    /// <summary>
+    /// Full HD breakpoint for devices with viewport width of 1920px and up.
+    /// Typically represents Full HD displays and standard widescreen monitors.
+    /// </summary>
+    fhd = 7,
+
+    /// <summary>
+    /// QHD breakpoint for devices with viewport width of 2560px and up.
+    /// Typically represents 2K displays and high-resolution monitors.
+    /// </summary>
+    qhd = 8,
+
+    /// <summary>
+    /// UHD breakpoint for devices with viewport width of 3200px and up.
+    /// Typically represents 4K displays and ultra-high-resolution monitors.
+    /// </summary>
+    uhd = 9
 }
