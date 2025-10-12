@@ -1,5 +1,3 @@
-# nullable enable
-
 using Microsoft.AspNetCore.Components;
 
 namespace LoreSoft.Blazor.Controls;

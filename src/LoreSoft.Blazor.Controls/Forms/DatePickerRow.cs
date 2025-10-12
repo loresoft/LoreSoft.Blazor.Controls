@@ -8,7 +8,7 @@ public class DatePickerRow
     /// <summary>
     /// Gets a unique key for the row, useful for rendering and identification.
     /// </summary>
-    public string Key { get; } = Guid.NewGuid().ToString();
+    public string Key { get; } = Identifier.Random();
 
     /// <summary>
     /// Gets the collection of cells in this row.

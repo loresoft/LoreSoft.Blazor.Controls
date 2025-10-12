@@ -15,5 +15,5 @@ public abstract class QueryRule
     /// Used for UI tracking and internal logic; not serialized.
     /// </summary>
     [JsonIgnore]
-    public string Id { get; set; } = Guid.NewGuid().ToString("N");
+    public string Id { get; set; } = Identifier.Random();
 }
