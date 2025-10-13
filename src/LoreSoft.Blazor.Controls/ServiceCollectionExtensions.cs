@@ -16,11 +16,13 @@ public static class ServiceCollectionExtensions
     /// <returns>The updated <see cref="IServiceCollection"/>.</returns>
     public static IServiceCollection AddBlazorControls(this IServiceCollection services)
     {
+        services.TryAddSingleton<Messenger>();
         services.TryAddScoped<DownloadService>();
         services.TryAddScoped<BrowserCultureProvider>();
 
         services.AddProgressBar();
         services.AddToaster();
+        services.AddModals();
 
         return services;
     }
@@ -48,6 +50,13 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddToaster(this IServiceCollection services)
     {
         services.TryAddSingleton<IToaster, Toaster>();
+
+        return services;
+    }
+
+    public static IServiceCollection AddModals(this IServiceCollection services)
+    {
+        services.TryAddSingleton<ModalService>();
 
         return services;
     }

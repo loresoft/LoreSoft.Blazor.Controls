@@ -1,0 +1,10 @@
+@namespace LoreSoft.Blazor.Controls
+
+<dialog id="@Modal.ModalId"
+        class="dialog-container"
+        @ref="Element">
+    <DynamicComponent Type="@Modal.ComponentType"
+                      Parameters="@Modal.Parameters" />
+</dialog>
+
+

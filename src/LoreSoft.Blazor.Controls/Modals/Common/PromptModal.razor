@@ -1,0 +1,44 @@
+@namespace LoreSoft.Blazor.Controls
+@inherits ModalComponentBase
+
+<div class="dialog-content @VariantClass">
+    <div class="dialog-header">
+        <h3>@Title</h3>
+    </div>
+    <div class="dialog-body">
+        <p>@Message</p>
+        <input type="text"
+               class="dialog-input"
+               @bind="InputValue"
+               @bind:event="oninput" />
+    </div>
+    <div class="dialog-footer">
+        <button type="button"
+                class="dialog-secondary-button"
+                @onclick="Cancel">
+            @SecondaryAction
+        </button>
+        <button type="button"
+                class="dialog-primary-button"
+                @onclick="Submit">
+            @PrimaryAction
+        </button>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public string DefaultValue { get; set; } = string.Empty;
+
+    protected string InputValue { get; set; } = string.Empty;
+
+    protected override void OnInitialized()
+    {
+        InputValue = DefaultValue;
+    }
+
+    private async Task Submit()
+    {
+        await Close(InputValue);
+    }
+}

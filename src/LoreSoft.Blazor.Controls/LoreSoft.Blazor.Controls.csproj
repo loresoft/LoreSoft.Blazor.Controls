@@ -28,7 +28,15 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Include="wwwroot\css\modal-dialog.css" />
+  </ItemGroup>
+
+  <ItemGroup>
     <SupportedPlatform Include="browser" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Dialogs\" />
   </ItemGroup>
 
 </Project>

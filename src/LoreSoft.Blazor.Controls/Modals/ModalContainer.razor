@@ -1,0 +1,6 @@
+@namespace LoreSoft.Blazor.Controls
+
+@foreach (var modal in Modals)
+{
+    <ModalDialog @key="modal.ModalId" Modal="modal" />
+}

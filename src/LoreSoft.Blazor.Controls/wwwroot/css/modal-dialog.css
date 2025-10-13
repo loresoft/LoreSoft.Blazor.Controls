@@ -1,0 +1,229 @@
+/* Modal Dialog Styles */
+.dialog-container {
+  /* Spacing variables */
+  --md-spacing-sm: 12px;
+  --md-spacing-md: 16px;
+  --md-spacing-lg: 20px;
+  --md-spacing-xl: 24px;
+
+  /* Border variables */
+  --md-border-radius: 8px;
+  --md-border-radius-sm: 6px;
+  --md-border-color: #e5e7eb;
+  --md-border-width: 1px;
+
+  /* Color variables */
+  --md-text-primary: #111827;
+  --md-text-secondary: #374151;
+  --md-backdrop-color: rgba(0, 0, 0, 0.5);
+  --md-backdrop-blur: 2px;
+
+  /* Shadow variables */
+  --md-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 10px 20px rgba(0, 0, 0, 0.15);
+  --md-focus-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+
+  /* Size variables */
+  --md-max-width: 500px;
+  --md-width: 90%;
+  --md-min-height: 200px;
+
+  /* Typography variables */
+  --md-title-size: 1.25rem;
+  --md-title-weight: 600;
+  --md-text-size: 1rem;
+  --md-button-size: 0.875rem;
+  --md-button-weight: 500;
+  --md-line-height: 1.5;
+
+  /* Input variables */
+  --md-input-padding: 8px 12px;
+  --md-input-border-color: #d1d5db;
+  --md-input-focus-color: #3b82f6;
+
+  /* Button variables */
+  --md-button-padding: 8px 16px;
+  --md-button-primary-bg: #3b82f6;
+  --md-button-primary-hover: #2563eb;
+  --md-button-secondary-bg: #e5e7eb;
+  --md-button-secondary-hover: #d1d5db;
+
+  /* Type-specific colors */
+  --md-primary-bg: #eff6ff;
+  --md-primary-border: #bfdbfe;
+  --md-primary-text: #1e40af;
+
+  --md-success-bg: #f0fdf4;
+  --md-success-border: #bbf7d0;
+  --md-success-text: #15803d;
+  --md-success-button: #16a34a;
+  --md-success-button-hover: #15803d;
+
+  --md-warning-bg: #fffbeb;
+  --md-warning-border: #fde68a;
+  --md-warning-text: #92400e;
+  --md-warning-button: #d97706;
+  --md-warning-button-hover: #b45309;
+
+  --md-danger-bg: #fef2f2;
+  --md-danger-border: #fecaca;
+  --md-danger-text: #991b1b;
+  --md-danger-button: #dc2626;
+  --md-danger-button-hover: #b91c1c;
+
+  /* Transition variables */
+  --md-transition: all 0.2s;
+
+  border: none;
+  border-radius: var(--md-border-radius);
+  padding: 0;
+  box-shadow: var(--md-shadow);
+  max-width: var(--md-max-width);
+  width: var(--md-width);
+}
+
+  .dialog-container::backdrop {
+    background-color: var(--md-backdrop-color);
+    backdrop-filter: blur(var(--md-backdrop-blur));
+  }
+
+.dialog-content {
+  display: flex;
+  flex-direction: column;
+  min-height: var(--md-min-height);
+}
+
+.dialog-header {
+  padding: var(--md-spacing-lg) var(--md-spacing-xl);
+  border-bottom: var(--md-border-width) solid var(--md-border-color);
+}
+
+  .dialog-header h3 {
+    margin: 0;
+    font-size: var(--md-title-size);
+    font-weight: var(--md-title-weight);
+    color: var(--md-text-primary);
+  }
+
+/* Modal Type Styles */
+.dialog-primary .dialog-header {
+  background-color: var(--md-primary-bg);
+  border-bottom-color: var(--md-primary-border);
+}
+
+  .dialog-primary .dialog-header h3 {
+    color: var(--md-primary-text);
+  }
+
+.dialog-success .dialog-header {
+  background-color: var(--md-success-bg);
+  border-bottom-color: var(--md-success-border);
+}
+
+  .dialog-success .dialog-header h3 {
+    color: var(--md-success-text);
+  }
+
+.dialog-warning .dialog-header {
+  background-color: var(--md-warning-bg);
+  border-bottom-color: var(--md-warning-border);
+}
+
+  .dialog-warning .dialog-header h3 {
+    color: var(--md-warning-text);
+  }
+
+.dialog-danger .dialog-header {
+  background-color: var(--md-danger-bg);
+  border-bottom-color: var(--md-danger-border);
+}
+
+  .dialog-danger .dialog-header h3 {
+    color: var(--md-danger-text);
+  }
+
+.dialog-body {
+  padding: var(--md-spacing-xl);
+  flex: 1;
+}
+
+  .dialog-body p {
+    margin: 0 0 var(--md-spacing-md) 0;
+    color: var(--md-text-secondary);
+    line-height: var(--md-line-height);
+  }
+
+.dialog-footer {
+  padding: var(--md-spacing-md) var(--md-spacing-xl);
+  border-top: var(--md-border-width) solid var(--md-border-color);
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--md-spacing-sm);
+}
+
+.dialog-input {
+  width: 100%;
+  padding: var(--md-input-padding);
+  border: var(--md-border-width) solid var(--md-input-border-color);
+  border-radius: var(--md-border-radius-sm);
+  font-size: var(--md-text-size);
+  transition: var(--md-transition);
+}
+
+  .dialog-input:focus {
+    outline: none;
+    border-color: var(--md-input-focus-color);
+    box-shadow: var(--md-focus-shadow);
+  }
+
+.dialog-primary-button,
+.dialog-secondary-button {
+  padding: var(--md-button-padding);
+  border: none;
+  border-radius: var(--md-border-radius-sm);
+  font-size: var(--md-button-size);
+  font-weight: var(--md-button-weight);
+  cursor: pointer;
+  transition: var(--md-transition);
+}
+
+.dialog-primary-button {
+  background-color: var(--md-button-primary-bg);
+  color: white;
+}
+
+  .dialog-primary-button:hover {
+    background-color: var(--md-button-primary-hover);
+  }
+
+.dialog-danger .dialog-primary-button {
+  background-color: var(--md-danger-button);
+}
+
+  .dialog-danger .dialog-primary-button:hover {
+    background-color: var(--md-danger-button-hover);
+  }
+
+.dialog-success .dialog-primary-button {
+  background-color: var(--md-success-button);
+}
+
+  .dialog-success .dialog-primary-button:hover {
+    background-color: var(--md-success-button-hover);
+  }
+
+.dialog-warning .dialog-primary-button {
+  background-color: var(--md-warning-button);
+}
+
+  .dialog-warning .dialog-primary-button:hover {
+    background-color: var(--md-warning-button-hover);
+  }
+
+.dialog-secondary-button {
+  background-color: var(--md-button-secondary-bg);
+  color: var(--md-text-secondary);
+}
+
+  .dialog-secondary-button:hover {
+    background-color: var(--md-button-secondary-hover);
+  }

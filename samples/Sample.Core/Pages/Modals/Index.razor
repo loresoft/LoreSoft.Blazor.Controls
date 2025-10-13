@@ -1,0 +1,123 @@
+@page "/modals/index"
+
+<h1>Modals</h1>
+
+<p>Modal Control</p>
+
+<Instructions></Instructions>
+
+<h2 class="mb-3">Examples</h2>
+
+<h3>Basic</h3>
+
+<h4>Example Alert Dialog with Types</h4>
+
+<div>
+    <button type="button"
+            class="btn btn-secondary"
+            @onclick="ShowInfoAlert">
+        Show Info
+    </button>
+    <button type="button"
+            class="btn btn-secondary"
+            @onclick="ShowSuccessAlert">
+        Show Success
+    </button>
+    <button type="button"
+            class="btn btn-secondary"
+            @onclick="ShowDangerAlert">
+        Show Danger
+    </button>
+</div>
+
+<h4>Confirm Dialog with Custom Buttons</h4>
+
+<div>
+    <button type="button"
+            class="btn btn-secondary"
+            @onclick="ShowDeleteConfirm">
+        Delete Item
+    </button>
+</div>
+
+<div>
+    Result: @_deleteConfirm
+</div>
+
+<h4>Prompt Dialog with Custom Buttons</h4>
+
+<div>
+    <button type="button"
+            class="btn btn-secondary"
+            @onclick="ShowPrompt">
+        Enter Name
+    </button>
+</div>
+
+<div>
+    Result: @_promptResult
+</div>
+@code {
+
+    [Inject]
+    public required ModalService ModalService { get; set; }
+
+    private bool? _deleteConfirm;
+    private string? _promptResult;
+
+    private async Task ShowInfoAlert()
+    {
+        await ModalService.Alert(
+            "This is an informational message!",
+            "Information"
+        );
+    }
+
+    private async Task ShowSuccessAlert()
+    {
+        await ModalService.Alert(
+            "Operation completed successfully!",
+            "Success",
+            ModalVariant.Success
+        );
+    }
+
+    private async Task ShowDangerAlert()
+    {
+        await ModalService.Alert(
+            "An error occurred!",
+            "Error",
+            ModalVariant.Danger,
+            primaryAction: "Got it"
+        );
+    }
+
+    private async Task ShowDeleteConfirm()
+    {
+        _deleteConfirm = await ModalService.Confirm(
+            "Are you sure you want to delete this item? This action cannot be undone.",
+            "Confirm Delete",
+            ModalVariant.Danger,
+            primaryAction: "Delete"
+        );
+
+        StateHasChanged();
+    }
+
+    private async Task ShowPrompt()
+    {
+        var modal = await ModalService.PromptModal(
+            "Please enter your name:",
+            "Name Entry",
+            "John Doe",
+            ModalVariant.Primary,
+            primaryAction: "Submit",
+            secondaryAction: "Skip"
+        );
+
+        var result = await modal.Result;
+        _promptResult = result.Data as string;
+
+        StateHasChanged();
+    }
+}
