@@ -54,10 +54,10 @@ public class IdentifierTests
     [InlineData(null)]
     [InlineData("")]
     [InlineData("   ")]
-    public void Random_NullOrWhiteSpacePrefix_ThrowsArgumentException(string prefix)
+    public void Random_NullOrWhiteSpacePrefix_ThrowsArgumentException(string? prefix)
     {
         // Act & Assert
-        Assert.ThrowsAny<ArgumentException>(() => Identifier.Random(prefix));
+        Assert.ThrowsAny<ArgumentException>(() => Identifier.Random(prefix!));
     }
 
     [Fact]
@@ -113,10 +113,10 @@ public class IdentifierTests
     [InlineData(null)]
     [InlineData("")]
     [InlineData("   ")]
-    public void Sequential_NullOrWhiteSpacePrefix_ThrowsArgumentException(string prefix)
+    public void Sequential_NullOrWhiteSpacePrefix_ThrowsArgumentException(string? prefix)
     {
         // Act & Assert
-        Assert.ThrowsAny<ArgumentException>(() => Identifier.Sequential(prefix));
+        Assert.ThrowsAny<ArgumentException>(() => Identifier.Sequential(prefix!));
     }
 
     [Fact]

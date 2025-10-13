@@ -1,6 +1,6 @@
 using System.Collections.Concurrent;
 
-namespace LoreSoft.Blazor.Controls.Utilities;
+namespace LoreSoft.Blazor.Controls;
 
 /// <summary>
 /// A lightweight in-process message service that uses weak references to prevent memory leaks.
