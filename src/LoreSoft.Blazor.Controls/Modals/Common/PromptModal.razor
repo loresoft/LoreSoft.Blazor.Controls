@@ -2,28 +2,36 @@
 @inherits ModalComponentBase
 
 <div class="dialog-content @VariantClass">
-    <div class="dialog-header">
-        <h3>@Title</h3>
-    </div>
-    <div class="dialog-body">
-        <p>@Message</p>
-        <input type="text"
-               class="dialog-input"
-               @bind="InputValue"
-               @bind:event="oninput" />
-    </div>
-    <div class="dialog-footer">
-        <button type="button"
-                class="dialog-secondary-button"
-                @onclick="Cancel">
-            @SecondaryAction
-        </button>
-        <button type="button"
-                class="dialog-primary-button"
-                @onclick="Submit">
-            @PrimaryAction
-        </button>
-    </div>
+    <form @onsubmit="SubmitAsync">
+        <div class="dialog-header">
+            <h3>@Title</h3>
+            <button type="button"
+                    class="dialog-close-button"
+                    aria-label="Close"
+                    @onclick="CancelAsync" />
+        </div>
+        <div class="dialog-body">
+            <p>@Message</p>
+            <input type="text"
+                   name="prompt-input"
+                   class="dialog-input"
+                   required
+                   autocomplete="off"
+                   @bind="InputValue"
+                   @bind:event="oninput" />
+        </div>
+        <div class="dialog-footer">
+            <button type="button"
+                    class="dialog-secondary-button"
+                    @onclick="CancelAsync">
+                @SecondaryAction
+            </button>
+            <button type="submit"
+                    class="dialog-primary-button">
+                @PrimaryAction
+            </button>
+        </div>
+    </form>
 </div>
 
 @code {
@@ -37,8 +45,8 @@
         InputValue = DefaultValue;
     }
 
-    private async Task Submit()
+    private async Task SubmitAsync()
     {
-        await Close(InputValue);
+        await CloseAsync(InputValue);
     }
 }

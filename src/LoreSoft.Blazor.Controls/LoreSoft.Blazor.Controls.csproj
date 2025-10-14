@@ -35,8 +35,4 @@
     <SupportedPlatform Include="browser" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Dialogs\" />
-  </ItemGroup>
-
 </Project>

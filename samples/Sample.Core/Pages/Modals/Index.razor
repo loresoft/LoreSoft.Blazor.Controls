@@ -15,13 +15,23 @@
 <div>
     <button type="button"
             class="btn btn-secondary"
+            @onclick="ShowPrimaryAlert">
+        Show Default
+    </button>
+    <button type="button"
+            class="btn btn-secondary"
             @onclick="ShowInfoAlert">
-        Show Info
+        Show Information
     </button>
     <button type="button"
             class="btn btn-secondary"
             @onclick="ShowSuccessAlert">
         Show Success
+    </button>
+    <button type="button"
+            class="btn btn-secondary"
+            @onclick="ShowWarnAlert">
+        Show Warning
     </button>
     <button type="button"
             class="btn btn-secondary"
@@ -65,11 +75,28 @@
     private bool? _deleteConfirm;
     private string? _promptResult;
 
+    private async Task ShowPrimaryAlert()
+    {
+        await ModalService.Alert(
+            "This is a standard message!"
+        );
+    }
+
     private async Task ShowInfoAlert()
     {
         await ModalService.Alert(
             "This is an informational message!",
-            "Information"
+            "Information",
+            ModalVariant.Information
+        );
+    }
+
+    private async Task ShowWarnAlert()
+    {
+        await ModalService.Alert(
+            "This is a warning message!",
+            "Warning",
+            ModalVariant.Warning
         );
     }
 

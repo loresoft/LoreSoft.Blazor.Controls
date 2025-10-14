@@ -4,6 +4,10 @@
 <div class="dialog-content @VariantClass">
     <div class="dialog-header">
         <h3>@Title</h3>
+        <button type="button"
+                class="dialog-close-button"
+                aria-label="Close"
+                @onclick="CancelAsync" />
     </div>
     <div class="dialog-body">
         <p>@Message</p>
@@ -11,12 +15,12 @@
     <div class="dialog-footer">
         <button type="button"
                 class="dialog-secondary-button"
-                @onclick="Cancel">
+                @onclick="CancelAsync">
             @SecondaryAction
         </button>
         <button type="button"
                 class="dialog-primary-button"
-                @onclick="Close">
+                @onclick="CloseAsync">
             @PrimaryAction
         </button>
     </div>

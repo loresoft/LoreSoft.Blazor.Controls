@@ -28,12 +28,16 @@ class DialogManager {
 
     // Setup event handlers with error handling
     this.closeHandler = () => {
+      var value = this.dialog.returnValue || '';
+
+      // if closed by script, ignore
+      if (value === '--closed--')
+        return;
+
       if (!this.dotNetHelper) {
         console.warn("DotNetHelper is not set for DialogManager.");
         return;
       }
-
-      var value = this.dialog.returnValue || '';
 
       this.dotNetHelper
         .invokeMethodAsync("OnDialogClosed", value)
@@ -87,20 +91,6 @@ class DialogManager {
       return '';
     }
     return this.dialog.returnValue || '';
-  }
-
-  /**
-   * Disposes the DialogManager and cleans up resources
-   */
-  dispose() {
-    if (this.dialog && this.closeHandler) {
-      this.dialog.removeEventListener('close', this.closeHandler);
-    }
-
-    this.dialog = null;
-    this.dotNetHelper = null;
-    this.cancelHandler = null;
-    this.closeHandler = null;
   }
 }
 

@@ -1,7 +1,9 @@
 @namespace LoreSoft.Blazor.Controls
 
 <dialog id="@Modal.ModalId"
-        class="dialog-container"
+        class="@ClassName"
+        style="@Style"
+        closedby="any"
         @ref="Element">
     <DynamicComponent Type="@Modal.ComponentType"
                       Parameters="@Modal.Parameters" />
