@@ -1,7 +1,7 @@
 <Project>
 
   <PropertyGroup Label="Package">
-    <Description>Blazor Controls Library</Description>
+    <Description>A comprehensive collection of high-quality Blazor components</Description>
     <Copyright>Copyright © $([System.DateTime]::Now.ToString(yyyy)) LoreSoft</Copyright>
     <Authors>LoreSoft</Authors>
     <NeutralLanguage>en-US</NeutralLanguage>

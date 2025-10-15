@@ -1,0 +1,330 @@
+/* Modal Dialog Styles */
+.dialog-container {
+    /* Spacing variables */
+    --md-spacing-button-gap: 0.75rem;
+    --md-spacing-paragraph: 0.75rem;
+    --md-spacing-header-vertical: 0.75rem;
+    --md-spacing-horizontal: 0.75rem;
+    --md-spacing-body: 0.75rem;
+    --md-spacing-footer-vertical: 0.75rem;
+    /* Border variables */
+    --md-border-radius: 0.5rem;
+    --md-border-radius-sm: 0.375rem;
+    --md-border-color: #e5e7eb;
+    --md-border-width: 1px;
+    /* Color variables */
+    --md-text-primary: #111827;
+    --md-text-secondary: #374151;
+    --md-backdrop-color: rgba(0, 0, 0, 0.5);
+    --md-backdrop-blur: 2px;
+    /* Shadow variables */
+    --md-shadow: 0 4px 6px rgba(0, 0, 0, 0.1), 0 10px 20px rgba(0, 0, 0, 0.15);
+    --md-focus-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    /* Size variables */
+    --md-max-width: 32rem;
+    --md-width: 90%;
+    --md-min-height: 12rem;
+    /* Typography variables */
+    --md-title-size: 1.25rem;
+    --md-title-weight: 600;
+    --md-text-size: 1rem;
+    --md-button-size: 0.875rem;
+    --md-button-weight: 500;
+    --md-line-height: 1.5;
+    /* Input variables */
+    --md-input-padding: 0.5rem 0.75rem;
+    --md-input-border-color: #d1d5db;
+    --md-input-focus-color: #3b82f6;
+    /* Button variables */
+    --md-button-padding: 0.5rem 1rem;
+    --md-button-primary-bg: #3b82f6;
+    --md-button-primary-hover: #2563eb;
+    --md-button-secondary-bg: #e5e7eb;
+    --md-button-secondary-hover: #d1d5db;
+    /* Type-specific colors */
+    --md-primary-bg: #ffffff;
+    --md-primary-border: #e5e7eb;
+    --md-primary-text: #111827;
+    --md-information-bg: #eff6ff;
+    --md-information-border: #bfdbfe;
+    --md-information-text: #1e40af;
+    --md-information-button: #3b82f6;
+    --md-information-button-hover: #2563eb;
+    --md-success-bg: #f0fdf4;
+    --md-success-border: #bbf7d0;
+    --md-success-text: #15803d;
+    --md-success-button: #16a34a;
+    --md-success-button-hover: #15803d;
+    --md-warning-bg: #fffbeb;
+    --md-warning-border: #fde68a;
+    --md-warning-text: #92400e;
+    --md-warning-button: #d97706;
+    --md-warning-button-hover: #b45309;
+    --md-danger-bg: #fef2f2;
+    --md-danger-border: #fecaca;
+    --md-danger-text: #991b1b;
+    --md-danger-button: #dc2626;
+    --md-danger-button-hover: #b91c1c;
+    /* Transition variables */
+    --md-transition: all 0.2s;
+    /* Close button variables */
+    --md-close-button-size: 2rem;
+    --md-close-button-font-size: 1.75rem;
+    --md-close-button-color: #6b7280;
+    --md-close-button-hover-color: #111827;
+    /* Primary button variables */
+    --md-primary-button-color: white;
+    --md-button-min-width: 4rem;
+}
+
+.dialog-container {
+    border: none;
+    border-radius: var(--md-border-radius);
+    padding: 0;
+    box-shadow: var(--md-shadow);
+    max-width: var(--md-max-width);
+    width: var(--md-width);
+}
+
+    .dialog-container::backdrop {
+        background-color: var(--md-backdrop-color);
+        backdrop-filter: blur(var(--md-backdrop-blur));
+    }
+
+.dialog-content {
+    display: flex;
+    flex-direction: column;
+    min-height: var(--md-min-height);
+}
+
+.dialog-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--md-spacing-header-vertical) var(--md-spacing-horizontal);
+    border-bottom: var(--md-border-width) solid var(--md-border-color);
+}
+
+    .dialog-header .dialog-title {
+        margin: 0;
+        font-size: var(--md-title-size);
+        font-weight: var(--md-title-weight);
+        color: var(--md-text-primary);
+    }
+
+.dialog-close-button {
+    background: none;
+    border: none;
+    font-size: var(--md-close-button-font-size);
+    line-height: 1;
+    color: var(--md-close-button-color);
+    cursor: pointer;
+    padding: 0;
+    width: var(--md-close-button-size);
+    height: var(--md-close-button-size);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--md-transition);
+}
+
+    .dialog-close-button::before {
+        content: "×";
+    }
+
+    .dialog-close-button:hover {
+        color: var(--md-close-button-hover-color);
+    }
+
+/* Modal Type Styles */
+.dialog-primary .dialog-header {
+    background-color: var(--md-primary-bg);
+    border-bottom-color: var(--md-primary-border);
+}
+
+    .dialog-primary .dialog-header .dialog-title {
+        color: var(--md-primary-text);
+    }
+
+.dialog-information .dialog-header {
+    background-color: var(--md-information-bg);
+    border-bottom-color: var(--md-information-border);
+}
+
+    .dialog-information .dialog-header .dialog-title {
+        color: var(--md-information-text);
+    }
+
+.dialog-success .dialog-header {
+    background-color: var(--md-success-bg);
+    border-bottom-color: var(--md-success-border);
+}
+
+    .dialog-success .dialog-header .dialog-title {
+        color: var(--md-success-text);
+    }
+
+.dialog-warning .dialog-header {
+    background-color: var(--md-warning-bg);
+    border-bottom-color: var(--md-warning-border);
+}
+
+    .dialog-warning .dialog-header .dialog-title {
+        color: var(--md-warning-text);
+    }
+
+.dialog-danger .dialog-header {
+    background-color: var(--md-danger-bg);
+    border-bottom-color: var(--md-danger-border);
+}
+
+    .dialog-danger .dialog-header .dialog-title {
+        color: var(--md-danger-text);
+    }
+
+.dialog-body {
+    padding: var(--md-spacing-body);
+    flex: 1;
+}
+
+    .dialog-body p {
+        margin: 0 0 var(--md-spacing-paragraph) 0;
+        color: var(--md-text-secondary);
+        line-height: var(--md-line-height);
+    }
+
+.dialog-footer {
+    padding: var(--md-spacing-footer-vertical) var(--md-spacing-horizontal);
+    border-top: var(--md-border-width) solid var(--md-border-color);
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--md-spacing-button-gap);
+}
+
+.dialog-input {
+    width: 100%;
+    padding: var(--md-input-padding);
+    border: var(--md-border-width) solid var(--md-input-border-color);
+    border-radius: var(--md-border-radius-sm);
+    font-size: var(--md-text-size);
+    transition: var(--md-transition);
+}
+
+    .dialog-input:focus {
+        outline: none;
+        border-color: var(--md-input-focus-color);
+        box-shadow: var(--md-focus-shadow);
+    }
+
+.dialog-primary-button,
+.dialog-secondary-button {
+    padding: var(--md-button-padding);
+    border: none;
+    border-radius: var(--md-border-radius-sm);
+    font-size: var(--md-button-size);
+    font-weight: var(--md-button-weight);
+    cursor: pointer;
+    transition: var(--md-transition);
+    min-width: var(--md-button-min-width);
+}
+
+.dialog-primary-button {
+    background-color: var(--md-button-primary-bg);
+    color: var(--md-primary-button-color);
+}
+
+    .dialog-primary-button:hover {
+        background-color: var(--md-button-primary-hover);
+    }
+
+.dialog-information .dialog-primary-button {
+    background-color: var(--md-information-button);
+}
+
+    .dialog-information .dialog-primary-button:hover {
+        background-color: var(--md-information-button-hover);
+    }
+
+.dialog-danger .dialog-primary-button {
+    background-color: var(--md-danger-button);
+}
+
+    .dialog-danger .dialog-primary-button:hover {
+        background-color: var(--md-danger-button-hover);
+    }
+
+.dialog-success .dialog-primary-button {
+    background-color: var(--md-success-button);
+}
+
+    .dialog-success .dialog-primary-button:hover {
+        background-color: var(--md-success-button-hover);
+    }
+
+.dialog-warning .dialog-primary-button {
+    background-color: var(--md-warning-button);
+}
+
+    .dialog-warning .dialog-primary-button:hover {
+        background-color: var(--md-warning-button-hover);
+    }
+
+.dialog-secondary-button {
+    background-color: var(--md-button-secondary-bg);
+    color: var(--md-text-secondary);
+}
+
+    .dialog-secondary-button:hover {
+        background-color: var(--md-button-secondary-hover);
+    }
+
+/* Dialog Open/Close Animations */
+dialog {
+    transition: display 300ms allow-discrete, overlay 1s allow-discrete;
+    animation: dialog-close 300ms forwards;
+}
+
+    dialog[open] {
+        animation: dialog-open 300ms forwards;
+    }
+
+@keyframes dialog-open {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes dialog-close {
+    from {
+        opacity: 1;
+    }
+
+    to {
+        opacity: 0;
+    }
+}
+
+/* Dialog Width Classes */
+.dialog-sm {
+    max-width: 20rem;
+}
+
+.dialog-md {
+    max-width: 32rem;
+}
+
+.dialog-lg {
+    max-width: 48rem;
+}
+
+.dialog-xl {
+    max-width: 64rem;
+}
+
+.dialog-full {
+    max-width: 90vw;
+}

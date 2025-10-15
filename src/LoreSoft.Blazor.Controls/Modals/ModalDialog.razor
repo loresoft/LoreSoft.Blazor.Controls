@@ -1,0 +1,12 @@
+@namespace LoreSoft.Blazor.Controls
+
+<dialog id="@Modal.ModalId"
+        class="@ClassName"
+        style="@Style"
+        closedby="any"
+        @ref="Element">
+    <DynamicComponent Type="@Modal.ComponentType"
+                      Parameters="@Modal.Parameters" />
+</dialog>
+
+

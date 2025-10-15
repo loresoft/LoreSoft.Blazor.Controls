@@ -1,6 +1,6 @@
 <Solution>
   <Folder Name="/Build/">
-    <File Path=".github/workflows/dotnetcore.yml" />
+    <File Path=".github/workflows/dotnet.yml" />
     <File Path="Directory.Build.props" />
     <File Path="Directory.Packages.props" />
     <File Path="README.md" />

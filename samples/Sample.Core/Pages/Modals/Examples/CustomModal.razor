@@ -1,0 +1,63 @@
+@using Sample.Core.Models
+@inherits ModalComponentBase
+
+<div class="dialog-content @VariantClass">
+    <form @onsubmit="SubmitAsync">
+        <div class="dialog-header">
+            <h3 class="dialog-title">@Title</h3>
+            <button type="button"
+                    class="dialog-close-button"
+                    aria-label="Close"
+                    @onclick="CancelAsync" />
+        </div>
+        <div class="dialog-body">
+            <h5>@Message</h5>
+            <div class="mb-2">
+                <label for="DisplayName">Display Name:</label>
+                <input id="DisplayName"
+                       type="text"
+                       class="dialog-input"
+                       required
+                       @bind="Profile.DisplayName"
+                       @bind:event="oninput" />
+            </div>
+            <div class="mb-2">
+                <label for="EmailAddress">Email Address:</label>
+                <input id="EmailAddress"
+                       type="email"
+                       class="dialog-input"
+                       required
+                       @bind="Profile.EmailAddress"
+                       @bind:event="oninput" />
+            </div>
+        </div>
+        <div class="dialog-footer">
+            <button type="button"
+                    class="dialog-secondary-button"
+                    @onclick="CancelAsync">
+                @SecondaryAction
+            </button>
+            <button type="submit"
+                    class="dialog-primary-button">
+                @PrimaryAction
+            </button>
+        </div>
+    </form>
+</div>
+
+@code {
+    [Parameter]
+    public Profile Profile { get; set; } = new Profile();
+
+    public Profile Model { get; set; } = null!;
+
+    protected override void OnInitialized()
+    {
+        Model = Profile;
+    }
+
+    private async Task SubmitAsync()
+    {
+        await CloseAsync(Profile);
+    }
+}

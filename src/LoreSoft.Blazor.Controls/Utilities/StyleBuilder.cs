@@ -4,9 +4,9 @@ namespace LoreSoft.Blazor.Controls.Utilities;
 /// Provides a fluent API for building CSS style strings for components.
 /// Supports conditional and dynamic style addition, merging, and formatting.
 /// </summary>
-public struct StyleBuilder(string prop, string value)
+public class StyleBuilder
 {
-    private string _buffer = $"{prop}:{value};";
+    private string _buffer = string.Empty;
 
     /// <summary>
     /// Creates a new <see cref="StyleBuilder"/> with a single property and value.
@@ -15,7 +15,7 @@ public struct StyleBuilder(string prop, string value)
     /// <param name="value">The CSS property value.</param>
     /// <returns>A new <see cref="StyleBuilder"/> instance.</returns>
     public static StyleBuilder Default(string prop, string value)
-        => new(prop, value);
+        => new StyleBuilder().AddStyle(prop, value);
 
     /// <summary>
     /// Creates a new <see cref="StyleBuilder"/> from a raw style string.
@@ -141,8 +141,9 @@ public struct StyleBuilder(string prop, string value)
     /// Merges a "style" attribute from a dictionary of attributes, removing it from the dictionary.
     /// </summary>
     /// <param name="attributes">A dictionary of attributes that may contain a "style" entry.</param>
+    /// <param name="remove">Whether to remove the "style" entry from the dictionary.</param>
     /// <returns>The current <see cref="StyleBuilder"/> instance.</returns>
-    public StyleBuilder MergeStyle(IDictionary<string, object>? attributes)
+    public StyleBuilder MergeStyle(IDictionary<string, object>? attributes, bool remove = true)
     {
         if (attributes == null)
             return this;
@@ -150,8 +151,9 @@ public struct StyleBuilder(string prop, string value)
         if (!attributes.TryGetValue("style", out var c))
             return this;
 
-        // remove so it doesn't overwrite
-        attributes.Remove("style");
+        // remove style to prevent duplication
+        if (remove)
+            attributes.Remove("style");
 
         return AddRaw(c?.ToString() ?? string.Empty);
     }
@@ -160,6 +162,6 @@ public struct StyleBuilder(string prop, string value)
     /// Returns the built CSS style string.
     /// </summary>
     /// <returns>The CSS style string.</returns>
-    public override readonly string ToString()
+    public override string ToString()
         => _buffer?.Trim() ?? string.Empty;
 }

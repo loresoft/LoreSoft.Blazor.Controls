@@ -1,4 +1,6 @@
-﻿<Router AppAssembly="@typeof(Routes).Assembly">
+<ModalContainer />
+
+<Router AppAssembly="@typeof(Routes).Assembly">
     <Found Context="routeData">
         <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
         <FocusOnNavigate RouteData="@routeData" Selector="h1" />

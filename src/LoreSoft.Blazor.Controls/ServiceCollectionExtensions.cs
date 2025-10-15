@@ -16,11 +16,13 @@ public static class ServiceCollectionExtensions
     /// <returns>The updated <see cref="IServiceCollection"/>.</returns>
     public static IServiceCollection AddBlazorControls(this IServiceCollection services)
     {
+        services.TryAddSingleton<Messenger>();
         services.TryAddScoped<DownloadService>();
         services.TryAddScoped<BrowserCultureProvider>();
 
         services.AddProgressBar();
         services.AddToaster();
+        services.AddModals();
 
         return services;
     }
@@ -48,6 +50,24 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddToaster(this IServiceCollection services)
     {
         services.TryAddSingleton<IToaster, Toaster>();
+
+        return services;
+    }
+
+    /// <summary>
+    /// Adds modal dialog services to the specified <see cref="IServiceCollection"/>.
+    /// Registers <see cref="ModalService"/> as singleton.
+    /// </summary>
+    /// <param name="services">The service collection to add the services to.</param>
+    /// <returns>The updated <see cref="IServiceCollection"/>.</returns>
+    /// <remarks>
+    /// This method registers the modal service which is used to display and manage modal dialogs.
+    /// The <see cref="ModalService"/> requires a <see cref="Messenger"/> service to be registered,
+    /// which is automatically handled by <see cref="AddBlazorControls"/>.
+    /// </remarks>
+    public static IServiceCollection AddModals(this IServiceCollection services)
+    {
+        services.TryAddSingleton<ModalService>();
 
         return services;
     }

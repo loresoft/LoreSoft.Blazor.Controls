@@ -3,6 +3,11 @@
 [assembly: System.Runtime.Versioning.TargetFramework(".NETCoreApp,Version=v9.0", FrameworkDisplayName=".NET 9.0")]
 namespace LoreSoft.Blazor.Controls
 {
+    public class AlertModal : LoreSoft.Blazor.Controls.ModalComponentBase
+    {
+        public AlertModal() { }
+        protected override void BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder @__builder) { }
+    }
     public class BooleanSelect<TValue> : Microsoft.AspNetCore.Components.Forms.InputSelect<TValue>
     {
         public BooleanSelect() { }
@@ -126,6 +131,11 @@ namespace LoreSoft.Blazor.Controls
         public Microsoft.AspNetCore.Components.RenderFragment? Passed { get; set; }
         protected override void BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder builder) { }
         protected override void OnParametersSet() { }
+    }
+    public class ConfirmModal : LoreSoft.Blazor.Controls.ModalComponentBase
+    {
+        public ConfirmModal() { }
+        protected override void BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder @__builder) { }
     }
     [Microsoft.AspNetCore.Components.CascadingTypeParameter("TItem")]
     public class DataColumn<TItem> : Microsoft.AspNetCore.Components.ComponentBase
@@ -708,12 +718,24 @@ namespace LoreSoft.Blazor.Controls
         r = 2,
         x = 3,
     }
+    public interface IModalReference
+    {
+        string ModalId { get; }
+        System.Threading.Tasks.Task<LoreSoft.Blazor.Controls.ModalResult> Result { get; }
+        System.Threading.Tasks.Task CancelAsync();
+        System.Threading.Tasks.Task CloseAsync(LoreSoft.Blazor.Controls.ModalResult modalResult);
+    }
     public interface IToaster
     {
         event System.Action<LoreSoft.Blazor.Controls.ToastLevel?>? OnClear;
         event System.Action<LoreSoft.Blazor.Controls.ToastLevel, Microsoft.AspNetCore.Components.RenderFragment, System.Action<LoreSoft.Blazor.Controls.ToastSettings>?> OnShow;
         void Clear(LoreSoft.Blazor.Controls.ToastLevel? toastLevel = default);
         void Show(LoreSoft.Blazor.Controls.ToastLevel level, Microsoft.AspNetCore.Components.RenderFragment message, System.Action<LoreSoft.Blazor.Controls.ToastSettings>? settings = null);
+    }
+    public static class Identifier
+    {
+        public static string Random(string prefix = "id") { }
+        public static string Sequential(string prefix = "id") { }
     }
     public class InputImage : Microsoft.AspNetCore.Components.Forms.InputBase<string>
     {
@@ -802,6 +824,138 @@ namespace LoreSoft.Blazor.Controls
         protected override void BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder builder) { }
         protected override System.Threading.Tasks.Task OnAfterRenderAsync(bool firstRender) { }
     }
+    public class Messenger : System.IDisposable
+    {
+        public Messenger() { }
+        public void Dispose() { }
+        public System.Threading.Tasks.Task PublishAsync<TMessage>(TMessage message) { }
+        public System.IDisposable Subscribe<TMessage>(object subscriber, System.Func<TMessage, System.Threading.Tasks.Task> handler) { }
+        public void Unsubscribe(object subscriber) { }
+    }
+    public class ModalClose : System.IEquatable<LoreSoft.Blazor.Controls.ModalClose>
+    {
+        public ModalClose(LoreSoft.Blazor.Controls.ModalReference Modal) { }
+        public LoreSoft.Blazor.Controls.ModalReference Modal { get; init; }
+    }
+    public abstract class ModalComponentBase : Microsoft.AspNetCore.Components.ComponentBase
+    {
+        protected ModalComponentBase() { }
+        [Microsoft.AspNetCore.Components.Parameter(CaptureUnmatchedValues=true)]
+        public System.Collections.Generic.Dictionary<string, object> AdditionalAttributes { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public string Message { get; set; }
+        [Microsoft.AspNetCore.Components.EditorRequired]
+        [Microsoft.AspNetCore.Components.Parameter]
+        public LoreSoft.Blazor.Controls.IModalReference Modal { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public string PrimaryAction { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public string SecondaryAction { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public string Title { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public LoreSoft.Blazor.Controls.ModalVariant Variant { get; set; }
+        protected string VariantClass { get; }
+        protected System.Threading.Tasks.Task CancelAsync() { }
+        protected System.Threading.Tasks.Task CloseAsync(object? result = null) { }
+        protected override void OnParametersSet() { }
+    }
+    public class ModalContainer : Microsoft.AspNetCore.Components.ComponentBase, System.IDisposable
+    {
+        public ModalContainer(LoreSoft.Blazor.Controls.Messenger messenger) { }
+        protected System.Collections.Generic.List<LoreSoft.Blazor.Controls.ModalReference> Modals { get; }
+        protected override void BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder @__builder) { }
+        public void Dispose() { }
+    }
+    public class ModalDialog : Microsoft.AspNetCore.Components.ComponentBase, System.IAsyncDisposable
+    {
+        public ModalDialog(LoreSoft.Blazor.Controls.Messenger messenger) { }
+        protected string ClassName { get; }
+        protected Microsoft.AspNetCore.Components.ElementReference Element { get; set; }
+        [Microsoft.AspNetCore.Components.Inject]
+        public Microsoft.JSInterop.IJSRuntime JavaScript { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public LoreSoft.Blazor.Controls.ModalReference Modal { get; set; }
+        protected string Style { get; }
+        protected override void BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder @__builder) { }
+        public System.Threading.Tasks.ValueTask DisposeAsync() { }
+        protected override System.Threading.Tasks.Task OnAfterRenderAsync(bool firstRender) { }
+        [Microsoft.JSInterop.JSInvokable]
+        public System.Threading.Tasks.Task OnDialogClosed(string? returnValue) { }
+        protected override void OnParametersSet() { }
+    }
+    public class ModalParameters : System.Collections.Generic.Dictionary<string, object>
+    {
+        public ModalParameters() { }
+        public ModalParameters(System.Collections.Generic.IDictionary<string, object> dictionary) { }
+        public ModalParameters(System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<string, object>> collection) { }
+        public ModalParameters(System.Collections.Generic.IEqualityComparer<string>? comparer) { }
+        public ModalParameters(int capacity) { }
+        public ModalParameters(System.Collections.Generic.IDictionary<string, object> dictionary, System.Collections.Generic.IEqualityComparer<string>? comparer) { }
+        public ModalParameters(System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<string, object>> collection, System.Collections.Generic.IEqualityComparer<string>? comparer) { }
+        public ModalParameters(int capacity, System.Collections.Generic.IEqualityComparer<string>? comparer) { }
+        public LoreSoft.Blazor.Controls.ModalParameters ClassName(System.Action<LoreSoft.Blazor.Controls.Utilities.CssBuilder> action) { }
+        public LoreSoft.Blazor.Controls.ModalParameters ClassName(string className) { }
+        public LoreSoft.Blazor.Controls.ModalParameters Message(string message) { }
+        public LoreSoft.Blazor.Controls.ModalParameters Parameter(string name, object value) { }
+        public LoreSoft.Blazor.Controls.ModalParameters PrimaryAction(string primaryAction) { }
+        public LoreSoft.Blazor.Controls.ModalParameters SecondaryAction(string secondaryAction) { }
+        public LoreSoft.Blazor.Controls.ModalParameters Style(System.Action<LoreSoft.Blazor.Controls.Utilities.StyleBuilder> action) { }
+        public LoreSoft.Blazor.Controls.ModalParameters Style(string rawStyle) { }
+        public LoreSoft.Blazor.Controls.ModalParameters Title(string title) { }
+        public LoreSoft.Blazor.Controls.ModalParameters Variant(LoreSoft.Blazor.Controls.ModalVariant variant) { }
+        public static LoreSoft.Blazor.Controls.ModalParameters Create() { }
+    }
+    public class ModalReference : LoreSoft.Blazor.Controls.IModalReference
+    {
+        public ModalReference(LoreSoft.Blazor.Controls.Messenger messenger, System.Type componentType, System.Collections.Generic.IDictionary<string, object> parameters, string? id = null) { }
+        public System.Type ComponentType { get; }
+        public string ModalId { get; }
+        public System.Collections.Generic.IDictionary<string, object> Parameters { get; }
+        public System.Threading.Tasks.Task<LoreSoft.Blazor.Controls.ModalResult> Result { get; }
+        public System.Threading.Tasks.Task CancelAsync() { }
+        public System.Threading.Tasks.Task CloseAsync(LoreSoft.Blazor.Controls.ModalResult modalResult) { }
+    }
+    public readonly struct ModalResult : System.IEquatable<LoreSoft.Blazor.Controls.ModalResult>
+    {
+        public ModalResult(object? data, bool cancelled) { }
+        public bool Cancelled { get; }
+        public bool Confirmed { get; }
+        public object? Data { get; }
+        public static LoreSoft.Blazor.Controls.ModalResult Cancel() { }
+        public static LoreSoft.Blazor.Controls.ModalResult Cancel(object? result) { }
+        public static LoreSoft.Blazor.Controls.ModalResult Success() { }
+        public static LoreSoft.Blazor.Controls.ModalResult Success(object? result) { }
+    }
+    public class ModalService
+    {
+        public ModalService(LoreSoft.Blazor.Controls.Messenger messenger) { }
+        public System.Threading.Tasks.Task<LoreSoft.Blazor.Controls.IModalReference> Show<TComponent>(System.Collections.Generic.IDictionary<string, object>? parameters = null)
+            where TComponent : LoreSoft.Blazor.Controls.ModalComponentBase { }
+        public static System.Collections.Generic.Dictionary<string, object> CreateParameters(string message, string title = "Alert", LoreSoft.Blazor.Controls.ModalVariant type = 0, string primaryAction = "OK", string secondaryAction = "Cancel") { }
+    }
+    public static class ModalServiceExtensions
+    {
+        public static System.Threading.Tasks.Task<bool> Alert(this LoreSoft.Blazor.Controls.ModalService modalService, string message, string title = "Alert", LoreSoft.Blazor.Controls.ModalVariant type = 0, string primaryAction = "OK") { }
+        public static System.Threading.Tasks.Task<LoreSoft.Blazor.Controls.IModalReference> AlertModal(this LoreSoft.Blazor.Controls.ModalService modalService, string message, string title = "Alert", LoreSoft.Blazor.Controls.ModalVariant type = 0, string primaryAction = "OK") { }
+        public static System.Threading.Tasks.Task<bool> Confirm(this LoreSoft.Blazor.Controls.ModalService modalService, string message, string title = "Confirm", LoreSoft.Blazor.Controls.ModalVariant type = 0, string primaryAction = "OK", string secondaryAction = "Cancel") { }
+        public static System.Threading.Tasks.Task<LoreSoft.Blazor.Controls.IModalReference> ConfirmModal(this LoreSoft.Blazor.Controls.ModalService modalService, string message, string title = "Confirm", LoreSoft.Blazor.Controls.ModalVariant type = 0, string primaryAction = "OK", string secondaryAction = "Cancel") { }
+        public static System.Threading.Tasks.Task<string?> Prompt(this LoreSoft.Blazor.Controls.ModalService modalService, string message, string title = "Prompt", string defaultValue = "", LoreSoft.Blazor.Controls.ModalVariant type = 0, string primaryAction = "OK", string secondaryAction = "Cancel") { }
+        public static System.Threading.Tasks.Task<LoreSoft.Blazor.Controls.IModalReference> PromptModal(this LoreSoft.Blazor.Controls.ModalService modalService, string message, string title = "Prompt", string defaultValue = "", LoreSoft.Blazor.Controls.ModalVariant type = 0, string primaryAction = "OK", string secondaryAction = "Cancel") { }
+    }
+    public class ModalShow : System.IEquatable<LoreSoft.Blazor.Controls.ModalShow>
+    {
+        public ModalShow(LoreSoft.Blazor.Controls.ModalReference Modal) { }
+        public LoreSoft.Blazor.Controls.ModalReference Modal { get; init; }
+    }
+    public enum ModalVariant
+    {
+        Primary = 0,
+        Information = 1,
+        Success = 2,
+        Warning = 3,
+        Danger = 4,
+    }
     public class PageChangedEventArgs : System.IEquatable<LoreSoft.Blazor.Controls.PageChangedEventArgs>
     {
         public PageChangedEventArgs(int Page, int PageSize) { }
@@ -850,6 +1004,15 @@ namespace LoreSoft.Blazor.Controls
         protected void NotifyStateChanged() { }
         public void Reset() { }
         public void Start() { }
+    }
+    public class PromptModal : LoreSoft.Blazor.Controls.ModalComponentBase
+    {
+        public PromptModal() { }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public string DefaultValue { get; set; }
+        protected string InputValue { get; set; }
+        protected override void BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder @__builder) { }
+        protected override void OnInitialized() { }
     }
     public class QueryBuilderField<TItem> : Microsoft.AspNetCore.Components.ComponentBase
     {
@@ -1000,6 +1163,7 @@ namespace LoreSoft.Blazor.Controls
     public static class ServiceCollectionExtensions
     {
         public static Microsoft.Extensions.DependencyInjection.IServiceCollection AddBlazorControls(this Microsoft.Extensions.DependencyInjection.IServiceCollection services) { }
+        public static Microsoft.Extensions.DependencyInjection.IServiceCollection AddModals(this Microsoft.Extensions.DependencyInjection.IServiceCollection services) { }
         public static Microsoft.Extensions.DependencyInjection.IServiceCollection AddProgressBar(this Microsoft.Extensions.DependencyInjection.IServiceCollection services) { }
         public static Microsoft.Extensions.DependencyInjection.IServiceCollection AddToaster(this Microsoft.Extensions.DependencyInjection.IServiceCollection services) { }
     }
@@ -1301,7 +1465,7 @@ namespace LoreSoft.Blazor.Controls.Extensions
 }
 namespace LoreSoft.Blazor.Controls.Utilities
 {
-    public readonly struct AttributeBuilder
+    public class AttributeBuilder
     {
         public AttributeBuilder(System.Collections.Generic.Dictionary<string, object> attributes) { }
         public AttributeBuilder(string prop, object value) { }
@@ -1320,9 +1484,9 @@ namespace LoreSoft.Blazor.Controls.Utilities
         public static object? Convert<T>(object? value) { }
         public static string? Format(object? value) { }
     }
-    public struct CssBuilder
+    public class CssBuilder
     {
-        public CssBuilder(string value) { }
+        public CssBuilder(string? value = null) { }
         public LoreSoft.Blazor.Controls.Utilities.CssBuilder AddClass(string? value) { }
         public LoreSoft.Blazor.Controls.Utilities.CssBuilder AddClass(LoreSoft.Blazor.Controls.Utilities.CssBuilder builder, System.Func<bool> when) { }
         public LoreSoft.Blazor.Controls.Utilities.CssBuilder AddClass(LoreSoft.Blazor.Controls.Utilities.CssBuilder builder, bool when) { }
@@ -1331,7 +1495,10 @@ namespace LoreSoft.Blazor.Controls.Utilities
         public LoreSoft.Blazor.Controls.Utilities.CssBuilder AddClass(string? value, System.Func<bool> when) { }
         public LoreSoft.Blazor.Controls.Utilities.CssBuilder AddClass(string? value, System.Func<string?, bool> when) { }
         public LoreSoft.Blazor.Controls.Utilities.CssBuilder AddClass(string? value, bool when) { }
-        public LoreSoft.Blazor.Controls.Utilities.CssBuilder MergeClass(System.Collections.Generic.IReadOnlyDictionary<string, object>? attributes) { }
+        [System.Runtime.CompilerServices.OverloadResolutionPriority(9)]
+        public LoreSoft.Blazor.Controls.Utilities.CssBuilder MergeClass(System.Collections.Generic.IDictionary<string, object>? attributes, bool remove = true) { }
+        [System.Runtime.CompilerServices.OverloadResolutionPriority(0)]
+        public LoreSoft.Blazor.Controls.Utilities.CssBuilder MergeClass(System.Collections.Generic.IReadOnlyDictionary<string, object>? attributes, bool remove = true) { }
         public override string ToString() { }
         public static LoreSoft.Blazor.Controls.Utilities.CssBuilder Default(string? value = null) { }
         public static LoreSoft.Blazor.Controls.Utilities.CssBuilder Empty() { }
@@ -1383,9 +1550,9 @@ namespace LoreSoft.Blazor.Controls.Utilities
         public static bool IsValid(LoreSoft.Blazor.Controls.QueryRule? queryRule) { }
         public static void RegisterWriter(string @operator, System.Action<System.Text.StringBuilder, System.Collections.Generic.List<object?>, LoreSoft.Blazor.Controls.QueryFilter> writer) { }
     }
-    public struct StyleBuilder
+    public class StyleBuilder
     {
-        public StyleBuilder(string prop, string value) { }
+        public StyleBuilder() { }
         public LoreSoft.Blazor.Controls.Utilities.StyleBuilder AddStyle(LoreSoft.Blazor.Controls.Utilities.StyleBuilder builder) { }
         public LoreSoft.Blazor.Controls.Utilities.StyleBuilder AddStyle(string? style) { }
         public LoreSoft.Blazor.Controls.Utilities.StyleBuilder AddStyle(LoreSoft.Blazor.Controls.Utilities.StyleBuilder builder, System.Func<bool> when) { }
@@ -1396,7 +1563,7 @@ namespace LoreSoft.Blazor.Controls.Utilities
         public LoreSoft.Blazor.Controls.Utilities.StyleBuilder AddStyle(string prop, string? value, System.Func<bool> when) { }
         public LoreSoft.Blazor.Controls.Utilities.StyleBuilder AddStyle(string prop, string? value, System.Func<string?, bool> when) { }
         public LoreSoft.Blazor.Controls.Utilities.StyleBuilder AddStyle(string prop, string? value, bool when) { }
-        public LoreSoft.Blazor.Controls.Utilities.StyleBuilder MergeStyle(System.Collections.Generic.IDictionary<string, object>? attributes) { }
+        public LoreSoft.Blazor.Controls.Utilities.StyleBuilder MergeStyle(System.Collections.Generic.IDictionary<string, object>? attributes, bool remove = true) { }
         public override string ToString() { }
         public static LoreSoft.Blazor.Controls.Utilities.StyleBuilder Default(string style) { }
         public static LoreSoft.Blazor.Controls.Utilities.StyleBuilder Default(string prop, string value) { }

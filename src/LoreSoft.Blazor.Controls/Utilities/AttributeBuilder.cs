@@ -4,7 +4,7 @@ namespace LoreSoft.Blazor.Controls.Utilities;
 /// Provides a fluent API for building a dictionary of HTML attributes for components.
 /// Supports conditional and dynamic attribute addition.
 /// </summary>
-public readonly struct AttributeBuilder
+public class AttributeBuilder
 {
     private readonly Dictionary<string, object> _attributes;
 
