@@ -1,5 +1,3 @@
-using System.Reflection;
-
 using LoreSoft.Blazor.Controls.Utilities;
 
 using Microsoft.AspNetCore.Components;
@@ -96,11 +94,11 @@ public partial class ModalDialog : ComponentBase, IAsyncDisposable
         base.OnParametersSet();
 
         ClassName = new CssBuilder("dialog-container")
-            .MergeClass(Modal.Parameters)
+            .MergeClass(Modal.Parameters, false)
             .ToString();
 
         Style = new StyleBuilder()
-            .MergeStyle(Modal.Parameters)
+            .MergeStyle(Modal.Parameters, false)
             .ToString();
     }
 

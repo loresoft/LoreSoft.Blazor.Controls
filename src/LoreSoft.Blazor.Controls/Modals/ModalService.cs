@@ -32,7 +32,7 @@ public class ModalService(Messenger messenger)
     /// var result = await modal.Result;
     /// </code>
     /// </example>
-    public async Task<IModalReference> Show<TComponent>(Dictionary<string, object>? parameters = null)
+    public async Task<IModalReference> Show<TComponent>(IDictionary<string, object>? parameters = null)
         where TComponent : ModalComponentBase
     {
         // ensure parameters is not null

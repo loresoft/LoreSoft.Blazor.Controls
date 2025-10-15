@@ -9,6 +9,12 @@ namespace LoreSoft.Blazor.Controls;
 public abstract class ModalComponentBase : ComponentBase
 {
     /// <summary>
+    /// Additional attributes to be applied to the button element.
+    /// </summary>
+    [Parameter(CaptureUnmatchedValues = true)]
+    public Dictionary<string, object> AdditionalAttributes { get; set; } = [];
+
+    /// <summary>
     /// Gets or sets the modal reference used to control the modal dialog.
     /// </summary>
     /// <value>The modal reference instance.</value>

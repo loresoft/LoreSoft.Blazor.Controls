@@ -1,4 +1,5 @@
 @page "/modals/index"
+@using Sample.Core.Pages.Modals.Examples
 
 <h1>Modals</h1>
 
@@ -8,143 +9,18 @@
 
 <h2 class="mb-3">Examples</h2>
 
-<h3>Basic</h3>
+<h3 class="my-3">Common Modals</h3>
 
-<h4>Example Alert Dialog with Types</h4>
+<Basic />
 
-<div>
-    <button type="button"
-            class="btn btn-secondary"
-            @onclick="ShowPrimaryAlert">
-        Show Default
-    </button>
-    <button type="button"
-            class="btn btn-secondary"
-            @onclick="ShowInfoAlert">
-        Show Information
-    </button>
-    <button type="button"
-            class="btn btn-secondary"
-            @onclick="ShowSuccessAlert">
-        Show Success
-    </button>
-    <button type="button"
-            class="btn btn-secondary"
-            @onclick="ShowWarnAlert">
-        Show Warning
-    </button>
-    <button type="button"
-            class="btn btn-secondary"
-            @onclick="ShowDangerAlert">
-        Show Danger
-    </button>
-</div>
+<h3 class="my-3">Custom Modals</h3>
 
-<h4>Confirm Dialog with Custom Buttons</h4>
+<Custom />
 
-<div>
-    <button type="button"
-            class="btn btn-secondary"
-            @onclick="ShowDeleteConfirm">
-        Delete Item
-    </button>
-</div>
+<h3 class="my-3">Bootstrap Style</h3>
 
-<div>
-    Result: @_deleteConfirm
-</div>
+<Bootstrap />
 
-<h4>Prompt Dialog with Custom Buttons</h4>
-
-<div>
-    <button type="button"
-            class="btn btn-secondary"
-            @onclick="ShowPrompt">
-        Enter Name
-    </button>
-</div>
-
-<div>
-    Result: @_promptResult
-</div>
 @code {
 
-    [Inject]
-    public required ModalService ModalService { get; set; }
-
-    private bool? _deleteConfirm;
-    private string? _promptResult;
-
-    private async Task ShowPrimaryAlert()
-    {
-        await ModalService.Alert(
-            "This is a standard message!"
-        );
-    }
-
-    private async Task ShowInfoAlert()
-    {
-        await ModalService.Alert(
-            "This is an informational message!",
-            "Information",
-            ModalVariant.Information
-        );
-    }
-
-    private async Task ShowWarnAlert()
-    {
-        await ModalService.Alert(
-            "This is a warning message!",
-            "Warning",
-            ModalVariant.Warning
-        );
-    }
-
-    private async Task ShowSuccessAlert()
-    {
-        await ModalService.Alert(
-            "Operation completed successfully!",
-            "Success",
-            ModalVariant.Success
-        );
-    }
-
-    private async Task ShowDangerAlert()
-    {
-        await ModalService.Alert(
-            "An error occurred!",
-            "Error",
-            ModalVariant.Danger,
-            primaryAction: "Got it"
-        );
-    }
-
-    private async Task ShowDeleteConfirm()
-    {
-        _deleteConfirm = await ModalService.Confirm(
-            "Are you sure you want to delete this item? This action cannot be undone.",
-            "Confirm Delete",
-            ModalVariant.Danger,
-            primaryAction: "Delete"
-        );
-
-        StateHasChanged();
-    }
-
-    private async Task ShowPrompt()
-    {
-        var modal = await ModalService.PromptModal(
-            "Please enter your name:",
-            "Name Entry",
-            "John Doe",
-            ModalVariant.Primary,
-            primaryAction: "Submit",
-            secondaryAction: "Skip"
-        );
-
-        var result = await modal.Result;
-        _promptResult = result.Data as string;
-
-        StateHasChanged();
-    }
 }

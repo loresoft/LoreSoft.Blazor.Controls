@@ -1,0 +1,51 @@
+@using Sample.Core.Models
+
+<p>Use bootstrap styling for the modal</p>
+
+<div>
+    <button type="button"
+            class="btn btn-secondary"
+            @onclick="ShowNewProfile">
+        Create Profile
+    </button>
+</div>
+
+<div>
+    <p>
+        New Profile:
+    </p>
+    <ul>
+        <li><strong>Display Name:</strong> @_newProfile.DisplayName</li>
+        <li><strong>Email Address:</strong> @_newProfile.EmailAddress</li>
+    </ul>
+</div>
+
+@code {
+    [Inject]
+    public required ModalService ModalService { get; set; }
+
+    private Profile _newProfile = new Profile();
+
+    private async Task ShowNewProfile()
+    {
+        _newProfile = new Profile();
+
+        var parameters = ModalParameters.Create()
+            .Title("New Profile")
+            .Message("Please enter the new profile information.")
+            .Parameter(nameof(CustomModal.Profile), _newProfile)
+            .Style(b => b.AddStyle("max-width", "700px"));
+
+        var modal = await ModalService.Show<CustomModal>(parameters);
+        var result = await modal.Result;
+
+        if (result.Cancelled)
+            return;
+
+        var profile = result.Data as Profile;
+        if (profile is not null)
+            _newProfile = profile;
+
+        StateHasChanged();
+    }
+}

@@ -1,0 +1,95 @@
+@using Sample.Core.Models
+
+
+<div>
+    <button type="button"
+            class="btn btn-secondary"
+            @onclick="ShowCurrentProfile">
+        Show Profile
+    </button>
+</div>
+
+<div>
+    <p>
+        Current Profile:
+    </p>
+    <ul>
+        <li><strong>Display Name:</strong> @_currentProfile.DisplayName</li>
+        <li><strong>Email Address:</strong> @_currentProfile.EmailAddress</li>
+    </ul>
+</div>
+
+<div>
+    <button type="button"
+            class="btn btn-secondary"
+            @onclick="ShowNewProfile">
+        Create Profile
+    </button>
+</div>
+
+<div>
+    <p>
+        New Profile:
+    </p>
+    <ul>
+        <li><strong>Display Name:</strong> @_newProfile.DisplayName</li>
+        <li><strong>Email Address:</strong> @_newProfile.EmailAddress</li>
+    </ul>
+</div>
+
+@code {
+    [Inject]
+    public required ModalService ModalService { get; set; }
+
+    private Profile _currentProfile = new Profile
+    {
+        DisplayName = "John Smith",
+        EmailAddress = "john.smith@email.com"
+    };
+
+    private Profile _newProfile = new Profile();
+
+    private async Task ShowCurrentProfile()
+    {
+        var parameters = ModalParameters.Create()
+            .Title("Update Profile")
+            .Message("Please update your profile information.")
+            .Parameter(nameof(CustomModal.Profile), _currentProfile)
+            .Style(b => b.AddStyle("max-width", "700px"));
+
+        var modal = await ModalService.Show<CustomModal>(parameters);
+        var result = await modal.Result;
+
+        if (result.Cancelled)
+            return;
+
+        var profile = result.Data as Profile;
+        if (profile is not null)
+            _currentProfile = profile;
+
+        StateHasChanged();
+    }
+
+    private async Task ShowNewProfile()
+    {
+        _newProfile = new Profile();
+
+        var parameters = ModalParameters.Create()
+            .Title("Create Profile")
+            .Message("Please enter the new profile information.")
+            .Parameter(nameof(CustomModal.Profile), _newProfile)
+            .ClassName("dialog-xl");
+
+        var modal = await ModalService.Show<CustomModal>(parameters);
+        var result = await modal.Result;
+
+        if (result.Cancelled)
+            return;
+
+        var profile = result.Data as Profile;
+        if (profile is not null)
+            _newProfile = profile;
+
+        StateHasChanged();
+    }
+}

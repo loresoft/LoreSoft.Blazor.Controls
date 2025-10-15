@@ -1,0 +1,65 @@
+@using Sample.Core.Models
+@inherits ModalComponentBase
+
+<div class="modal-dialog">
+    <div class="modal-content">
+        <form @onsubmit="SubmitAsync">
+            <div class="modal-header">
+                <h3 class="modal-title">@Title</h3>
+                <button type="button"
+                        class="btn-close"
+                        aria-label="Close"
+                        @onclick="CancelAsync" />
+            </div>
+            <div class="modal-body">
+                <h5>@Message</h5>
+                <div class="mb-2">
+                    <label for="DisplayName">Display Name:</label>
+                    <input id="DisplayName"
+                           type="text"
+                           class="dialog-input"
+                           required
+                           @bind="Profile.DisplayName"
+                           @bind:event="oninput" />
+                </div>
+                <div class="mb-2">
+                    <label for="EmailAddress">Email Address:</label>
+                    <input id="EmailAddress"
+                           type="email"
+                           class="dialog-input"
+                           required
+                           @bind="Profile.EmailAddress"
+                           @bind:event="oninput" />
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button"
+                        class="btn-secondary"
+                        @onclick="CancelAsync">
+                    @SecondaryAction
+                </button>
+                <button type="submit"
+                        class="btn-primary">
+                    @PrimaryAction
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public Profile Profile { get; set; } = new Profile();
+
+    public Profile Model { get; set; } = null!;
+
+    protected override void OnInitialized()
+    {
+        Model = Profile;
+    }
+
+    private async Task SubmitAsync()
+    {
+        await CloseAsync(Profile);
+    }
+}

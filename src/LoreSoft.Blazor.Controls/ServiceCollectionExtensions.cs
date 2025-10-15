@@ -54,6 +54,17 @@ public static class ServiceCollectionExtensions
         return services;
     }
 
+    /// <summary>
+    /// Adds modal dialog services to the specified <see cref="IServiceCollection"/>.
+    /// Registers <see cref="ModalService"/> as singleton.
+    /// </summary>
+    /// <param name="services">The service collection to add the services to.</param>
+    /// <returns>The updated <see cref="IServiceCollection"/>.</returns>
+    /// <remarks>
+    /// This method registers the modal service which is used to display and manage modal dialogs.
+    /// The <see cref="ModalService"/> requires a <see cref="Messenger"/> service to be registered,
+    /// which is automatically handled by <see cref="AddBlazorControls"/>.
+    /// </remarks>
     public static IServiceCollection AddModals(this IServiceCollection services)
     {
         services.TryAddSingleton<ModalService>();

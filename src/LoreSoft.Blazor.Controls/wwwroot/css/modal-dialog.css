@@ -67,6 +67,14 @@
     --md-danger-button-hover: #b91c1c;
     /* Transition variables */
     --md-transition: all 0.2s;
+    /* Close button variables */
+    --md-close-button-size: 2rem;
+    --md-close-button-font-size: 1.75rem;
+    --md-close-button-color: #6b7280;
+    --md-close-button-hover-color: #111827;
+    /* Primary button variables */
+    --md-primary-button-color: white;
+    --md-button-min-width: 4rem;
 }
 
 .dialog-container {
@@ -97,7 +105,7 @@
     border-bottom: var(--md-border-width) solid var(--md-border-color);
 }
 
-    .dialog-header h3 {
+    .dialog-header .dialog-title {
         margin: 0;
         font-size: var(--md-title-size);
         font-weight: var(--md-title-weight);
@@ -107,17 +115,17 @@
 .dialog-close-button {
     background: none;
     border: none;
-    font-size: 1.75rem;
+    font-size: var(--md-close-button-font-size);
     line-height: 1;
-    color: #6b7280;
+    color: var(--md-close-button-color);
     cursor: pointer;
     padding: 0;
-    width: 2rem;
-    height: 2rem;
+    width: var(--md-close-button-size);
+    height: var(--md-close-button-size);
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.2s;
+    transition: var(--md-transition);
 }
 
     .dialog-close-button::before {
@@ -125,7 +133,7 @@
     }
 
     .dialog-close-button:hover {
-        color: #111827;
+        color: var(--md-close-button-hover-color);
     }
 
 /* Modal Type Styles */
@@ -134,7 +142,7 @@
     border-bottom-color: var(--md-primary-border);
 }
 
-    .dialog-primary .dialog-header h3 {
+    .dialog-primary .dialog-header .dialog-title {
         color: var(--md-primary-text);
     }
 
@@ -143,7 +151,7 @@
     border-bottom-color: var(--md-information-border);
 }
 
-    .dialog-information .dialog-header h3 {
+    .dialog-information .dialog-header .dialog-title {
         color: var(--md-information-text);
     }
 
@@ -152,7 +160,7 @@
     border-bottom-color: var(--md-success-border);
 }
 
-    .dialog-success .dialog-header h3 {
+    .dialog-success .dialog-header .dialog-title {
         color: var(--md-success-text);
     }
 
@@ -161,7 +169,7 @@
     border-bottom-color: var(--md-warning-border);
 }
 
-    .dialog-warning .dialog-header h3 {
+    .dialog-warning .dialog-header .dialog-title {
         color: var(--md-warning-text);
     }
 
@@ -170,7 +178,7 @@
     border-bottom-color: var(--md-danger-border);
 }
 
-    .dialog-danger .dialog-header h3 {
+    .dialog-danger .dialog-header .dialog-title {
         color: var(--md-danger-text);
     }
 
@@ -217,11 +225,12 @@
     font-weight: var(--md-button-weight);
     cursor: pointer;
     transition: var(--md-transition);
+    min-width: var(--md-button-min-width);
 }
 
 .dialog-primary-button {
     background-color: var(--md-button-primary-bg);
-    color: white;
+    color: var(--md-primary-button-color);
 }
 
     .dialog-primary-button:hover {

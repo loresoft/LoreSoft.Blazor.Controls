@@ -42,7 +42,7 @@ public class StyleBuilderTests
     public void AddStyle_DoesNotAppendNullOrWhitespace()
     {
         var builder = StyleBuilder.Empty()
-            .AddStyle(null)
+            .AddStyle((string?)null)
             .AddStyle("")
             .AddStyle("   ")
             .AddStyle("color:blue");

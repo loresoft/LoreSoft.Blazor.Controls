@@ -30,7 +30,7 @@ public class ModalReference : IModalReference
     public ModalReference(
         Messenger messenger,
         Type componentType,
-        Dictionary<string, object> parameters,
+        IDictionary<string, object> parameters,
         string? id = null)
     {
         _messenger = messenger ?? throw new ArgumentNullException(nameof(messenger));
@@ -62,7 +62,7 @@ public class ModalReference : IModalReference
     /// Gets the parameters to pass to the modal component.
     /// </summary>
     /// <value>A dictionary of parameter names and values.</value>
-    public Dictionary<string, object> Parameters { get; }
+    public IDictionary<string, object> Parameters { get; }
 
     /// <summary>
     /// Gets a task that completes when the modal dialog is closed, providing the result of the dialog.

@@ -1,5 +1,7 @@
 // Ignore Spelling: Css
 
+using System.Runtime.CompilerServices;
+
 using LoreSoft.Blazor.Controls.Extensions;
 
 namespace LoreSoft.Blazor.Controls.Utilities;
@@ -8,7 +10,7 @@ namespace LoreSoft.Blazor.Controls.Utilities;
 /// Provides a fluent API for building CSS class strings for components.
 /// Supports conditional and dynamic class addition, merging, and formatting.
 /// </summary>
-public struct CssBuilder(string value)
+public class CssBuilder(string? value = null)
 {
     private string _buffer = value ?? string.Empty;
 
@@ -105,8 +107,10 @@ public struct CssBuilder(string value)
     /// Merges a "class" attribute from a dictionary of attributes, removing it from the dictionary.
     /// </summary>
     /// <param name="attributes">A dictionary of attributes that may contain a "class" entry.</param>
+    /// <param name="remove">Whether to remove the "class" entry from the dictionary.</param>
     /// <returns>The current <see cref="CssBuilder"/> instance.</returns>
-    public CssBuilder MergeClass(IReadOnlyDictionary<string, object>? attributes)
+    [OverloadResolutionPriority(0)]
+    public CssBuilder MergeClass(IReadOnlyDictionary<string, object>? attributes, bool remove = true)
     {
         if (attributes == null)
             return this;
@@ -114,8 +118,31 @@ public struct CssBuilder(string value)
         if (!attributes.TryGetValue("class", out var value))
             return this;
 
-        if (attributes is IDictionary<string, object> dictionary)
+        // remove style to prevent duplication
+        if (remove && attributes is IDictionary<string, object> dictionary)
             dictionary.Remove("class");
+
+        return AddClass(value?.ToString());
+    }
+
+    /// <summary>
+    /// Merges a "class" attribute from a dictionary of attributes, removing it from the dictionary.
+    /// </summary>
+    /// <param name="attributes">A dictionary of attributes that may contain a "class" entry.</param>
+    /// <param name="remove">Whether to remove the "class" entry from the dictionary.</param>
+    /// <returns>The current <see cref="CssBuilder"/> instance.</returns>
+    [OverloadResolutionPriority(9)]
+    public CssBuilder MergeClass(IDictionary<string, object>? attributes, bool remove = true)
+    {
+        if (attributes == null)
+            return this;
+
+        if (!attributes.TryGetValue("class", out var value))
+            return this;
+
+        // remove style to prevent duplication
+        if (remove)
+            attributes.Remove("class");
 
         return AddClass(value?.ToString());
     }
@@ -124,6 +151,6 @@ public struct CssBuilder(string value)
     /// Returns the built CSS class string.
     /// </summary>
     /// <returns>The CSS class string.</returns>
-    public override readonly string ToString()
+    public override string ToString()
         => _buffer.Trim();
 }
