@@ -282,11 +282,11 @@
 dialog {
     transition: display 300ms allow-discrete, overlay 1s allow-discrete;
     animation: dialog-close 300ms forwards;
+}
 
-    &[open] {
+    dialog[open] {
         animation: dialog-open 300ms forwards;
     }
-}
 
 @keyframes dialog-open {
     from {
