@@ -87,6 +87,27 @@ public static class ModalServiceExtensions
     }
 
     /// <summary>
+    /// Shows a confirmation modal dialog for deleting an item.
+    /// </summary>
+    /// <param name="modalService">The modal service instance.</param>
+    /// <param name="itemName">The name of the item to delete. Defaults to "this item".</param>
+    /// <returns>
+    /// A task that returns <c>true</c> if the user confirmed the deletion; otherwise, <c>false</c> if cancelled.
+    /// </returns>
+    public static Task<bool> ConfirmDelete(
+        this ModalService modalService,
+        string itemName = "this item")
+    {
+        return modalService.Confirm(
+            message: $"Are you sure you want to delete {itemName}?",
+            title: "Confirm Deletion",
+            type: ModalVariant.Danger,
+            primaryAction: "Delete",
+            secondaryAction: "Cancel"
+        );
+    }
+
+    /// <summary>
     /// Shows an alert modal dialog with a single action button.
     /// </summary>
     /// <param name="modalService">The modal service instance.</param>
