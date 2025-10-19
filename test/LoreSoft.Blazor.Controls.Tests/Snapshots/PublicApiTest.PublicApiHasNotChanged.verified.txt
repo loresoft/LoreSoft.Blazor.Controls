@@ -1192,6 +1192,21 @@ namespace LoreSoft.Blazor.Controls
         [System.ComponentModel.Description("rectangle")]
         Rectangle = 2,
     }
+    public class StorageService
+    {
+        public const string LocalStorage = "localStorage";
+        public const string SessionStorage = "sessionStorage";
+        public StorageService(Microsoft.JSInterop.IJSRuntime javaScript, Microsoft.Extensions.Options.IOptions<System.Text.Json.JsonSerializerOptions> options, Microsoft.Extensions.Logging.ILogger<LoreSoft.Blazor.Controls.StorageService> logger) { }
+        public System.Threading.Tasks.ValueTask ClearAsync(LoreSoft.Blazor.Controls.StoreType storeType = 1) { }
+        public System.Threading.Tasks.ValueTask<T?> GetItemAsync<T>(string key, LoreSoft.Blazor.Controls.StoreType storeType = 1) { }
+        public System.Threading.Tasks.ValueTask RemoveItemAsync(string key, LoreSoft.Blazor.Controls.StoreType storeType = 1) { }
+        public System.Threading.Tasks.ValueTask SetItemAsync<T>(string key, T value, LoreSoft.Blazor.Controls.StoreType storeType = 1) { }
+    }
+    public enum StoreType
+    {
+        Local = 0,
+        Session = 1,
+    }
     public enum TextAlign
     {
         Start = 0,
