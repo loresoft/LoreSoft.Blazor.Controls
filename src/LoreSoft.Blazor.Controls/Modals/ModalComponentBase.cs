@@ -36,14 +36,14 @@ public abstract class ModalComponentBase : ComponentBase
     public string Message { get; set; } = "";
 
     /// <summary>
-    /// Gets or sets the text for the primary action button.
+    /// Gets or sets the text for the primary action button. The primary action typically represents a confirmation or acceptance action.
     /// </summary>
     /// <value>The primary action button text. Defaults to "OK".</value>
     [Parameter]
     public string PrimaryAction { get; set; } = "OK";
 
     /// <summary>
-    /// Gets or sets the text for the secondary action button.
+    /// Gets or sets the text for the secondary action button. The secondary action is typically used for canceling or dismissing the modal.
     /// </summary>
     /// <value>The secondary action button text. Defaults to "Cancel".</value>
     [Parameter]

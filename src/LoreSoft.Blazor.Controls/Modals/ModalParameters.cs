@@ -143,7 +143,7 @@ public class ModalParameters : Dictionary<string, object>
     }
 
     /// <summary>
-    /// Sets the text for the primary action button.
+    /// Sets the text for the primary action button. The primary action is typically used for confirming or proceeding with an action.
     /// </summary>
     /// <param name="primaryAction">The text to display on the primary action button.</param>
     /// <returns>The current <see cref="ModalParameters"/> instance for method chaining.</returns>
@@ -161,7 +161,7 @@ public class ModalParameters : Dictionary<string, object>
     }
 
     /// <summary>
-    /// Sets the text for the secondary action button.
+    /// Sets the text for the secondary action button. The secondary action is typically used for canceling or dismissing the modal.
     /// </summary>
     /// <param name="secondaryAction">The text to display on the secondary action button.</param>
     /// <returns>The current <see cref="ModalParameters"/> instance for method chaining.</returns>

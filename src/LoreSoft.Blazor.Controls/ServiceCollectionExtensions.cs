@@ -18,6 +18,7 @@ public static class ServiceCollectionExtensions
     {
         services.TryAddSingleton<Messenger>();
         services.TryAddScoped<DownloadService>();
+        services.TryAddScoped<StorageService>();
         services.TryAddScoped<BrowserCultureProvider>();
 
         services.AddProgressBar();

@@ -179,7 +179,7 @@ public class MessengerTests
     }
 
     [Fact]
-    public async Task Subscribe_DisposeTwice_DoesNotThrow()
+    public void Subscribe_DisposeTwice_DoesNotThrow()
     {
         // Arrange
         var messenger = new Messenger();

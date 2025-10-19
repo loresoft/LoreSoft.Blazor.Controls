@@ -14,6 +14,9 @@ namespace LoreSoft.Blazor.Controls;
 /// </remarks>
 public partial class ModalDialog : ComponentBase, IAsyncDisposable
 {
+    // Special return value indicating the dialog was closed programmatically, used to prevent duplicate close notifications.
+    private const string ProgrammaticCloseValue = "--closed--";
+
     private readonly Messenger _messenger;
 
     private IJSObjectReference? _module;
@@ -80,7 +83,7 @@ public partial class ModalDialog : ComponentBase, IAsyncDisposable
             return;
 
         // If the dialog was closed programmatically, do not send another close message
-        if (returnValue == "--closed--")
+        if (returnValue == ProgrammaticCloseValue)
             return;
 
         await Modal.CloseAsync(ModalResult.Cancel());
@@ -145,7 +148,7 @@ public partial class ModalDialog : ComponentBase, IAsyncDisposable
             return;
 
         // close with special value to indicate programmatic close
-        await _dialog.InvokeVoidAsync("close", "--closed--");
+        await _dialog.InvokeVoidAsync("close", ProgrammaticCloseValue);
     }
 
     /// <summary>
