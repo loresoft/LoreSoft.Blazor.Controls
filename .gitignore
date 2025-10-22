@@ -330,4 +330,4 @@ ASALocalRun/
 .mfractor/
 
 .parcel-cache
-.received.txt
+*.received.txt

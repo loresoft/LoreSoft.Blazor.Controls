@@ -140,14 +140,18 @@ public partial class BreakpointProvider : IAsyncDisposable
 
         if (_monitor != null)
         {
-            await _monitor.InvokeVoidAsync("dispose");
             await _monitor.DisposeAsync();
+            _monitor = null;
         }
 
         if (_module != null)
+        {
             await _module.DisposeAsync();
+            _module = null;
+        }
 
         _dotNetRef?.Dispose();
+        _dotNetRef = null;
 
         GC.SuppressFinalize(this);
     }
