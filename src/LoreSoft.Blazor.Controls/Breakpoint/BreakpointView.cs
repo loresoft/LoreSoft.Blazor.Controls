@@ -11,7 +11,7 @@ namespace LoreSoft.Blazor.Controls;
 /// </summary>
 /// <remarks>
 /// This component must be used within a <see cref="BreakpointProvider"/> component to function properly.
-/// The breakpoint hierarchy is: xxl → xl → lg → md → sm → xs (fallback).
+/// The breakpoint hierarchy is: uhd → qhd → fhd → hd → xxl → xl → lg → md → sm → xs (fallback).
 /// </remarks>
 /// <example>
 /// <code>
@@ -131,6 +131,62 @@ public partial class BreakpointView : ComponentBase, IDisposable
     public RenderFragment? ExtraExtraLarge { get; set; }
 
     /// <summary>
+    /// Gets or sets the content to display for HD breakpoints (hd) and up.
+    /// This content will be used for HD wide desktop displays and will cascade down to smaller breakpoints if not specified.
+    /// </summary>
+    /// <value>
+    /// A <see cref="RenderFragment"/> containing the content to render for HD viewports (typically ≥ 1600px).
+    /// </value>
+    /// <remarks>
+    /// If this content is not specified, the component will fall back to smaller breakpoint content in this order:
+    /// <see cref="ExtraExtraLarge"/> → <see cref="ExtraLarge"/> → <see cref="Large"/> → <see cref="Medium"/> → <see cref="Small"/> → <see cref="ExtraSmall"/>.
+    /// </remarks>
+    [Parameter]
+    public RenderFragment? HighDefinition { get; set; }
+
+    /// <summary>
+    /// Gets or sets the content to display for Full HD breakpoints (fhd) and up.
+    /// This content will be used for Full HD displays and will cascade down to smaller breakpoints if not specified.
+    /// </summary>
+    /// <value>
+    /// A <see cref="RenderFragment"/> containing the content to render for Full HD viewports (typically ≥ 1920px).
+    /// </value>
+    /// <remarks>
+    /// If this content is not specified, the component will fall back to smaller breakpoint content in this order:
+    /// <see cref="HighDefinition"/> → <see cref="ExtraExtraLarge"/> → <see cref="ExtraLarge"/> → <see cref="Large"/> → <see cref="Medium"/> → <see cref="Small"/> → <see cref="ExtraSmall"/>.
+    /// </remarks>
+    [Parameter]
+    public RenderFragment? FullHighDefinition { get; set; }
+
+    /// <summary>
+    /// Gets or sets the content to display for QHD breakpoints (qhd) and up.
+    /// This content will be used for 2K displays and high-resolution monitors and will cascade down to smaller breakpoints if not specified.
+    /// </summary>
+    /// <value>
+    /// A <see cref="RenderFragment"/> containing the content to render for QHD viewports (typically ≥ 2560px).
+    /// </value>
+    /// <remarks>
+    /// If this content is not specified, the component will fall back to smaller breakpoint content in this order:
+    /// <see cref="FullHighDefinition"/> → <see cref="HighDefinition"/> → <see cref="ExtraExtraLarge"/> → <see cref="ExtraLarge"/> → <see cref="Large"/> → <see cref="Medium"/> → <see cref="Small"/> → <see cref="ExtraSmall"/>.
+    /// </remarks>
+    [Parameter]
+    public RenderFragment? QuadHighDefinition { get; set; }
+
+    /// <summary>
+    /// Gets or sets the content to display for UHD breakpoints (uhd) and up.
+    /// This content will be used for 4K displays and ultra-high-resolution monitors and will cascade down to smaller breakpoints if not specified.
+    /// </summary>
+    /// <value>
+    /// A <see cref="RenderFragment"/> containing the content to render for UHD viewports (typically ≥ 3200px).
+    /// </value>
+    /// <remarks>
+    /// If this content is not specified, the component will fall back to smaller breakpoint content in this order:
+    /// <see cref="QuadHighDefinition"/> → <see cref="FullHighDefinition"/> → <see cref="HighDefinition"/> → <see cref="ExtraExtraLarge"/> → <see cref="ExtraLarge"/> → <see cref="Large"/> → <see cref="Medium"/> → <see cref="Small"/> → <see cref="ExtraSmall"/>.
+    /// </remarks>
+    [Parameter]
+    public RenderFragment? UltraHighDefinition { get; set; }
+
+    /// <summary>
     /// Builds the render tree for the component by adding the current fragment based on the active breakpoint.
     /// </summary>
     /// <param name="builder">The <see cref="RenderTreeBuilder"/> used to construct the render tree.</param>
@@ -193,7 +249,7 @@ public partial class BreakpointView : ComponentBase, IDisposable
     /// to smaller breakpoints if content is not available for the current breakpoint.
     /// </summary>
     /// <param name="currentBreakpoint">
-    /// The current breakpoint name (e.g., "xs", "sm", "md", "lg", "xl", "xxl").
+    /// The current breakpoint name (e.g., "xs", "sm", "md", "lg", "xl", "xxl", "hd", "fhd", "qhd", "uhd").
     /// If the breakpoint name cannot be parsed, defaults to "xs".
     /// </param>
     /// <remarks>
@@ -201,6 +257,10 @@ public partial class BreakpointView : ComponentBase, IDisposable
     /// The fallback hierarchy ensures that content is always available by cascading from larger to smaller breakpoints:
     /// </para>
     /// <list type="bullet">
+    /// <item><description>uhd → qhd → fhd → hd → xxl → xl → lg → md → sm → xs</description></item>
+    /// <item><description>qhd → fhd → hd → xxl → xl → lg → md → sm → xs</description></item>
+    /// <item><description>fhd → hd → xxl → xl → lg → md → sm → xs</description></item>
+    /// <item><description>hd → xxl → xl → lg → md → sm → xs</description></item>
     /// <item><description>xxl → xl → lg → md → sm → xs</description></item>
     /// <item><description>xl → lg → md → sm → xs</description></item>
     /// <item><description>lg → md → sm → xs</description></item>
@@ -231,6 +291,10 @@ public partial class BreakpointView : ComponentBase, IDisposable
         // Start from the current breakpoint and work down to find the first available fragment
         _currentFragment = current switch
         {
+            Breakpoints.uhd => UltraHighDefinition ?? QuadHighDefinition ?? FullHighDefinition ?? HighDefinition ?? ExtraExtraLarge ?? ExtraLarge ?? Large ?? Medium ?? Small ?? ExtraSmall,
+            Breakpoints.qhd => QuadHighDefinition ?? FullHighDefinition ?? HighDefinition ?? ExtraExtraLarge ?? ExtraLarge ?? Large ?? Medium ?? Small ?? ExtraSmall,
+            Breakpoints.fhd => FullHighDefinition ?? HighDefinition ?? ExtraExtraLarge ?? ExtraLarge ?? Large ?? Medium ?? Small ?? ExtraSmall,
+            Breakpoints.hd => HighDefinition ?? ExtraExtraLarge ?? ExtraLarge ?? Large ?? Medium ?? Small ?? ExtraSmall,
             Breakpoints.xxl => ExtraExtraLarge ?? ExtraLarge ?? Large ?? Medium ?? Small ?? ExtraSmall,
             Breakpoints.xl => ExtraLarge ?? Large ?? Medium ?? Small ?? ExtraSmall,
             Breakpoints.lg => Large ?? Medium ?? Small ?? ExtraSmall,

@@ -13,7 +13,8 @@ public partial class BreakpointProvider : IAsyncDisposable
 
     private IJSObjectReference? _module;
     private IJSObjectReference? _monitor;
-    private DotNetObjectReference<BreakpointProvider>? _dotNetRef;
+    private DotNetObjectReference<BreakpointProvider>? _instance;
+    private bool _disposed;
 
     /// <summary>
     /// Gets or sets the JavaScript runtime instance used for interop operations.
@@ -77,8 +78,8 @@ public partial class BreakpointProvider : IAsyncDisposable
         _monitor = await _module.InvokeAsync<IJSObjectReference>(
             "createMonitor", breakpointsToUse, Debounce);
 
-        _dotNetRef = DotNetObjectReference.Create(this);
-        await _monitor.InvokeVoidAsync("registerDotNetHelper", _dotNetRef);
+        _instance = DotNetObjectReference.Create(this);
+        await _monitor.InvokeVoidAsync("registerDotNetHelper", _instance);
 
         var current = await _monitor.InvokeAsync<string>("getCurrent");
         OnBreakpointChanged(new() { Current = current });
@@ -135,6 +136,9 @@ public partial class BreakpointProvider : IAsyncDisposable
     /// <returns>A task representing the asynchronous dispose operation.</returns>
     public async ValueTask DisposeAsync()
     {
+        if (_disposed)
+            return;
+
         if (_subscribers.Count > 0)
             _subscribers.Clear();
 
@@ -150,9 +154,13 @@ public partial class BreakpointProvider : IAsyncDisposable
             _module = null;
         }
 
-        _dotNetRef?.Dispose();
-        _dotNetRef = null;
+        if (_instance != null)
+        {
+            _instance?.Dispose();
+            _instance = null;
+        }
 
+        _disposed = true;
         GC.SuppressFinalize(this);
     }
 }

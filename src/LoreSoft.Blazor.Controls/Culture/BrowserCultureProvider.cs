@@ -1,5 +1,7 @@
 using System.Globalization;
 
+using LoreSoft.Blazor.Controls.Utilities;
+
 using Microsoft.JSInterop;
 
 namespace LoreSoft.Blazor.Controls;
@@ -8,18 +10,10 @@ namespace LoreSoft.Blazor.Controls;
 /// Provides functionality to retrieve and cache the browser's culture and time zone information.
 /// This service uses JavaScript interop to detect the user's language preference and local time zone from the browser.
 /// </summary>
-public class BrowserCultureProvider : IAsyncDisposable
+public class BrowserCultureProvider(IJSRuntime javaScript)
+    : JavaScriptModule(javaScript, ModulePath)
 {
-    private readonly IJSRuntime _javaScript;
-    private readonly Lazy<Task<IJSObjectReference>> _moduleTask;
-
-    public BrowserCultureProvider(IJSRuntime javaScript)
-    {
-        _javaScript = javaScript;
-        _moduleTask = new(() => _javaScript.InvokeAsync<IJSObjectReference>(
-           "import", "./_content/LoreSoft.Blazor.Controls/js/browser.js").AsTask());
-    }
-
+    private const string ModulePath = "./_content/LoreSoft.Blazor.Controls/js/browser.js";
 
     private TimeZoneInfo? _cachedTimeZone;
     private string? _cachedLanguage;
@@ -44,9 +38,7 @@ public class BrowserCultureProvider : IAsyncDisposable
         if (!force && _cachedTimeZone is not null)
             return _cachedTimeZone;
 
-        var module = await _moduleTask.Value;
-
-        var browserTimeZone = await module.InvokeAsync<string>("browserTimeZone");
+        var browserTimeZone = await InvokeAsync<string>("browserTimeZone");
 
         if (string.IsNullOrWhiteSpace(browserTimeZone))
         {
@@ -85,23 +77,10 @@ public class BrowserCultureProvider : IAsyncDisposable
         if (!force && _cachedLanguage is not null)
             return _cachedLanguage;
 
-        var module = await _moduleTask.Value;
-
-        _cachedLanguage = await module.InvokeAsync<string>("browserLanguage")
+        _cachedLanguage = await InvokeAsync<string>("browserLanguage")
             ?? CultureInfo.CurrentUICulture.Name;
 
         return _cachedLanguage ?? string.Empty;
-    }
-
-    public async ValueTask DisposeAsync()
-    {
-        if (_moduleTask.IsValueCreated)
-        {
-            var module = await _moduleTask.Value;
-            await module.DisposeAsync();
-        }
-
-        GC.SuppressFinalize(this);
     }
 }
 

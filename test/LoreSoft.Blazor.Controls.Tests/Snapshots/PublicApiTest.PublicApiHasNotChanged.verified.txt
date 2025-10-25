@@ -65,13 +65,21 @@ namespace LoreSoft.Blazor.Controls
         [Microsoft.AspNetCore.Components.Parameter]
         public Microsoft.AspNetCore.Components.RenderFragment? ExtraSmall { get; set; }
         [Microsoft.AspNetCore.Components.Parameter]
+        public Microsoft.AspNetCore.Components.RenderFragment? FullHighDefinition { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public Microsoft.AspNetCore.Components.RenderFragment? HighDefinition { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
         public Microsoft.AspNetCore.Components.RenderFragment? Large { get; set; }
         [Microsoft.AspNetCore.Components.Parameter]
         public Microsoft.AspNetCore.Components.RenderFragment? Medium { get; set; }
         [Microsoft.AspNetCore.Components.CascadingParameter]
         public LoreSoft.Blazor.Controls.BreakpointProvider? Provider { get; set; }
         [Microsoft.AspNetCore.Components.Parameter]
+        public Microsoft.AspNetCore.Components.RenderFragment? QuadHighDefinition { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
         public Microsoft.AspNetCore.Components.RenderFragment? Small { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public Microsoft.AspNetCore.Components.RenderFragment? UltraHighDefinition { get; set; }
         protected override void BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder builder) { }
         public void Dispose() { }
         protected override void OnInitialized() { }
@@ -89,10 +97,9 @@ namespace LoreSoft.Blazor.Controls
         qhd = 8,
         uhd = 9,
     }
-    public class BrowserCultureProvider : System.IAsyncDisposable
+    public class BrowserCultureProvider : LoreSoft.Blazor.Controls.Utilities.JavaScriptModule
     {
         public BrowserCultureProvider(Microsoft.JSInterop.IJSRuntime javaScript) { }
-        public System.Threading.Tasks.ValueTask DisposeAsync() { }
         public System.Threading.Tasks.ValueTask<string> GetLanguage(bool force = false) { }
         public System.Threading.Tasks.ValueTask<System.TimeZoneInfo> GetTimeZone(bool force = false) { }
     }
@@ -669,10 +676,9 @@ namespace LoreSoft.Blazor.Controls
         public System.TimeSpan Delay { get; }
         public T Value { get; set; }
     }
-    public class DownloadService : System.IAsyncDisposable
+    public class DownloadService : LoreSoft.Blazor.Controls.Utilities.JavaScriptModule
     {
         public DownloadService(Microsoft.JSInterop.IJSRuntime javaScript) { }
-        public System.Threading.Tasks.ValueTask DisposeAsync() { }
         public System.Threading.Tasks.Task DownloadFileStream(System.IO.Stream stream, string? fileName = null, string? mimeType = null) { }
         public System.Threading.Tasks.Task DownloadFileText(string text, string? fileName = null, string? mimeType = null) { }
         public System.Threading.Tasks.Task TriggerFileDownload(string url, string? fileName = null) { }
@@ -1199,9 +1205,11 @@ namespace LoreSoft.Blazor.Controls
         public const string SessionStorage = "sessionStorage";
         public StorageService(Microsoft.JSInterop.IJSRuntime javaScript, Microsoft.Extensions.Options.IOptions<System.Text.Json.JsonSerializerOptions> options, Microsoft.Extensions.Logging.ILogger<LoreSoft.Blazor.Controls.StorageService> logger) { }
         public System.Threading.Tasks.ValueTask ClearAsync(LoreSoft.Blazor.Controls.StoreType storeType = 1) { }
-        public System.Threading.Tasks.ValueTask<T?> GetItemAsync<T>(string key, LoreSoft.Blazor.Controls.StoreType storeType = 1) { }
+        public System.Threading.Tasks.ValueTask<string?> GetItemAsync(string key, LoreSoft.Blazor.Controls.StoreType storeType = 1, string? protectionKey = null) { }
+        public System.Threading.Tasks.ValueTask<T?> GetItemAsync<T>(string key, LoreSoft.Blazor.Controls.StoreType storeType = 1, string? protectionKey = null) { }
         public System.Threading.Tasks.ValueTask RemoveItemAsync(string key, LoreSoft.Blazor.Controls.StoreType storeType = 1) { }
-        public System.Threading.Tasks.ValueTask SetItemAsync<T>(string key, T value, LoreSoft.Blazor.Controls.StoreType storeType = 1) { }
+        public System.Threading.Tasks.ValueTask SetItemAsync(string key, string value, LoreSoft.Blazor.Controls.StoreType storeType = 1, string? protectionKey = null) { }
+        public System.Threading.Tasks.ValueTask SetItemAsync<T>(string key, T value, LoreSoft.Blazor.Controls.StoreType storeType = 1, string? protectionKey = null) { }
     }
     public enum StoreType
     {
@@ -1555,6 +1563,14 @@ namespace LoreSoft.Blazor.Controls.Utilities
         public void NotifyStateChanged() { }
         public void Toggle(TItem item) { }
     }
+    public abstract class JavaScriptModule : System.IAsyncDisposable
+    {
+        protected JavaScriptModule(Microsoft.JSInterop.IJSRuntime javaScript, string moduleUrl) { }
+        public System.Threading.Tasks.ValueTask DisposeAsync() { }
+        protected virtual System.Threading.Tasks.ValueTask DisposeCoreAsync() { }
+        protected System.Threading.Tasks.ValueTask<T> InvokeAsync<T>(string identifier, params object?[]? args) { }
+        protected System.Threading.Tasks.ValueTask InvokeVoidAsync(string identifier, params object?[]? args) { }
+    }
     public class LinqExpressionBuilder
     {
         public LinqExpressionBuilder() { }
@@ -1584,5 +1600,10 @@ namespace LoreSoft.Blazor.Controls.Utilities
         public static LoreSoft.Blazor.Controls.Utilities.StyleBuilder Default(string style) { }
         public static LoreSoft.Blazor.Controls.Utilities.StyleBuilder Default(string prop, string value) { }
         public static LoreSoft.Blazor.Controls.Utilities.StyleBuilder Empty() { }
+    }
+    public static class XorEncryption
+    {
+        public static string Decrypt(this string encrypted, string key) { }
+        public static string Encrypt(this string text, string key) { }
     }
 }

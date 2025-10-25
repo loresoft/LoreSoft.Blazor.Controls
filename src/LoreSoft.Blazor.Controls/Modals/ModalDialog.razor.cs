@@ -178,7 +178,12 @@ public partial class ModalDialog : ComponentBase, IAsyncDisposable
             _module = null;
         }
 
-        _instance?.Dispose();
+        if (_instance != null)
+        {
+            _instance?.Dispose();
+            _instance = null;
+        }
+
         _disposed = true;
 
         GC.SuppressFinalize(this);

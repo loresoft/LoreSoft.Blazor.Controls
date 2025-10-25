@@ -71,9 +71,6 @@ class BreakpointMonitor {
       width: width
     };
 
-    // Fire browser event
-    const event = new CustomEvent('breakpointChanged', { detail: eventData });
-    window.dispatchEvent(event);
 
     // Call .NET callback if registered
     if (this.dotnetHelper) {
@@ -87,13 +84,6 @@ class BreakpointMonitor {
    */
   registerDotNetHelper(dotnetHelper) {
     this.dotnetHelper = dotnetHelper;
-  }
-
-  /**
-   * Unregister the .NET object reference
-   */
-  unregisterDotNetHelper() {
-    this.dotnetHelper = null;
   }
 
   /**
@@ -142,7 +132,6 @@ class BreakpointMonitor {
    */
   dispose() {
     this.stop();
-    this.unregisterDotNetHelper();
   }
 }
 // Export for ES6 modules
