@@ -510,6 +510,7 @@ public partial class Typeahead<TItem, TValue> : ComponentBase, IDisposable
         return CssBuilder
             .Default("typeahead-control")
             .AddClass("typeahead-active", SearchMode)
+            .AddClass("typeahead-disabled", Disabled)
             .AddClass(validationClass, validationClass.HasValue())
             .ToString();
     }
