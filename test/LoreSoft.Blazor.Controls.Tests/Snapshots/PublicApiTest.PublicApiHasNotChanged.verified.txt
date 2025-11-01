@@ -269,6 +269,7 @@ namespace LoreSoft.Blazor.Controls
         public LoreSoft.Blazor.Controls.DataPagerState Pager { get; }
         [Microsoft.AspNetCore.Components.Parameter]
         public LoreSoft.Blazor.Controls.QueryGroup? Query { get; set; }
+        protected bool Rendered { get; }
         public LoreSoft.Blazor.Controls.QueryGroup RootQuery { get; }
         [Microsoft.AspNetCore.Components.Parameter]
         public bool Sortable { get; set; }

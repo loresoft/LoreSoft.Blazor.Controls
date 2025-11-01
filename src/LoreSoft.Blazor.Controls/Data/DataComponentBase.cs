@@ -225,6 +225,11 @@ public abstract class DataComponentBase<TItem> : ComponentBase, IDisposable
     protected bool FilterOpen { get; private set; }
 
     /// <summary>
+    /// Gets a value indicating whether the component has been rendered.
+    /// </summary>
+    protected bool Rendered { get; private set; }
+
+    /// <summary>
     /// Shows the filter panel.
     /// If no filters exist, a default empty filter is added to provide a starting point for user input.
     /// This method triggers a UI update to display the filter interface.
@@ -416,7 +421,7 @@ public abstract class DataComponentBase<TItem> : ComponentBase, IDisposable
     {
         if (_initialQuery != Query)
         {
-            await ApplyFilter(Query, false);
+            await ApplyFilter(Query, Rendered);
             _initialQuery = Query;
         }
 
@@ -456,6 +461,8 @@ public abstract class DataComponentBase<TItem> : ComponentBase, IDisposable
     /// <inheritdoc />
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
+        Rendered = true;
+
         if (!firstRender)
             return;
 
