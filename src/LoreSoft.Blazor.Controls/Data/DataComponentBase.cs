@@ -341,7 +341,8 @@ public abstract class DataComponentBase<TItem> : ComponentBase, IDisposable
         if (rule.Id.HasValue())
             RootQuery.Filters.RemoveAll(f => f.Id == rule.Id);
 
-        RootQuery.Filters.Add(rule);
+        if (LinqExpressionBuilder.IsValid(rule))
+            RootQuery.Filters.Add(rule);
 
         if (refresh)
             await RefreshAsync(true);
