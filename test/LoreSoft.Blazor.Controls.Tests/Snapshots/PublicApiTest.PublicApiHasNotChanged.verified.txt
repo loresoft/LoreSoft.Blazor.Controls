@@ -259,6 +259,8 @@ namespace LoreSoft.Blazor.Controls
         protected bool FilterOpen { get; }
         [Microsoft.AspNetCore.Components.Parameter]
         public bool Filterable { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public Microsoft.AspNetCore.Components.EventCallback<LoreSoft.Blazor.Controls.DataGrid<TItem>> Initialized { get; set; }
         public bool IsLoading { get; set; }
         [Microsoft.AspNetCore.Components.Inject]
         public required Microsoft.JSInterop.IJSRuntime JavaScript { get; set; }
@@ -277,9 +279,9 @@ namespace LoreSoft.Blazor.Controls
         public int VirtualOverscan { get; set; }
         [Microsoft.AspNetCore.Components.Parameter]
         public bool Virtualize { get; set; }
-        public System.Threading.Tasks.Task ApplyFilter(LoreSoft.Blazor.Controls.QueryRule rule) { }
+        public System.Threading.Tasks.Task ApplyFilter(LoreSoft.Blazor.Controls.QueryRule? rule, bool refresh = true) { }
         protected System.Threading.Tasks.Task ApplyFilters() { }
-        public System.Threading.Tasks.Task ApplyFilters(System.Collections.Generic.IEnumerable<LoreSoft.Blazor.Controls.QueryRule> rules, bool replace = false) { }
+        public System.Threading.Tasks.Task ApplyFilters(System.Collections.Generic.IEnumerable<LoreSoft.Blazor.Controls.QueryRule> rules, bool replace = false, bool refresh = true) { }
         public System.Threading.Tasks.Task ClearFilters() { }
         public void CloseFilter() { }
         public virtual LoreSoft.Blazor.Controls.DataRequest CreateDataRequest(System.Threading.CancellationToken cancellationToken = default) { }
@@ -392,7 +394,6 @@ namespace LoreSoft.Blazor.Controls
         protected bool IsRowSelected(TItem item) { }
         protected override System.Threading.Tasks.Task OnAfterRenderAsync(bool firstRender) { }
         protected override void OnInitialized() { }
-        protected override void OnParametersSet() { }
         public System.Threading.Tasks.Task QuickSearch(string? searchText, bool clearFilter = false) { }
         public override System.Threading.Tasks.Task RefreshAsync(bool resetPager = false, bool forceReload = false) { }
         protected void SelectAll() { }
@@ -1108,7 +1109,7 @@ namespace LoreSoft.Blazor.Controls
         protected override void OnParametersSet() { }
         public void Refresh() { }
     }
-    public class QueryFilter : LoreSoft.Blazor.Controls.QueryRule
+    public class QueryFilter : LoreSoft.Blazor.Controls.QueryRule, System.IEquatable<LoreSoft.Blazor.Controls.QueryFilter?>
     {
         public QueryFilter() { }
         [System.Text.Json.Serialization.JsonPropertyName("field")]
@@ -1117,14 +1118,20 @@ namespace LoreSoft.Blazor.Controls
         public string? Operator { get; set; }
         [System.Text.Json.Serialization.JsonPropertyName("value")]
         public object? Value { get; set; }
+        public bool Equals(LoreSoft.Blazor.Controls.QueryFilter? other) { }
+        public override bool Equals(object? obj) { }
+        public override int GetHashCode() { }
     }
-    public class QueryGroup : LoreSoft.Blazor.Controls.QueryRule
+    public class QueryGroup : LoreSoft.Blazor.Controls.QueryRule, System.IEquatable<LoreSoft.Blazor.Controls.QueryGroup?>
     {
         public QueryGroup() { }
         [System.Text.Json.Serialization.JsonPropertyName("filters")]
         public System.Collections.Generic.List<LoreSoft.Blazor.Controls.QueryRule> Filters { get; set; }
         [System.Text.Json.Serialization.JsonPropertyName("logic")]
         public string? Logic { get; set; }
+        public bool Equals(LoreSoft.Blazor.Controls.QueryGroup? other) { }
+        public override bool Equals(object? obj) { }
+        public override int GetHashCode() { }
     }
     public static class QueryLogic
     {

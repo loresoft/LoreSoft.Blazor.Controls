@@ -23,7 +23,6 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
     private readonly HashSet<TItem> _expandedItems = [];
     private readonly HashSet<string> _expandedGroups = [];
 
-    private QueryGroup? _initialQuery;
     private BreakpointProvider? _breakpointProvider;
 
     /// <summary>
@@ -343,24 +342,6 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
             throw new InvalidOperationException("DataGrid requires at least one DataColumn child component.");
 
         await base.OnAfterRenderAsync(firstRender);
-    }
-
-    /// <inheritdoc />
-    protected override void OnParametersSet()
-    {
-        base.OnParametersSet();
-
-        // only update RootQuery if Query changed
-        if (_initialQuery != Query)
-        {
-            _initialQuery = Query;
-            // RootQuery is managed by the base class, we can only access it if it exists
-            if (Query != null)
-            {
-                // The base class handles RootQuery initialization and management
-                // We just track the initial query for change detection
-            }
-        }
     }
 
     /// <inheritdoc />

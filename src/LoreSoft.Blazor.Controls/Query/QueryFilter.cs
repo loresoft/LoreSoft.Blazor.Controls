@@ -6,7 +6,7 @@ namespace LoreSoft.Blazor.Controls;
 /// Represents a single filter condition for a query in a data-bound component.
 /// Inherits from <see cref="QueryRule"/> and specifies the field, operator, and value for filtering.
 /// </summary>
-public class QueryFilter : QueryRule
+public class QueryFilter : QueryRule, IEquatable<QueryFilter?>
 {
     /// <summary>
     /// Gets or sets the name of the field to filter on.
@@ -26,4 +26,25 @@ public class QueryFilter : QueryRule
     /// </summary>
     [JsonPropertyName("value")]
     public object? Value { get; set; }
+
+    /// <inheritdoc/>
+    public override bool Equals(object? obj)
+    {
+        return Equals(obj as QueryFilter);
+    }
+
+    /// <inheritdoc/>
+    public bool Equals(QueryFilter? other)
+    {
+        return other is not null &&
+               Field == other.Field &&
+               Operator == other.Operator &&
+               EqualityComparer<object?>.Default.Equals(Value, other.Value);
+    }
+
+    /// <inheritdoc/>
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(Field, Operator, Value);
+    }
 }

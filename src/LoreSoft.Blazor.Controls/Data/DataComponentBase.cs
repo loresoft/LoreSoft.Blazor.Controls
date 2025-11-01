@@ -22,6 +22,7 @@ public abstract class DataComponentBase<TItem> : ComponentBase, IDisposable
     private IEnumerable<TItem>? _data;
     private bool _isLoading;
     private DataSort? _currentSort;
+    private QueryGroup? _initialQuery;
 
     /// <summary>
     /// Gets or sets the JavaScript runtime for interop calls.
@@ -158,11 +159,17 @@ public abstract class DataComponentBase<TItem> : ComponentBase, IDisposable
     public QueryGroup? Query { get; set; }
 
     /// <summary>
+    /// Event triggered when the data grid is initialized.
+    /// </summary>
+    [Parameter]
+    public EventCallback<DataGrid<TItem>> Initialized { get; set; }
+
+    /// <summary>
     /// Gets the root query group for filtering and searching.
     /// This is the primary filter container that holds all active filters and query groups.
     /// It's automatically managed by the component's filter operations but can be accessed for advanced scenarios.
     /// </summary>
-    public QueryGroup RootQuery { get; private set; } = new();
+    public QueryGroup RootQuery { get; } = new();
 
     /// <summary>
     /// Gets or sets a value indicating whether the component is currently loading data.
@@ -295,10 +302,13 @@ public abstract class DataComponentBase<TItem> : ComponentBase, IDisposable
     /// This method allows programmatic application of filters without user interaction with the filter UI.
     /// </summary>
     /// <param name="rules">The collection of filter rules to apply. Each rule defines a specific filter condition.</param>
-    /// <param name="replace">When true, existing filters are cleared before applying new rules.
-    /// When false, new rules are added to existing filters.</param>
+    /// <param name="replace">
+    /// When true, existing filters are cleared before applying new rules.
+    /// When false, new rules are added to existing filters.
+    /// </param>
+    /// <param name="refresh">Whether to refresh the data display after applying the filter.</param>
     /// <returns>A task representing the asynchronous filter application and data refresh operation.</returns>
-    public async Task ApplyFilters(IEnumerable<QueryRule> rules, bool replace = false)
+    public async Task ApplyFilters(IEnumerable<QueryRule> rules, bool replace = false, bool refresh = true)
     {
         if (replace)
             RootQuery.Filters.Clear();
@@ -306,7 +316,8 @@ public abstract class DataComponentBase<TItem> : ComponentBase, IDisposable
         if (rules != null)
             RootQuery.Filters.AddRange(rules);
 
-        await RefreshAsync(true);
+        if (refresh)
+            await RefreshAsync(true);
     }
 
     /// <summary>
@@ -315,8 +326,9 @@ public abstract class DataComponentBase<TItem> : ComponentBase, IDisposable
     /// This allows for easy updates to existing filters without duplicating filter conditions.
     /// </summary>
     /// <param name="rule">The filter rule to apply. If null, no action is taken.</param>
+    /// <param name="refresh">Whether to refresh the data display after applying the filter.</param>
     /// <returns>A task representing the asynchronous filter application and data refresh operation.</returns>
-    public async Task ApplyFilter(QueryRule rule)
+    public async Task ApplyFilter(QueryRule? rule, bool refresh = true)
     {
         if (rule == null)
             return;
@@ -325,7 +337,9 @@ public abstract class DataComponentBase<TItem> : ComponentBase, IDisposable
             RootQuery.Filters.RemoveAll(f => f.Id == rule.Id);
 
         RootQuery.Filters.Add(rule);
-        await RefreshAsync(true);
+
+        if (refresh)
+            await RefreshAsync(true);
     }
 
     /// <summary>
@@ -400,6 +414,12 @@ public abstract class DataComponentBase<TItem> : ComponentBase, IDisposable
     /// <inheritdoc />
     protected override async Task OnParametersSetAsync()
     {
+        if (_initialQuery != Query)
+        {
+            await ApplyFilter(Query, false);
+            _initialQuery = Query;
+        }
+
         if (DataProvider != null)
         {
             if (Data != null || DataLoader != null)
@@ -438,6 +458,9 @@ public abstract class DataComponentBase<TItem> : ComponentBase, IDisposable
     {
         if (!firstRender)
             return;
+
+        // notify initialized
+        await Initialized.InvokeAsync((DataGrid<TItem>)this);
 
         // re-render due to columns being added
         await RefreshAsync();
@@ -626,7 +649,7 @@ public abstract class DataComponentBase<TItem> : ComponentBase, IDisposable
         if (!Sortable || request.Sorts == null || request.Sorts.Length == 0)
             return queryable;
 
-       return queryable.Sort(request.Sorts);
+        return queryable.Sort(request.Sorts);
     }
 
     /// <summary>
