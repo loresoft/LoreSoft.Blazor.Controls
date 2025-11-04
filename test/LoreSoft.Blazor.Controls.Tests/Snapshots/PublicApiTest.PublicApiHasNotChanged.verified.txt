@@ -260,7 +260,7 @@ namespace LoreSoft.Blazor.Controls
         [Microsoft.AspNetCore.Components.Parameter]
         public bool Filterable { get; set; }
         [Microsoft.AspNetCore.Components.Parameter]
-        public Microsoft.AspNetCore.Components.EventCallback<LoreSoft.Blazor.Controls.DataGrid<TItem>> Initialized { get; set; }
+        public Microsoft.AspNetCore.Components.EventCallback<LoreSoft.Blazor.Controls.DataComponentBase<TItem>> Initialized { get; set; }
         public bool IsLoading { get; set; }
         [Microsoft.AspNetCore.Components.Inject]
         public required Microsoft.JSInterop.IJSRuntime JavaScript { get; set; }
