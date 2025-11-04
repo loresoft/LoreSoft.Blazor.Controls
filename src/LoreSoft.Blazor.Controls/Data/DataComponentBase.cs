@@ -162,7 +162,7 @@ public abstract class DataComponentBase<TItem> : ComponentBase, IDisposable
     /// Event triggered when the data grid is initialized.
     /// </summary>
     [Parameter]
-    public EventCallback<DataGrid<TItem>> Initialized { get; set; }
+    public EventCallback<DataComponentBase<TItem>> Initialized { get; set; }
 
     /// <summary>
     /// Gets the root query group for filtering and searching.
@@ -468,7 +468,7 @@ public abstract class DataComponentBase<TItem> : ComponentBase, IDisposable
             return;
 
         // notify initialized
-        await Initialized.InvokeAsync((DataGrid<TItem>)this);
+        await Initialized.InvokeAsync(this);
 
         // re-render due to columns being added
         await RefreshAsync();
