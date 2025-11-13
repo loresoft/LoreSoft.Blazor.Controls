@@ -132,7 +132,7 @@ public partial class DateTimePicker<TValue> : InputBase<TValue>
     /// <summary>
     /// Gets the CSS class for the picker container.
     /// </summary>
-    protected string PickerClass => CssBuilder
+    protected string? PickerClass => CssBuilder
         .Default("datetime-picker")
         .AddClass("is-date-picker-open", IsDatePickerOpen)
         .ToString();
@@ -146,7 +146,7 @@ public partial class DateTimePicker<TValue> : InputBase<TValue>
     /// <summary>
     /// Gets the CSS class for the input element.
     /// </summary>
-    protected string InputClass => CssBuilder
+    protected string? InputClass => CssBuilder
         .Default("datetime-picker-input")
         .MergeClass(AdditionalAttributes)
         .AddClass(ValidationClass, v => !string.IsNullOrWhiteSpace(v))
@@ -658,7 +658,7 @@ public partial class DateTimePicker<TValue> : InputBase<TValue>
     /// </summary>
     /// <param name="datePickerCell">The date cell.</param>
     /// <returns>The CSS class string.</returns>
-    private string DateCellClass(DatePickerCell datePickerCell)
+    private string? DateCellClass(DatePickerCell datePickerCell)
     {
         return CssBuilder
             .Default("date-picker-cell")
@@ -675,7 +675,7 @@ public partial class DateTimePicker<TValue> : InputBase<TValue>
     /// </summary>
     /// <param name="timePickerSegment">The time segment.</param>
     /// <returns>The CSS class string.</returns>
-    private string TimeSegmentClass(TimePickerSegment timePickerSegment)
+    private string? TimeSegmentClass(TimePickerSegment timePickerSegment)
     {
         return CssBuilder
             .Default("time-picker-cell")

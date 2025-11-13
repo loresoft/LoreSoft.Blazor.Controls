@@ -1,3 +1,4 @@
+using LoreSoft.Blazor.Controls.Events;
 using LoreSoft.Blazor.Controls.Utilities;
 
 using Microsoft.AspNetCore.Components;
@@ -17,7 +18,7 @@ public partial class ModalDialog : ComponentBase, IAsyncDisposable
     // Special return value indicating the dialog was closed programmatically, used to prevent duplicate close notifications.
     private const string ProgrammaticCloseValue = "--closed--";
 
-    private readonly Messenger _messenger;
+    private readonly EventBus _eventBus;
 
     private IJSObjectReference? _module;
     private IJSObjectReference? _dialog;
@@ -27,11 +28,11 @@ public partial class ModalDialog : ComponentBase, IAsyncDisposable
     /// <summary>
     /// Initializes a new instance of the <see cref="ModalDialog"/> class.
     /// </summary>
-    /// <param name="messenger">The messenger service used to subscribe to modal close messages.</param>
-    public ModalDialog(Messenger messenger)
+    /// <param name="eventBus">The event bus service used to subscribe to modal close messages.</param>
+    public ModalDialog(EventBus eventBus)
     {
-        _messenger = messenger;
-        _messenger.Subscribe<ModalClose>(this, HandleModalClose);
+        _eventBus = eventBus;
+        _eventBus.Subscribe<ModalClose>(HandleModalClose);
     }
 
     /// <summary>
@@ -58,13 +59,13 @@ public partial class ModalDialog : ComponentBase, IAsyncDisposable
     /// Gets the CSS class names to apply to the dialog container.
     /// </summary>
     /// <value>The combined CSS class string. Defaults to "dialog-container".</value>
-    protected string ClassName { get; private set; } = "dialog-container";
+    protected string? ClassName { get; private set; } = "dialog-container";
 
     /// <summary>
     /// Gets the inline styles to apply to the dialog container.
     /// </summary>
     /// <value>The combined inline style string.</value>
-    protected string Style { get; private set; } = string.Empty;
+    protected string? Style { get; private set; }
 
     /// <summary>
     /// JavaScript-invokable method called when the dialog is closed via the native dialog close event.
@@ -96,11 +97,14 @@ public partial class ModalDialog : ComponentBase, IAsyncDisposable
     {
         base.OnParametersSet();
 
-        ClassName = new CssBuilder("dialog-container")
+        using var builder = CssBuilder.Pool.GetPooled();
+        ClassName = builder.Instance
+            .AddClass("dialog-container")
             .MergeClass(Modal.Parameters, false)
             .ToString();
 
-        Style = new StyleBuilder()
+        using var styleBuilder = StyleBuilder.Pool.GetPooled();
+        Style = styleBuilder.Instance
             .MergeStyle(Modal.Parameters, false)
             .ToString();
     }
@@ -139,7 +143,7 @@ public partial class ModalDialog : ComponentBase, IAsyncDisposable
     /// Uses a special return value of "--closed--" to indicate programmatic closure,
     /// which prevents the <see cref="OnDialogClosed"/> callback from triggering a duplicate close.
     /// </remarks>
-    private async Task HandleModalClose(ModalClose close)
+    private async ValueTask HandleModalClose(ModalClose close)
     {
         if (_disposed)
             return;
@@ -156,7 +160,7 @@ public partial class ModalDialog : ComponentBase, IAsyncDisposable
     /// </summary>
     /// <returns>A task that represents the asynchronous dispose operation.</returns>
     /// <remarks>
-    /// This method unsubscribes from messenger notifications, disposes JavaScript object references,
+    /// This method unsubscribes from eventbus notifications, disposes JavaScript object references,
     /// and ensures proper cleanup of unmanaged resources. It is safe to call multiple times.
     /// </remarks>
     public async ValueTask DisposeAsync()
@@ -164,7 +168,7 @@ public partial class ModalDialog : ComponentBase, IAsyncDisposable
         if (_disposed)
             return;
 
-        _messenger.Unsubscribe(this);
+        _eventBus.Unsubscribe(this);
 
         if (_dialog != null)
         {

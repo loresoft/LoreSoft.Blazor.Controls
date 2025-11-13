@@ -2,13 +2,13 @@ using Microsoft.AspNetCore.Components;
 
 namespace LoreSoft.Blazor.Controls.Tests.Buttons;
 
-public class BusyButtonTests : TestContext
+public class BusyButtonTests : BunitContext
 {
     [Fact]
     public void Renders_Button_With_Default_Class()
     {
         // arrange & act
-        var cut = RenderComponent<BusyButton>();
+        var cut = Render<BusyButton>();
 
         // assert
         cut.MarkupMatches("<button class=\"busy-button\"></button>");
@@ -18,7 +18,7 @@ public class BusyButtonTests : TestContext
     public void Renders_Button_With_Child_Content()
     {
         // arrange & act
-        var cut = RenderComponent<BusyButton>(parameters => parameters
+        var cut = Render<BusyButton>(parameters => parameters
             .AddChildContent("Click Me")
         );
 
@@ -30,7 +30,7 @@ public class BusyButtonTests : TestContext
     public void Button_Is_Disabled_When_Disabled_Parameter_Is_True()
     {
         // arrange & act
-        var cut = RenderComponent<BusyButton>(parameters => parameters
+        var cut = Render<BusyButton>(parameters => parameters
             .Add(p => p.Disabled, true)
             .AddChildContent("Disabled Button")
         );
@@ -44,7 +44,7 @@ public class BusyButtonTests : TestContext
     public void Button_Is_Disabled_When_Busy_Parameter_Is_True()
     {
         // arrange & act
-        var cut = RenderComponent<BusyButton>(parameters => parameters
+        var cut = Render<BusyButton>(parameters => parameters
             .Add(p => p.Busy, true)
             .AddChildContent("Normal Content")
         );
@@ -58,7 +58,7 @@ public class BusyButtonTests : TestContext
     public void Renders_Default_Busy_Template_When_Busy()
     {
         // arrange & act
-        var cut = RenderComponent<BusyButton>(parameters => parameters
+        var cut = Render<BusyButton>(parameters => parameters
             .Add(p => p.Busy, true)
             .AddChildContent("Normal Content")
         );
@@ -76,7 +76,7 @@ public class BusyButtonTests : TestContext
     public void Renders_Custom_Busy_Text()
     {
         // arrange & act
-        var cut = RenderComponent<BusyButton>(parameters => parameters
+        var cut = Render<BusyButton>(parameters => parameters
             .Add(p => p.Busy, true)
             .Add(p => p.BusyText, "Loading...")
             .AddChildContent("Normal Content")
@@ -91,7 +91,7 @@ public class BusyButtonTests : TestContext
     public void Renders_Custom_Busy_Template()
     {
         // arrange & act
-        var cut = RenderComponent<BusyButton>(parameters => parameters
+        var cut = Render<BusyButton>(parameters => parameters
             .Add(p => p.Busy, true)
             .Add(p => p.BusyTemplate, builder => builder.AddMarkupContent(0, "<span class='custom-spinner'>Spinning...</span>"))
             .AddChildContent("Normal Content")
@@ -107,7 +107,7 @@ public class BusyButtonTests : TestContext
     public void Shows_Child_Content_When_Not_Busy()
     {
         // arrange & act
-        var cut = RenderComponent<BusyButton>(parameters => parameters
+        var cut = Render<BusyButton>(parameters => parameters
             .Add(p => p.Busy, false)
             .AddChildContent("Click Me")
         );
@@ -126,7 +126,7 @@ public class BusyButtonTests : TestContext
         var trigger = EventCallback.Factory.Create(this, () => triggerExecuted = true);
 
         // act
-        var cut = RenderComponent<BusyButton>(parameters => parameters
+        var cut = Render<BusyButton>(parameters => parameters
             .Add(p => p.Trigger, trigger)
             .AddChildContent("Click Me")
         );
@@ -144,7 +144,7 @@ public class BusyButtonTests : TestContext
         var triggerExecuted = false;
         var trigger = EventCallback.Factory.Create(this, () => triggerExecuted = true);
 
-        var cut = RenderComponent<BusyButton>(parameters => parameters
+        var cut = Render<BusyButton>(parameters => parameters
             .Add(p => p.Trigger, trigger)
             .AddChildContent("Click Me")
         );
@@ -164,7 +164,7 @@ public class BusyButtonTests : TestContext
         var tcs = new TaskCompletionSource();
         var trigger = EventCallback.Factory.Create(this, () => tcs.Task);
 
-        var cut = RenderComponent<BusyButton>(parameters => parameters
+        var cut = Render<BusyButton>(parameters => parameters
             .Add(p => p.Trigger, trigger)
             .AddChildContent("Click Me")
         );
@@ -197,7 +197,7 @@ public class BusyButtonTests : TestContext
         var tcs = new TaskCompletionSource();
         var trigger = EventCallback.Factory.Create(this, () => tcs.Task);
 
-        var cut = RenderComponent<BusyButton>(parameters => parameters
+        var cut = Render<BusyButton>(parameters => parameters
             .Add(p => p.Trigger, trigger)
             .Add(p => p.Disabled, true)
             .AddChildContent("Click Me")
@@ -226,7 +226,7 @@ public class BusyButtonTests : TestContext
         var tcs = new TaskCompletionSource();
         var trigger = EventCallback.Factory.Create(this, () => tcs.Task);
 
-        var cut = RenderComponent<BusyButton>(parameters => parameters
+        var cut = Render<BusyButton>(parameters => parameters
             .Add(p => p.Trigger, trigger)
             .Add(p => p.Busy, false)
             .AddChildContent("Click Me")
@@ -257,7 +257,7 @@ public class BusyButtonTests : TestContext
     public void Button_Shows_Busy_State_When_Both_Busy_Parameter_And_Executing_Are_True()
     {
         // arrange & act
-        var cut = RenderComponent<BusyButton>(parameters => parameters
+        var cut = Render<BusyButton>(parameters => parameters
             .Add(p => p.Busy, true)
             .Add(p => p.BusyText, "External Busy")
             .AddChildContent("Click Me")
@@ -273,7 +273,7 @@ public class BusyButtonTests : TestContext
     public void Button_Updates_When_Busy_Parameter_Changes()
     {
         // arrange
-        var cut = RenderComponent<BusyButton>(parameters => parameters
+        var cut = Render<BusyButton>(parameters => parameters
             .Add(p => p.Busy, false)
             .AddChildContent("Click Me")
         );
@@ -284,7 +284,7 @@ public class BusyButtonTests : TestContext
         Assert.Equal("Click Me", button.TextContent);
 
         // act - change Busy parameter
-        cut.SetParametersAndRender(parameters => parameters
+        cut.Render(parameters => parameters
             .Add(p => p.Busy, true)
         );
 
@@ -298,7 +298,7 @@ public class BusyButtonTests : TestContext
     public void Button_Updates_When_BusyText_Parameter_Changes()
     {
         // arrange
-        var cut = RenderComponent<BusyButton>(parameters => parameters
+        var cut = Render<BusyButton>(parameters => parameters
             .Add(p => p.Busy, true)
             .Add(p => p.BusyText, "Loading...")
             .AddChildContent("Click Me")
@@ -309,7 +309,7 @@ public class BusyButtonTests : TestContext
         Assert.Contains("Loading...", button.TextContent);
 
         // act - change BusyText parameter
-        cut.SetParametersAndRender(parameters => parameters
+        cut.Render(parameters => parameters
             .Add(p => p.BusyText, "Please wait...")
         );
 
@@ -330,7 +330,7 @@ public class BusyButtonTests : TestContext
             await tcs.Task;
         });
 
-        var cut = RenderComponent<BusyButton>(parameters => parameters
+        var cut = Render<BusyButton>(parameters => parameters
             .Add(p => p.Trigger, trigger)
             .AddChildContent("Click Me")
         );
@@ -353,7 +353,7 @@ public class BusyButtonTests : TestContext
     public void Button_Without_Trigger_Does_Not_Have_Type_Attribute()
     {
         // arrange & act
-        var cut = RenderComponent<BusyButton>(parameters => parameters
+        var cut = Render<BusyButton>(parameters => parameters
             .AddChildContent("Static Button")
         );
 
@@ -367,7 +367,7 @@ public class BusyButtonTests : TestContext
     public void Complex_Markup_In_Child_Content_Is_Preserved()
     {
         // arrange & act
-        var cut = RenderComponent<BusyButton>(parameters => parameters
+        var cut = Render<BusyButton>(parameters => parameters
             .AddChildContent("<span class='icon'>📤</span> <strong>Submit</strong>")
         );
 
@@ -383,7 +383,7 @@ public class BusyButtonTests : TestContext
     public void Complex_Markup_In_Busy_Template_Is_Rendered()
     {
         // arrange & act
-        var cut = RenderComponent<BusyButton>(parameters => parameters
+        var cut = Render<BusyButton>(parameters => parameters
             .Add(p => p.Busy, true)
             .Add(p => p.BusyTemplate, builder =>
             {

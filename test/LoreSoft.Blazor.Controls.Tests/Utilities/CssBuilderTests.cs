@@ -18,7 +18,7 @@ public class CssBuilderTests
     public void Empty_CreatesBuilderWithNoValue()
     {
         var builder = CssBuilder.Empty();
-        Assert.Equal(string.Empty, builder.ToString());
+        Assert.Null(builder.ToString());
     }
 
     [Fact]
@@ -57,7 +57,7 @@ public class CssBuilderTests
         var builder = CssBuilder.Empty()
             .AddClass("foo", false);
 
-        Assert.Equal(string.Empty, builder.ToString());
+        Assert.Null(builder.ToString());
     }
 
     [Fact]
@@ -75,7 +75,7 @@ public class CssBuilderTests
         var builder = CssBuilder.Empty()
             .AddClass("foo", () => false);
 
-        Assert.Equal(string.Empty, builder.ToString());
+        Assert.Null(builder.ToString());
     }
 
     [Fact]
@@ -111,7 +111,7 @@ public class CssBuilderTests
         var builder = CssBuilder.Empty()
             .AddClass("foo", v => v == "bar");
 
-        Assert.Equal(string.Empty, builder.ToString());
+        Assert.Null(builder.ToString());
     }
 
     [Fact]
@@ -131,7 +131,7 @@ public class CssBuilderTests
         var builder = CssBuilder.Empty()
             .AddClass(other, false);
 
-        Assert.Equal(string.Empty, builder.ToString());
+        Assert.Null(builder.ToString());
     }
 
     [Fact]
@@ -162,7 +162,7 @@ public class CssBuilderTests
         var builder = CssBuilder.Empty()
             .MergeClass(dict);
 
-        Assert.Equal(string.Empty, builder.ToString());
+        Assert.Null(builder.ToString());
         Assert.True(dict.ContainsKey("id"));
     }
 
@@ -172,6 +172,6 @@ public class CssBuilderTests
         var builder = CssBuilder.Empty()
             .MergeClass(null);
 
-        Assert.Equal(string.Empty, builder.ToString());
+        Assert.Null(builder.ToString());
     }
 }

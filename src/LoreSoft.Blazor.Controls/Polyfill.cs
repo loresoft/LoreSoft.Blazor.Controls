@@ -1,5 +1,7 @@
-
 #if !NET9_0_OR_GREATER
+
+#pragma warning disable IDE0161 // Convert to file-scoped namespace
+
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 

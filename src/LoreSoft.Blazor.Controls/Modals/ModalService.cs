@@ -1,3 +1,5 @@
+using LoreSoft.Blazor.Controls.Events;
+
 namespace LoreSoft.Blazor.Controls;
 
 /// <summary>
@@ -5,13 +7,13 @@ namespace LoreSoft.Blazor.Controls;
 /// </summary>
 /// <remarks>
 /// The <see cref="ModalService"/> provides a simple API for showing modal dialogs by publishing
-/// <see cref="ModalShow"/> messages through the messenger service. Register this service in your
+/// <see cref="ModalShow"/> messages through the eventbus service. Register this service in your
 /// DI container to use it throughout your application.
 /// </remarks>
-public class ModalService(Messenger messenger)
+public class ModalService(EventBus eventBus)
 {
-    private readonly Messenger _messenger = messenger
-        ?? throw new ArgumentNullException(nameof(messenger));
+    private readonly EventBus _eventBus = eventBus
+        ?? throw new ArgumentNullException(nameof(eventBus));
 
     /// <summary>
     /// Shows a modal dialog with the specified component and optional parameters.
@@ -39,11 +41,11 @@ public class ModalService(Messenger messenger)
         parameters ??= CreateParameters(string.Empty);
 
         // modal reference controls the lifetime of the modal
-        var modalReference = new ModalReference(_messenger, typeof(TComponent), parameters);
+        var modalReference = new ModalReference(_eventBus, typeof(TComponent), parameters);
 
         // publish a message to show the modal
         var message = new ModalShow(modalReference);
-        await _messenger.PublishAsync(message);
+        await _eventBus.PublishAsync(message);
 
         // allow caller to await the result
         return modalReference;

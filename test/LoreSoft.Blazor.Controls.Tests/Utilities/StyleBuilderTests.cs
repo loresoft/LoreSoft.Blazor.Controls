@@ -25,7 +25,7 @@ public class StyleBuilderTests
     public void Empty_CreatesEmptyStyle()
     {
         var builder = StyleBuilder.Empty();
-        Assert.Equal(string.Empty, builder.ToString());
+        Assert.Null(builder.ToString());
     }
 
     [Fact]
@@ -75,7 +75,7 @@ public class StyleBuilderTests
         var builder = StyleBuilder.Empty()
             .AddStyle("color", "red", false);
 
-        Assert.Equal(string.Empty, builder.ToString());
+        Assert.Null(builder.ToString());
     }
 
     [Fact]
@@ -111,7 +111,7 @@ public class StyleBuilderTests
         var builder = StyleBuilder.Empty()
             .AddStyle("border", "1px solid", v => v == "none");
 
-        Assert.Equal(string.Empty, builder.ToString());
+        Assert.Null(builder.ToString());
     }
 
     [Fact]
@@ -141,7 +141,7 @@ public class StyleBuilderTests
         var builder = StyleBuilder.Empty()
             .AddStyle(other, false);
 
-        Assert.Equal(string.Empty, builder.ToString());
+        Assert.Null(builder.ToString());
     }
 
     [Fact]
@@ -172,7 +172,7 @@ public class StyleBuilderTests
         var builder = StyleBuilder.Empty()
             .MergeStyle(dict);
 
-        Assert.Equal(string.Empty, builder.ToString());
+        Assert.Null(builder.ToString());
         Assert.True(dict.ContainsKey("id"));
     }
 
@@ -182,6 +182,6 @@ public class StyleBuilderTests
         var builder = StyleBuilder.Empty()
             .MergeStyle(null);
 
-        Assert.Equal(string.Empty, builder.ToString());
+        Assert.Null(builder.ToString());
     }
 }

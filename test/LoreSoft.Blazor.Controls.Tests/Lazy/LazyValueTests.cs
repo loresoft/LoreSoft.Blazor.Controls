@@ -2,7 +2,7 @@ using LoreSoft.Blazor.Controls.Tests.Models;
 
 namespace LoreSoft.Blazor.Controls.Tests.Lazy;
 
-public class LazyValueTests : TestContext
+public class LazyValueTests : BunitContext
 {
     [Fact]
     public void Renders_Value_Using_LoadMethod_And_Key()
@@ -13,7 +13,7 @@ public class LazyValueTests : TestContext
         var loadMethod = Fruit.GetByIdAsync;
 
         // act
-        var cut = RenderComponent<LazyValue<Guid, Fruit>>(parameters => parameters
+        var cut = Render<LazyValue<Guid, Fruit>>(parameters => parameters
             .Add(p => p.LoadMethod, loadMethod)
             .Add(p => p.Key, key)
         );
@@ -33,7 +33,7 @@ public class LazyValueTests : TestContext
         var loadMethod = Fruit.GetByIdAsync;
 
         // act
-        var cut = RenderComponent<LazyValue<Guid, Fruit>>(parameters => parameters
+        var cut = Render<LazyValue<Guid, Fruit>>(parameters => parameters
             .Add(p => p.LoadMethod, loadMethod)
             .Add(p => p.Key, key)
             .Add(p => p.ChildContent, value => $"<div class='fruit'>{value?.Name}</div>")
@@ -53,7 +53,7 @@ public class LazyValueTests : TestContext
         var loadMethod = Fruit.GetByIdAsync;
 
         // act
-        var cut = RenderComponent<LazyValue<Guid, Fruit>>(parameters => parameters
+        var cut = Render<LazyValue<Guid, Fruit>>(parameters => parameters
             .Add(p => p.LoadMethod, loadMethod)
             .Add(p => p.Key, nonExistentKey)
         );
@@ -72,7 +72,7 @@ public class LazyValueTests : TestContext
         var loadMethod = Fruit.GetByIdAsync;
 
         // act
-        var cut = RenderComponent<LazyValue<Guid, Fruit>>(parameters => parameters
+        var cut = Render<LazyValue<Guid, Fruit>>(parameters => parameters
             .Add(p => p.LoadMethod, loadMethod)
             .Add(p => p.Key, nonExistentKey)
             .Add(p => p.ChildContent, value => value == null ? "<span>Not found</span>" : $"<div>{value.Name}</div>")
@@ -94,7 +94,7 @@ public class LazyValueTests : TestContext
         var loadMethod = Fruit.GetByIdAsync;
 
         // act
-        var cut = RenderComponent<LazyValue<Guid, Fruit>>(parameters => parameters
+        var cut = Render<LazyValue<Guid, Fruit>>(parameters => parameters
             .Add(p => p.LoadMethod, loadMethod)
             .Add(p => p.Key, firstKey)
         );
@@ -106,7 +106,7 @@ public class LazyValueTests : TestContext
         });
 
         // change key parameter
-        cut.SetParametersAndRender(parameters => parameters
+        cut.Render(parameters => parameters
             .Add(p => p.Key, secondKey)
         );
 
@@ -126,7 +126,7 @@ public class LazyValueTests : TestContext
         var loadMethod = Fruit.GetByIdAsync;
 
         // act
-        var cut = RenderComponent<LazyValue<Guid, Fruit>>(parameters => parameters
+        var cut = Render<LazyValue<Guid, Fruit>>(parameters => parameters
             .Add(p => p.LoadMethod, loadMethod)
             .Add(p => p.Key, key)
             .Add(p => p.ChildContent, value => $@"
@@ -158,7 +158,7 @@ public class LazyValueTests : TestContext
         var loadMethod = Fruit.GetByIdAsync;
 
         // act
-        var cut = RenderComponent<LazyValue<Guid, Fruit>>(parameters => parameters
+        var cut = Render<LazyValue<Guid, Fruit>>(parameters => parameters
             .Add(p => p.LoadMethod, loadMethod)
             .Add(p => p.Key, key)
         );
@@ -181,7 +181,7 @@ public class LazyValueTests : TestContext
         var loadMethod = Fruit.GetByIdAsync;
 
         // act
-        var cut = RenderComponent<LazyValue<Guid, Fruit>>(parameters => parameters
+        var cut = Render<LazyValue<Guid, Fruit>>(parameters => parameters
             .Add(p => p.LoadMethod, loadMethod)
             .Add(p => p.Key, nonExistentKey)
         );
@@ -201,7 +201,7 @@ public class LazyValueTests : TestContext
         var key = "hello";
 
         // act
-        var cut = RenderComponent<LazyValue<string, string>>(parameters => parameters
+        var cut = Render<LazyValue<string, string>>(parameters => parameters
             .Add(p => p.LoadMethod, LoadStringAsync)
             .Add(p => p.Key, key)
         );
@@ -220,7 +220,7 @@ public class LazyValueTests : TestContext
         var key = "test";
 
         // act
-        var cut = RenderComponent<LazyValue<string, string>>(parameters => parameters
+        var cut = Render<LazyValue<string, string>>(parameters => parameters
             .Add(p => p.LoadMethod, LoadEmptyStringAsync)
             .Add(p => p.Key, key)
         );
@@ -239,7 +239,7 @@ public class LazyValueTests : TestContext
         var loadMethod = Fruit.GetByIdAsync;
 
         // act
-        var cut = RenderComponent<LazyValue<Guid, Fruit>>(parameters => parameters
+        var cut = Render<LazyValue<Guid, Fruit>>(parameters => parameters
             .Add(p => p.LoadMethod, loadMethod)
             .Add(p => p.Key, fruits[0].Id)
         );
@@ -251,11 +251,11 @@ public class LazyValueTests : TestContext
         });
 
         // rapidly change keys
-        cut.SetParametersAndRender(parameters => parameters
+        cut.Render(parameters => parameters
             .Add(p => p.Key, fruits[1].Id)
         );
 
-        cut.SetParametersAndRender(parameters => parameters
+        cut.Render(parameters => parameters
             .Add(p => p.Key, fruits[2].Id)
         );
 
@@ -275,7 +275,7 @@ public class LazyValueTests : TestContext
         var loadMethod = Fruit.GetByIdAsync;
 
         // act
-        var cut = RenderComponent<LazyValue<Guid, Fruit>>(parameters => parameters
+        var cut = Render<LazyValue<Guid, Fruit>>(parameters => parameters
             .Add(p => p.LoadMethod, loadMethod)
             .Add(p => p.Key, key)
         );
@@ -287,7 +287,7 @@ public class LazyValueTests : TestContext
         });
 
         // set same key again
-        cut.SetParametersAndRender(parameters => parameters
+        cut.Render(parameters => parameters
             .Add(p => p.Key, key)
         );
 
@@ -307,7 +307,7 @@ public class LazyValueTests : TestContext
         var loadMethod = Fruit.GetByIdAsync;
 
         // act
-        var cut = RenderComponent<LazyValue<Guid, Fruit>>(parameters => parameters
+        var cut = Render<LazyValue<Guid, Fruit>>(parameters => parameters
             .Add(p => p.LoadMethod, loadMethod)
             .Add(p => p.Key, key)
             .Add(p => p.ChildContent, value =>

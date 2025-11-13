@@ -128,7 +128,9 @@ public partial class DataList<TItem> : DataComponentBase<TItem>
     /// <inheritdoc />
     protected override void OnParametersSet()
     {
-        ClassName = new CssBuilder("data-list")
+        using var builder = CssBuilder.Pool.GetPooled();
+        ClassName = builder.Instance
+            .AddClass("data-list")
             .MergeClass(AdditionalAttributes)
             .ToString();
 

@@ -99,7 +99,9 @@ public class BusyButton : ComponentBase
     {
         base.OnParametersSet();
 
-        ClassName = new CssBuilder("busy-button")
+        using var builder = CssBuilder.Pool.GetPooled();
+        ClassName = builder.Instance
+            .AddClass("busy-button")
             .MergeClass(AdditionalAttributes)
             .ToString();
 

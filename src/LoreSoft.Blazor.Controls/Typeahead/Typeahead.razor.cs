@@ -501,7 +501,7 @@ public partial class Typeahead<TItem, TValue> : ComponentBase, IDisposable
     /// Gets the CSS class for the typeahead control based on validation and active state.
     /// </summary>
     /// <returns>The CSS class string.</returns>
-    public string ControlClass()
+    public string? ControlClass()
     {
         var validationClass = EditContext != null
             ? EditContext.FieldCssClass(FieldIdentifier)

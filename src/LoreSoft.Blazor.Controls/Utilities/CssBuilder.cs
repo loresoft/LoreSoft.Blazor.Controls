@@ -1,6 +1,7 @@
 // Ignore Spelling: Css
 
 using System.Runtime.CompilerServices;
+using System.Text;
 
 using LoreSoft.Blazor.Controls.Extensions;
 
@@ -10,22 +11,44 @@ namespace LoreSoft.Blazor.Controls.Utilities;
 /// Provides a fluent API for building CSS class strings for components.
 /// Supports conditional and dynamic class addition, merging, and formatting.
 /// </summary>
-public class CssBuilder(string? value = null)
+public class CssBuilder()
 {
-    private string _buffer = value ?? string.Empty;
+    /// <summary>
+    /// Gets a shared singleton instance of <see cref="ObjectPool{T}"/> for <see cref="CssBuilder"/>.
+    /// </summary>
+    /// <value>A singleton object pool instance for <see cref="CssBuilder"/>.</value>
+    /// <remarks>
+    /// This provides a convenient way to reuse <see cref="CssBuilder"/> instances and reduce allocations.
+    /// The pool is configured with a reset action that clears the builder's state.
+    /// </remarks>
+    /// <example>
+    /// <code>
+    /// using var pooled = CssBuilder.Pool.GetPooled();
+    /// pooled.Instance
+    ///     .AddClass("foo")
+    ///     .AddClass("bar", condition);
+    /// var classes = pooled.Instance.ToString();
+    /// </code>
+    /// </example>
+    public static ObjectPool<CssBuilder> Pool { get; }
+        = new(static () => new CssBuilder(), static builder => builder.Clear());
 
     /// <summary>
     /// Creates a new <see cref="CssBuilder"/> with an optional initial value.
     /// </summary>
     /// <param name="value">The initial CSS class string.</param>
     /// <returns>A new <see cref="CssBuilder"/> instance.</returns>
-    public static CssBuilder Default(string? value = null) => new(value ?? string.Empty);
+    public static CssBuilder Default(string? value = null)
+        => new CssBuilder().AddClass(value);
 
     /// <summary>
     /// Creates an empty <see cref="CssBuilder"/>.
     /// </summary>
     /// <returns>A new <see cref="CssBuilder"/> instance with no classes.</returns>
-    public static CssBuilder Empty() => new(string.Empty);
+    public static CssBuilder Empty() => new();
+
+
+    private readonly StringBuilder _buffer = new(256);
 
     /// <summary>
     /// Adds a CSS class to the builder if the value is not null or empty.
@@ -35,7 +58,12 @@ public class CssBuilder(string? value = null)
     public CssBuilder AddClass(string? value)
     {
         if (value.HasValue())
-            _buffer += $" {value}";
+        {
+            if (_buffer.Length > 0)
+                _buffer.Append(' ');
+
+            _buffer.Append(value);
+        }
 
         return this;
     }
@@ -148,9 +176,27 @@ public class CssBuilder(string? value = null)
     }
 
     /// <summary>
+    /// Clears the accumulated CSS classes.
+    /// </summary>
+    public void Clear()
+    {
+        _buffer.Clear();
+
+        // Reset capacity if it has grown too large to prevent memory bloat
+        if (_buffer.Capacity > 1024)
+            _buffer.Capacity = 256;
+    }
+
+    /// <summary>
     /// Returns the built CSS class string.
     /// </summary>
     /// <returns>The CSS class string.</returns>
-    public override string ToString()
-        => _buffer.Trim();
+    public override string? ToString()
+    {
+        if (_buffer.Length == 0)
+            return null;
+
+        var result = _buffer.ToString().Trim();
+        return string.IsNullOrEmpty(result) ? null : result;
+    }
 }

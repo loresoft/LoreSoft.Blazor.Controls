@@ -135,7 +135,7 @@ public partial class ToastElement : IDisposable
     /// Gets the CSS class string for the toast element based on its level and settings.
     /// </summary>
     /// <returns>The CSS class string.</returns>
-    private string ToastClass()
+    private string? ToastClass()
     {
         var className = Level switch
         {

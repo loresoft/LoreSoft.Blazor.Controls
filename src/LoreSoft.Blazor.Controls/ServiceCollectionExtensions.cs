@@ -1,3 +1,5 @@
+using LoreSoft.Blazor.Controls.Events;
+
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 
@@ -16,7 +18,7 @@ public static class ServiceCollectionExtensions
     /// <returns>The updated <see cref="IServiceCollection"/>.</returns>
     public static IServiceCollection AddBlazorControls(this IServiceCollection services)
     {
-        services.TryAddSingleton<Messenger>();
+        services.TryAddSingleton<EventBus>();
         services.TryAddScoped<DownloadService>();
         services.TryAddScoped<StorageService>();
         services.TryAddScoped<BrowserCultureProvider>();
@@ -63,7 +65,7 @@ public static class ServiceCollectionExtensions
     /// <returns>The updated <see cref="IServiceCollection"/>.</returns>
     /// <remarks>
     /// This method registers the modal service which is used to display and manage modal dialogs.
-    /// The <see cref="ModalService"/> requires a <see cref="Messenger"/> service to be registered,
+    /// The <see cref="ModalService"/> requires a <see cref="EventBus"/> service to be registered,
     /// which is automatically handled by <see cref="AddBlazorControls"/>.
     /// </remarks>
     public static IServiceCollection AddModals(this IServiceCollection services)

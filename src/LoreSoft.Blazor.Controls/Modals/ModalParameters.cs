@@ -215,7 +215,7 @@ public class ModalParameters : Dictionary<string, object>
         var builder = new CssBuilder();
         action(builder);
 
-        this["class"] = builder.ToString();
+        this["class"] = builder.ToString() ?? string.Empty;
 
         return this;
     }
@@ -258,7 +258,7 @@ public class ModalParameters : Dictionary<string, object>
         var builder = new StyleBuilder();
         action(builder);
 
-        this["style"] = builder.ToString();
+        this["style"] = builder.ToString() ?? string.Empty;
 
         return this;
     }

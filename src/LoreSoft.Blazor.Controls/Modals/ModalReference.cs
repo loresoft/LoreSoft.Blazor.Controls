@@ -1,3 +1,5 @@
+using LoreSoft.Blazor.Controls.Events;
+
 namespace LoreSoft.Blazor.Controls;
 
 /// <summary>
@@ -5,35 +7,35 @@ namespace LoreSoft.Blazor.Controls;
 /// </summary>
 /// <remarks>
 /// This class implements <see cref="IModalReference"/> and provides the coordination between
-/// the modal dialog component, the messenger service, and the code that initiated the modal.
+/// the modal dialog component, the eventbus service, and the code that initiated the modal.
 /// It automatically injects itself as a parameter to the modal component.
 /// </remarks>
 public class ModalReference : IModalReference
 {
-    private readonly Messenger _messenger;
+    private readonly EventBus _eventBus;
     private readonly TaskCompletionSource<ModalResult> _resultCompletion;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ModalReference"/> class.
     /// </summary>
-    /// <param name="messenger">The messenger service used to publish modal close messages.</param>
+    /// <param name="eventBus">The eventbus service used to publish modal close messages.</param>
     /// <param name="componentType">The type of the component to render in the modal dialog.</param>
     /// <param name="parameters">The parameters to pass to the modal component.</param>
     /// <param name="id">The unique identifier for the modal. If <c>null</c>, a random identifier is generated.</param>
     /// <exception cref="ArgumentNullException">
-    /// Thrown if <paramref name="messenger"/>, <paramref name="componentType"/>, or <paramref name="parameters"/> is null.
+    /// Thrown if <paramref name="eventBus"/>, <paramref name="componentType"/>, or <paramref name="parameters"/> is null.
     /// </exception>
     /// <remarks>
     /// The constructor automatically adds this <see cref="ModalReference"/> instance to the parameters dictionary
     /// under the key <see cref="ModalComponentBase.Modal"/>, making it available to the modal component.
     /// </remarks>
     public ModalReference(
-        Messenger messenger,
+        EventBus eventBus,
         Type componentType,
         IDictionary<string, object> parameters,
         string? id = null)
     {
-        _messenger = messenger ?? throw new ArgumentNullException(nameof(messenger));
+        _eventBus = eventBus ?? throw new ArgumentNullException(nameof(eventBus));
 
         ComponentType = componentType ?? throw new ArgumentNullException(nameof(componentType));
         Parameters = parameters ?? throw new ArgumentNullException(nameof(parameters));
@@ -84,14 +86,14 @@ public class ModalReference : IModalReference
     /// <param name="modalResult">The result to return when closing the modal.</param>
     /// <returns>A task that represents the asynchronous close operation.</returns>
     /// <remarks>
-    /// This method publishes a <see cref="ModalClose"/> message via the messenger service to notify
+    /// This method publishes a <see cref="ModalClose"/> message via the eventbus service to notify
     /// the modal dialog to close, then completes the <see cref="Result"/> task with the provided result.
     /// </remarks>
     public async Task CloseAsync(ModalResult modalResult)
     {
         // signal others to close the modal
         var message = new ModalClose(this);
-        await _messenger.PublishAsync(message);
+        await _eventBus.PublishAsync(message);
 
         // complete the result task
         Complete(modalResult);

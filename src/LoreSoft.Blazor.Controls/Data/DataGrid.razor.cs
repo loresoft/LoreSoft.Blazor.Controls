@@ -615,7 +615,7 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
     /// This method combines the base grid classes with optional border styling and custom grid classes.
     /// </summary>
     /// <returns>The computed CSS class string for the grid container.</returns>
-    private string ComputeGridClass()
+    private string? ComputeGridClass()
     {
         return CssBuilder.Default("data-grid")
             .AddClass("data-grid--horizontal-borders", Borders is Borders.Horizontal or Borders.All)
@@ -630,7 +630,7 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
     /// </summary>
     /// <param name="item">The data item for the row.</param>
     /// <returns>The computed CSS class string for the row.</returns>
-    private string ComputeRowClass(TItem item)
+    private string? ComputeRowClass(TItem item)
     {
         return CssBuilder.Default("data-grid__row")
             .AddClass("data-grid__row--selected", IsRowSelected(item))
@@ -644,7 +644,7 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
     /// </summary>
     /// <param name="key">The unique key identifying the group.</param>
     /// <returns>The computed CSS class string for the group header.</returns>
-    private string ComputeGroupClass(string key)
+    private string? ComputeGroupClass(string key)
     {
         var isGroupExpanded = IsGroupExpanded(key);
 

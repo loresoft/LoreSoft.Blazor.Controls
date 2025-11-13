@@ -132,7 +132,7 @@ public partial class ToastContainer : IDisposable
     /// </summary>
     /// <param name="position">The <see cref="ToastPosition"/> to use.</param>
     /// <returns>The CSS class string for the container.</returns>
-    private string ContainerClass(ToastPosition? position)
+    private string? ContainerClass(ToastPosition? position)
     {
         var className = position switch
         {

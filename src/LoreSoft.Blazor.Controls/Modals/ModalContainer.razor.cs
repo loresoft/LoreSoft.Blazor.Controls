@@ -1,3 +1,5 @@
+using LoreSoft.Blazor.Controls.Events;
+
 using Microsoft.AspNetCore.Components;
 
 namespace LoreSoft.Blazor.Controls;
@@ -11,17 +13,17 @@ namespace LoreSoft.Blazor.Controls;
 /// </remarks>
 public partial class ModalContainer : ComponentBase, IDisposable
 {
-    private readonly Messenger _messenger;
+    private readonly EventBus _eventBus;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ModalContainer"/> class.
     /// </summary>
-    /// <param name="messenger">The messenger service used to subscribe to modal show and close messages.</param>
-    public ModalContainer(Messenger messenger)
+    /// <param name="eventBus">The event bus service used to subscribe to modal show and close messages.</param>
+    public ModalContainer(EventBus eventBus)
     {
-        _messenger = messenger;
-        _messenger.Subscribe<ModalShow>(this, HandleModalShow);
-        _messenger.Subscribe<ModalClose>(this, HandleModalClose);
+        _eventBus = eventBus;
+        _eventBus.Subscribe<ModalShow>(HandleModalShow);
+        _eventBus.Subscribe<ModalClose>(HandleModalClose);
     }
 
     /// <summary>
@@ -35,7 +37,7 @@ public partial class ModalContainer : ComponentBase, IDisposable
     /// </summary>
     /// <param name="message">The modal show message containing the modal reference to display.</param>
     /// <returns>A task that represents the asynchronous operation.</returns>
-    private async Task HandleModalShow(ModalShow message)
+    private async ValueTask HandleModalShow(ModalShow message)
     {
         if (message is null || message.Modal is null)
             return;
@@ -52,7 +54,7 @@ public partial class ModalContainer : ComponentBase, IDisposable
     /// <remarks>
     /// Includes a 250ms delay to allow closing animations to complete before removing the modal from the DOM.
     /// </remarks>
-    private async Task HandleModalClose(ModalClose message)
+    private async ValueTask HandleModalClose(ModalClose message)
     {
         if (message is null || message.Modal is null)
             return;
@@ -65,11 +67,11 @@ public partial class ModalContainer : ComponentBase, IDisposable
     }
 
     /// <summary>
-    /// Disposes the component and unsubscribes from all messenger subscriptions.
+    /// Disposes the component and unsubscribes from all eventbus subscriptions.
     /// </summary>
     public void Dispose()
     {
-        _messenger.Unsubscribe(this);
+        _eventBus.Unsubscribe(this);
         GC.SuppressFinalize(this);
     }
 }

@@ -41,12 +41,12 @@ public class Skeleton : ComponentBase
     /// <summary>
     /// Gets the computed CSS class for the skeleton element.
     /// </summary>
-    protected string ClassName { get; set; } = null!;
+    protected string? ClassName { get; set; }
 
     /// <summary>
     /// Gets the computed CSS style for the skeleton element.
     /// </summary>
-    protected string Style { get; set; } = null!;
+    protected string? Style { get; set; }
 
     /// <inheritdoc />
     protected override void OnParametersSet()
@@ -54,13 +54,16 @@ public class Skeleton : ComponentBase
         var type = Type.ToString().ToLowerInvariant();
 
         // update only after parameters are set
-        ClassName = new CssBuilder("skeleton")
+        using var builder = CssBuilder.Pool.GetPooled();
+        ClassName = builder.Instance
+            .AddClass("skeleton")
             .AddClass("skeleton-wave")
             .AddClass($"skeleton-{type}")
             .MergeClass(AdditionalAttributes)
             .ToString();
 
-        Style = new StyleBuilder()
+        using var styleBuilder = StyleBuilder.Pool.GetPooled();
+        Style = styleBuilder.Instance
             .MergeStyle(AdditionalAttributes)
             .AddStyle("width", Width, (v) => v.HasValue())
             .AddStyle("height", Height, (v) => v.HasValue())

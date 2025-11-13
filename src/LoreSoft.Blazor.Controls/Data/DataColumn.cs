@@ -325,31 +325,31 @@ public class DataColumn<TItem> : ComponentBase
     /// Gets the computed CSS class for the header cell.
     /// This includes base classes and any custom header classes.
     /// </summary>
-    internal string CurrentHeaderClass { get; private set; } = null!;
+    internal string? CurrentHeaderClass { get; private set; }
 
     /// <summary>
     /// Gets the computed CSS style for the header cell.
     /// This includes sizing, alignment, and any custom header styles.
     /// </summary>
-    internal string CurrentHeaderStyle { get; private set; } = null!;
+    internal string? CurrentHeaderStyle { get; private set; }
 
     /// <summary>
     /// Gets the computed CSS class for data cells.
     /// This includes base classes and any custom cell classes.
     /// </summary>
-    internal string CurrentCellClass { get; private set; } = null!;
+    internal string? CurrentCellClass { get; private set; }
 
     /// <summary>
     /// Gets the computed CSS class for the footer cell.
     /// This includes base classes and any custom footer classes.
     /// </summary>
-    internal string CurrentFooterClass { get; private set; } = null!;
+    internal string? CurrentFooterClass { get; private set; }
 
     /// <summary>
     /// Gets the computed CSS style for the footer cell.
     /// This includes sizing, alignment, and any custom footer styles.
     /// </summary>
-    internal string CurrentFooterStyle { get; private set; } = null!;
+    internal string? CurrentFooterStyle { get; private set; }
 
 
     /// <summary>
@@ -588,7 +588,7 @@ public class DataColumn<TItem> : ComponentBase
     /// </summary>
     /// <param name="data">The data item for the current row.</param>
     /// <returns>The computed CSS style string for the cell.</returns>
-    internal string ComputeCellStyle(TItem data)
+    internal string? ComputeCellStyle(TItem data)
     {
         return StyleBuilder.Default(CellStyle?.Invoke(data) ?? string.Empty)
             .AddStyle(ColumnStyle)

@@ -1,6 +1,47 @@
 ﻿[assembly: System.Reflection.AssemblyMetadata("RepositoryUrl", "https://github.com/loresoft/LoreSoft.Blazor.Controls")]
 [assembly: System.Resources.NeutralResourcesLanguage("en-US")]
-[assembly: System.Runtime.Versioning.TargetFramework(".NETCoreApp,Version=v9.0", FrameworkDisplayName=".NET 9.0")]
+[assembly: System.Runtime.Versioning.TargetFramework(".NETCoreApp,Version=v10.0", FrameworkDisplayName=".NET 10.0")]
+namespace LoreSoft.Blazor.Controls.Abstracts
+{
+    public class EventBusComponent : LoreSoft.Blazor.Controls.Abstracts.StandardComponent
+    {
+        public EventBusComponent() { }
+        [Microsoft.AspNetCore.Components.Inject]
+        public required LoreSoft.Blazor.Controls.Events.EventBus EventBus { get; set; }
+        protected override void DisposeManagedResources() { }
+        protected override void OnInitialized() { }
+        protected virtual void Subscribe(LoreSoft.Blazor.Controls.Events.EventBus eventBus) { }
+    }
+    public class StandardComponent : Microsoft.AspNetCore.Components.ComponentBase, System.IAsyncDisposable, System.IDisposable
+    {
+        public StandardComponent() { }
+        [Microsoft.AspNetCore.Components.Parameter(CaptureUnmatchedValues=true)]
+        public System.Collections.Generic.Dictionary<string, object>? AdditionalAttributes { get; set; }
+        protected string? ClassBound { get; }
+        protected bool Disposed { get; }
+        protected Microsoft.AspNetCore.Components.ElementReference Element { get; set; }
+        protected virtual string? ElementClass { get; }
+        protected string? ElementId { get; }
+        protected virtual string? ElementStyle { get; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public string? Id { get; set; }
+        protected bool Rendered { get; }
+        protected string? StyleBound { get; }
+        protected virtual LoreSoft.Blazor.Controls.Utilities.StyleBuilder ComputeAttributes(LoreSoft.Blazor.Controls.Utilities.StyleBuilder styleBuilder) { }
+        protected virtual LoreSoft.Blazor.Controls.Utilities.CssBuilder ComputeClasses(LoreSoft.Blazor.Controls.Utilities.CssBuilder cssBuilder) { }
+        public void Dispose() { }
+        protected virtual void Dispose(bool disposing) { }
+        public System.Threading.Tasks.ValueTask DisposeAsync() { }
+        protected virtual System.Threading.Tasks.ValueTask DisposeAsyncCore() { }
+        protected virtual void DisposeManagedResources() { }
+        protected virtual void DisposeUnmanagedResources() { }
+        protected void ExecuteAfterRender(System.Func<System.Threading.Tasks.ValueTask> action) { }
+        protected override System.Threading.Tasks.Task OnAfterRenderAsync(bool firstRender) { }
+        protected override void OnParametersSet() { }
+        protected System.Threading.Tasks.ValueTask ProcessRenderQueue() { }
+        protected void ThrowIfDisposed() { }
+    }
+}
 namespace LoreSoft.Blazor.Controls
 {
     public class AlertModal : LoreSoft.Blazor.Controls.ModalComponentBase
@@ -97,7 +138,7 @@ namespace LoreSoft.Blazor.Controls
         qhd = 8,
         uhd = 9,
     }
-    public class BrowserCultureProvider : LoreSoft.Blazor.Controls.Utilities.JavaScriptModule
+    public class BrowserCultureProvider : LoreSoft.Blazor.Controls.JavaScriptModule
     {
         public BrowserCultureProvider(Microsoft.JSInterop.IJSRuntime javaScript) { }
         public System.Threading.Tasks.ValueTask<string> GetLanguage(bool force = false) { }
@@ -678,7 +719,7 @@ namespace LoreSoft.Blazor.Controls
         public System.TimeSpan Delay { get; }
         public T Value { get; set; }
     }
-    public class DownloadService : LoreSoft.Blazor.Controls.Utilities.JavaScriptModule
+    public class DownloadService : LoreSoft.Blazor.Controls.JavaScriptModule
     {
         public DownloadService(Microsoft.JSInterop.IJSRuntime javaScript) { }
         public System.Threading.Tasks.Task DownloadFileStream(System.IO.Stream stream, string? fileName = null, string? mimeType = null) { }
@@ -767,6 +808,14 @@ namespace LoreSoft.Blazor.Controls
         protected override void OnParametersSet() { }
         protected override bool TryParseValueFromString(string? value, [System.Diagnostics.CodeAnalysis.MaybeNullWhen(false)] out string result, [System.Diagnostics.CodeAnalysis.NotNullWhen(false)] out string? validationErrorMessage) { }
     }
+    public class JavaScriptModule : System.IAsyncDisposable
+    {
+        public JavaScriptModule(Microsoft.JSInterop.IJSRuntime javaScript, string moduleUrl) { }
+        public System.Threading.Tasks.ValueTask DisposeAsync() { }
+        protected virtual System.Threading.Tasks.ValueTask DisposeCoreAsync() { }
+        public System.Threading.Tasks.ValueTask<T> InvokeAsync<T>(string identifier, params object?[]? args) { }
+        public System.Threading.Tasks.ValueTask InvokeVoidAsync(string identifier, params object?[]? args) { }
+    }
     public class JsonDisplay : Microsoft.AspNetCore.Components.ComponentBase
     {
         public JsonDisplay() { }
@@ -832,14 +881,6 @@ namespace LoreSoft.Blazor.Controls
         protected override void BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder builder) { }
         protected override System.Threading.Tasks.Task OnAfterRenderAsync(bool firstRender) { }
     }
-    public class Messenger : System.IDisposable
-    {
-        public Messenger() { }
-        public void Dispose() { }
-        public System.Threading.Tasks.Task PublishAsync<TMessage>(TMessage message) { }
-        public System.IDisposable Subscribe<TMessage>(object subscriber, System.Func<TMessage, System.Threading.Tasks.Task> handler) { }
-        public void Unsubscribe(object subscriber) { }
-    }
     public class ModalClose : System.IEquatable<LoreSoft.Blazor.Controls.ModalClose>
     {
         public ModalClose(LoreSoft.Blazor.Controls.ModalReference Modal) { }
@@ -870,21 +911,21 @@ namespace LoreSoft.Blazor.Controls
     }
     public class ModalContainer : Microsoft.AspNetCore.Components.ComponentBase, System.IDisposable
     {
-        public ModalContainer(LoreSoft.Blazor.Controls.Messenger messenger) { }
+        public ModalContainer(LoreSoft.Blazor.Controls.Events.EventBus eventBus) { }
         protected System.Collections.Generic.List<LoreSoft.Blazor.Controls.ModalReference> Modals { get; }
         protected override void BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder @__builder) { }
         public void Dispose() { }
     }
     public class ModalDialog : Microsoft.AspNetCore.Components.ComponentBase, System.IAsyncDisposable
     {
-        public ModalDialog(LoreSoft.Blazor.Controls.Messenger messenger) { }
-        protected string ClassName { get; }
+        public ModalDialog(LoreSoft.Blazor.Controls.Events.EventBus eventBus) { }
+        protected string? ClassName { get; }
         protected Microsoft.AspNetCore.Components.ElementReference Element { get; set; }
         [Microsoft.AspNetCore.Components.Inject]
         public Microsoft.JSInterop.IJSRuntime JavaScript { get; set; }
         [Microsoft.AspNetCore.Components.Parameter]
         public LoreSoft.Blazor.Controls.ModalReference Modal { get; set; }
-        protected string Style { get; }
+        protected string? Style { get; }
         protected override void BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder @__builder) { }
         public System.Threading.Tasks.ValueTask DisposeAsync() { }
         protected override System.Threading.Tasks.Task OnAfterRenderAsync(bool firstRender) { }
@@ -916,7 +957,7 @@ namespace LoreSoft.Blazor.Controls
     }
     public class ModalReference : LoreSoft.Blazor.Controls.IModalReference
     {
-        public ModalReference(LoreSoft.Blazor.Controls.Messenger messenger, System.Type componentType, System.Collections.Generic.IDictionary<string, object> parameters, string? id = null) { }
+        public ModalReference(LoreSoft.Blazor.Controls.Events.EventBus eventBus, System.Type componentType, System.Collections.Generic.IDictionary<string, object> parameters, string? id = null) { }
         public System.Type ComponentType { get; }
         public string ModalId { get; }
         public System.Collections.Generic.IDictionary<string, object> Parameters { get; }
@@ -937,7 +978,7 @@ namespace LoreSoft.Blazor.Controls
     }
     public class ModalService
     {
-        public ModalService(LoreSoft.Blazor.Controls.Messenger messenger) { }
+        public ModalService(LoreSoft.Blazor.Controls.Events.EventBus eventBus) { }
         public System.Threading.Tasks.Task<LoreSoft.Blazor.Controls.IModalReference> Show<TComponent>(System.Collections.Generic.IDictionary<string, object>? parameters = null)
             where TComponent : LoreSoft.Blazor.Controls.ModalComponentBase { }
         public static System.Collections.Generic.Dictionary<string, object> CreateParameters(string message, string title = "Alert", LoreSoft.Blazor.Controls.ModalVariant type = 0, string primaryAction = "OK", string secondaryAction = "Cancel") { }
@@ -1187,10 +1228,10 @@ namespace LoreSoft.Blazor.Controls
         public Skeleton() { }
         [Microsoft.AspNetCore.Components.Parameter(CaptureUnmatchedValues=true)]
         public System.Collections.Generic.Dictionary<string, object>? AdditionalAttributes { get; set; }
-        protected string ClassName { get; set; }
+        protected string? ClassName { get; set; }
         [Microsoft.AspNetCore.Components.Parameter]
         public string? Height { get; set; }
-        protected string Style { get; set; }
+        protected string? Style { get; set; }
         [Microsoft.AspNetCore.Components.Parameter]
         public LoreSoft.Blazor.Controls.SkeletonType Type { get; set; }
         [Microsoft.AspNetCore.Components.Parameter]
@@ -1431,6 +1472,58 @@ namespace LoreSoft.Blazor.Controls
         protected void Execute() { }
     }
 }
+namespace LoreSoft.Blazor.Controls.Events
+{
+    public class EventBus
+    {
+        public EventBus() { }
+        public System.Threading.Tasks.ValueTask PublishAsync<TEvent>(TEvent eventData, System.Threading.CancellationToken cancellationToken = default) { }
+        public void Subscribe<TEvent>(System.Func<TEvent, System.Threading.Tasks.ValueTask> handler) { }
+        public void Subscribe<TEvent>(System.Func<TEvent, System.Threading.CancellationToken, System.Threading.Tasks.ValueTask> handler) { }
+        public void Unsubscribe(object subscriber) { }
+        public void Unsubscribe<TEvent>(System.Func<TEvent, System.Threading.Tasks.ValueTask> handler) { }
+        public void Unsubscribe<TEvent>(System.Func<TEvent, System.Threading.CancellationToken, System.Threading.Tasks.ValueTask> handler) { }
+    }
+    public readonly struct WeakDelegate
+    {
+        public WeakDelegate(System.Delegate handler) { }
+        public bool IsAlive { get; }
+        public System.Threading.Tasks.ValueTask InvokeAsync(object? parameter = null, System.Threading.CancellationToken cancellationToken = default) { }
+        public bool IsDelegateMatch(System.Delegate handler) { }
+        public bool IsTargetMatch(object target) { }
+    }
+    public sealed class WeakEvent : LoreSoft.Blazor.Controls.Events.WeakEventBase
+    {
+        public WeakEvent() { }
+        public System.Threading.Tasks.ValueTask PublishAsync(System.Threading.CancellationToken cancellationToken = default) { }
+        public void Subscribe(System.Action handler) { }
+        public void Subscribe(System.Func<System.Threading.Tasks.ValueTask> handler) { }
+        public void Subscribe(System.Func<System.Threading.CancellationToken, System.Threading.Tasks.ValueTask> handler) { }
+        public int Unsubscribe(System.Action handler) { }
+        public int Unsubscribe(System.Func<System.Threading.Tasks.ValueTask> handler) { }
+        public int Unsubscribe(System.Func<System.Threading.CancellationToken, System.Threading.Tasks.ValueTask> handler) { }
+    }
+    public class WeakEventBase
+    {
+        public WeakEventBase() { }
+        protected System.Threading.Tasks.ValueTask PublishCoreAsync(object? eventData, System.Threading.CancellationToken cancellationToken = default) { }
+        protected void SubscribeCore(System.Delegate handler) { }
+        public int SubscriberCount() { }
+        public int Unsubscribe(object subscriber) { }
+        protected int UnsubscribeCore(System.Delegate handler) { }
+    }
+    public sealed class WeakEvent<TEvent> : LoreSoft.Blazor.Controls.Events.WeakEventBase
+    {
+        public WeakEvent() { }
+        public System.Threading.Tasks.ValueTask PublishAsync(TEvent eventData, System.Threading.CancellationToken cancellationToken = default) { }
+        public void Subscribe(System.Action<TEvent> handler) { }
+        public void Subscribe(System.Func<TEvent, System.Threading.Tasks.ValueTask> handler) { }
+        public void Subscribe(System.Func<TEvent, System.Threading.CancellationToken, System.Threading.Tasks.ValueTask> handler) { }
+        public int Unsubscribe(System.Action<TEvent> handler) { }
+        public int Unsubscribe(System.Func<TEvent, System.Threading.Tasks.ValueTask> handler) { }
+        public int Unsubscribe(System.Func<TEvent, System.Threading.CancellationToken, System.Threading.Tasks.ValueTask> handler) { }
+    }
+}
 namespace LoreSoft.Blazor.Controls.Extensions
 {
     public static class ConvertExtensions
@@ -1459,6 +1552,17 @@ namespace LoreSoft.Blazor.Controls.Extensions
     {
         public static System.DateTime ToTimeZone(this System.DateTime dateTime, System.TimeZoneInfo timeZoneInfo) { }
         public static System.DateTimeOffset ToTimeZone(this System.DateTimeOffset dateTimeOffset, System.TimeZoneInfo timeZoneInfo) { }
+    }
+    public static class ObjectPoolExtensions
+    {
+        public static LoreSoft.Blazor.Controls.Utilities.ObjectPool<System.Text.StringBuilder> get_Pool() { }
+        public sealed class <G>$CD29E70E0DCA5BBFCFAC7C2BEF3C5C99
+        {
+            [System.Runtime.CompilerServices.ExtensionMarker("<M>$96C44AFA3891DCFC6A50C7402B9CB709")]
+            [get: System.Runtime.CompilerServices.ExtensionMarker("<M>$96C44AFA3891DCFC6A50C7402B9CB709")]
+            public static LoreSoft.Blazor.Controls.Utilities.ObjectPool<System.Text.StringBuilder> Pool { get; }
+            public static class <M>$96C44AFA3891DCFC6A50C7402B9CB709 { }
+        }
     }
     public static class QueryExtensions
     {
@@ -1518,7 +1622,8 @@ namespace LoreSoft.Blazor.Controls.Utilities
     }
     public class CssBuilder
     {
-        public CssBuilder(string? value = null) { }
+        public CssBuilder() { }
+        public static LoreSoft.Blazor.Controls.Utilities.ObjectPool<LoreSoft.Blazor.Controls.Utilities.CssBuilder> Pool { get; }
         public LoreSoft.Blazor.Controls.Utilities.CssBuilder AddClass(string? value) { }
         public LoreSoft.Blazor.Controls.Utilities.CssBuilder AddClass(LoreSoft.Blazor.Controls.Utilities.CssBuilder builder, System.Func<bool> when) { }
         public LoreSoft.Blazor.Controls.Utilities.CssBuilder AddClass(LoreSoft.Blazor.Controls.Utilities.CssBuilder builder, bool when) { }
@@ -1527,11 +1632,12 @@ namespace LoreSoft.Blazor.Controls.Utilities
         public LoreSoft.Blazor.Controls.Utilities.CssBuilder AddClass(string? value, System.Func<bool> when) { }
         public LoreSoft.Blazor.Controls.Utilities.CssBuilder AddClass(string? value, System.Func<string?, bool> when) { }
         public LoreSoft.Blazor.Controls.Utilities.CssBuilder AddClass(string? value, bool when) { }
+        public void Clear() { }
         [System.Runtime.CompilerServices.OverloadResolutionPriority(9)]
         public LoreSoft.Blazor.Controls.Utilities.CssBuilder MergeClass(System.Collections.Generic.IDictionary<string, object>? attributes, bool remove = true) { }
         [System.Runtime.CompilerServices.OverloadResolutionPriority(0)]
         public LoreSoft.Blazor.Controls.Utilities.CssBuilder MergeClass(System.Collections.Generic.IReadOnlyDictionary<string, object>? attributes, bool remove = true) { }
-        public override string ToString() { }
+        public override string? ToString() { }
         public static LoreSoft.Blazor.Controls.Utilities.CssBuilder Default(string? value = null) { }
         public static LoreSoft.Blazor.Controls.Utilities.CssBuilder Empty() { }
     }
@@ -1571,14 +1677,6 @@ namespace LoreSoft.Blazor.Controls.Utilities
         public void NotifyStateChanged() { }
         public void Toggle(TItem item) { }
     }
-    public abstract class JavaScriptModule : System.IAsyncDisposable
-    {
-        protected JavaScriptModule(Microsoft.JSInterop.IJSRuntime javaScript, string moduleUrl) { }
-        public System.Threading.Tasks.ValueTask DisposeAsync() { }
-        protected virtual System.Threading.Tasks.ValueTask DisposeCoreAsync() { }
-        protected System.Threading.Tasks.ValueTask<T> InvokeAsync<T>(string identifier, params object?[]? args) { }
-        protected System.Threading.Tasks.ValueTask InvokeVoidAsync(string identifier, params object?[]? args) { }
-    }
     public class LinqExpressionBuilder
     {
         public LinqExpressionBuilder() { }
@@ -1590,9 +1688,24 @@ namespace LoreSoft.Blazor.Controls.Utilities
         public static bool IsValid(LoreSoft.Blazor.Controls.QueryRule? queryRule) { }
         public static void RegisterWriter(string @operator, System.Action<System.Text.StringBuilder, System.Collections.Generic.List<object?>, LoreSoft.Blazor.Controls.QueryFilter> writer) { }
     }
+    public class ObjectPool<T>
+        where T :  class
+    {
+        public ObjectPool(System.Func<T> objectFactory, System.Action<T>? resetAction = null, int maxSize = 0, int preallocate = 0) { }
+        public T Get() { }
+        public LoreSoft.Blazor.Controls.Utilities.ObjectPool<T>.PooledObject GetPooled() { }
+        public void Return(T item) { }
+        public readonly struct PooledObject : System.IDisposable
+        {
+            public T Instance { get; }
+            public void Dispose() { }
+            public static T op_Implicit(LoreSoft.Blazor.Controls.Utilities.ObjectPool<T>.PooledObject pooledObject) { }
+        }
+    }
     public class StyleBuilder
     {
         public StyleBuilder() { }
+        public static LoreSoft.Blazor.Controls.Utilities.ObjectPool<LoreSoft.Blazor.Controls.Utilities.StyleBuilder> Pool { get; }
         public LoreSoft.Blazor.Controls.Utilities.StyleBuilder AddStyle(LoreSoft.Blazor.Controls.Utilities.StyleBuilder builder) { }
         public LoreSoft.Blazor.Controls.Utilities.StyleBuilder AddStyle(string? style) { }
         public LoreSoft.Blazor.Controls.Utilities.StyleBuilder AddStyle(LoreSoft.Blazor.Controls.Utilities.StyleBuilder builder, System.Func<bool> when) { }
@@ -1603,9 +1716,13 @@ namespace LoreSoft.Blazor.Controls.Utilities
         public LoreSoft.Blazor.Controls.Utilities.StyleBuilder AddStyle(string prop, string? value, System.Func<bool> when) { }
         public LoreSoft.Blazor.Controls.Utilities.StyleBuilder AddStyle(string prop, string? value, System.Func<string?, bool> when) { }
         public LoreSoft.Blazor.Controls.Utilities.StyleBuilder AddStyle(string prop, string? value, bool when) { }
+        public void Clear() { }
+        [System.Runtime.CompilerServices.OverloadResolutionPriority(9)]
         public LoreSoft.Blazor.Controls.Utilities.StyleBuilder MergeStyle(System.Collections.Generic.IDictionary<string, object>? attributes, bool remove = true) { }
-        public override string ToString() { }
-        public static LoreSoft.Blazor.Controls.Utilities.StyleBuilder Default(string style) { }
+        [System.Runtime.CompilerServices.OverloadResolutionPriority(0)]
+        public LoreSoft.Blazor.Controls.Utilities.StyleBuilder MergeStyle(System.Collections.Generic.IReadOnlyDictionary<string, object>? attributes, bool remove = true) { }
+        public override string? ToString() { }
+        public static LoreSoft.Blazor.Controls.Utilities.StyleBuilder Default(string? style) { }
         public static LoreSoft.Blazor.Controls.Utilities.StyleBuilder Default(string prop, string value) { }
         public static LoreSoft.Blazor.Controls.Utilities.StyleBuilder Empty() { }
     }

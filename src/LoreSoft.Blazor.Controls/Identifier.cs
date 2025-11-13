@@ -23,7 +23,7 @@ public static class Identifier
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(prefix);
 
-        return $"{prefix}-{System.Random.Shared.Next():x}";
+        return $"{prefix}-{System.Random.Shared.Next():x8}";
     }
 
     /// <summary>
@@ -42,23 +42,25 @@ public static class Identifier
     /// Performance: The default "id" prefix is optimized with a dedicated counter to avoid dictionary lookup overhead,
     /// making it the most performant option for typical use cases.
     /// </para>
+    /// <para>
+    /// The counter will automatically reset to 1 when approaching the maximum int value to prevent overflow.
+    /// </para>
     /// </remarks>
     public static string Sequential(string prefix = "id")
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(prefix);
 
-        int value;
-
         // Optimize for the default "id" prefix to avoid dictionary lookup
-        if (prefix == "id")
-        {
-            value = Interlocked.Increment(ref _defaultCounter);
-            return $"{prefix}-{value:x}";
-        }
+        ref int counter = ref prefix == "id"
+            ? ref _defaultCounter
+            : ref _counters.GetOrAdd(prefix, static _ => new StrongBox<int>(0)).Value;
 
-        var counter = _counters.GetOrAdd(prefix, static _ => new StrongBox<int>(0));
-        value = Interlocked.Increment(ref counter.Value);
+        int value = Interlocked.Increment(ref counter);
 
-        return $"{prefix}-{value:x}";
+        // Reset counter if approaching max value (leave some headroom for thread safety)
+        if (value >= int.MaxValue - 1000)
+            Interlocked.Exchange(ref counter, 0);
+
+        return $"{prefix}-{value:x8}";
     }
 }
