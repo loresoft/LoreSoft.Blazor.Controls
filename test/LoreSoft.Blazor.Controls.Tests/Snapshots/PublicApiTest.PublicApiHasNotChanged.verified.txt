@@ -671,7 +671,7 @@ namespace LoreSoft.Blazor.Controls
         [Microsoft.AspNetCore.Components.Parameter]
         public System.DayOfWeek FirstDayOfWeek { get; set; }
         protected System.Collections.Generic.List<string> Headers { get; set; }
-        protected string InputClass { get; }
+        protected string? InputClass { get; }
         protected string InputType { get; set; }
         public bool IsDatePickerOpen { get; set; }
         [Microsoft.AspNetCore.Components.Parameter]
@@ -679,7 +679,7 @@ namespace LoreSoft.Blazor.Controls
         public int Month { get; set; }
         [Microsoft.AspNetCore.Components.Parameter]
         public string ParsingErrorMessage { get; set; }
-        protected string PickerClass { get; }
+        protected string? PickerClass { get; }
         protected bool PreventKey { get; set; }
         protected System.Collections.Generic.List<LoreSoft.Blazor.Controls.DatePickerRow> Rows { get; set; }
         protected System.Collections.Generic.List<LoreSoft.Blazor.Controls.TimePickerSegment> Segments { get; set; }
@@ -1449,7 +1449,7 @@ namespace LoreSoft.Blazor.Controls
         protected override void BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder @__builder) { }
         public System.Threading.Tasks.Task Clear() { }
         public void CloseMenu() { }
-        public string ControlClass() { }
+        public string? ControlClass() { }
         public void Dispose() { }
         public System.Threading.Tasks.Task HandleKeydown(Microsoft.AspNetCore.Components.Web.KeyboardEventArgs args) { }
         public bool HasSearchResult() { }
