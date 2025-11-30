@@ -345,6 +345,35 @@ namespace LoreSoft.Blazor.Controls
         protected virtual System.Linq.IQueryable<TItem> SortData(System.Linq.IQueryable<TItem> queryable, LoreSoft.Blazor.Controls.DataRequest request) { }
         public void ToggleFilter() { }
     }
+    public class DataContinuation : Microsoft.AspNetCore.Components.ComponentBase, System.IDisposable
+    {
+        public DataContinuation() { }
+        [Microsoft.AspNetCore.Components.Parameter(CaptureUnmatchedValues=true)]
+        public System.Collections.Generic.Dictionary<string, object>? AdditionalAttributes { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public string ButtonClass { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public string CurrentClass { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public string DisabledClass { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public string FirstText { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public string ItemClass { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public string NextText { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public int PageSize { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public string PagerClass { get; set; }
+        [Microsoft.AspNetCore.Components.CascadingParameter(Name="PagerState")]
+        protected LoreSoft.Blazor.Controls.DataPagerState PagerState { get; set; }
+        protected override void BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder builder) { }
+        public void Dispose() { }
+        public void FirstPage() { }
+        public void NextPage() { }
+        protected override void OnInitialized() { }
+    }
     [Microsoft.AspNetCore.Components.CascadingTypeParameter("TItem")]
     public class DataGridToolbar<TItem> : Microsoft.AspNetCore.Components.ComponentBase
         where TItem :  class
@@ -576,16 +605,18 @@ namespace LoreSoft.Blazor.Controls
     public class DataPagerState : System.ComponentModel.INotifyPropertyChanged
     {
         public DataPagerState() { }
+        public string? ContinuationToken { get; set; }
         public int EndItem { get; }
         public bool HasNextPage { get; }
         public bool HasPreviousPage { get; }
         public bool IsFirstPage { get; }
         public bool IsLastPage { get; }
+        public string? NextToken { get; set; }
         public int Page { get; set; }
         public int PageCount { get; }
         public int PageSize { get; set; }
         public int StartItem { get; }
-        public int Total { get; set; }
+        public int? Total { get; set; }
         public event System.ComponentModel.PropertyChangedEventHandler? PropertyChanged;
         protected virtual void RaisePropertyChanged(string? propertyName) { }
         protected void SetProperty<T>(ref T field, T value, [System.Runtime.CompilerServices.CallerMemberName] string? propertyName = null) { }
@@ -593,18 +624,21 @@ namespace LoreSoft.Blazor.Controls
     public delegate System.Threading.Tasks.ValueTask<LoreSoft.Blazor.Controls.DataResult<TItem>> DataProviderDelegate<TItem>(LoreSoft.Blazor.Controls.DataRequest request);
     public class DataRequest : System.IEquatable<LoreSoft.Blazor.Controls.DataRequest>
     {
-        public DataRequest(int Page, int PageSize, LoreSoft.Blazor.Controls.DataSort[]? Sorts, LoreSoft.Blazor.Controls.QueryGroup? Query, System.Threading.CancellationToken CancellationToken) { }
+        public DataRequest() { }
         public System.Threading.CancellationToken CancellationToken { get; init; }
-        public int Page { get; init; }
+        public string? ContinuationToken { get; init; }
+        public int? Page { get; init; }
         public int PageSize { get; init; }
         public LoreSoft.Blazor.Controls.QueryGroup? Query { get; init; }
         public LoreSoft.Blazor.Controls.DataSort[]? Sorts { get; init; }
     }
     public class DataResult<TItem> : System.IEquatable<LoreSoft.Blazor.Controls.DataResult<TItem>>
     {
-        public DataResult(int Total, System.Collections.Generic.IEnumerable<TItem> Items) { }
-        public System.Collections.Generic.IEnumerable<TItem> Items { get; init; }
-        public int Total { get; init; }
+        public DataResult(int? total, System.Collections.Generic.IEnumerable<TItem> items) { }
+        public DataResult(System.Collections.Generic.IEnumerable<TItem> items, int? total = default, string? continuationToken = null) { }
+        public string? ContinuationToken { get; }
+        public System.Collections.Generic.IEnumerable<TItem> Items { get; }
+        public int? Total { get; }
     }
     public class DataSizer : Microsoft.AspNetCore.Components.ComponentBase, System.IDisposable
     {
@@ -1555,13 +1589,9 @@ namespace LoreSoft.Blazor.Controls.Extensions
     }
     public static class ObjectPoolExtensions
     {
-        public static LoreSoft.Blazor.Controls.Utilities.ObjectPool<System.Text.StringBuilder> get_Pool() { }
-        public sealed class <G>$CD29E70E0DCA5BBFCFAC7C2BEF3C5C99
+        extension(System.Text.StringBuilder)
         {
-            [System.Runtime.CompilerServices.ExtensionMarker("<M>$96C44AFA3891DCFC6A50C7402B9CB709")]
-            [get: System.Runtime.CompilerServices.ExtensionMarker("<M>$96C44AFA3891DCFC6A50C7402B9CB709")]
             public static LoreSoft.Blazor.Controls.Utilities.ObjectPool<System.Text.StringBuilder> Pool { get; }
-            public static class <M>$96C44AFA3891DCFC6A50C7402B9CB709 { }
         }
     }
     public static class QueryExtensions

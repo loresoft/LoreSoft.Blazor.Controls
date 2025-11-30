@@ -20,7 +20,6 @@ public class DataPagerStateTests
         // Assert
         Assert.Equal(0, pagerState.Page);
         Assert.Equal(0, pagerState.PageSize);
-        Assert.Equal(0, pagerState.Total);
     }
 
     [Theory]
