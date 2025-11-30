@@ -15,11 +15,13 @@ public class DataPagerState : INotifyPropertyChanged
 {
     private int _page;
     private int _pageSize;
-    private int _total;
+    private int? _total;
+    private string? _continuationToken;
+    private string? _nextToken;
 
     /// <summary>
     /// Occurs when a property value changes.
-    /// This event is raised whenever any of the pagination properties (<see cref="Page"/>, <see cref="PageSize"/>, 
+    /// This event is raised whenever any of the pagination properties (<see cref="Page"/>, <see cref="PageSize"/>,
     /// or <see cref="Total"/>) are modified, allowing subscribers to respond to pagination state changes.
     /// Components typically use this event to trigger data refreshes or UI updates.
     /// </summary>
@@ -64,10 +66,22 @@ public class DataPagerState : INotifyPropertyChanged
     /// like <see cref="HasNextPage"/> and <see cref="IsLastPage"/>.
     /// </summary>
     /// <value>The total count of items across all pages. A value of 0 indicates an empty dataset.</value>
-    public int Total
+    public int? Total
     {
         get => _total;
         set => SetProperty(ref _total, value);
+    }
+
+    public string? ContinuationToken
+    {
+        get => _continuationToken;
+        set => SetProperty(ref _continuationToken, value);
+    }
+
+    public string? NextToken
+    {
+        get => _nextToken;
+        set => SetProperty(ref _nextToken, value);
     }
 
     /// <summary>
@@ -103,9 +117,9 @@ public class DataPagerState : INotifyPropertyChanged
         get
         {
             if (PageSize == 0)
-                return Total;
+                return Total ?? 0;
 
-            return Math.Min(PageSize * Page, Total);
+            return Math.Min(PageSize * Page, Total ?? 0);
         }
     }
 
@@ -123,9 +137,11 @@ public class DataPagerState : INotifyPropertyChanged
             if (Total <= 0)
                 return 0;
 
-            return (int)Math.Ceiling(Total / (double)PageSize);
+            return (int)Math.Ceiling((Total ?? 0) / (double)PageSize);
         }
     }
+
+
 
     /// <summary>
     /// Gets a value indicating whether a previous page exists before the current page.
@@ -184,6 +200,7 @@ public class DataPagerState : INotifyPropertyChanged
     internal void Reset()
     {
         _page = 1;
+        _continuationToken = null;
     }
 
     /// <summary>
@@ -195,7 +212,7 @@ public class DataPagerState : INotifyPropertyChanged
     /// <typeparam name="T">The type of the property being set.</typeparam>
     /// <param name="field">A reference to the backing field that stores the property value.</param>
     /// <param name="value">The new value to assign to the property.</param>
-    /// <param name="propertyName">The name of the property being changed. 
+    /// <param name="propertyName">The name of the property being changed.
     /// Automatically populated by the compiler when called from a property setter.</param>
     protected void SetProperty<T>(ref T field, T value, [CallerMemberName] string? propertyName = null)
     {
@@ -212,7 +229,7 @@ public class DataPagerState : INotifyPropertyChanged
     /// the property change notification behavior. It safely handles null event handlers
     /// and ensures that subscribers are notified of property changes in a thread-safe manner.
     /// </summary>
-    /// <param name="propertyName">The name of the property that changed. 
+    /// <param name="propertyName">The name of the property that changed.
     /// This value is passed to event subscribers via <see cref="PropertyChangedEventArgs"/>.</param>
     protected virtual void RaisePropertyChanged(string? propertyName)
     {

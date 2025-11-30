@@ -127,4 +127,18 @@ public static class Data
 
         return generator.Generate(count);
     }
+
+    public static IReadOnlyCollection<LogEvent> GenerateLogEvents(int count = 1000)
+    {
+        var levels = new[] { "Debug", "Info", "Warn", "Error", "Fatal" };
+        var startDate = DateTimeOffset.Now.AddDays(-2); // Or any starting date
+
+        var generator = new Faker<LogEvent>()
+            .RuleFor(e => e.Id, f => f.IndexGlobal)
+            .RuleFor(e => e.Timestamp, f => startDate = startDate.AddSeconds(f.Random.Int(1, 1800)))
+            .RuleFor(e => e.Level, f => f.Random.CollectionItem(levels))
+            .RuleFor(e => e.Message, f => f.Lorem.Sentence());
+
+        return generator.Generate(count);
+    }
 }

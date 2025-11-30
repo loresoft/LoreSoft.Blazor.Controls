@@ -100,15 +100,15 @@ public static class QueryExtensions
         var total = filterQuery.Count();
 
         if (total == 0)
-            return new DataResult<T>(total, []);
+            return new DataResult<T>([], total);
 
         var sortedQuery = filterQuery.Sort(request.Sorts);
 
         if (request.Page > 0 && request.PageSize > 0)
-            sortedQuery = sortedQuery.Page(request.Page, request.PageSize);
+            sortedQuery = sortedQuery.Page(request.Page.Value, request.PageSize);
 
         var results = sortedQuery.ToList();
 
-        return new DataResult<T>(total, results);
+        return new DataResult<T>(results, total);
     }
 }

@@ -515,7 +515,8 @@ public abstract class DataComponentBase<TItem> : ComponentBase, IDisposable
             if (!cancellationToken.IsCancellationRequested)
             {
                 Pager.Total = result.Total;
-                View = result.Items.ToList();
+                Pager.NextToken = result.ContinuationToken;
+                View = [.. result.Items];
             }
         }
         catch (Exception ex)
@@ -593,7 +594,15 @@ public abstract class DataComponentBase<TItem> : ComponentBase, IDisposable
     public virtual DataRequest CreateDataRequest(CancellationToken cancellationToken = default)
     {
         DataSort[] sorts = _currentSort != null ? [_currentSort] : [];
-        return new DataRequest(Pager.Page, Pager.PageSize, sorts, RootQuery, cancellationToken);
+        return new DataRequest
+        {
+            Page = Pager.Page,
+            PageSize = Pager.PageSize,
+            ContinuationToken = Pager.ContinuationToken,
+            Sorts = sorts,
+            Query = RootQuery,
+            CancellationToken = cancellationToken
+        };
     }
 
     /// <summary>
@@ -609,7 +618,7 @@ public abstract class DataComponentBase<TItem> : ComponentBase, IDisposable
             _data = await DataLoader();
 
         if (_data == null || !_data.Any())
-            return new DataResult<TItem>(0, []);
+            return new DataResult<TItem>([]);
 
         var query = _data.AsQueryable();
 
@@ -620,7 +629,7 @@ public abstract class DataComponentBase<TItem> : ComponentBase, IDisposable
         var sorted = SortData(query, request);
         sorted = PageData(sorted, request);
 
-        return new DataResult<TItem>(total, sorted);
+        return new DataResult<TItem>(sorted, total);
     }
 
     /// <summary>
@@ -633,11 +642,11 @@ public abstract class DataComponentBase<TItem> : ComponentBase, IDisposable
     /// <returns>The paged queryable data containing only items for the requested page.</returns>
     protected virtual IQueryable<TItem> PageData(IQueryable<TItem> queryable, DataRequest request)
     {
-        if (Pager == null || request.PageSize == 0)
+        if (Pager == null || request.Page is null || request.PageSize == 0)
             return queryable;
 
         var size = request.PageSize;
-        int skip = Math.Max(size * (request.Page - 1), 0);
+        int skip = Math.Max(size * (request.Page.Value - 1), 0);
 
         return queryable
             .Skip(skip)
@@ -689,6 +698,7 @@ public abstract class DataComponentBase<TItem> : ComponentBase, IDisposable
         {
             case nameof(DataPagerState.Page):
             case nameof(DataPagerState.PageSize):
+            case nameof(DataPagerState.ContinuationToken):
                 InvokeAsync(() => RefreshAsync());
                 break;
         }

@@ -1,5 +1,7 @@
 using LoreSoft.Blazor.Controls;
 
+using Microsoft.Extensions.DependencyInjection.Extensions;
+
 using Sample.Core;
 using Sample.Core.Services;
 using Sample.ServerSide.Components;
@@ -21,6 +23,8 @@ public static class Program
             .AddInteractiveServerComponents();
 
         builder.Services.AddBlazorControls();
+
+        builder.Services.TryAddSingleton<LogEventService>();
 
         var app = builder.Build();
 

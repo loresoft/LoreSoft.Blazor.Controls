@@ -549,7 +549,15 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
             .Select(c => new DataSort(c.ColumnName, c.CurrentSortDescending))
             .ToArray();
 
-        return new DataRequest(Pager.Page, Pager.PageSize, sorts, RootQuery, cancellationToken);
+        return new DataRequest
+        {
+            Page = Pager.Page,
+            PageSize = Pager.PageSize,
+            ContinuationToken = Pager.ContinuationToken,
+            Sorts = sorts,
+            Query = RootQuery,
+            CancellationToken = cancellationToken
+        };
     }
 
     /// <summary>

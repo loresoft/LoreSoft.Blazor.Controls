@@ -1,0 +1,50 @@
+@using Sample.Core.Models
+@using Sample.Core.Services
+
+<h3>Logging</h3>
+
+<DataGrid DataProvider="LoadData"
+          Sortable="false"
+          Selectable="true"
+          Borders="Borders.All"
+          TItem="LogEvent"
+          @ref="Grid">
+    <DataToolbar>
+        <DataGridToolbar Title="Logging Grid" />
+    </DataToolbar>
+    <DataColumns>
+        <DataColumn Property="p => p.Id"
+                    Width="80px" />
+
+        <DataColumn Property="p => p.Timestamp"
+                    Title="Timestamp"
+                    Width="160px">
+            <Template>
+                <LocalTime Value="@context.Timestamp" />
+            </Template>
+        </DataColumn>
+
+        <DataColumn Property="p => p.Level"
+                    Width="100px" />
+
+        <DataColumn Property="p => p.Message" />
+    </DataColumns>
+    <DataPagination Context="grid">
+        <DataContinuation PageSize="20" />
+        <DataSizer />
+    </DataPagination>
+</DataGrid>
+
+@code {
+    [Inject]
+    public required LogEventService LogEventService { get; set; }
+
+    private DataGrid<LogEvent>? Grid { get; set; }
+
+    public ValueTask<DataResult<LogEvent>> LoadData(DataRequest request)
+    {
+        var result = LogEventService.Load(request);
+        return ValueTask.FromResult(result);
+    }
+
+}
