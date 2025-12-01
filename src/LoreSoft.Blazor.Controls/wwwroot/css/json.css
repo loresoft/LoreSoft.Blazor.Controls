@@ -34,4 +34,5 @@
   background-color: var(--json-value-bg-color);
   color: var(--json-value-text-color);
   width: var(--json-value-width);
+  white-space: pre-wrap;
 }

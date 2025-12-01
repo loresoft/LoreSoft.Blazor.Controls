@@ -518,9 +518,8 @@ public class DataColumn<TItem> : ComponentBase
             .AddStyle($"flex", $"0 0 {Width}", Width.HasValue())
             .AddStyle("min-width", MinWidth, (v) => v.HasValue())
             .AddStyle("max-width", MaxWidth, (v) => v.HasValue())
-            .AddStyle("text-align", "center", HeaderAlign is TextAlign.Center)
-            .AddStyle("text-align", "left", HeaderAlign is TextAlign.Left or TextAlign.Start)
-            .AddStyle("text-align", "right", HeaderAlign is TextAlign.Right or TextAlign.End)
+            .AddStyle("justify-content", "center", HeaderAlign is TextAlign.Center)
+            .AddStyle("justify-content", "flex-end", HeaderAlign is TextAlign.Right or TextAlign.End)
             .ToString();
 
         CurrentCellClass = CssBuilder.Default("data-grid__cell")
