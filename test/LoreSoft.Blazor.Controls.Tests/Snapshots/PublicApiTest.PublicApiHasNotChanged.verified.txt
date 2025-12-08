@@ -1239,6 +1239,16 @@ namespace LoreSoft.Blazor.Controls
         [System.Text.Json.Serialization.JsonIgnore]
         public string Id { get; set; }
     }
+    public static class QueryRuleBuilder
+    {
+        public static LoreSoft.Blazor.Controls.QueryRule? And([System.Runtime.CompilerServices.ParamCollection] System.Collections.Generic.IEnumerable<LoreSoft.Blazor.Controls.QueryRule?> rules) { }
+        public static LoreSoft.Blazor.Controls.QueryRule? And<T>(string field, System.Collections.Generic.IEnumerable<T> values, string? op = "equal", string? id = null) { }
+        public static LoreSoft.Blazor.Controls.QueryRule? Filter<T>(string field, T? value, string? op = "equal", string? id = null) { }
+        public static LoreSoft.Blazor.Controls.QueryRule? Group(System.Collections.Generic.IEnumerable<LoreSoft.Blazor.Controls.QueryRule?> rules, string logic = "and", string? id = null) { }
+        public static LoreSoft.Blazor.Controls.QueryRule? Group<T>(string field, System.Collections.Generic.IEnumerable<T> values, string logic = "and", string? op = "equal", string? id = null) { }
+        public static LoreSoft.Blazor.Controls.QueryRule? Or([System.Runtime.CompilerServices.ParamCollection] System.Collections.Generic.IEnumerable<LoreSoft.Blazor.Controls.QueryRule?> rules) { }
+        public static LoreSoft.Blazor.Controls.QueryRule? Or<T>(string field, System.Collections.Generic.IEnumerable<T> values, string? op = "equal", string? id = null) { }
+    }
     public class Repeater<TItem> : Microsoft.AspNetCore.Components.ComponentBase
     {
         public Repeater() { }
@@ -1687,16 +1697,18 @@ namespace LoreSoft.Blazor.Controls.Utilities
         public static System.Action Throttle(this System.Action action, System.TimeSpan? interval = default) { }
         public static System.Action<T> Throttle<T>(this System.Action<T> action, System.TimeSpan? interval = default) { }
     }
-    public readonly struct DisposableBag : System.IDisposable
+    public sealed class DisposableBag : System.IDisposable
     {
         public DisposableBag() { }
+        public DisposableBag(System.Collections.Generic.IEnumerable<System.IDisposable> collection) { }
+        public bool IsDisposed { get; }
+        public LoreSoft.Blazor.Controls.Utilities.DisposableBag Add<T>(T disposable)
+            where T : System.IDisposable { }
         public T Create<T>()
             where T : System.IDisposable, new () { }
-        public T Create<T>(System.Func<T> creator)
+        public T Create<T>(System.Func<T> factory)
             where T : System.IDisposable { }
         public void Dispose() { }
-        public T Include<T>(T disposable)
-            where T : System.IDisposable { }
     }
     public class ExpandTracker<TItem>
     {
