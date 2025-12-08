@@ -1243,6 +1243,8 @@ namespace LoreSoft.Blazor.Controls
     {
         public static LoreSoft.Blazor.Controls.QueryRule? And([System.Runtime.CompilerServices.ParamCollection] System.Collections.Generic.IEnumerable<LoreSoft.Blazor.Controls.QueryRule?> rules) { }
         public static LoreSoft.Blazor.Controls.QueryRule? And<T>(string field, System.Collections.Generic.IEnumerable<T> values, string? op = "equal", string? id = null) { }
+        [return: System.Diagnostics.CodeAnalysis.NotNullIfNotNull("rule")]
+        public static LoreSoft.Blazor.Controls.QueryGroup? AsGroup(this LoreSoft.Blazor.Controls.QueryRule? rule, string logic = "and") { }
         public static LoreSoft.Blazor.Controls.QueryRule? Filter<T>(string field, T? value, string? op = "equal", string? id = null) { }
         public static LoreSoft.Blazor.Controls.QueryRule? Group(System.Collections.Generic.IEnumerable<LoreSoft.Blazor.Controls.QueryRule?> rules, string logic = "and", string? id = null) { }
         public static LoreSoft.Blazor.Controls.QueryRule? Group<T>(string field, System.Collections.Generic.IEnumerable<T> values, string logic = "and", string? op = "equal", string? id = null) { }

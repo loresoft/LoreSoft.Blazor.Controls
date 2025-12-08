@@ -1,3 +1,7 @@
+using System.Diagnostics.CodeAnalysis;
+
+using static System.Net.Mime.MediaTypeNames;
+
 namespace LoreSoft.Blazor.Controls;
 
 /// <summary>
@@ -164,6 +168,31 @@ public static class QueryRuleBuilder
             Id = id ?? Identifier.Random(),
             Logic = logic,
             Filters = groupRules
+        };
+    }
+
+    /// <summary>
+    /// Casts or converts a <see cref="QueryRule"/> to a <see cref="QueryGroup"/> with the specified logic.
+    /// </summary>
+    /// <param name="rule">The query rule to convert.</param>
+    /// <param name="logic">The logical operator to use for the group. Defaults to <see cref="QueryLogic.And"/>.</param>
+    /// <returns>A <see cref="QueryGroup"/> representing the rule, or null if the rule is null.</returns>
+    [return: NotNullIfNotNull(nameof(rule))]
+    public static QueryGroup? AsGroup(
+        this QueryRule? rule,
+        string logic = QueryLogic.And)
+    {
+        if (rule == null)
+            return null;
+
+        if (rule is QueryGroup group)
+            return group;
+
+        return new QueryGroup
+        {
+            Id = rule.Id ?? Identifier.Random(),
+            Logic = logic,
+            Filters = [rule]
         };
     }
 }
