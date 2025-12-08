@@ -1,64 +1,134 @@
+using System.Collections.Concurrent;
+
 namespace LoreSoft.Blazor.Controls.Utilities;
 
 /// <summary>
-/// Provides a stack-based container for managing and disposing multiple <see cref="IDisposable"/> objects.
-/// Ensures all included disposables are disposed in reverse order when the bag is disposed.
+/// A high-performance, lock-free container for managing multiple <see cref="IDisposable"/> instances.
+/// Thread-safe using <see cref="ConcurrentStack{T}"/> for optimal performance.
+/// Disposes all contained disposables in LIFO order (stack order) when disposed.
 /// </summary>
-public readonly struct DisposableBag() : IDisposable
+public sealed class DisposableBag : IDisposable
 {
-    private readonly Stack<IDisposable> _disposeStack = new();
+    private ConcurrentStack<IDisposable>? _disposables;
+    private volatile bool _isDisposed;
 
     /// <summary>
-    /// Creates a new instance of <typeparamref name="T"/> and adds it to the bag for disposal.
+    /// Initializes a new instance of the <see cref="DisposableBag"/> class.
     /// </summary>
-    /// <typeparam name="T">The type of <see cref="IDisposable"/> to create and manage.</typeparam>
+    public DisposableBag()
+    {
+        _disposables = new ConcurrentStack<IDisposable>();
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="DisposableBag"/> class with the specified collection of disposables.
+    /// </summary>
+    /// <param name="collection">The collection of disposables to add to the bag.</param>
+    public DisposableBag(IEnumerable<IDisposable> collection)
+    {
+        _disposables = new ConcurrentStack<IDisposable>(collection);
+    }
+
+    /// <summary>
+    /// Adds a disposable instance to the bag.
+    /// </summary>
+    /// <typeparam name="T">The type of disposable to add.</typeparam>
+    /// <param name="disposable">The disposable to add.</param>
+    /// <returns>The same disposable instance for fluent chaining.</returns>
+    /// <exception cref="ObjectDisposedException">Thrown if the bag has been disposed.</exception>
+    public DisposableBag Add<T>(T disposable) where T : IDisposable
+    {
+        if (disposable == null)
+            return this;
+
+        ThrowIfDisposed();
+
+        var stack = _disposables;
+        if (stack == null)
+            throw new ObjectDisposedException(nameof(DisposableBag));
+
+        stack.Push(disposable);
+        return this;
+    }
+
+    /// <summary>
+    /// Creates a disposable instance using its parameterless constructor and adds it to the bag.
+    /// </summary>
+    /// <typeparam name="T">The type of disposable to create. Must have a parameterless constructor.</typeparam>
     /// <returns>The created disposable instance.</returns>
+    /// <exception cref="ObjectDisposedException">Thrown if the bag has been disposed.</exception>
     public T Create<T>() where T : IDisposable, new()
     {
-        var disposable = new T();
-        _disposeStack.Push(disposable);
+        ThrowIfDisposed();
 
-        return disposable;
+        var instance = new T();
+        Add(instance);
+
+        return instance;
     }
 
     /// <summary>
-    /// Creates a new instance of <typeparamref name="T"/> using the specified factory and adds it to the bag for disposal.
+    /// Creates a disposable instance using the specified factory function and adds it to the bag.
     /// </summary>
-    /// <typeparam name="T">The type of <see cref="IDisposable"/> to create and manage.</typeparam>
-    /// <param name="creator">A factory function to create the disposable instance.</param>
+    /// <typeparam name="T">The type of disposable to create.</typeparam>
+    /// <param name="factory">Factory function to create the disposable.</param>
     /// <returns>The created disposable instance.</returns>
-    public T Create<T>(Func<T> creator) where T : IDisposable
+    /// <exception cref="ArgumentNullException">Thrown if <paramref name="factory"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ObjectDisposedException">Thrown if the bag has been disposed.</exception>
+    public T Create<T>(Func<T> factory) where T : IDisposable
     {
-        var disposable = creator();
-        _disposeStack.Push(disposable);
+        if (factory == null)
+            throw new ArgumentNullException(nameof(factory));
 
-        return disposable;
+        ThrowIfDisposed();
+
+        var instance = factory();
+        Add(instance);
+
+        return instance;
     }
 
     /// <summary>
-    /// Adds an existing <see cref="IDisposable"/> instance to the bag for disposal.
+    /// Gets a value indicating whether the bag has been disposed.
     /// </summary>
-    /// <typeparam name="T">The type of <see cref="IDisposable"/> to include.</typeparam>
-    /// <param name="disposable">The disposable instance to include.</param>
-    /// <returns>The included disposable instance.</returns>
-    public T Include<T>(T disposable) where T : IDisposable
-    {
-        _disposeStack.Push(disposable);
-
-        return disposable;
-    }
+    /// <value><see langword="true"/> if the bag has been disposed; otherwise, <see langword="false"/>.</value>
+    public bool IsDisposed => _isDisposed;
 
     /// <summary>
-    /// Disposes all <see cref="IDisposable"/> objects in the bag in reverse order of inclusion.
+    /// Disposes all contained disposables in LIFO order (stack order).
+    /// Exceptions thrown during disposal are swallowed to ensure all items are disposed.
+    /// This method is idempotent and can be called multiple times safely.
     /// </summary>
     public void Dispose()
     {
-        while (_disposeStack.Count > 0)
-        {
-            var disposable = _disposeStack.Pop();
-            disposable.Dispose();
-        }
+        if (_isDisposed)
+            return;
 
-        GC.SuppressFinalize(this);
+        // Atomically swap out the stack
+        var stack = Interlocked.Exchange(ref _disposables, null);
+        if (stack == null)
+            return;
+
+        _isDisposed = true;
+
+        // Dispose all items - ConcurrentStack naturally provides LIFO order
+        while (stack.TryPop(out var disposable))
+        {
+            try
+            {
+                disposable?.Dispose();
+            }
+            catch
+            {
+                // Swallow exceptions to ensure all items are disposed
+            }
+        }
     }
+
+    /// <summary>
+    /// Throws an <see cref="ObjectDisposedException"/> if the bag has been disposed.
+    /// </summary>
+    /// <exception cref="ObjectDisposedException">Thrown if the bag has been disposed.</exception>
+    private void ThrowIfDisposed()
+        => ObjectDisposedException.ThrowIf(_isDisposed, nameof(DisposableBag));
 }
