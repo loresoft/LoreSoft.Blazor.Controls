@@ -256,6 +256,8 @@ namespace LoreSoft.Blazor.Controls
         public string PropertyName { get; }
         public System.Type PropertyType { get; }
         [Microsoft.AspNetCore.Components.Parameter]
+        public bool Searchable { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
         public bool SortDescending { get; set; }
         [Microsoft.AspNetCore.Components.Parameter]
         public int SortIndex { get; set; }
@@ -1120,6 +1122,8 @@ namespace LoreSoft.Blazor.Controls
         public System.Collections.Generic.List<string>? Operators { get; set; }
         [Microsoft.AspNetCore.Components.CascadingParameter(Name="QueryBuilder")]
         protected LoreSoft.Blazor.Controls.QueryBuilder<TItem> QueryBuilder { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public bool Searchable { get; set; }
         [Microsoft.AspNetCore.Components.Parameter]
         public string? Title { get; set; }
         public System.Type? Type { get; set; }
