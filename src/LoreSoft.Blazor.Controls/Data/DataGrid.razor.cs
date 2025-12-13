@@ -198,7 +198,7 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
 
 
             // all filterable string columns
-            foreach (var column in Columns.Where(c => c.Filterable && c.PropertyType == typeof(string)))
+            foreach (var column in Columns.Where(c => c.Filterable && c.Searchable && c.PropertyType == typeof(string)))
             {
                 var filter = new QueryFilter
                 {

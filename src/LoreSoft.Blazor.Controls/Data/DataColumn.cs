@@ -183,6 +183,13 @@ public class DataColumn<TItem> : ComponentBase
     public bool Filterable { get; set; } = true;
 
     /// <summary>
+    /// Gets or sets a value indicating whether the column is included in quick search.
+    /// When true, this column will be searched during quick search operations.
+    /// </summary>
+    [Parameter]
+    public bool Searchable { get; set; } = true;
+
+    /// <summary>
     /// Gets or sets a value indicating whether the column is exportable.
     /// When true, this column will be included in data exports.
     /// </summary>

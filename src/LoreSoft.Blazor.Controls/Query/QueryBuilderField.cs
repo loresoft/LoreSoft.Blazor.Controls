@@ -75,6 +75,13 @@ public class QueryBuilderField<TItem> : ComponentBase
     [Parameter]
     public string? Format { get; set; }
 
+    /// <summary>
+    /// Gets or sets a value indicating whether the field is included in quick search.
+    /// When true, this field will be searched during quick search operations.
+    /// </summary>
+    [Parameter]
+    public bool Searchable { get; set; } = true;
+
 
     /// <summary>
     /// Gets the name of the field (property name).
