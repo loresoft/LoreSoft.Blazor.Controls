@@ -607,6 +607,9 @@ public class DataColumn<TItem> : ComponentBase
             .AddStyle("text-align", "center", Align is TextAlign.Center)
             .AddStyle("text-align", "left", Align is TextAlign.Left or TextAlign.Start)
             .AddStyle("text-align", "right", Align is TextAlign.Right or TextAlign.End)
+            .AddStyle("justify-content", "center", Align is TextAlign.Center)
+            .AddStyle("justify-content", "flex-start", Align is TextAlign.Left or TextAlign.Start)
+            .AddStyle("justify-content", "flex-end", Align is TextAlign.Right or TextAlign.End)
             .ToString();
     }
 }
