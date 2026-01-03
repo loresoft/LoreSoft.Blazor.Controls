@@ -1739,10 +1739,11 @@ namespace LoreSoft.Blazor.Controls.Utilities
     public class ObjectPool<T>
         where T :  class
     {
-        public ObjectPool(System.Func<T> objectFactory, System.Action<T>? resetAction = null, int maxSize = 0, int preallocate = 0) { }
+        public ObjectPool(System.Func<T> objectFactory, System.Action<T>? resetAction = null, int maxSize = 0) { }
         public T Get() { }
         public LoreSoft.Blazor.Controls.Utilities.ObjectPool<T>.PooledObject GetPooled() { }
         public void Return(T item) { }
+        public TResult Use<TResult>(System.Func<T, TResult> factory) { }
         public readonly struct PooledObject : System.IDisposable
         {
             public T Instance { get; }
