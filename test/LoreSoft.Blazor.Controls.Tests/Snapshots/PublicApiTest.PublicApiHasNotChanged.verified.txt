@@ -19,7 +19,7 @@ namespace LoreSoft.Blazor.Controls.Abstracts
         public System.Collections.Generic.Dictionary<string, object>? AdditionalAttributes { get; set; }
         protected string? ClassBound { get; }
         protected bool Disposed { get; }
-        protected Microsoft.AspNetCore.Components.ElementReference Element { get; set; }
+        protected Microsoft.AspNetCore.Components.ElementReference? Element { get; set; }
         protected virtual string? ElementClass { get; }
         protected string? ElementId { get; }
         protected virtual string? ElementStyle { get; }
@@ -1435,6 +1435,39 @@ namespace LoreSoft.Blazor.Controls
         public System.Linq.Expressions.Expression<System.Func<TValue>>? ValueExpression { get; set; }
         protected override void BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder builder) { }
         protected override void OnInitialized() { }
+    }
+    public class Tooltip : LoreSoft.Blazor.Controls.Abstracts.StandardComponent
+    {
+        public Tooltip() { }
+        [Microsoft.AspNetCore.Components.EditorRequired]
+        [Microsoft.AspNetCore.Components.Parameter]
+        public required Microsoft.AspNetCore.Components.RenderFragment ChildContent { get; set; }
+        protected override string? ElementClass { get; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public LoreSoft.Blazor.Controls.TooltipPosition Position { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public string? Tip { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public Microsoft.AspNetCore.Components.RenderFragment? TipContent { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public LoreSoft.Blazor.Controls.TooltipVariant? Variant { get; set; }
+        protected override void BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder @__builder) { }
+        protected override LoreSoft.Blazor.Controls.Utilities.CssBuilder ComputeClasses(LoreSoft.Blazor.Controls.Utilities.CssBuilder cssBuilder) { }
+    }
+    public enum TooltipPosition
+    {
+        Top = 0,
+        Bottom = 1,
+        Left = 2,
+        Right = 3,
+    }
+    public enum TooltipVariant
+    {
+        Default = 0,
+        Success = 1,
+        Danger = 2,
+        Warning = 3,
+        Information = 4,
     }
     [Microsoft.AspNetCore.Components.CascadingTypeParameter("TItem")]
     [Microsoft.AspNetCore.Components.CascadingTypeParameter("TValue")]

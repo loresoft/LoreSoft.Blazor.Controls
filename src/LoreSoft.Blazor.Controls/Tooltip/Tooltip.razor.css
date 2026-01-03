@@ -1,0 +1,338 @@
+.tooltip-container {
+  --tt-bg: #2d3748;
+  --tt-text: #ffffff;
+  --tt-link: #93c5fd;
+  --tt-link-hover: #bfdbfe;
+  --tt-success-bg: #198754;
+  --tt-success-link: #a7f3d0;
+  --tt-success-link-hover: #d1fae5;
+  --tt-danger-bg: #dc3545;
+  --tt-danger-link: #fecaca;
+  --tt-danger-link-hover: #fee2e2;
+  --tt-warning-bg: #ffc107;
+  --tt-warning-text: #000000;
+  --tt-warning-link: #92400e;
+  --tt-warning-link-hover: #78350f;
+  --tt-info-bg: #0dcaf0;
+  --tt-info-text: #000000;
+  --tt-info-link: #164e63;
+  --tt-info-link-hover: #083344;
+}
+
+/* Tooltip Container */
+.tooltip-container {
+  position: relative;
+  display: inline-block;
+  cursor: help;
+}
+
+/* Tooltip Trigger */
+.tooltip-trigger {
+  transition: all 0.3s ease;
+}
+
+.tooltip-container:hover .tooltip-trigger {
+  transform: translateY(-2px);
+}
+
+/* Tooltip Content */
+.tooltip-content {
+  position: absolute;
+  background: var(--tt-bg);
+  color: var(--tt-text);
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  line-height: 1.5;
+  white-space: normal;
+  max-width: 350px;
+  width: max-content;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease;
+  z-index: 1000;
+  pointer-events: none;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+}
+
+  /* Arrow */
+  .tooltip-content::before {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 0;
+    border-style: solid;
+  }
+
+  /* Invisible bridge to prevent tooltip closing during mouse transition */
+  .tooltip-content::after {
+    content: '';
+    position: absolute;
+    background: transparent;
+  }
+
+  /* Show tooltip on hover of trigger or content */
+  .tooltip-container:hover .tooltip-content,
+  .tooltip-content:hover {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+  }
+
+  /* Links in tooltips */
+  .tooltip-content ::deep a {
+    color: var(--tt-link);
+    text-decoration: underline;
+    cursor: pointer;
+  }
+
+  .tooltip-content ::deep a:hover {
+    color: var(--tt-link-hover);
+  }
+
+/* Top Anchor */
+.tooltip-top .tooltip-content {
+  bottom: calc(100% + 10px);
+  left: 50%;
+  transform: translateX(-50%) translateY(5px);
+}
+
+.tooltip-top:hover .tooltip-content {
+  transform: translateX(-50%) translateY(0);
+}
+
+.tooltip-top .tooltip-content::before {
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 8px 8px 0 8px;
+  border-color: var(--tt-bg) transparent transparent transparent;
+}
+
+.tooltip-top .tooltip-content::after {
+  top: 100%;
+  left: 0;
+  right: 0;
+  height: 10px;
+}
+
+/* Bottom Anchor */
+.tooltip-bottom .tooltip-content {
+  top: calc(100% + 10px);
+  left: 50%;
+  transform: translateX(-50%) translateY(-5px);
+}
+
+.tooltip-bottom:hover .tooltip-content {
+  transform: translateX(-50%) translateY(0);
+}
+
+.tooltip-bottom .tooltip-content::before {
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 0 8px 8px 8px;
+  border-color: transparent transparent var(--tt-bg) transparent;
+}
+
+.tooltip-bottom .tooltip-content::after {
+  bottom: 100%;
+  left: 0;
+  right: 0;
+  height: 10px;
+}
+
+/* Left Anchor */
+.tooltip-left .tooltip-content {
+  right: calc(100% + 10px);
+  top: 50%;
+  transform: translateY(-50%) translateX(5px);
+}
+
+.tooltip-left:hover .tooltip-content {
+  transform: translateY(-50%) translateX(0);
+}
+
+.tooltip-left .tooltip-content::before {
+  left: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  border-width: 8px 0 8px 8px;
+  border-color: transparent transparent transparent var(--tt-bg);
+}
+
+.tooltip-left .tooltip-content::after {
+  left: 100%;
+  top: 0;
+  bottom: 0;
+  width: 10px;
+}
+
+/* Right Anchor */
+.tooltip-right .tooltip-content {
+  left: calc(100% + 10px);
+  top: 50%;
+  transform: translateY(-50%) translateX(-5px);
+}
+
+.tooltip-right:hover .tooltip-content {
+  transform: translateY(-50%) translateX(0);
+}
+
+.tooltip-right .tooltip-content::before {
+  right: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  border-width: 8px 8px 8px 0;
+  border-color: transparent var(--tt-bg) transparent transparent;
+}
+
+.tooltip-right .tooltip-content::after {
+  right: 100%;
+  top: 0;
+  bottom: 0;
+  width: 10px;
+}
+
+/* Color Variants */
+.tooltip-success .tooltip-content {
+  background: var(--tt-success-bg);
+}
+
+  .tooltip-success .tooltip-content::before {
+    border-top-color: var(--tt-success-bg);
+    border-bottom-color: var(--tt-success-bg);
+    border-left-color: var(--tt-success-bg);
+    border-right-color: var(--tt-success-bg);
+  }
+
+.tooltip-success.tooltip-top .tooltip-content::before {
+  border-color: var(--tt-success-bg) transparent transparent transparent;
+}
+
+.tooltip-success.tooltip-bottom .tooltip-content::before {
+  border-color: transparent transparent var(--tt-success-bg) transparent;
+}
+
+.tooltip-success.tooltip-left .tooltip-content::before {
+  border-color: transparent transparent transparent var(--tt-success-bg);
+}
+
+.tooltip-success.tooltip-right .tooltip-content::before {
+  border-color: transparent var(--tt-success-bg) transparent transparent;
+}
+
+.tooltip-success .tooltip-content ::deep a {
+  color: var(--tt-success-link);
+}
+
+  .tooltip-success .tooltip-content ::deep a:hover {
+    color: var(--tt-success-link-hover);
+  }
+
+.tooltip-danger .tooltip-content {
+  background: var(--tt-danger-bg);
+}
+
+  .tooltip-danger .tooltip-content::before {
+    border-top-color: var(--tt-danger-bg);
+    border-bottom-color: var(--tt-danger-bg);
+    border-left-color: var(--tt-danger-bg);
+    border-right-color: var(--tt-danger-bg);
+  }
+
+.tooltip-danger.tooltip-top .tooltip-content::before {
+  border-color: var(--tt-danger-bg) transparent transparent transparent;
+}
+
+.tooltip-danger.tooltip-bottom .tooltip-content::before {
+  border-color: transparent transparent var(--tt-danger-bg) transparent;
+}
+
+.tooltip-danger.tooltip-left .tooltip-content::before {
+  border-color: transparent transparent transparent var(--tt-danger-bg);
+}
+
+.tooltip-danger.tooltip-right .tooltip-content::before {
+  border-color: transparent var(--tt-danger-bg) transparent transparent;
+}
+
+.tooltip-danger .tooltip-content ::deep a {
+  color: var(--tt-danger-link);
+}
+
+  .tooltip-danger .tooltip-content ::deep a:hover {
+    color: var(--tt-danger-link-hover);
+  }
+
+.tooltip-warning .tooltip-content {
+  background: var(--tt-warning-bg);
+  color: var(--tt-warning-text);
+}
+
+  .tooltip-warning .tooltip-content::before {
+    border-top-color: var(--tt-warning-bg);
+    border-bottom-color: var(--tt-warning-bg);
+    border-left-color: var(--tt-warning-bg);
+    border-right-color: var(--tt-warning-bg);
+  }
+
+.tooltip-warning.tooltip-top .tooltip-content::before {
+  border-color: var(--tt-warning-bg) transparent transparent transparent;
+}
+
+.tooltip-warning.tooltip-bottom .tooltip-content::before {
+  border-color: transparent transparent var(--tt-warning-bg) transparent;
+}
+
+.tooltip-warning.tooltip-left .tooltip-content::before {
+  border-color: transparent transparent transparent var(--tt-warning-bg);
+}
+
+.tooltip-warning.tooltip-right .tooltip-content::before {
+  border-color: transparent var(--tt-warning-bg) transparent transparent;
+}
+
+.tooltip-warning .tooltip-content ::deep a {
+  color: var(--tt-warning-link);
+}
+
+  .tooltip-warning .tooltip-content ::deep a:hover {
+    color: var(--tt-warning-link-hover);
+  }
+
+.tooltip-info .tooltip-content {
+  background: var(--tt-info-bg);
+  color: var(--tt-info-text);
+}
+
+  .tooltip-info .tooltip-content::before {
+    border-top-color: var(--tt-info-bg);
+    border-bottom-color: var(--tt-info-bg);
+    border-left-color: var(--tt-info-bg);
+    border-right-color: var(--tt-info-bg);
+  }
+
+.tooltip-info.tooltip-top .tooltip-content::before {
+  border-color: var(--tt-info-bg) transparent transparent transparent;
+}
+
+.tooltip-info.tooltip-bottom .tooltip-content::before {
+  border-color: transparent transparent var(--tt-info-bg) transparent;
+}
+
+.tooltip-info.tooltip-left .tooltip-content::before {
+  border-color: transparent transparent transparent var(--tt-info-bg);
+}
+
+.tooltip-info.tooltip-right .tooltip-content::before {
+  border-color: transparent var(--tt-info-bg) transparent transparent;
+}
+
+.tooltip-info .tooltip-content ::deep a {
+  color: var(--tt-info-link);
+}
+
+  .tooltip-info .tooltip-content ::deep a:hover {
+    color: var(--tt-info-link-hover);
+  }

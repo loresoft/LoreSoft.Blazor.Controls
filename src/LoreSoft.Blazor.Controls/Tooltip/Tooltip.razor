@@ -1,0 +1,20 @@
+@namespace LoreSoft.Blazor.Controls
+@inherits StandardComponent
+
+<div id="@ElementId"
+     class="@ClassBound"
+     style="@StyleBound">
+    <div class="tooltip-trigger">
+        @ChildContent
+    </div>
+    <div class="tooltip-content">
+        @if (TipContent != null)
+        {
+            @TipContent
+        }
+        else if (!string.IsNullOrEmpty(Tip))
+        {
+            @Tip
+        }
+    </div>
+</div>

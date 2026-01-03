@@ -1,6 +1,7 @@
 @page "/toaster/index"
-
 @inject IToaster Toaster
+
+<PageTitle>Toaster</PageTitle>
 
 <h1>Toaster</h1>
 
@@ -35,7 +36,7 @@
         <div class="form-group row">
             <label for="position" class="col-sm-6 col-form-label">Position</label>
             <div class="col-sm-5">
-                <select id="position" class="form-control form-control-sm" @bind="position">
+                <select id="position" class="form-select" @bind="position">
                     <option value="@ToastPosition.TopLeft">Top left</option>
                     <option value="@ToastPosition.TopCenter">Top center</option>
                     <option value="@ToastPosition.TopRight">Top right</option>
@@ -49,7 +50,7 @@
         <div class="form-group row">
             <label for="visibleStateDuration" class="col-sm-7 col-form-label">Visible duration</label>
             <div class="col-sm-4">
-                <input type="number" class="form-control form-control-sm" id="visibleStateDuration" @bind="timeout" />
+                <input type="number" class="form-control" id="visibleStateDuration" @bind="timeout" />
             </div>
         </div>
     </div>

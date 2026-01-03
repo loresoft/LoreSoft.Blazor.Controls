@@ -2,6 +2,7 @@ using LoreSoft.Blazor.Controls;
 
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 using Sample.Core;
 using Sample.Core.Services;
@@ -33,6 +34,8 @@ public static class Program
         );
 
         services.AddBlazorControls();
+
+        services.TryAddSingleton<LogEventService>();
 
         await builder
             .Build()

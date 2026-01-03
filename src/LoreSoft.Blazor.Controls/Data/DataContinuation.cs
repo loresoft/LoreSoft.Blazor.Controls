@@ -98,10 +98,13 @@ public class DataContinuation : ComponentBase, IDisposable
         var isCurrent = disabledClass == CurrentClass;
         var isDisabled = disabledClass == DisabledClass;
 
-        var itemClass = CssBuilder
-            .Default(ItemClass)
-            .AddClass(disabledClass, !enabled)
-            .ToString();
+        var itemClass = CssBuilder.Pool.Use(b =>
+        {
+            return b
+                .AddClass(ItemClass)
+                .AddClass(disabledClass, !enabled)
+                .ToString();
+        });
 
         builder.OpenElement(5, "li");
         builder.AddAttribute(6, "class", itemClass);

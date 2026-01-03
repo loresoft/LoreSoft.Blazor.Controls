@@ -146,11 +146,14 @@ public partial class ToastElement : IDisposable
             _ => "toast-information",
         };
 
-        return CssBuilder
-            .Default("toast-element")
-            .AddClass(className)
-            .AddClass(Settings.ClassName)
-            .ToString();
+        return CssBuilder.Pool.Use(builder =>
+        {
+            return builder
+                .AddClass("toast-element")
+                .AddClass(className)
+                .AddClass(Settings.ClassName)
+                .ToString();
+        });
 
     }
 

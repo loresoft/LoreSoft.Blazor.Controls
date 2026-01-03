@@ -43,7 +43,7 @@ public class StandardComponent : ComponentBase, IDisposable, IAsyncDisposable
     /// Gets or sets the reference to the component's rendered element.
     /// This can be used to interact with the DOM element directly via JavaScript interop.
     /// </summary>
-    protected ElementReference Element { get; set; }
+    protected ElementReference? Element { get; set; }
 
 
     /// <summary>

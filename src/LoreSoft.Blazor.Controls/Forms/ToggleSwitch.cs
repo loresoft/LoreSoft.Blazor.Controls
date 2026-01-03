@@ -111,9 +111,13 @@ public partial class ToggleSwitch<TValue> : ComponentBase
         builder.SetUpdatesAttributeName("checked");
         builder.CloseElement(); // input
 
-        var sliderClass = CssBuilder.Default("toggle-slider")
-            .AddClass(fieldClass, fieldClass.HasValue())
-            .ToString();
+        var sliderClass = CssBuilder.Pool.Use(b =>
+        {
+            return b
+                .AddClass("toggle-slider")
+                .AddClass(fieldClass, fieldClass.HasValue())
+                .ToString();
+        });
 
         builder.OpenElement(7, "span");
         builder.AddAttribute(8, "class", sliderClass);

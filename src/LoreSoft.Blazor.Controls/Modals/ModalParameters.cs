@@ -212,10 +212,11 @@ public class ModalParameters : Dictionary<string, object>
     /// </example>
     public ModalParameters ClassName(Action<CssBuilder> action)
     {
-        var builder = new CssBuilder();
-        action(builder);
-
-        this["class"] = builder.ToString() ?? string.Empty;
+        this["class"] = CssBuilder.Pool.Use(builder =>
+        {
+            action(builder);
+            return builder.ToString() ?? string.Empty;
+        });
 
         return this;
     }
@@ -255,10 +256,11 @@ public class ModalParameters : Dictionary<string, object>
     /// </example>
     public ModalParameters Style(Action<StyleBuilder> action)
     {
-        var builder = new StyleBuilder();
-        action(builder);
-
-        this["style"] = builder.ToString() ?? string.Empty;
+        this["style"] = StyleBuilder.Pool.Use(builder =>
+        {
+            action(builder);
+            return builder.ToString() ?? string.Empty;
+        });
 
         return this;
     }

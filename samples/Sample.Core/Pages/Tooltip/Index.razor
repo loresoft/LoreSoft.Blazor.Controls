@@ -1,0 +1,141 @@
+@page "/tooltip/index"
+
+<PageTitle>Tooltip</PageTitle>
+
+<h1>Tooltip</h1>
+
+<p>Tooltip Control</p>
+
+<Instructions></Instructions>
+
+<h2 class="mb-2">Example</h2>
+
+<h4>Simple String Tooltip (using Tip parameter)</h4>
+<Tooltip Tip="This is a simple tooltip!">
+    Hover me
+</Tooltip>
+<p class="mb-2" />
+
+<h4>String with Position and Color</h4>
+
+<Tooltip Tip="Success message!"
+         Position="TooltipPosition.Bottom"
+         Variant="TooltipVariant.Success">
+    <div>Success Button</div>
+</Tooltip>
+<p class="mb-2" />
+
+<h4>Rich HTML Content (using TipContent)</h4>
+<Tooltip Position="TooltipPosition.Bottom">
+    <ChildContent>
+        <div>Rich Content Button</div>
+    </ChildContent>
+    <TipContent>
+        <strong>Features:</strong>
+        <ul>
+            <li>Pure CSS</li>
+            <li>No JavaScript</li>
+        </ul>
+    </TipContent>
+</Tooltip>
+<p class="mb-2" />
+
+<h4>With Links</h4>
+<Tooltip Position="TooltipPosition.Right">
+    <ChildContent>
+        <div>Interactive Button</div>
+    </ChildContent>
+    <TipContent>
+        Check out <a href="https://docs.microsoft.com/blazor" target="_blank">Blazor Docs</a>
+    </TipContent>
+</Tooltip>
+<p class="mb-2" />
+
+<h4>Different Variants (Simple Syntax)</h4>
+<Tooltip Variant="TooltipVariant.Success">
+    <ChildContent>
+        <div>Success</div>
+    </ChildContent>
+    <TipContent>
+        Operation completed! See <a href="https://learn.microsoft.com/aspnet/core/blazor" target="_blank">Blazor Docs</a>.
+    </TipContent>
+</Tooltip>
+<p class="mb-2" />
+
+<Tooltip Variant="TooltipVariant.Danger">
+    <ChildContent>
+        <div>Danger</div>
+    </ChildContent>
+    <TipContent>
+        Warning: Critical error. Learn more <a href="https://learn.microsoft.com/azure" target="_blank">on Azure</a>.
+    </TipContent>
+</Tooltip>
+<p class="mb-2" />
+
+<Tooltip Variant="TooltipVariant.Warning">
+    <ChildContent>
+        <div>Warning</div>
+    </ChildContent>
+    <TipContent>
+        Please review carefully. Read <a href="https://learn.microsoft.com/dotnet/" target="_blank">.NET guidance</a>.
+    </TipContent>
+</Tooltip>
+<p class="mb-2" />
+
+<Tooltip Variant="TooltipVariant.Information">
+    <ChildContent>
+        <div>Information</div>
+    </ChildContent>
+    <TipContent>
+        This is informative information. Visit <a href="https://learn.microsoft.com/" target="_blank">Microsoft Learn</a>.
+    </TipContent>
+</Tooltip>
+<p class="mb-2" />
+
+<h4>Different Sizes</h4>
+<Tooltip Tip="Hello">
+    <div>Small Tip</div>
+</Tooltip>
+<p class="mb-2" />
+
+
+<Tooltip Tip="Medium sized tooltip">
+    <div>Medium Tip</div>
+</Tooltip>
+<p class="mb-2" />
+
+<Tooltip Tip="Larger tooltip with more space taken">
+    <div>Large Tip</div>
+</Tooltip>
+<p class="mb-2" />
+
+<Tooltip>
+    <ChildContent>
+        <div>Extra Large Tip</div>
+    </ChildContent>
+    <TipContent>
+        This is an large tooltip with lots of room for detailed information.
+        The content should wrap when gets to long.
+    </TipContent>
+</Tooltip>
+<p class="mb-2" />
+
+<h4>Custom Trigger Content</h4>
+<Tooltip Tip="Click to edit">
+    <button class="btn btn-primary">Edit Profile</button>
+</Tooltip>
+<p class="mb-2" />
+
+<Tooltip Tip="Enter an Email Address">
+    <input type="email" id="email" name="email" placeholder="user@email.com" />
+</Tooltip>
+<p class="mb-2" />
+
+<Tooltip Tip="Navigation to Home">
+    <a href="#">Home</a>
+</Tooltip>
+<p class="mb-2" />
+
+@code {
+
+}

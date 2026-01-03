@@ -132,10 +132,13 @@ public partial class DateTimePicker<TValue> : InputBase<TValue>
     /// <summary>
     /// Gets the CSS class for the picker container.
     /// </summary>
-    protected string? PickerClass => CssBuilder
-        .Default("datetime-picker")
-        .AddClass("is-date-picker-open", IsDatePickerOpen)
-        .ToString();
+    protected string? PickerClass => CssBuilder.Pool.Use(builder =>
+    {
+        return builder
+            .AddClass("datetime-picker")
+            .AddClass("is-date-picker-open", IsDatePickerOpen)
+            .ToString();
+    });
 
     /// <summary>
     /// Gets the CSS class for validation state.
@@ -146,11 +149,14 @@ public partial class DateTimePicker<TValue> : InputBase<TValue>
     /// <summary>
     /// Gets the CSS class for the input element.
     /// </summary>
-    protected string? InputClass => CssBuilder
-        .Default("datetime-picker-input")
-        .MergeClass(AdditionalAttributes)
-        .AddClass(ValidationClass, v => !string.IsNullOrWhiteSpace(v))
-        .ToString();
+    protected string? InputClass => CssBuilder.Pool.Use(builder =>
+    {
+        return builder
+            .AddClass("datetime-picker-input")
+            .MergeClass(AdditionalAttributes)
+            .AddClass(ValidationClass, v => !string.IsNullOrWhiteSpace(v))
+            .ToString();
+    });
 
     /// <summary>
     /// Gets or sets the input type for the picker ("date", "time", or "datetime-local").
@@ -660,14 +666,17 @@ public partial class DateTimePicker<TValue> : InputBase<TValue>
     /// <returns>The CSS class string.</returns>
     private string? DateCellClass(DatePickerCell datePickerCell)
     {
-        return CssBuilder
-            .Default("date-picker-cell")
-            .AddClass("is-primary-month", datePickerCell.IsPrimaryMonth)
-            .AddClass("is-secondary-month", datePickerCell.IsSecondaryMonth)
-            .AddClass("is-today", datePickerCell.IsToday)
-            .AddClass("is-selected", IsDateSelected(datePickerCell.Date))
-            .AddClass("is-disabled", datePickerCell.IsDisabled)
-            .ToString();
+        return CssBuilder.Pool.Use(builder =>
+        {
+            return builder
+                .AddClass("date-picker-cell")
+                .AddClass("is-primary-month", datePickerCell.IsPrimaryMonth)
+                .AddClass("is-secondary-month", datePickerCell.IsSecondaryMonth)
+                .AddClass("is-today", datePickerCell.IsToday)
+                .AddClass("is-selected", IsDateSelected(datePickerCell.Date))
+                .AddClass("is-disabled", datePickerCell.IsDisabled)
+                .ToString();
+        });
     }
 
     /// <summary>
@@ -677,11 +686,14 @@ public partial class DateTimePicker<TValue> : InputBase<TValue>
     /// <returns>The CSS class string.</returns>
     private string? TimeSegmentClass(TimePickerSegment timePickerSegment)
     {
-        return CssBuilder
-            .Default("time-picker-cell")
-            .AddClass("is-selected", IsTimeSelected(timePickerSegment.Date))
-            .AddClass("is-disabled", timePickerSegment.IsDisabled)
-            .ToString();
+        return CssBuilder.Pool.Use(builder =>
+        {
+            return builder
+                .AddClass("time-picker-cell")
+                .AddClass("is-selected", IsTimeSelected(timePickerSegment.Date))
+                .AddClass("is-disabled", timePickerSegment.IsDisabled)
+                .ToString();
+        });
     }
 
     /// <summary>

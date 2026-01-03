@@ -625,11 +625,15 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
     /// <returns>The computed CSS class string for the grid container.</returns>
     private string? ComputeGridClass()
     {
-        return CssBuilder.Default("data-grid")
-            .AddClass("data-grid--horizontal-borders", Borders is Borders.Horizontal or Borders.All)
-            .AddClass("data-grid--vertical-borders", Borders is Borders.Vertical or Borders.All)
-            .AddClass(GridClass)
-            .ToString();
+        return CssBuilder.Pool.Use(builder =>
+        {
+            return builder
+                .AddClass("data-grid")
+                .AddClass("data-grid--horizontal-borders", Borders is Borders.Horizontal or Borders.All)
+                .AddClass("data-grid--vertical-borders", Borders is Borders.Vertical or Borders.All)
+                .AddClass(GridClass)
+                .ToString();
+        });
     }
 
     /// <summary>
@@ -640,10 +644,14 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
     /// <returns>The computed CSS class string for the row.</returns>
     private string? ComputeRowClass(TItem item)
     {
-        return CssBuilder.Default("data-grid__row")
-            .AddClass("data-grid__row--selected", IsRowSelected(item))
-            .AddClass("data-grid__row--expanded", IsRowExpanded(item))
-            .ToString();
+        return CssBuilder.Pool.Use(builder =>
+        {
+            return builder
+                .AddClass("data-grid__row")
+                .AddClass("data-grid__row--selected", IsRowSelected(item))
+                .AddClass("data-grid__row--expanded", IsRowExpanded(item))
+                .ToString();
+        });
     }
 
     /// <summary>
@@ -656,10 +664,14 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
     {
         var isGroupExpanded = IsGroupExpanded(key);
 
-        return CssBuilder.Default("data-grid__group-header")
-            .AddClass("ddata-grid__group-header--expanded", isGroupExpanded)
-            .AddClass("data-grid__group-header--collapsed", !isGroupExpanded)
-            .ToString();
+        return CssBuilder.Pool.Use(builder =>
+        {
+            return builder
+                .AddClass("data-grid__group-header")
+                .AddClass("ddata-grid__group-header--expanded", isGroupExpanded)
+                .AddClass("data-grid__group-header--collapsed", !isGroupExpanded)
+                .ToString();
+        });
     }
 
     /// <summary>

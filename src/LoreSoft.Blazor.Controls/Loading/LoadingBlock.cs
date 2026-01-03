@@ -124,9 +124,12 @@ public class LoadingBlock : ComponentBase
     {
         base.OnParametersSet();
 
-        ClassName = CssBuilder
-            .Default("loading-block")
-            .MergeClass(AdditionalAttributes)
-            .ToString();
+        ClassName = CssBuilder.Pool.Use(builder =>
+        {
+            return builder
+                .AddClass("loading-block")
+                .MergeClass(AdditionalAttributes)
+                .ToString();
+        });
     }
 }

@@ -145,11 +145,14 @@ public partial class ToastContainer : IDisposable
             _ => "toaster-top-right"
         };
 
-        return CssBuilder
-            .Default("toaster")
-            .AddClass(className)
-            .MergeClass(Attributes)
-            .ToString();
+        return CssBuilder.Pool.Use(builder =>
+        {
+            return builder
+                .AddClass("toaster")
+                .AddClass(className)
+                .MergeClass(Attributes)
+                .ToString();
+        });
     }
 
     /// <summary>

@@ -514,37 +514,57 @@ public class DataColumn<TItem> : ComponentBase
     {
         bool sortable = Sortable && (Grid?.Sortable ?? false);
 
-        CurrentHeaderClass = CssBuilder.Default("data-grid__header-cell")
-            .AddClass(HeaderClass, v => v.HasValue())
-            .AddClass(ColumnClass, v => v.HasValue())
-            .AddClass("data-grid__header-cell--sortable-button", sortable)
-            .ToString();
+        CurrentHeaderClass = CssBuilder.Pool.Use(builder =>
+        {
+            return builder
+                .AddClass("data-grid__header-cell")
+                .AddClass(HeaderClass, v => v.HasValue())
+                .AddClass(ColumnClass, v => v.HasValue())
+                .AddClass("data-grid__header-cell--sortable-button", sortable)
+                .ToString();
+        });
 
-        CurrentHeaderStyle = StyleBuilder.Default(HeaderStyle ?? string.Empty)
-            .AddStyle(ColumnStyle)
-            .AddStyle($"flex", $"0 0 {Width}", Width.HasValue())
-            .AddStyle("min-width", MinWidth, (v) => v.HasValue())
-            .AddStyle("max-width", MaxWidth, (v) => v.HasValue())
-            .AddStyle("justify-content", "center", HeaderAlign is TextAlign.Center)
-            .AddStyle("justify-content", "flex-end", HeaderAlign is TextAlign.Right or TextAlign.End)
-            .ToString();
+        CurrentHeaderStyle = StyleBuilder.Pool.Use(builder =>
+        {
+            return builder
+                .AddStyle(HeaderStyle ?? string.Empty)
+                .AddStyle(ColumnStyle)
+                .AddStyle($"flex", $"0 0 {Width}", Width.HasValue())
+                .AddStyle("min-width", MinWidth, (v) => v.HasValue())
+                .AddStyle("max-width", MaxWidth, (v) => v.HasValue())
+                .AddStyle("justify-content", "center", HeaderAlign is TextAlign.Center)
+                .AddStyle("justify-content", "flex-end", HeaderAlign is TextAlign.Right or TextAlign.End)
+                .ToString();
+        });
 
-        CurrentCellClass = CssBuilder.Default("data-grid__cell")
-            .AddClass(CellClass, v => v.HasValue())
-            .AddClass(ColumnClass, v => v.HasValue())
-            .ToString();
+        CurrentCellClass = CssBuilder.Pool.Use(builder =>
+        {
+            return builder
+                .AddClass("data-grid__cell")
+                .AddClass(CellClass, v => v.HasValue())
+                .AddClass(ColumnClass, v => v.HasValue())
+                .ToString();
+        });
 
-        CurrentFooterClass = CssBuilder.Default("data-grid__footer-cell")
-            .AddClass(FooterClass, v => v.HasValue())
-            .AddClass(ColumnClass, v => v.HasValue())
-            .ToString();
+        CurrentFooterClass = CssBuilder.Pool.Use(builder =>
+        {
+            return builder
+                .AddClass("data-grid__footer-cell")
+                .AddClass(FooterClass, v => v.HasValue())
+                .AddClass(ColumnClass, v => v.HasValue())
+                .ToString();
+        });
 
-        CurrentFooterStyle = StyleBuilder.Default(FooterStyle ?? string.Empty)
-            .AddStyle(ColumnStyle)
-            .AddStyle($"flex", $"0 0 {Width}", Width.HasValue())
-            .AddStyle("min-width", MinWidth, (v) => v.HasValue())
-            .AddStyle("max-width", MaxWidth, (v) => v.HasValue())
-            .ToString();
+        CurrentFooterStyle = StyleBuilder.Pool.Use(builder =>
+        {
+            return builder
+                .AddStyle(FooterStyle ?? string.Empty)
+                .AddStyle(ColumnStyle)
+                .AddStyle($"flex", $"0 0 {Width}", Width.HasValue())
+                .AddStyle("min-width", MinWidth, (v) => v.HasValue())
+                .AddStyle("max-width", MaxWidth, (v) => v.HasValue())
+                .ToString();
+        });
     }
 
     /// <summary>

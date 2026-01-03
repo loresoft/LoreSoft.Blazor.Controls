@@ -507,12 +507,15 @@ public partial class Typeahead<TItem, TValue> : ComponentBase, IDisposable
             ? EditContext.FieldCssClass(FieldIdentifier)
             : string.Empty;
 
-        return CssBuilder
-            .Default("typeahead-control")
-            .AddClass("typeahead-active", SearchMode)
-            .AddClass("typeahead-disabled", Disabled)
-            .AddClass(validationClass, validationClass.HasValue())
-            .ToString();
+        return CssBuilder.Pool.Use(builder =>
+        {
+            return builder
+                .AddClass("typeahead-control")
+                .AddClass("typeahead-active", SearchMode)
+                .AddClass("typeahead-disabled", Disabled)
+                .AddClass(validationClass, validationClass.HasValue())
+                .ToString();
+        });
     }
 
     /// <summary>
