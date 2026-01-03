@@ -99,11 +99,11 @@ public class BusyButton : ComponentBase
     {
         base.OnParametersSet();
 
-        using var builder = CssBuilder.Pool.GetPooled();
-        ClassName = builder.Instance
+        ClassName = CssBuilder.Pool.Use(builder => builder
             .AddClass("busy-button")
             .MergeClass(AdditionalAttributes)
-            .ToString();
+            .ToString()
+        );
 
         BusyTemplate ??= builder => {
             builder.AddContent(0, BusyText);

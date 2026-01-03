@@ -128,11 +128,11 @@ public partial class DataList<TItem> : DataComponentBase<TItem>
     /// <inheritdoc />
     protected override void OnParametersSet()
     {
-        using var builder = CssBuilder.Pool.GetPooled();
-        ClassName = builder.Instance
+        ClassName = CssBuilder.Pool.Use(builder => builder
             .AddClass("data-list")
             .MergeClass(AdditionalAttributes)
-            .ToString();
+            .ToString()
+        );
 
         CurrentSortField = SortField;
         CurrentSortDirection = SortDescending ? "desc" : "asc";

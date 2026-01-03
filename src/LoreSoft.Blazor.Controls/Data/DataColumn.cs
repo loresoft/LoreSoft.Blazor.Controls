@@ -596,7 +596,8 @@ public class DataColumn<TItem> : ComponentBase
     /// <returns>The computed CSS style string for the cell.</returns>
     internal string? ComputeCellStyle(TItem data)
     {
-        return StyleBuilder.Default(CellStyle?.Invoke(data) ?? string.Empty)
+        return StyleBuilder.Pool.Use(builder => builder
+            .AddStyle(CellStyle?.Invoke(data))
             .AddStyle(ColumnStyle)
             .AddStyle($"flex", $"0 0 {Width}", Width.HasValue())
             .AddStyle("min-width", MinWidth, (v) => v.HasValue())
@@ -610,6 +611,7 @@ public class DataColumn<TItem> : ComponentBase
             .AddStyle("justify-content", "center", Align is TextAlign.Center)
             .AddStyle("justify-content", "flex-start", Align is TextAlign.Left or TextAlign.Start)
             .AddStyle("justify-content", "flex-end", Align is TextAlign.Right or TextAlign.End)
-            .ToString();
+            .ToString()
+        );
     }
 }

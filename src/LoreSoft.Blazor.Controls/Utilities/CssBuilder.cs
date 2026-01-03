@@ -23,11 +23,10 @@ public class CssBuilder()
     /// </remarks>
     /// <example>
     /// <code>
-    /// using var pooled = CssBuilder.Pool.GetPooled();
-    /// pooled.Instance
+    /// string classes = CssBuilder.Pool.Use(builder => builder
     ///     .AddClass("foo")
-    ///     .AddClass("bar", condition);
-    /// var classes = pooled.Instance.ToString();
+    ///     .AddClass("bar", condition)
+    ///     .ToString());
     /// </code>
     /// </example>
     public static ObjectPool<CssBuilder> Pool { get; }

@@ -19,11 +19,10 @@ public class StyleBuilder
     /// </remarks>
     /// <example>
     /// <code>
-    /// using var pooled = StyleBuilder.Pool.GetPooled();
-    /// pooled.Instance
+    /// string styles = StyleBuilder.Pool.Use(builder => builder
     ///     .AddStyle("color", "red")
-    ///     .AddStyle("padding", "10px", condition);
-    /// var styles = pooled.Instance.ToString();
+    ///     .AddStyle("padding", "10px", condition)
+    ///     .ToString());
     /// </code>
     /// </example>
     public static ObjectPool<StyleBuilder> Pool { get; }

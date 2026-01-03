@@ -9,7 +9,7 @@ namespace LoreSoft.Blazor.Controls.Utilities;
 /// <remarks>
 /// <para>
 /// This object pool implementation uses a <see cref="ConcurrentQueue{T}"/> for thread-safe storage with an additional
-/// single-item cache for improved performance. It provides automatic return-to-pool functionality via the 
+/// single-item cache for improved performance. It provides automatic return-to-pool functionality via the
 /// <see cref="PooledObject"/> disposable wrapper.
 /// </para>
 /// <para>
@@ -57,12 +57,12 @@ namespace LoreSoft.Blazor.Controls.Utilities;
 /// );
 ///
 /// // Use with automatic return (recommended)
-/// using (var pooled = pool.GetPooled())
+/// string result = pool.Use(sb =>
 /// {
-///     pooled.Instance.Append("Hello, World!");
-///     Console.WriteLine(pooled.Instance.ToString());
-/// }
-/// // Object is automatically returned to pool when disposed
+///     sb.Append("Hello, World!");
+///     return sb.ToString();
+/// });
+/// // Object is automatically returned to pool
 /// </code>
 ///
 /// <para><strong>Example 2: Manual get/return pattern</strong></para>
@@ -94,35 +94,28 @@ public class ObjectPool<T> where T : class
     /// Initializes a new instance of the <see cref="ObjectPool{T}"/> class with the specified configuration.
     /// </summary>
     /// <param name="objectFactory">
-    /// A factory function that creates new objects when the pool is empty. This function is called each time 
+    /// A factory function that creates new objects when the pool is empty. This function is called each time
     /// a new instance is needed and should return a properly initialized object ready for use.
     /// The factory should be thread-safe if the pool will be used concurrently.
     /// </param>
     /// <param name="resetAction">
-    /// An optional action that resets objects to a clean state before returning them to the pool. 
+    /// An optional action that resets objects to a clean state before returning them to the pool.
     /// Use this to clear state, reset properties, release resources, or prepare the object for reuse.
     /// </param>
     /// <param name="maxSize">
-    /// The maximum number of objects to retain in the pool. Objects exceeding this limit will not be returned 
-    /// to the pool and will be eligible for garbage collection. A value of 0 (default) uses a default maximum 
+    /// The maximum number of objects to retain in the pool. Objects exceeding this limit will not be returned
+    /// to the pool and will be eligible for garbage collection. A value of 0 (default) uses a default maximum
     /// of <c>Environment.ProcessorCount * 2</c>, which provides a good balance for most scenarios.
     /// </param>
-    /// <param name="preallocate">
-    /// The number of objects to create and add to the pool during initialization. This can improve performance 
-    /// by avoiding allocation during initial usage at the cost of increased startup time and memory usage.
-    /// Default is 0 (no preallocation).
-    /// </param>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="objectFactory"/> is <see langword="null"/>.</exception>
-    /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="maxSize"/> or <paramref name="preallocate"/> is negative.</exception>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="maxSize"/> is negative.</exception>
     public ObjectPool(
         Func<T> objectFactory,
         Action<T>? resetAction = null,
-        int maxSize = 0,
-        int preallocate = 0)
+        int maxSize = 0)
     {
         ArgumentNullException.ThrowIfNull(objectFactory);
         ArgumentOutOfRangeException.ThrowIfNegative(maxSize);
-        ArgumentOutOfRangeException.ThrowIfNegative(preallocate);
 
         _objectFactory = objectFactory;
         _resetAction = resetAction;
@@ -132,15 +125,6 @@ public class ObjectPool<T> where T : class
         // Set default max size if unlimited
         if (_maxSize == 0)
             _maxSize = Environment.ProcessorCount * 2;
-
-        if (preallocate <= 0)
-            return;
-
-        // Preallocate objects
-        for (int i = 0; i < preallocate; i++)
-        {
-            _objects.Enqueue(objectFactory());
-        }
     }
 
     /// <summary>
@@ -148,7 +132,7 @@ public class ObjectPool<T> where T : class
     /// </summary>
     /// <returns>
     /// An object from the pool if available; otherwise, a newly created instance using the object factory.
-    /// The returned object is ready for use and should be returned to the pool via <see cref="Return"/> 
+    /// The returned object is ready for use and should be returned to the pool via <see cref="Return"/>
     /// when no longer needed, or obtained via <see cref="GetPooled"/> for automatic return.
     /// </returns>
     /// <remarks>
@@ -231,7 +215,7 @@ public class ObjectPool<T> where T : class
     /// </para>
     /// <para>
     /// If a reset action was provided in the constructor, it will be invoked before the object is added back to the pool.
-    /// If the reset action throws an exception, the object will not be returned to the pool and will be eligible 
+    /// If the reset action throws an exception, the object will not be returned to the pool and will be eligible
     /// for garbage collection. This prevents corrupted or improperly reset objects from being reused and causing
     /// unexpected behavior in subsequent operations.
     /// </para>
@@ -239,7 +223,7 @@ public class ObjectPool<T> where T : class
     /// <strong>Maximum Size Enforcement:</strong>
     /// </para>
     /// <para>
-    /// If the pool has reached its maximum size, the object will not be added to the pool and will be eligible 
+    /// If the pool has reached its maximum size, the object will not be added to the pool and will be eligible
     /// for garbage collection. The maximum size is enforced using atomic operations (<see cref="Interlocked"/>),
     /// but under extreme concurrency the pool may briefly exceed the limit before stabilizing. This is by design
     /// to avoid expensive locking and is considered acceptable for most use cases.
@@ -282,7 +266,7 @@ public class ObjectPool<T> where T : class
     /// {
     ///     pool.Return(obj);  // Always return in finally block
     /// }
-    /// 
+    ///
     /// // Don't do this:
     /// pool.Return(obj);
     /// obj.DoWork();      // ERROR: Object may be reused by another thread!
@@ -318,11 +302,59 @@ public class ObjectPool<T> where T : class
     }
 
     /// <summary>
+    /// Executes a function with a pooled object and automatically returns it to the pool.
+    /// </summary>
+    /// <typeparam name="TResult">The type of the result returned by the function.</typeparam>
+    /// <param name="factory">
+    /// A function that accepts a pooled object and returns a result. The function is executed with an object
+    /// retrieved from the pool, which is automatically returned after execution completes.
+    /// </param>
+    /// <returns>
+    /// The result returned by the provided function after executing with the pooled object.
+    /// </returns>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="factory"/> is <see langword="null"/>.</exception>
+    /// <remarks>
+    /// This method provides a convenient way to use pooled objects without manual Get/Return calls or using statements.
+    /// It handles all object lifecycle management automatically, including returning the object to the pool even if
+    /// the function throws an exception.
+    /// </remarks>
+    /// <example>
+    /// <para><strong>Simple usage with StringBuilder</strong></para>
+    /// <code>
+    /// // Execute and get result in one call
+    /// string result = StringBuilder.Pool.Use(sb =>
+    /// {
+    ///     sb.Append("Hello, ");
+    ///     sb.Append("World!");
+    ///     return sb.ToString();
+    /// });
+    /// // StringBuilder is automatically returned to pool
+    /// </code>
+    /// </example>
+    public TResult Use<TResult>(Func<T, TResult> factory)
+    {
+        ArgumentNullException.ThrowIfNull(factory);
+
+        // Get an object from the pool
+        var pooled = Get();
+        try
+        {
+            // Execute the provided function with the pooled instance
+            return factory(pooled);
+        }
+        finally
+        {
+            // Ensure the object is returned to the pool
+            Return(pooled);
+        }
+    }
+
+    /// <summary>
     /// Gets a disposable wrapper that automatically returns the object to the pool when disposed.
     /// </summary>
     /// <returns>
-    /// A <see cref="PooledObject"/> that wraps the pooled instance and implements <see cref="IDisposable"/>. 
-    /// The object is automatically returned to the pool when the wrapper is disposed (e.g., at the end of a 
+    /// A <see cref="PooledObject"/> that wraps the pooled instance and implements <see cref="IDisposable"/>.
+    /// The object is automatically returned to the pool when the wrapper is disposed (e.g., at the end of a
     /// <c>using</c> block or statement).
     /// </returns>
     /// <remarks>
@@ -330,16 +362,16 @@ public class ObjectPool<T> where T : class
     /// <strong>Recommended Usage Pattern:</strong>
     /// </para>
     /// <para>
-    /// This is the <strong>recommended</strong> way to use the object pool as it ensures objects are always 
-    /// returned to the pool, even if an exception occurs during processing. The returned wrapper can be used 
+    /// This is the <strong>recommended</strong> way to use the object pool as it ensures objects are always
+    /// returned to the pool, even if an exception occurs during processing. The returned wrapper can be used
     /// in a <c>using</c> statement or declaration to guarantee automatic return of the object.
     /// </para>
     /// <para>
     /// <strong>Struct Design for Performance:</strong>
     /// </para>
     /// <para>
-    /// The wrapper is a <see langword="struct"/> (value type) to avoid additional heap allocations, making the 
-    /// pooling mechanism truly zero-allocation. This is particularly important in high-throughput scenarios 
+    /// The wrapper is a <see langword="struct"/> (value type) to avoid additional heap allocations, making the
+    /// pooling mechanism truly zero-allocation. This is particularly important in high-throughput scenarios
     /// where even small allocations can add up.
     /// </para>
     /// <para>

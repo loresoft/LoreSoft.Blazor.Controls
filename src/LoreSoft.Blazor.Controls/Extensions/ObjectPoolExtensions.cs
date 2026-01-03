@@ -30,18 +30,12 @@ public static class ObjectPoolExtensions
         /// <example>
         /// The following example demonstrates how to use the pool to build a string efficiently:
         /// <code>
-        /// var pool = StringBuilder.Pool;
-        /// var sb = pool.Get();
-        /// try
+        /// string result = StringBuilder.Pool.Use(sb =>
         /// {
         ///     sb.Append("Hello, ");
         ///     sb.Append("World!");
         ///     return sb.ToString();
-        /// }
-        /// finally
-        /// {
-        ///     pool.Return(sb);
-        /// }
+        /// });
         /// </code>
         /// </example>
         public static ObjectPool<StringBuilder> Pool => _stringBuilderPool.Value;

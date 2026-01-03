@@ -122,11 +122,11 @@ public class ProgressBar : ComponentBase, IDisposable
     protected override void OnParametersSet()
     {
         // update only after parameters are set
-        using var builder = CssBuilder.Pool.GetPooled();
-        ClassName = builder.Instance
+        ClassName = CssBuilder.Pool.Use(builder => builder
             .AddClass("progress-container")
             .MergeClass(Attributes)
-            .ToString();
+            .ToString()
+        );
     }
 
     /// <summary>

@@ -97,16 +97,16 @@ public partial class ModalDialog : ComponentBase, IAsyncDisposable
     {
         base.OnParametersSet();
 
-        using var builder = CssBuilder.Pool.GetPooled();
-        ClassName = builder.Instance
+        ClassName = CssBuilder.Pool.Use(builder => builder
             .AddClass("dialog-container")
             .MergeClass(Modal.Parameters, false)
-            .ToString();
+            .ToString()
+        );
 
-        using var styleBuilder = StyleBuilder.Pool.GetPooled();
-        Style = styleBuilder.Instance
+        Style = StyleBuilder.Pool.Use(builder => builder
             .MergeStyle(Modal.Parameters, false)
-            .ToString();
+            .ToString()
+        );
     }
 
     /// <summary>

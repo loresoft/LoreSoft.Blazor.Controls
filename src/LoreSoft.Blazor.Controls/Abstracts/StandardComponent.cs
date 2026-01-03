@@ -134,8 +134,7 @@ public class StandardComponent : ComponentBase, IDisposable, IAsyncDisposable
 
     private string? ComputeStyles()
     {
-        var builder = StyleBuilder.Pool.Get();
-        try
+        return StyleBuilder.Pool.Use(builder =>
         {
             builder.AddStyle(ElementStyle).MergeStyle(AdditionalAttributes);
 
@@ -143,11 +142,7 @@ public class StandardComponent : ComponentBase, IDisposable, IAsyncDisposable
             ComputeAttributes(builder);
 
             return builder.ToString();
-        }
-        finally
-        {
-            StyleBuilder.Pool.Return(builder);
-        }
+        });
     }
 
     /// <summary>
@@ -161,8 +156,7 @@ public class StandardComponent : ComponentBase, IDisposable, IAsyncDisposable
 
     private string? ComputeClasses()
     {
-        var builder = CssBuilder.Pool.Get();
-        try
+        return CssBuilder.Pool.Use(builder =>
         {
             builder.AddClass(ElementClass).MergeClass(AdditionalAttributes);
 
@@ -170,11 +164,7 @@ public class StandardComponent : ComponentBase, IDisposable, IAsyncDisposable
             ComputeClasses(builder);
 
             return builder.ToString();
-        }
-        finally
-        {
-            CssBuilder.Pool.Return(builder);
-        }
+        });
     }
 
     /// <summary>

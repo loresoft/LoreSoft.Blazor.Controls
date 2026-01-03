@@ -16,6 +16,9 @@
 
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
+  justify-content: end;
+  gap: .25rem .125rem;
 }
 
 .data-toolbar .toolbar-title {

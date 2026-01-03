@@ -54,20 +54,20 @@ public class Skeleton : ComponentBase
         var type = Type.ToString().ToLowerInvariant();
 
         // update only after parameters are set
-        using var builder = CssBuilder.Pool.GetPooled();
-        ClassName = builder.Instance
+        ClassName = CssBuilder.Pool.Use(builder => builder
             .AddClass("skeleton")
             .AddClass("skeleton-wave")
             .AddClass($"skeleton-{type}")
             .MergeClass(AdditionalAttributes)
-            .ToString();
+            .ToString()
+        );
 
-        using var styleBuilder = StyleBuilder.Pool.GetPooled();
-        Style = styleBuilder.Instance
+        Style = StyleBuilder.Pool.Use(builder => builder
             .MergeStyle(AdditionalAttributes)
             .AddStyle("width", Width, (v) => v.HasValue())
             .AddStyle("height", Height, (v) => v.HasValue())
-            .ToString();
+            .ToString()
+        );
     }
 
     /// <inheritdoc />
