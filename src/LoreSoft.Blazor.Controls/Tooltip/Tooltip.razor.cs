@@ -40,6 +40,10 @@ public partial class Tooltip : StandardComponent
         TooltipPosition.Bottom => "tooltip-bottom",
         TooltipPosition.Left => "tooltip-left",
         TooltipPosition.Right => "tooltip-right",
+        TooltipPosition.TopLeft => "tooltip-top-left",
+        TooltipPosition.TopRight => "tooltip-top-right",
+        TooltipPosition.BottomLeft => "tooltip-bottom-left",
+        TooltipPosition.BottomRight => "tooltip-bottom-right",
         _ => "tooltip-top"
     };
 

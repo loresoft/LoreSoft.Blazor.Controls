@@ -7,5 +7,9 @@ public enum TooltipPosition
     Top,
     Bottom,
     Left,
-    Right
+    Right,
+    TopLeft,
+    TopRight,
+    BottomLeft,
+    BottomRight
 }

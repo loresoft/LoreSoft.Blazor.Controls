@@ -11,130 +11,162 @@
 <h2 class="mb-2">Example</h2>
 
 <h4>Simple String Tooltip (using Tip parameter)</h4>
-<Tooltip Tip="This is a simple tooltip!">
-    Hover me
-</Tooltip>
-<p class="mb-2" />
+<div style="margin-bottom: 20px;">
+    <Tooltip Tip="This is a simple tooltip!">
+        <button class="btn btn-outline-primary">Hover me</button>
+    </Tooltip>
+</div>
 
 <h4>String with Position and Color</h4>
-
-<Tooltip Tip="Success message!"
-         Position="TooltipPosition.Bottom"
-         Variant="TooltipVariant.Success">
-    <div>Success Button</div>
-</Tooltip>
-<p class="mb-2" />
+<div style="margin-bottom: 20px;">
+    <Tooltip Tip="Success message!"
+             Position="TooltipPosition.Bottom"
+             Variant="TooltipVariant.Success">
+        <button class="btn btn-success">Success Button</button>
+    </Tooltip>
+</div>
 
 <h4>Rich HTML Content (using TipContent)</h4>
-<Tooltip Position="TooltipPosition.Bottom">
-    <ChildContent>
-        <div>Rich Content Button</div>
-    </ChildContent>
-    <TipContent>
-        <strong>Features:</strong>
-        <ul>
-            <li>Pure CSS</li>
-            <li>No JavaScript</li>
-        </ul>
-    </TipContent>
-</Tooltip>
-<p class="mb-2" />
+<div style="margin-bottom: 20px;">
+    <Tooltip Position="TooltipPosition.Bottom">
+        <ChildContent>
+            <button class="btn btn-outline-info">Rich Content Button</button>
+        </ChildContent>
+        <TipContent>
+            <strong>Features:</strong>
+            <ul>
+                <li>Pure CSS</li>
+                <li>No JavaScript</li>
+            </ul>
+        </TipContent>
+    </Tooltip>
+</div>
 
 <h4>With Links</h4>
-<Tooltip Position="TooltipPosition.Right">
-    <ChildContent>
-        <div>Interactive Button</div>
-    </ChildContent>
-    <TipContent>
-        Check out <a href="https://docs.microsoft.com/blazor" target="_blank">Blazor Docs</a>
-    </TipContent>
-</Tooltip>
-<p class="mb-2" />
+<div style="margin-bottom: 20px;">
+    <Tooltip Position="TooltipPosition.Right">
+        <ChildContent>
+            <button class="btn btn-outline-primary">Interactive Button</button>
+        </ChildContent>
+        <TipContent>
+            Check out <a href="https://docs.microsoft.com/blazor" target="_blank">Blazor Docs</a>
+        </TipContent>
+    </Tooltip>
+</div>
 
-<h4>Different Variants (Simple Syntax)</h4>
-<Tooltip Variant="TooltipVariant.Success">
-    <ChildContent>
-        <div>Success</div>
-    </ChildContent>
-    <TipContent>
-        Operation completed! See <a href="https://learn.microsoft.com/aspnet/core/blazor" target="_blank">Blazor Docs</a>.
-    </TipContent>
-</Tooltip>
-<p class="mb-2" />
+<h4>All Tooltip Positions</h4>
+<div style="display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 20px;">
+    <Tooltip Tip="Top position" Position="TooltipPosition.Top">
+        <button class="btn btn-outline-primary">Top</button>
+    </Tooltip>
 
-<Tooltip Variant="TooltipVariant.Danger">
-    <ChildContent>
-        <div>Danger</div>
-    </ChildContent>
-    <TipContent>
-        Warning: Critical error. Learn more <a href="https://learn.microsoft.com/azure" target="_blank">on Azure</a>.
-    </TipContent>
-</Tooltip>
-<p class="mb-2" />
+    <Tooltip Tip="Bottom position" Position="TooltipPosition.Bottom">
+        <button class="btn btn-outline-primary">Bottom</button>
+    </Tooltip>
 
-<Tooltip Variant="TooltipVariant.Warning">
-    <ChildContent>
-        <div>Warning</div>
-    </ChildContent>
-    <TipContent>
-        Please review carefully. Read <a href="https://learn.microsoft.com/dotnet/" target="_blank">.NET guidance</a>.
-    </TipContent>
-</Tooltip>
-<p class="mb-2" />
+    <Tooltip Tip="Left position" Position="TooltipPosition.Left">
+        <button class="btn btn-outline-primary">Left</button>
+    </Tooltip>
 
-<Tooltip Variant="TooltipVariant.Information">
-    <ChildContent>
-        <div>Information</div>
-    </ChildContent>
-    <TipContent>
-        This is informative information. Visit <a href="https://learn.microsoft.com/" target="_blank">Microsoft Learn</a>.
-    </TipContent>
-</Tooltip>
-<p class="mb-2" />
+    <Tooltip Tip="Right position" Position="TooltipPosition.Right">
+        <button class="btn btn-outline-primary">Right</button>
+    </Tooltip>
+
+    <Tooltip Tip="Top-Left position" Position="TooltipPosition.TopLeft">
+        <button class="btn btn-outline-secondary">Top-Left</button>
+    </Tooltip>
+
+    <Tooltip Tip="Top-Right position" Position="TooltipPosition.TopRight">
+        <button class="btn btn-outline-secondary">Top-Right</button>
+    </Tooltip>
+
+    <Tooltip Tip="Bottom-Left position" Position="TooltipPosition.BottomLeft">
+        <button class="btn btn-outline-secondary">Bottom-Left</button>
+    </Tooltip>
+
+    <Tooltip Tip="Bottom-Right position" Position="TooltipPosition.BottomRight">
+        <button class="btn btn-outline-secondary">Bottom-Right</button>
+    </Tooltip>
+</div>
+
+<h4>Different Variants</h4>
+<div style="display: flex; gap: 15px; flex-wrap: wrap; margin-bottom: 20px;">
+    <Tooltip Variant="TooltipVariant.Success">
+        <ChildContent>
+            <button class="btn btn-success">Success</button>
+        </ChildContent>
+        <TipContent>
+            Operation completed! See <a href="https://learn.microsoft.com/aspnet/core/blazor" target="_blank">Blazor Docs</a>.
+        </TipContent>
+    </Tooltip>
+
+    <Tooltip Variant="TooltipVariant.Danger">
+        <ChildContent>
+            <button class="btn btn-danger">Danger</button>
+        </ChildContent>
+        <TipContent>
+            Warning: Critical error. Learn more <a href="https://learn.microsoft.com/azure" target="_blank">on Azure</a>.
+        </TipContent>
+    </Tooltip>
+
+    <Tooltip Variant="TooltipVariant.Warning">
+        <ChildContent>
+            <button class="btn btn-warning">Warning</button>
+        </ChildContent>
+        <TipContent>
+            Please review carefully. Read <a href="https://learn.microsoft.com/dotnet/" target="_blank">.NET guidance</a>.
+        </TipContent>
+    </Tooltip>
+
+    <Tooltip Variant="TooltipVariant.Information">
+        <ChildContent>
+            <button class="btn btn-info">Information</button>
+        </ChildContent>
+        <TipContent>
+            This is informative information. Visit <a href="https://learn.microsoft.com/" target="_blank">Microsoft Learn</a>.
+        </TipContent>
+    </Tooltip>
+</div>
 
 <h4>Different Sizes</h4>
-<Tooltip Tip="Hello">
-    <div>Small Tip</div>
-</Tooltip>
-<p class="mb-2" />
+<div style="display: flex; gap: 15px; flex-wrap: wrap; align-items: center; margin-bottom: 20px;">
+    <Tooltip Tip="Hello">
+        <button class="btn btn-sm btn-outline-primary">Small Tip</button>
+    </Tooltip>
 
+    <Tooltip Tip="Medium sized tooltip">
+        <button class="btn btn-outline-primary">Medium Tip</button>
+    </Tooltip>
 
-<Tooltip Tip="Medium sized tooltip">
-    <div>Medium Tip</div>
-</Tooltip>
-<p class="mb-2" />
+    <Tooltip Tip="Larger tooltip with more space taken">
+        <button class="btn btn-lg btn-outline-primary">Large Tip</button>
+    </Tooltip>
 
-<Tooltip Tip="Larger tooltip with more space taken">
-    <div>Large Tip</div>
-</Tooltip>
-<p class="mb-2" />
-
-<Tooltip>
-    <ChildContent>
-        <div>Extra Large Tip</div>
-    </ChildContent>
-    <TipContent>
-        This is an large tooltip with lots of room for detailed information.
-        The content should wrap when gets to long.
-    </TipContent>
-</Tooltip>
-<p class="mb-2" />
+    <Tooltip>
+        <ChildContent>
+            <button class="btn btn-outline-primary">Extra Large Tip</button>
+        </ChildContent>
+        <TipContent>
+            This is an large tooltip with lots of room for detailed information.
+            The content should wrap when gets to long.
+        </TipContent>
+    </Tooltip>
+</div>
 
 <h4>Custom Trigger Content</h4>
-<Tooltip Tip="Click to edit">
-    <button class="btn btn-primary">Edit Profile</button>
-</Tooltip>
-<p class="mb-2" />
+<div style="display: flex; gap: 20px; flex-wrap: wrap; align-items: center; margin-bottom: 20px;">
+    <Tooltip Tip="Click to edit">
+        <button class="btn btn-primary">Edit Profile</button>
+    </Tooltip>
 
-<Tooltip Tip="Enter an Email Address">
-    <input type="email" id="email" name="email" placeholder="user@email.com" />
-</Tooltip>
-<p class="mb-2" />
+    <Tooltip Tip="Enter an Email Address">
+        <input type="email" id="email" name="email" placeholder="user@email.com" class="form-control" style="width: 250px;" />
+    </Tooltip>
 
-<Tooltip Tip="Navigation to Home">
-    <a href="#">Home</a>
-</Tooltip>
-<p class="mb-2" />
+    <Tooltip Tip="Navigation to Home">
+        <a href="#" class="btn btn-link">Home</a>
+    </Tooltip>
+</div>
 
 @code {
 
