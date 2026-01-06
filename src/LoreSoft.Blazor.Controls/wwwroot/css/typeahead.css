@@ -90,6 +90,7 @@
                 margin-right: 2px;
                 max-width: calc(100% - 8px);
                 position: absolute;
+                overflow: clip;
                 text-overflow: ellipsis;
                 white-space: nowrap;
                 top: 50%;
