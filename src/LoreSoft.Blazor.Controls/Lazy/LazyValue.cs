@@ -12,6 +12,8 @@ namespace LoreSoft.Blazor.Controls;
 [CascadingTypeParameter(nameof(TValue))]
 public class LazyValue<TKey, TValue> : ComponentBase
 {
+    private TKey? _previousKey;
+
     /// <summary>
     /// Gets or sets the asynchronous method used to load the value based on the provided key.
     /// </summary>
@@ -48,11 +50,16 @@ public class LazyValue<TKey, TValue> : ComponentBase
     {
         await base.OnParametersSetAsync();
 
+        // Only load if the key has changed
+        if (EqualityComparer<TKey>.Default.Equals(Key, _previousKey))
+            return;
+
         Loading = true;
         try
         {
             // load the value async
             Value = await LoadMethod(Key);
+            _previousKey = Key;
         }
         finally
         {
