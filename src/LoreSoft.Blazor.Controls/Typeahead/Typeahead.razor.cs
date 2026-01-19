@@ -1,8 +1,8 @@
-// Ignore Spelling: Debounce Keydown Multiselect
+// Ignore Spelling: Debounce Keydown Multiselect Typeahead
 
 using System.Linq.Expressions;
-using System.Timers;
 
+using LoreSoft.Blazor.Controls.Abstracts;
 using LoreSoft.Blazor.Controls.Extensions;
 using LoreSoft.Blazor.Controls.Utilities;
 
@@ -20,32 +20,10 @@ namespace LoreSoft.Blazor.Controls;
 /// <typeparam name="TValue">The type of the value selected by the user.</typeparam>
 [CascadingTypeParameter(nameof(TItem))]
 [CascadingTypeParameter(nameof(TValue))]
-public partial class Typeahead<TItem, TValue> : ComponentBase, IDisposable
+public partial class Typeahead<TItem, TValue> : StandardComponent
 {
-    private readonly System.Timers.Timer _debounceTimer;
-    private readonly Queue<Func<Task>> _pending;
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="Typeahead{TItem, TValue}"/> component.
-    /// </summary>
-    public Typeahead()
-    {
-        Items = [];
-        AllowClear = true;
-        Loading = false;
-        SearchMode = false;
-        SelectedIndex = 0;
-        SearchResults = [];
-        SearchPlaceholder = "Search ...";
-
-        _searchText = string.Empty;
-
-        _debounceTimer = new System.Timers.Timer();
-        _debounceTimer.AutoReset = false;
-        _debounceTimer.Elapsed += (s, e) => InvokeAsync(() => Search(s, e));
-
-        _pending = new Queue<Func<Task>>();
-    }
+    private readonly DebounceAction<string?> _debouncer = new();
+    private readonly LoadingState _loadingState = new();
 
     /// <summary>
     /// Gets or sets the cascading <see cref="EditContext"/> for form validation.
@@ -53,12 +31,7 @@ public partial class Typeahead<TItem, TValue> : ComponentBase, IDisposable
     [CascadingParameter]
     protected EditContext? EditContext { get; set; }
 
-    /// <summary>
-    /// Gets or sets additional attributes to be applied to the root element.
-    /// </summary>
-    [Parameter(CaptureUnmatchedValues = true)]
-    public Dictionary<string, object>? AdditionalAttributes { get; set; }
-
+    #region Value Binding
     /// <summary>
     /// Gets or sets the selected value for single-select mode.
     /// </summary>
@@ -76,7 +49,9 @@ public partial class Typeahead<TItem, TValue> : ComponentBase, IDisposable
     /// </summary>
     [Parameter]
     public Expression<Func<TValue>>? ValueExpression { get; set; }
+    #endregion
 
+    #region Values Binding
     /// <summary>
     /// Gets or sets the selected values for multi-select mode.
     /// </summary>
@@ -95,6 +70,8 @@ public partial class Typeahead<TItem, TValue> : ComponentBase, IDisposable
     [Parameter]
     public Expression<Func<IList<TValue>>>? ValuesExpression { get; set; }
 
+    #endregion
+
     /// <summary>
     /// Gets or sets the placeholder text for the input control.
     /// </summary>
@@ -105,13 +82,14 @@ public partial class Typeahead<TItem, TValue> : ComponentBase, IDisposable
     /// Gets or sets the placeholder text for the search input.
     /// </summary>
     [Parameter]
-    public string? SearchPlaceholder { get; set; }
+    public string? SearchPlaceholder { get; set; } = "Search ...";
+
 
     /// <summary>
     /// Gets or sets the list of items to display in the dropdown.
     /// </summary>
     [Parameter]
-    public IReadOnlyCollection<TItem>? Items { get; set; }
+    public IEnumerable<TItem>? Items { get; set; }
 
     /// <summary>
     /// Gets or sets the asynchronous method to load items.
@@ -119,17 +97,26 @@ public partial class Typeahead<TItem, TValue> : ComponentBase, IDisposable
     [Parameter]
     public Func<Task<IEnumerable<TItem>>>? ItemLoader { get; set; }
 
+
     /// <summary>
     /// Gets or sets the asynchronous search method to filter items based on input text.
     /// </summary>
     [Parameter]
-    public Func<string, Task<IEnumerable<TItem>>> SearchMethod { get; set; } = null!;
+    public Func<string, Task<IEnumerable<TItem>>>? SearchMethod { get; set; }
 
     /// <summary>
     /// Gets or sets the method to convert an item to its value.
     /// </summary>
     [Parameter]
-    public Func<TItem, TValue?> ConvertMethod { get; set; } = null!;
+    public Func<TItem?, TValue?>? ConvertMethod { get; set; }
+
+    /// <summary>
+    /// Gets or sets the asynchronous method to look up an item by its value.
+    /// Used to convert a value back to its corresponding item.
+    /// </summary>
+    [Parameter]
+    public Func<TValue?, Task<TItem?>>? LookupMethod { get; set; }
+
 
     /// <summary>
     /// Gets or sets the template to display when no records are found.
@@ -147,19 +134,20 @@ public partial class Typeahead<TItem, TValue> : ComponentBase, IDisposable
     /// Gets or sets the template for displaying each search result item.
     /// </summary>
     [Parameter]
-    public RenderFragment<TItem> ResultTemplate { get; set; } = null!;
+    public RenderFragment<TItem>? ResultTemplate { get; set; }
 
     /// <summary>
     /// Gets or sets the template for displaying the selected value.
     /// </summary>
     [Parameter]
-    public RenderFragment<TValue> SelectedTemplate { get; set; } = null!;
+    public RenderFragment<TValue>? SelectedTemplate { get; set; }
 
     /// <summary>
     /// Gets or sets the template for the dropdown footer.
     /// </summary>
     [Parameter]
     public RenderFragment? FooterTemplate { get; set; }
+
 
     /// <summary>
     /// Gets or sets the minimum number of characters required to trigger a search.
@@ -177,7 +165,7 @@ public partial class Typeahead<TItem, TValue> : ComponentBase, IDisposable
     /// Gets or sets a value indicating whether the clear button is allowed.
     /// </summary>
     [Parameter]
-    public bool AllowClear { get; set; }
+    public bool AllowClear { get; set; } = true;
 
     /// <summary>
     /// Gets or sets a value indicating whether the control is disabled.
@@ -191,10 +179,11 @@ public partial class Typeahead<TItem, TValue> : ComponentBase, IDisposable
     [Parameter]
     public FieldIdentifier FieldIdentifier { get; set; }
 
+
     /// <summary>
     /// Gets a value indicating whether the control is currently loading search results.
     /// </summary>
-    protected bool Loading { get; set; }
+    protected bool Loading => _loadingState.IsLoading;
 
     /// <summary>
     /// Gets a value indicating whether the search menu is currently open.
@@ -204,41 +193,13 @@ public partial class Typeahead<TItem, TValue> : ComponentBase, IDisposable
     /// <summary>
     /// Gets the list of search results.
     /// </summary>
-    protected IList<TItem> SearchResults { get; set; }
-
-    /// <summary>
-    /// Gets the reference to the search input element.
-    /// </summary>
-    protected ElementReference SearchInput { get; set; }
-
-    private string _searchText;
+    protected List<TItem> SearchResults { get; set; } = [];
 
     /// <summary>
     /// Gets or sets the current search text.
     /// Triggers search or clears results based on input length.
     /// </summary>
-    protected string SearchText
-    {
-        get => _searchText;
-        set
-        {
-            _searchText = value;
-
-            if (value.Length == 0)
-            {
-                _debounceTimer.Stop();
-                SearchResults.Clear();
-                SelectedIndex = -1;
-
-                ShowItems();
-            }
-            else if (value.Length >= MinimumLength)
-            {
-                _debounceTimer.Stop();
-                _debounceTimer.Start();
-            }
-        }
-    }
+    protected string SearchText { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets or sets the index of the currently selected search result.
@@ -250,32 +211,21 @@ public partial class Typeahead<TItem, TValue> : ComponentBase, IDisposable
     /// </summary>
     protected bool PreventKey { get; set; }
 
+    /// <summary>
+    /// Gets the list of current items. Either from Items parameter or loaded via ItemLoader.
+    /// </summary>
+    protected List<TItem> CurrentItems { get; set; } = [];
+
     /// <inheritdoc />
     protected override void OnParametersSet()
     {
         base.OnParametersSet();
 
-        if (SearchMethod == null)
-        {
-            if (typeof(TItem) != typeof(string) || Items == null)
-                throw new InvalidOperationException($"{GetType()} requires a {nameof(SearchMethod)} parameter.");
+        // copy Items to CurrentItems if not set
+        if (Items != null && ItemLoader == null && CurrentItems.Count == 0)
+            CurrentItems.AddRange(Items);
 
-            SearchMethod = (text) => Task.FromResult(Items.Where(x => x is string s && s.Contains(text, StringComparison.InvariantCultureIgnoreCase)));
-        }
-
-        if (ConvertMethod == null)
-        {
-            if (typeof(TItem) != typeof(TValue))
-                throw new InvalidOperationException($"{GetType()} requires a {nameof(ConvertMethod)} parameter.");
-
-            ConvertMethod = item => item is TValue value ? value : default;
-        }
-
-        SelectedTemplate ??= item => builder => builder.AddContent(0, item?.ToString());
-        ResultTemplate ??= item => builder => builder.AddContent(0, item?.ToString());
-        NoRecordsTemplate ??= builder => builder.AddContent(0, "No Records Found");
-        LoadingTemplate ??= builder => builder.AddContent(0, "Loading ...");
-
+        // set up field identifier for validation
         if (FieldIdentifier.Equals(default))
         {
             if (ValuesExpression != null)
@@ -283,8 +233,6 @@ public partial class Typeahead<TItem, TValue> : ComponentBase, IDisposable
             else if (ValueExpression != null)
                 FieldIdentifier = FieldIdentifier.Create(ValueExpression);
         }
-
-        _debounceTimer.Interval = Debounce;
     }
 
     /// <inheritdoc />
@@ -292,37 +240,66 @@ public partial class Typeahead<TItem, TValue> : ComponentBase, IDisposable
     {
         await base.OnInitializedAsync();
 
-        if (ItemLoader != null)
-            _pending.Enqueue(LoadItems);
+        // load items if an item loader is provided
+        // will overwrite Items parameter if both are set
+        if (!Disabled && ItemLoader != null)
+            ExecuteAfterRender(LoadItems);
     }
 
-    /// <inheritdoc />
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        while (_pending.Count > 0)
-        {
-            var action = _pending.Dequeue();
-            await action();
-        }
-    }
 
     /// <summary>
     /// Performs a search using the current search text and updates the search results.
     /// </summary>
-    /// <param name="source">The event source.</param>
-    /// <param name="e">The elapsed event arguments.</param>
-    public async void Search(object? source, ElapsedEventArgs e)
+    /// <param name="searchText">The text to search for.</param>
+    public async Task Search(string? searchText)
     {
-        Loading = true;
+        // do not search if disabled or not in search mode
+        if (Disabled || !SearchMode)
+            return;
+
+        // set loading state
+        using var loading = _loadingState.Start();
         StateHasChanged();
 
-        var result = await SearchMethod(_searchText);
+        IEnumerable<TItem>? result = null;
 
-        SearchResults = result?.ToList() ?? [];
+        if (string.IsNullOrWhiteSpace(searchText) || searchText.Length < MinimumLength)
+        {
+            // if search text is null or below minimum length, return all items
+            result = CurrentItems;
+        }
+        else if (SearchMethod != null)
+        {
+            // use custom search method
+            result = await SearchMethod(searchText);
+        }
+        else if (typeof(TItem) == typeof(string) && CurrentItems.Count > 0)
+        {
+            // default search: filter items containing the search text (case-insensitive)
+            result = CurrentItems.Where(x => x is string s && s.Contains(searchText, StringComparison.InvariantCultureIgnoreCase));
+        }
+        else
+        {
+            // no search method available
+            throw new InvalidOperationException($"Typeahead component requires a {nameof(SearchMethod)} parameter.");
+        }
 
-        Loading = false;
+        // apply search results
+        SearchResults.Clear();
+        if (result != null)
+            SearchResults.AddRange(result);
+
+        // reset loading state
+        loading.Dispose();
         StateHasChanged();
     }
+
+    /// <summary>
+    /// Handles search input changes with debouncing to prevent excessive searches.
+    /// </summary>
+    private async Task HandleSearchInput()
+        => await _debouncer.Debounce(SearchText, Search, TimeSpan.FromMilliseconds(Debounce));
+
 
     /// <summary>
     /// Selects a search result item and updates the selected value(s).
@@ -330,7 +307,7 @@ public partial class Typeahead<TItem, TValue> : ComponentBase, IDisposable
     /// <param name="item">The item to select.</param>
     public async Task SelectResult(TItem item)
     {
-        var value = ConvertMethod(item);
+        var value = ConvertItem(item);
         if (value == null)
             return;
 
@@ -378,6 +355,7 @@ public partial class Typeahead<TItem, TValue> : ComponentBase, IDisposable
         CloseMenu();
     }
 
+
     /// <summary>
     /// Shows the search menu and focuses the search input.
     /// </summary>
@@ -386,11 +364,21 @@ public partial class Typeahead<TItem, TValue> : ComponentBase, IDisposable
         if (Disabled || SearchMode)
             return;
 
-        SearchText = "";
+        SearchText = string.Empty;
         SearchMode = true;
+        SelectedIndex = -1;
+        SearchResults.Clear();
 
         // need to wait for search input to render
-        _pending.Enqueue(() => SearchInput.FocusAsync().AsTask());
+        ExecuteAfterRender(async () =>
+        {
+            // set focus to search input
+            if (Element != null)
+                await Element.Value.FocusAsync();
+
+            // perform initial search
+            await Search(SearchText);
+        });
     }
 
     /// <summary>
@@ -399,7 +387,8 @@ public partial class Typeahead<TItem, TValue> : ComponentBase, IDisposable
     public void CloseMenu()
     {
         SearchMode = false;
-        Loading = false;
+        SelectedIndex = -1;
+        SearchResults.Clear();
     }
 
     /// <summary>
@@ -413,11 +402,12 @@ public partial class Typeahead<TItem, TValue> : ComponentBase, IDisposable
             ShowMenu();
     }
 
+
     /// <summary>
     /// Handles keydown events for navigation and selection in the search menu.
     /// </summary>
     /// <param name="args">The keyboard event arguments.</param>
-    public async Task HandleKeydown(KeyboardEventArgs args)
+    private async Task HandleKeydown(KeyboardEventArgs args)
     {
         // prevent form submit on enter
         PreventKey = (args.Key == "Enter");
@@ -440,7 +430,7 @@ public partial class Typeahead<TItem, TValue> : ComponentBase, IDisposable
     /// Determines whether the control is in multi-select mode.
     /// </summary>
     /// <returns><c>true</c> if multi-select; otherwise, <c>false</c>.</returns>
-    public bool IsMultiselect()
+    private bool IsMultiselect()
     {
         return ValuesExpression != null;
     }
@@ -449,7 +439,7 @@ public partial class Typeahead<TItem, TValue> : ComponentBase, IDisposable
     /// Determines whether there are search results to display.
     /// </summary>
     /// <returns><c>true</c> if there are search results; otherwise, <c>false</c>.</returns>
-    public bool HasSearchResult()
+    private bool HasSearchResult()
     {
         return SearchMode
             && !Loading
@@ -460,7 +450,7 @@ public partial class Typeahead<TItem, TValue> : ComponentBase, IDisposable
     /// Determines whether there is a selected value or values.
     /// </summary>
     /// <returns><c>true</c> if there is a value; otherwise, <c>false</c>.</returns>
-    public bool HasValue()
+    private bool HasValue()
     {
         return Value != null || Values?.Count > 0;
     }
@@ -471,14 +461,14 @@ public partial class Typeahead<TItem, TValue> : ComponentBase, IDisposable
     /// <param name="item">The item to evaluate.</param>
     /// <param name="index">The index of the item.</param>
     /// <returns>The CSS class string.</returns>
-    public string ResultClass(TItem item, int index)
+    private string ResultClass(TItem item, int index)
     {
         const string resultClass = "typeahead-option-selected";
 
         if (index == SelectedIndex)
             return resultClass;
 
-        var value = ConvertMethod(item);
+        var value = ConvertItem(item);
         if (value == null)
             return string.Empty;
 
@@ -501,7 +491,7 @@ public partial class Typeahead<TItem, TValue> : ComponentBase, IDisposable
     /// Gets the CSS class for the typeahead control based on validation and active state.
     /// </summary>
     /// <returns>The CSS class string.</returns>
-    public string? ControlClass()
+    private string? ControlClass()
     {
         var validationClass = EditContext != null
             ? EditContext.FieldCssClass(FieldIdentifier)
@@ -521,29 +511,26 @@ public partial class Typeahead<TItem, TValue> : ComponentBase, IDisposable
     /// <summary>
     /// Loads items asynchronously using the <see cref="ItemLoader"/> method.
     /// </summary>
-    public async Task LoadItems()
+    private async ValueTask LoadItems()
     {
         if (ItemLoader == null)
             return;
 
-        Loading = true;
+        using var loading = _loadingState.Start();
         StateHasChanged();
 
         var result = await ItemLoader();
 
-        Items = result?.ToList() ?? [];
+        CurrentItems.Clear();
+        if (result != null)
+            CurrentItems.AddRange(result);
 
-        Loading = false;
+        // trigger result update if search menu active
+        if (SearchMode)
+            await HandleSearchInput();
+
+        loading.Dispose();
         StateHasChanged();
-    }
-
-    /// <summary>
-    /// Disposes resources used by the component.
-    /// </summary>
-    public void Dispose()
-    {
-        _debounceTimer?.Dispose();
-        GC.SuppressFinalize(this);
     }
 
     /// <summary>
@@ -564,13 +551,19 @@ public partial class Typeahead<TItem, TValue> : ComponentBase, IDisposable
     }
 
     /// <summary>
-    /// Shows all items in the search results if not already present.
+    /// Converts an item to its corresponding value using <see cref="ConvertMethod"/> or direct casting.
     /// </summary>
-    private void ShowItems()
+    /// <param name="item">The item to convert.</param>
+    /// <returns>The converted value.</returns>
+    /// <exception cref="InvalidOperationException">Thrown when conversion is not possible and no <see cref="ConvertMethod"/> is provided.</exception>
+    private TValue? ConvertItem(TItem item)
     {
-        if (Items == null || Items.Count == 0 || SearchResults.Count != 0)
-            return;
+        if (ConvertMethod is not null)
+            return ConvertMethod(item);
 
-        SearchResults = [.. Items];
+        if (item is TValue value)
+            return value;
+
+        throw new InvalidOperationException($"Typeahead component requires a {nameof(ConvertMethod)} parameter.");
     }
 }

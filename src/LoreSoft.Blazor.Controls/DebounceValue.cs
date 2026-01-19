@@ -1,3 +1,5 @@
+// Ignore Spelling: debounce, debounced
+
 #nullable enable
 
 namespace LoreSoft.Blazor.Controls;
@@ -15,7 +17,7 @@ public class DebounceValue<T>
     public static readonly TimeSpan DefaultDelay = TimeSpan.FromMilliseconds(800);
 
     private T? _value;
-    private int _last = 0;
+    private int _counter = 0;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="DebounceValue{T}"/> class with the specified action, delay, and initial value.
@@ -45,11 +47,11 @@ public class DebounceValue<T>
 
             _value = value;
 
-            var current = Interlocked.Increment(ref _last);
+            var current = Interlocked.Increment(ref _counter);
 
             Task.Delay(Delay).ContinueWith(_ =>
             {
-                if (current == _last)
+                if (current == _counter)
                     Action(_value);
             });
         }

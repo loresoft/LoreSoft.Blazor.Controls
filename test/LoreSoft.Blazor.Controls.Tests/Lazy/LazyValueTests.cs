@@ -321,4 +321,143 @@ public class LazyValueTests : BunitContext
             cut.MarkupMatches($"<span class='loaded'>{fruit.Name} - {fruit.Rank}</span>");
         });
     }
+
+    [Fact]
+    public void Displays_LoadingText_While_Loading()
+    {
+        // arrange
+        var fruit = Fruit.Data().First();
+        var key = fruit.Id;
+        var loadingText = "Loading fruit data...";
+        var tcs = new TaskCompletionSource<Fruit?>();
+
+        // act
+        var cut = Render<LazyValue<Guid, Fruit>>(parameters => parameters
+            .Add(p => p.LoadMethod, _ => tcs.Task)
+            .Add(p => p.Key, key)
+            .Add(p => p.LoadingText, loadingText)
+        );
+
+        // assert loading state
+        cut.MarkupMatches(loadingText);
+        Assert.True(cut.Instance.Loading);
+
+        // complete loading
+        tcs.SetResult(fruit);
+
+        // assert loaded state
+        cut.WaitForAssertion(() =>
+        {
+            cut.MarkupMatches(fruit.ToString());
+            Assert.False(cut.Instance.Loading);
+        });
+    }
+
+    [Fact]
+    public void Displays_LoadingTemplate_While_Loading()
+    {
+        // arrange
+        var fruit = Fruit.Data().First();
+        var key = fruit.Id;
+        var tcs = new TaskCompletionSource<Fruit?>();
+
+        // act
+        var cut = Render<LazyValue<Guid, Fruit>>(parameters => parameters
+            .Add(p => p.LoadMethod, _ => tcs.Task)
+            .Add(p => p.Key, key)
+            .Add(p => p.LoadingTemplate, "<div class='spinner'>Loading...</div>")
+        );
+
+        // assert loading state
+        cut.MarkupMatches("<div class='spinner'>Loading...</div>");
+        Assert.True(cut.Instance.Loading);
+
+        // complete loading
+        tcs.SetResult(fruit);
+
+        // assert loaded state
+        cut.WaitForAssertion(() =>
+        {
+            cut.MarkupMatches(fruit.ToString());
+            Assert.False(cut.Instance.Loading);
+        });
+    }
+
+    [Fact]
+    public void LoadingTemplate_Takes_Precedence_Over_LoadingText()
+    {
+        // arrange
+        var fruit = Fruit.Data().First();
+        var key = fruit.Id;
+        var tcs = new TaskCompletionSource<Fruit?>();
+
+        // act
+        var cut = Render<LazyValue<Guid, Fruit>>(parameters => parameters
+            .Add(p => p.LoadMethod, _ => tcs.Task)
+            .Add(p => p.Key, key)
+            .Add(p => p.LoadingTemplate, "<span>Template Loading</span>")
+            .Add(p => p.LoadingText, "Text Loading")
+        );
+
+        // assert loading state shows template, not text
+        cut.MarkupMatches("<span>Template Loading</span>");
+
+        // complete loading
+        tcs.SetResult(fruit);
+
+        cut.WaitForAssertion(() =>
+        {
+            cut.MarkupMatches(fruit.ToString());
+        });
+    }
+
+    [Fact]
+    public void Displays_Key_While_Loading_When_No_LoadingTemplate_Or_LoadingText()
+    {
+        // arrange
+        var fruit = Fruit.Data().First();
+        var key = fruit.Id;
+        var tcs = new TaskCompletionSource<Fruit?>();
+
+        // act
+        var cut = Render<LazyValue<Guid, Fruit>>(parameters => parameters
+            .Add(p => p.LoadMethod, _ => tcs.Task)
+            .Add(p => p.Key, key)
+        );
+
+        // assert loading state shows key
+        cut.MarkupMatches(key.ToString());
+        Assert.True(cut.Instance.Loading);
+
+        // complete loading
+        tcs.SetResult(fruit);
+
+        cut.WaitForAssertion(() =>
+        {
+            cut.MarkupMatches(fruit.ToString());
+            Assert.False(cut.Instance.Loading);
+        });
+    }
+
+    [Fact]
+    public void Loading_Property_Is_False_After_Completion()
+    {
+        // arrange
+        var fruit = Fruit.Data().First();
+        var key = fruit.Id;
+        var loadMethod = Fruit.GetByIdAsync;
+
+        // act
+        var cut = Render<LazyValue<Guid, Fruit>>(parameters => parameters
+            .Add(p => p.LoadMethod, loadMethod)
+            .Add(p => p.Key, key)
+        );
+
+        // assert
+        cut.WaitForAssertion(() =>
+        {
+            Assert.False(cut.Instance.Loading);
+            Assert.NotNull(cut.Instance.Value);
+        });
+    }
 }

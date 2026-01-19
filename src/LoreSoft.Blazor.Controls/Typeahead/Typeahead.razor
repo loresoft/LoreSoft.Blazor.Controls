@@ -1,13 +1,16 @@
+@inherits StandardComponent
 @typeparam TItem
 @typeparam TValue
 @namespace LoreSoft.Blazor.Controls
 
-@using Microsoft.AspNetCore.Components.Web
-
 <div class="typeahead">
     <div class="@ControlClass()"
-         tabindex="0"
-         role="textbox"
+         tabindex="@(Disabled ? "-1" : "0")"
+         role="combobox"
+         aria-expanded="@SearchMode.ToString().ToLower()"
+         aria-haspopup="listbox"
+         aria-label="@Placeholder"
+         aria-disabled="@(Disabled ? "true" : null)"
          title="@Placeholder"
          @attributes="AdditionalAttributes"
          @onfocus="ShowMenu">
@@ -18,7 +21,7 @@
                 {
                     <div @key="value" class="typeahead-multi-value">
                         <div class="typeahead-multi-value-label">
-                            @SelectedTemplate(value)
+                            @SelectedValue(value)
                         </div>
                         <button type="button"
                                 class="typeahead-multi-value-clear"
@@ -35,7 +38,7 @@
             else if (!IsMultiselect() && Value != null)
             {
                 <div class="typeahead-single-value">
-                    @SelectedTemplate(Value)
+                    @SelectedValue(Value)
                 </div>
             }
             else
@@ -90,27 +93,40 @@
 
         <div class="typeahead-menu">
             <div class="typeahead-search-container">
-                <input @ref="SearchInput"
+                <input @ref="Element"
                        @bind-value="SearchText"
                        @bind-value:event="oninput"
+                       @bind-value:after="HandleSearchInput"
                        @onkeydown="HandleKeydown"
                        @onkeydown:preventDefault="PreventKey"
+                       id="@ElementId"
                        class="typeahead-search-input"
                        type="search"
+                       role="searchbox"
+                       aria-autocomplete="list"
+                       aria-controls="@(ElementId)-menu"
+                       aria-activedescendant="@(SelectedIndex >= 0 ? $"{ElementId}-option-{SelectedIndex}" : null)"
                        placeholder="@SearchPlaceholder"
                        autocomplete="off" />
             </div>
-            <div class="typeahead-menu-list">
+            <div class="typeahead-menu-list"
+                 id="@(ElementId)-menu"
+                 role="listbox"
+                 aria-label="Search results">
                 @if (Loading)
                 {
-                    <div class="typeahead-option-loading">
-                        @LoadingTemplate
+                    <div class="typeahead-option-loading"
+                         role="status"
+                         aria-live="polite">
+                        @(LoadingTemplate == null ? "Loading ..." : LoadingTemplate)
                     </div>
                 }
                 else if (!HasSearchResult())
                 {
-                    <div class="typeahead-option-no-records">
-                        @NoRecordsTemplate
+                    <div class="typeahead-option-no-records"
+                         role="status"
+                         aria-live="polite">
+                        @(NoRecordsTemplate == null ? "No records found." : NoRecordsTemplate)
                     </div>
                 }
                 else
@@ -118,10 +134,14 @@
                     for (var index = 0; index < SearchResults.Count; index++)
                     {
                         var item = SearchResults[index];
+                        var isSelected = index == SelectedIndex;
                         <div @key="item"
+                             id="@(ElementId)-option-@index"
                              class="typeahead-option @ResultClass(item, index)"
+                             role="option"
+                             aria-selected="@isSelected.ToString().ToLower()"
                              @onclick="@(() => SelectResult(item))">
-                            @ResultTemplate(item)
+                            @ResultValue(item)
                         </div>
                     }
                 }
@@ -136,3 +156,39 @@
         </div>
     }
 </div>
+@code {
+    protected RenderFragment<TValue> SelectedValue => value => __builder =>
+    {
+        @if (SelectedTemplate == null)
+        {
+            @if (LookupMethod != null)
+            {
+                <LazyValue TKey="TValue"
+                           TValue="TItem"
+                           Key="@value"
+                           LoadingText="Loading..."
+                           LoadMethod="@LookupMethod" />
+            }
+            else
+            {
+                <span>@value?.ToString()</span>
+            }
+        }
+        else
+        {
+            @SelectedTemplate(value)
+        }
+    };
+
+    protected RenderFragment<TItem> ResultValue => item => __builder =>
+    {
+        @if (ResultTemplate == null)
+        {
+            <span>@item?.ToString()</span>
+        }
+        else
+        {
+            @ResultTemplate(item)
+        }
+    };
+}

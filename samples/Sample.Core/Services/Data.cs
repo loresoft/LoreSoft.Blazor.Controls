@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-
 using Bogus;
 
 using Sample.Core.Models;
@@ -10,7 +8,7 @@ namespace Sample.Core.Services;
 
 public static class Data
 {
-    public static IReadOnlyCollection<Person> PersonList { get; } = new List<Person>
+    public static List<Person> PersonList { get; } = new List<Person>
     {
         new() {Id = 1, FirstName = "John", LastName = "Smith"},
         new() {Id = 2, FirstName = "Jane", LastName = "Doe"},
@@ -20,7 +18,7 @@ public static class Data
         new() {Id = 6, FirstName = "Jon", LastName = "Thomas"}
     };
 
-    public static IReadOnlyCollection<StateLocation> StateList { get; } = new List<StateLocation>
+    public static List<StateLocation> StateList { get; } = new List<StateLocation>
     {
         new("AL - Alabama", "AL"),
         new("AK - Alaska", "AK"),
@@ -99,7 +97,7 @@ public static class Data
         "Ally Bank"
     };
 
-    public static IReadOnlyCollection<Person> GeneratePeople(int count = 100)
+    public static List<Person> GeneratePeople(int count = 100)
     {
         var generator = new Faker<Person>()
             .RuleFor(p => p.Id, f => f.IndexGlobal)
@@ -112,7 +110,7 @@ public static class Data
         return generator.Generate(count);
     }
 
-    public static IReadOnlyCollection<Bank> GenerateBanks(int count = 1000)
+    public static List<Bank> GenerateBanks(int count = 1000)
     {
         var generator = new Faker<Bank>()
             .RuleFor(b => b.Id, f => f.IndexGlobal)
@@ -128,7 +126,7 @@ public static class Data
         return generator.Generate(count);
     }
 
-    public static IReadOnlyCollection<LogEvent> GenerateLogEvents(int count = 1000)
+    public static List<LogEvent> GenerateLogEvents(int count = 1000)
     {
         var levels = new[] { "Debug", "Info", "Warn", "Error", "Fatal" };
         var startDate = DateTimeOffset.Now.AddDays(-2); // Or any starting date

@@ -34,6 +34,20 @@ public class LazyValue<TKey, TValue> : ComponentBase
     public RenderFragment<TValue?>? ChildContent { get; set; }
 
     /// <summary>
+    /// Gets or sets the template used to render content while the value is being loaded.
+    /// If not set, <see cref="LoadingText"/> or <see cref="Key"/> will be displayed.
+    /// </summary>
+    [Parameter]
+    public RenderFragment? LoadingTemplate { get; set; }
+
+    /// <summary>
+    /// Gets or sets the text to display while the value is being loaded.
+    /// Only used if <see cref="LoadingTemplate"/> is not set.
+    /// </summary>
+    [Parameter]
+    public string? LoadingText { get; set; }
+
+    /// <summary>
     /// Gets or sets the loaded value.
     /// </summary>
     public TValue? Value { get; set; }
@@ -75,12 +89,25 @@ public class LazyValue<TKey, TValue> : ComponentBase
     protected override void BuildRenderTree(RenderTreeBuilder builder)
     {
         if (Loading)
-            builder.AddContent(0, Key);
+        {
+            if (LoadingTemplate != null)
+                builder.AddContent(0, LoadingTemplate);
+            else if (!string.IsNullOrEmpty(LoadingText))
+                builder.AddContent(0, LoadingText);
+            else
+                builder.AddContent(0, Key);
+        }
         else if (ChildContent != null)
+        {
             builder.AddContent(0, ChildContent, Value);
+        }
         else if (Value == null)
+        {
             builder.AddContent(0, Key);
+        }
         else
+        {
             builder.AddContent(0, Value);
+        }
     }
 }

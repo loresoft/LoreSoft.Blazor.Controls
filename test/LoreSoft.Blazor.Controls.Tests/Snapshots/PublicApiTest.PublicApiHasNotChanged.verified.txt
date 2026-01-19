@@ -747,6 +747,16 @@ namespace LoreSoft.Blazor.Controls
         protected void ToggleDatePicker() { }
         protected override bool TryParseValueFromString(string? value, [System.Diagnostics.CodeAnalysis.MaybeNullWhen(false)] out TValue result, [System.Diagnostics.CodeAnalysis.NotNullWhen(false)] out string? validationErrorMessage) { }
     }
+    public class DebounceAction
+    {
+        public DebounceAction(System.TimeSpan? defaultDelay = default) { }
+        public System.Threading.Tasks.Task Debounce(System.Func<System.Threading.Tasks.Task> action, System.TimeSpan? delay = default) { }
+    }
+    public class DebounceAction<T>
+    {
+        public DebounceAction(System.TimeSpan? defaultDelay = default, bool skipDuplicates = true) { }
+        public System.Threading.Tasks.Task Debounce(T value, System.Func<T, System.Threading.Tasks.Task> action, System.TimeSpan? delay = default) { }
+    }
     public class DebounceValue<T>
     {
         public static readonly System.TimeSpan DefaultDelay;
@@ -754,6 +764,11 @@ namespace LoreSoft.Blazor.Controls
         public System.Action<T?> Action { get; }
         public System.TimeSpan Delay { get; }
         public T Value { get; set; }
+    }
+    public struct DisposableAction : System.IDisposable
+    {
+        public DisposableAction(System.Action? action) { }
+        public void Dispose() { }
     }
     public class DownloadService : LoreSoft.Blazor.Controls.JavaScriptModule
     {
@@ -877,6 +892,10 @@ namespace LoreSoft.Blazor.Controls
         [Microsoft.AspNetCore.Components.Parameter]
         public required System.Func<TKey?, System.Threading.Tasks.Task<TValue?>> LoadMethod { get; set; }
         public bool Loading { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public Microsoft.AspNetCore.Components.RenderFragment? LoadingTemplate { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public string? LoadingText { get; set; }
         public TValue Value { get; set; }
         protected override void BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder builder) { }
         protected override System.Threading.Tasks.Task OnParametersSetAsync() { }
@@ -901,6 +920,14 @@ namespace LoreSoft.Blazor.Controls
         public bool ShowSpinner { get; set; }
         protected override void BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder builder) { }
         protected override void OnParametersSet() { }
+    }
+    public class LoadingState
+    {
+        public LoadingState() { }
+        public bool IsLoading { get; }
+        public void Reset() { }
+        public LoreSoft.Blazor.Controls.DisposableAction Start() { }
+        public void Stop() { }
     }
     public class LocalTime<TValue> : Microsoft.AspNetCore.Components.ComponentBase
     {
@@ -1475,15 +1502,14 @@ namespace LoreSoft.Blazor.Controls
     }
     [Microsoft.AspNetCore.Components.CascadingTypeParameter("TItem")]
     [Microsoft.AspNetCore.Components.CascadingTypeParameter("TValue")]
-    public class Typeahead<TItem, TValue> : Microsoft.AspNetCore.Components.ComponentBase, System.IDisposable
+    public class Typeahead<TItem, TValue> : LoreSoft.Blazor.Controls.Abstracts.StandardComponent
     {
         public Typeahead() { }
-        [Microsoft.AspNetCore.Components.Parameter(CaptureUnmatchedValues=true)]
-        public System.Collections.Generic.Dictionary<string, object>? AdditionalAttributes { get; set; }
         [Microsoft.AspNetCore.Components.Parameter]
         public bool AllowClear { get; set; }
         [Microsoft.AspNetCore.Components.Parameter]
-        public System.Func<TItem, TValue?> ConvertMethod { get; set; }
+        public System.Func<TItem?, TValue?>? ConvertMethod { get; set; }
+        protected System.Collections.Generic.List<TItem> CurrentItems { get; set; }
         [Microsoft.AspNetCore.Components.Parameter]
         public int Debounce { get; set; }
         [Microsoft.AspNetCore.Components.Parameter]
@@ -1497,10 +1523,12 @@ namespace LoreSoft.Blazor.Controls
         [Microsoft.AspNetCore.Components.Parameter]
         public System.Func<System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<TItem>>>? ItemLoader { get; set; }
         [Microsoft.AspNetCore.Components.Parameter]
-        public System.Collections.Generic.IReadOnlyCollection<TItem>? Items { get; set; }
-        protected bool Loading { get; set; }
+        public System.Collections.Generic.IEnumerable<TItem>? Items { get; set; }
+        protected bool Loading { get; }
         [Microsoft.AspNetCore.Components.Parameter]
         public Microsoft.AspNetCore.Components.RenderFragment? LoadingTemplate { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public System.Func<TValue?, System.Threading.Tasks.Task<TItem?>>? LookupMethod { get; set; }
         [Microsoft.AspNetCore.Components.Parameter]
         public int MinimumLength { get; set; }
         [Microsoft.AspNetCore.Components.Parameter]
@@ -1509,18 +1537,19 @@ namespace LoreSoft.Blazor.Controls
         public string? Placeholder { get; set; }
         protected bool PreventKey { get; set; }
         [Microsoft.AspNetCore.Components.Parameter]
-        public Microsoft.AspNetCore.Components.RenderFragment<TItem> ResultTemplate { get; set; }
-        protected Microsoft.AspNetCore.Components.ElementReference SearchInput { get; set; }
+        public Microsoft.AspNetCore.Components.RenderFragment<TItem>? ResultTemplate { get; set; }
+        protected Microsoft.AspNetCore.Components.RenderFragment<TItem> ResultValue { get; }
         [Microsoft.AspNetCore.Components.Parameter]
-        public System.Func<string, System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<TItem>>> SearchMethod { get; set; }
+        public System.Func<string, System.Threading.Tasks.Task<System.Collections.Generic.IEnumerable<TItem>>>? SearchMethod { get; set; }
         protected bool SearchMode { get; set; }
         [Microsoft.AspNetCore.Components.Parameter]
         public string? SearchPlaceholder { get; set; }
-        protected System.Collections.Generic.IList<TItem> SearchResults { get; set; }
+        protected System.Collections.Generic.List<TItem> SearchResults { get; set; }
         protected string SearchText { get; set; }
         protected int SelectedIndex { get; set; }
         [Microsoft.AspNetCore.Components.Parameter]
-        public Microsoft.AspNetCore.Components.RenderFragment<TValue> SelectedTemplate { get; set; }
+        public Microsoft.AspNetCore.Components.RenderFragment<TValue>? SelectedTemplate { get; set; }
+        protected Microsoft.AspNetCore.Components.RenderFragment<TValue> SelectedValue { get; }
         [Microsoft.AspNetCore.Components.Parameter]
         public TValue Value { get; set; }
         [Microsoft.AspNetCore.Components.Parameter]
@@ -1536,19 +1565,10 @@ namespace LoreSoft.Blazor.Controls
         protected override void BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder @__builder) { }
         public System.Threading.Tasks.Task Clear() { }
         public void CloseMenu() { }
-        public string? ControlClass() { }
-        public void Dispose() { }
-        public System.Threading.Tasks.Task HandleKeydown(Microsoft.AspNetCore.Components.Web.KeyboardEventArgs args) { }
-        public bool HasSearchResult() { }
-        public bool HasValue() { }
-        public bool IsMultiselect() { }
-        public System.Threading.Tasks.Task LoadItems() { }
-        protected override System.Threading.Tasks.Task OnAfterRenderAsync(bool firstRender) { }
         protected override System.Threading.Tasks.Task OnInitializedAsync() { }
         protected override void OnParametersSet() { }
         public System.Threading.Tasks.Task RemoveValue(TValue item) { }
-        public string ResultClass(TItem item, int index) { }
-        public void Search(object? source, System.Timers.ElapsedEventArgs e) { }
+        public System.Threading.Tasks.Task Search(string? searchText) { }
         public System.Threading.Tasks.Task SelectResult(TItem item) { }
         public void ShowMenu() { }
         public void ToggleMenu() { }
@@ -1729,16 +1749,6 @@ namespace LoreSoft.Blazor.Controls.Utilities
         public static System.Threading.Tasks.Task<string> WriteAsync<T>(System.Collections.Generic.IEnumerable<string>? headers, System.Collections.Generic.IEnumerable<T> rows, System.Func<T, System.Collections.Generic.IEnumerable<string?>> selector, System.Threading.CancellationToken cancellationToken = default) { }
         public static System.Threading.Tasks.Task WriteAsync<T>(System.IO.TextWriter writer, System.Collections.Generic.IEnumerable<string>? headers, System.Collections.Generic.IEnumerable<T> rows, System.Func<T, System.Collections.Generic.IEnumerable<string?>> selector, System.Threading.CancellationToken cancellationToken = default) { }
         public static System.Threading.Tasks.Task WriteAsync<T>(System.IO.Stream stream, System.Collections.Generic.IEnumerable<string>? headers, System.Collections.Generic.IEnumerable<T> rows, System.Func<T, System.Collections.Generic.IEnumerable<string?>> selector, System.Text.Encoding? encoding = null, System.Threading.CancellationToken cancellationToken = default) { }
-    }
-    public static class DelayedAction
-    {
-        public static readonly System.TimeSpan DefaultDelay;
-        public static System.Action Debounce(this System.Action action, System.TimeSpan? interval = default) { }
-        public static System.Action<T> Debounce<T>(this System.Action<T> action, System.TimeSpan? interval = default) { }
-        public static System.Func<System.Threading.Tasks.Task> DebounceAsync(this System.Func<System.Threading.Tasks.Task> action, System.TimeSpan? interval = default) { }
-        public static System.Func<T, System.Threading.Tasks.Task> DebounceAsync<T>(this System.Func<T, System.Threading.Tasks.Task> action, System.TimeSpan? interval = default) { }
-        public static System.Action Throttle(this System.Action action, System.TimeSpan? interval = default) { }
-        public static System.Action<T> Throttle<T>(this System.Action<T> action, System.TimeSpan? interval = default) { }
     }
     public sealed class DisposableBag : System.IDisposable
     {

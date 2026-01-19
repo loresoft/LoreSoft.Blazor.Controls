@@ -19,4 +19,7 @@ public class Person
     public int Score { get; set; }
     public string? Location { get; set; }
     public DateTime? Birthday { get; set; }
+
+    public override string ToString()
+        => FullName ?? string.Empty;
 }

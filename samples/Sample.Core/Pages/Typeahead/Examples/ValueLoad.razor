@@ -1,0 +1,49 @@
+@using Sample.Core.Models
+@using Sample.Core.Services
+<h3>Bind to different Type from search result Type</h3>
+
+<Typeahead TItem="Person"
+           TValue="int?"
+           ItemLoader="LoadPeople"
+           SearchMethod="SearchPeople"
+           ConvertMethod="ConvertPerson"
+           LookupMethod="LookupPerson"
+           @bind-Value="PersonId"
+           Placeholder="Person">
+</Typeahead>
+
+<p>Bound Value: @PersonId</p>
+
+@code {
+    public int? PersonId { get; set; } = 50;
+
+    public async Task<IEnumerable<Person>> SearchPeople(string searchText)
+    {
+        await Task.Delay(TimeSpan.FromSeconds(1)); // Simulate async delay
+
+        var result = Data.PersonList
+            .Where(x => x.FullName?.IndexOf(searchText, StringComparison.OrdinalIgnoreCase) >= 0)
+            .ToList();
+
+        return await Task.FromResult(result);
+    }
+
+    public int? ConvertPerson(Person? person)
+    {
+        return person?.Id;
+    }
+
+    public async Task<Person?> LookupPerson(int? id)
+    {
+        await Task.Delay(TimeSpan.FromSeconds(1)); // Simulate async delay
+
+        return Data.PersonList.FirstOrDefault(p => p.Id == id);
+    }
+
+    private async Task<IEnumerable<Person>> LoadPeople()
+    {
+        await Task.Delay(TimeSpan.FromSeconds(1)); // Simulate async delay
+
+        return Data.PersonList.AsEnumerable();
+    }
+}
