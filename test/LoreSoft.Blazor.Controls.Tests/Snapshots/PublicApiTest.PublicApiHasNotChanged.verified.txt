@@ -311,7 +311,7 @@ namespace LoreSoft.Blazor.Controls
         public Microsoft.AspNetCore.Components.RenderFragment? LoadingTemplate { get; set; }
         public LoreSoft.Blazor.Controls.DataPagerState Pager { get; }
         [Microsoft.AspNetCore.Components.Parameter]
-        public LoreSoft.Blazor.Controls.QueryGroup? Query { get; set; }
+        public LoreSoft.Blazor.Controls.QueryRule? Query { get; set; }
         protected bool Rendered { get; }
         public LoreSoft.Blazor.Controls.QueryGroup RootQuery { get; }
         [Microsoft.AspNetCore.Components.Parameter]
@@ -339,8 +339,8 @@ namespace LoreSoft.Blazor.Controls
         protected virtual System.Linq.IQueryable<TItem> PageData(System.Linq.IQueryable<TItem> queryable, LoreSoft.Blazor.Controls.DataRequest request) { }
         public virtual System.Threading.Tasks.Task RefreshAsync(bool resetPager = false, bool forceReload = false) { }
         protected virtual System.Threading.Tasks.ValueTask RefreshCoreAsync() { }
-        public System.Threading.Tasks.Task RemoveFilter(string id) { }
-        public System.Threading.Tasks.Task RemoveFilters(System.Predicate<LoreSoft.Blazor.Controls.QueryRule> match) { }
+        public System.Threading.Tasks.Task RemoveFilter(string id, bool refresh = true) { }
+        public System.Threading.Tasks.Task RemoveFilters(System.Predicate<LoreSoft.Blazor.Controls.QueryRule> match, bool refresh = true) { }
         public void ShowFilter() { }
         public virtual void SortBy(string columnName, bool? descending = default) { }
         public virtual System.Threading.Tasks.Task SortByAsync(string columnName, bool? descending = default) { }
