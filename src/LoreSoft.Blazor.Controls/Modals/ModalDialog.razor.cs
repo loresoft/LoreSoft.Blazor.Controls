@@ -151,6 +151,10 @@ public partial class ModalDialog : ComponentBase, IAsyncDisposable
         if (close is null || close.Modal is null || _dialog is null)
             return;
 
+        // Only close this dialog if the message is for this specific modal
+        if (close.Modal != Modal)
+            return;
+
         // close with special value to indicate programmatic close
         await _dialog.InvokeVoidAsync("close", ProgrammaticCloseValue);
     }

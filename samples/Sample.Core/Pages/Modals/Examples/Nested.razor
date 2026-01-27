@@ -1,0 +1,40 @@
+@using LoreSoft.Blazor.Controls
+
+<p>This example demonstrates opening a modal dialog from within another modal dialog.</p>
+
+<div>
+    <button type="button"
+            class="btn btn-secondary"
+            @onclick="OpenFirstModal">
+        Open First Modal
+    </button>
+</div>
+
+<div class="mt-3">
+    <p><strong>Result from nested modals:</strong> @_result</p>
+</div>
+
+@code {
+    [Inject]
+    public required ModalService ModalService { get; set; }
+
+    private string _result = "No action taken yet";
+
+    private async Task OpenFirstModal()
+    {
+        var modal = await ModalService.Show<FirstNestedModal>();
+        var result = await modal.Result;
+
+        if (result.Cancelled)
+        {
+            _result = "First modal was cancelled";
+        }
+        else
+        {
+            _result = $"Completed nested modals. Final data: {result.Data}";
+        }
+
+        StateHasChanged();
+    }
+}
+

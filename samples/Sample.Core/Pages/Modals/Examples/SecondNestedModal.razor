@@ -1,0 +1,74 @@
+@namespace Sample.Core.Pages.Modals.Examples
+@using LoreSoft.Blazor.Controls
+@inherits ModalComponentBase
+
+<div class="dialog-content @VariantClass">
+    <div class="dialog-header">
+        <h3 class="dialog-title">Second Modal Level (Nested)</h3>
+        <button type="button"
+                class="dialog-close-button"
+                aria-label="Close"
+                @onclick="CancelAsync" />
+    </div>
+    <div class="dialog-body">
+        <p class="text-success fw-bold">This is the <strong>second (nested)</strong> modal!</p>
+        <p>You can open even more modals if needed. This demonstrates that modals can be stacked.</p>
+        
+        <div class="mb-3">
+            <label for="userInput" class="form-label">Enter some data:</label>
+            <input type="text" 
+                   class="form-control" 
+                   id="userInput" 
+                   @bind="_userInput" 
+                   placeholder="Type something here..." />
+        </div>
+
+        <button type="button" 
+                class="btn btn-sm dialog-primary-button" 
+                @onclick="OpenThirdModal">
+            Open Another Nested Modal
+        </button>
+    </div>
+    <div class="dialog-footer">
+        <button type="button"
+                class="dialog-secondary-button"
+                @onclick="CancelAsync">
+            Cancel
+        </button>
+        <button type="button"
+                class="dialog-primary-button"
+                @onclick="SubmitData">
+            Submit Data
+        </button>
+    </div>
+</div>
+
+@code {
+    [Inject]
+    public required ModalService ModalService { get; set; }
+
+    private string _userInput = "";
+
+    private async Task SubmitData()
+    {
+        await CloseAsync(_userInput);
+    }
+
+    private async Task OpenThirdModal()
+    {
+        var confirmed = await ModalService.Confirm(
+            "This is a third level modal! You can nest modals as deep as you need. Do you want to continue?",
+            "Confirmation",
+            ModalVariant.Information
+        );
+
+        if (confirmed)
+        {
+            await ModalService.Alert(
+                "You confirmed! This is a fourth level modal (just to show it's possible).",
+                "Success",
+                ModalVariant.Success
+            );
+        }
+    }
+}
