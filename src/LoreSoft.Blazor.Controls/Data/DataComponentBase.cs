@@ -22,7 +22,7 @@ public abstract class DataComponentBase<TItem> : ComponentBase, IDisposable
     private IEnumerable<TItem>? _data;
     private bool _isLoading;
     private DataSort? _currentSort;
-    private QueryGroup? _initialQuery;
+    private QueryRule? _initialQuery;
 
     /// <summary>
     /// Gets or sets the JavaScript runtime for interop calls.
@@ -156,7 +156,7 @@ public abstract class DataComponentBase<TItem> : ComponentBase, IDisposable
     /// When set, this query will be merged with the internal <see cref="RootQuery"/> for filtering operations.
     /// </summary>
     [Parameter]
-    public QueryGroup? Query { get; set; }
+    public QueryRule? Query { get; set; }
 
     /// <summary>
     /// Event triggered when the data grid is initialized.
@@ -319,7 +319,10 @@ public abstract class DataComponentBase<TItem> : ComponentBase, IDisposable
             RootQuery.Filters.Clear();
 
         if (rules != null)
-            RootQuery.Filters.AddRange(rules);
+        {
+            foreach (var rule in rules)
+                await ApplyFilter(rule, false);
+        }
 
         if (refresh)
             await RefreshAsync(true);
@@ -339,7 +342,7 @@ public abstract class DataComponentBase<TItem> : ComponentBase, IDisposable
             return;
 
         if (rule.Id.HasValue())
-            RootQuery.Filters.RemoveAll(f => f.Id == rule.Id);
+            await RemoveFilter(rule.Id, false);
 
         if (LinqExpressionBuilder.IsValid(rule))
             RootQuery.Filters.Add(rule);
@@ -355,11 +358,24 @@ public abstract class DataComponentBase<TItem> : ComponentBase, IDisposable
     /// </summary>
     /// <param name="match">The predicate function that determines which filters to remove.
     /// Filters for which this function returns true will be removed.</param>
+    /// <param name="refresh">Whether to refresh the data display after applying the filter.</param>
     /// <returns>A task representing the asynchronous filter removal and data refresh operation.</returns>
-    public async Task RemoveFilters(Predicate<QueryRule> match)
+    public async Task RemoveFilters(Predicate<QueryRule> match, bool refresh = true)
     {
-        RootQuery.Filters.RemoveAll(match);
-        await RefreshAsync(true);
+        var groupsToProcess = new Queue<QueryGroup>();
+        groupsToProcess.Enqueue(RootQuery);
+
+        while (groupsToProcess.Count > 0)
+        {
+            var currentGroup = groupsToProcess.Dequeue();
+            currentGroup.Filters.RemoveAll(match);
+
+            foreach (var nestedGroup in currentGroup.Filters.OfType<QueryGroup>())
+                groupsToProcess.Enqueue(nestedGroup);
+        }
+
+        if (refresh)
+            await RefreshAsync(true);
     }
 
     /// <summary>
@@ -368,11 +384,24 @@ public abstract class DataComponentBase<TItem> : ComponentBase, IDisposable
     /// commonly used for removing filters applied programmatically.
     /// </summary>
     /// <param name="id">The unique identifier of the filter(s) to remove.</param>
+    /// <param name="refresh">Whether to refresh the data display after applying the filter.</param>
     /// <returns>A task representing the asynchronous filter removal and data refresh operation.</returns>
-    public async Task RemoveFilter(string id)
+    public async Task RemoveFilter(string id, bool refresh = true)
     {
-        RootQuery.Filters.RemoveAll(f => f.Id == id);
-        await RefreshAsync(true);
+        var groupsToProcess = new Queue<QueryGroup>();
+        groupsToProcess.Enqueue(RootQuery);
+
+        while (groupsToProcess.Count > 0)
+        {
+            var currentGroup = groupsToProcess.Dequeue();
+            currentGroup.Filters.RemoveAll(f => f.Id == id);
+
+            foreach (var nestedGroup in currentGroup.Filters.OfType<QueryGroup>())
+                groupsToProcess.Enqueue(nestedGroup);
+        }
+
+        if (refresh)
+            await RefreshAsync(true);
     }
 
     /// <summary>
@@ -422,8 +451,8 @@ public abstract class DataComponentBase<TItem> : ComponentBase, IDisposable
     {
         if (_initialQuery != Query)
         {
-            await ApplyFilter(Query, Rendered);
             _initialQuery = Query;
+            await ApplyFilter(_initialQuery, Rendered);
         }
 
         if (DataProvider != null)
