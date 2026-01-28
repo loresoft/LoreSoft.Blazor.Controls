@@ -110,11 +110,21 @@ public static class QueryRuleBuilder
             group.Filters.Add(filter);
         }
 
-        // no need for group if only one filter
-        if (group.Filters.Count == 1)
-            return group.Filters[0];
+        // no filters to group
+        if (group.Filters.Count == 0)
+            return null;
 
-        return group;
+        // return group only if multiple filters
+        if (group.Filters.Count > 1)
+            return group;
+
+        // no need for group if only one filter
+        var result = group.Filters[0];
+
+        // ensure filter has correct id
+        result.Id = id ?? Identifier.Random();
+
+        return result;
     }
 
     /// <summary>
@@ -161,7 +171,14 @@ public static class QueryRuleBuilder
 
         // no need for group if only one filter
         if (groupRules.Count == 1)
-            return groupRules[0];
+        {
+            var result = groupRules[0];
+
+            // ensure filter has correct id
+            result.Id = id ?? Identifier.Random();
+
+            return result;
+        }
 
         return new QueryGroup
         {
