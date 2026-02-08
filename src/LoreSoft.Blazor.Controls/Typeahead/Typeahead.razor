@@ -5,12 +5,12 @@
 
 <div class="typeahead">
     <div class="@ControlClass()"
-         tabindex="@(Disabled ? "-1" : "0")"
+         tabindex="@TabIndex"
          role="combobox"
          aria-expanded="@SearchMode.ToString().ToLower()"
          aria-haspopup="listbox"
          aria-label="@Placeholder"
-         aria-disabled="@(Disabled ? "true" : null)"
+         aria-disabled="@Disabled"
          title="@Placeholder"
          @attributes="AdditionalAttributes"
          @onfocus="ShowMenu">
@@ -99,18 +99,18 @@
                        @bind-value:after="HandleSearchInput"
                        @onkeydown="HandleKeydown"
                        @onkeydown:preventDefault="PreventKey"
-                       id="@ElementId"
+                       id="@BoundElementId"
                        class="typeahead-search-input"
                        type="search"
                        role="searchbox"
                        aria-autocomplete="list"
-                       aria-controls="@(ElementId)-menu"
-                       aria-activedescendant="@(SelectedIndex >= 0 ? $"{ElementId}-option-{SelectedIndex}" : null)"
+                       aria-controls="@(BoundElementId)-menu"
+                       aria-activedescendant="@(SelectedIndex >= 0 ? $"{BoundElementId}-option-{SelectedIndex}" : null)"
                        placeholder="@SearchPlaceholder"
                        autocomplete="off" />
             </div>
             <div class="typeahead-menu-list"
-                 id="@(ElementId)-menu"
+                 id="@(BoundElementId)-menu"
                  role="listbox"
                  aria-label="Search results">
                 @if (Loading)
@@ -136,7 +136,7 @@
                         var item = SearchResults[index];
                         var isSelected = index == SelectedIndex;
                         <div @key="item"
-                             id="@(ElementId)-option-@index"
+                             id="@(BoundElementId)-option-@index"
                              class="typeahead-option @ResultClass(item, index)"
                              role="option"
                              aria-selected="@isSelected.ToString().ToLower()"
@@ -169,9 +169,17 @@
                            LoadingText="Loading..."
                            LoadMethod="@LookupMethod" />
             }
+            else if (value == null)
+            {
+                <span></span>
+            }
+            else if (EqualityComparer<TValue>.Default.Equals(value, default))
+            {
+                <span></span>
+            }
             else
             {
-                <span>@value?.ToString()</span>
+                <span>@value.ToString()</span>
             }
         }
         else

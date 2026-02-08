@@ -88,23 +88,33 @@ public class LazyValue<TKey, TValue> : ComponentBase
     /// <param name="builder">The <see cref="RenderTreeBuilder"/> used to build the component's render tree.</param>
     protected override void BuildRenderTree(RenderTreeBuilder builder)
     {
+        // Render loading state when a value is in-flight.
         if (Loading)
         {
+            // Prefer a custom loading template when provided.
             if (LoadingTemplate != null)
                 builder.AddContent(0, LoadingTemplate);
+            // Fall back to the loading text if supplied.
             else if (!string.IsNullOrEmpty(LoadingText))
                 builder.AddContent(0, LoadingText);
+            // Otherwise display the key while loading.
             else
                 builder.AddContent(0, Key);
         }
+        // Render using the provided child content template when available.
         else if (ChildContent != null)
         {
             builder.AddContent(0, ChildContent, Value);
         }
+        // When no value is loaded, show the key unless it's the default value.
         else if (Value == null)
         {
-            builder.AddContent(0, Key);
+            if (EqualityComparer<TKey>.Default.Equals(Key, default))
+                builder.AddContent(0, string.Empty);
+            else
+                builder.AddContent(0, Key);
         }
+        // Fall back to rendering the value directly.
         else
         {
             builder.AddContent(0, Value);

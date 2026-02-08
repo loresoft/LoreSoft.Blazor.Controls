@@ -196,9 +196,12 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
         {
             var quickSearch = new QueryGroup { Id = nameof(QuickSearch), Logic = QueryLogic.Or };
 
-
             // all filterable string columns
-            foreach (var column in Columns.Where(c => c.Filterable && c.Searchable && c.PropertyType == typeof(string)))
+            var columns = Columns
+                .Where(c => c.Filterable && c.Searchable && c.PropertyType == typeof(string))
+                .DistinctBy(p => p.ColumnName);
+
+            foreach (var column in columns)
             {
                 var filter = new QueryFilter
                 {

@@ -17,43 +17,6 @@
 
 <p>Bound Value: @PersonId</p>
 
-<pre><code class="language-markup">&lt;Typeahead SearchMethod="SearchPeople"
-           ConvertMethod="ConvertPerson"
-           Items="Data.PersonList"
-           @@bind-Value="PersonId"
-           Placeholder="Person"&gt;
-    &lt;SelectedTemplate Context="personId"&gt;
-        @@LookupPerson(personId)?.FullName
-    &lt;/SelectedTemplate&gt;
-    &lt;ResultTemplate Context="person"&gt;
-        @@person.FirstName @@person.LastName
-    &lt;/ResultTemplate&gt;
-&lt;/Typeahead&gt;</code></pre>
-
-<pre><code class="language-csharp">@@code {
-    public int? PersonId { get; set; }
-
-    public async Task&lt;IEnumerable&lt;Person&gt;&gt; SearchPeople(string searchText)
-    {
-        var result = Data.PersonList
-            .Where(x =&gt; x.FullName.Contains(searchText, StringComparison.OrdinalIgnoreCase))
-            .ToList();
-
-        return await Task.FromResult(result);
-    }
-
-    public int? ConvertPerson(Person person)
-    {
-        return person?.Id;
-    }
-
-    public Person LookupPerson(int? id)
-    {
-        return Data.PersonList.FirstOrDefault(p =&gt; p.Id == id);
-    }
-}</code></pre>
-
-
 @code {
     public int? PersonId { get; set; }
 

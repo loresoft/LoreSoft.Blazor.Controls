@@ -17,7 +17,7 @@ public class StandardComponent : ComponentBase, IDisposable, IAsyncDisposable
     /// If not specified, a random identifier will be automatically generated.
     /// </summary>
     [Parameter]
-    public string? Id { get; set; }
+    public string? ElementId { get; set; }
 
     /// <summary>
     /// Gets or sets a collection of additional attributes that will be applied to the component element.
@@ -48,21 +48,21 @@ public class StandardComponent : ComponentBase, IDisposable, IAsyncDisposable
 
     /// <summary>
     /// Gets the computed element identifier used in rendering.
-    /// This will either be the user-specified <see cref="Id"/> or an auto-generated random identifier.
+    /// This will either be the user-specified <see cref="ElementId"/> or an auto-generated random identifier.
     /// </summary>
-    protected string? ElementId { get; private set; }
+    protected string? BoundElementId { get; private set; }
 
     /// <summary>
     /// Gets the computed CSS class string that combines <see cref="ElementClass"/>,
     /// additional attributes, and any derived class modifications.
     /// </summary>
-    protected string? ClassBound { get; private set; }
+    protected string? BoundClass { get; private set; }
 
     /// <summary>
     /// Gets the computed CSS style string that combines <see cref="ElementStyle"/>,
     /// additional attributes, and any derived class modifications.
     /// </summary>
-    protected string? StyleBound { get; private set; }
+    protected string? BoundStyle { get; private set; }
 
     /// <summary>
     /// Gets a value indicating whether the component has been rendered at least once.
@@ -79,13 +79,13 @@ public class StandardComponent : ComponentBase, IDisposable, IAsyncDisposable
     {
         base.OnParametersSet();
 
-        if (Id != null && Id != ElementId)
-            ElementId = Id;
+        if (ElementId != null && ElementId != BoundElementId)
+            BoundElementId = ElementId;
 
-        ElementId ??= Identifier.Random();
+        BoundElementId ??= Identifier.Random();
 
-        ClassBound = ComputeClasses();
-        StyleBound = ComputeStyles();
+        BoundClass = ComputeClasses();
+        BoundStyle = ComputeStyles();
     }
 
     /// <summary>

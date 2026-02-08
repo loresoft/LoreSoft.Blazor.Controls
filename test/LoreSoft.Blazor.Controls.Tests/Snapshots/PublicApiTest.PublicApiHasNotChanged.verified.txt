@@ -17,16 +17,16 @@ namespace LoreSoft.Blazor.Controls.Abstracts
         public StandardComponent() { }
         [Microsoft.AspNetCore.Components.Parameter(CaptureUnmatchedValues=true)]
         public System.Collections.Generic.Dictionary<string, object>? AdditionalAttributes { get; set; }
-        protected string? ClassBound { get; }
+        protected string? BoundClass { get; }
+        protected string? BoundElementId { get; }
+        protected string? BoundStyle { get; }
         protected bool Disposed { get; }
         protected Microsoft.AspNetCore.Components.ElementReference? Element { get; set; }
         protected virtual string? ElementClass { get; }
-        protected string? ElementId { get; }
-        protected virtual string? ElementStyle { get; }
         [Microsoft.AspNetCore.Components.Parameter]
-        public string? Id { get; set; }
+        public string? ElementId { get; set; }
+        protected virtual string? ElementStyle { get; }
         protected bool Rendered { get; }
-        protected string? StyleBound { get; }
         protected virtual LoreSoft.Blazor.Controls.Utilities.StyleBuilder ComputeAttributes(LoreSoft.Blazor.Controls.Utilities.StyleBuilder styleBuilder) { }
         protected virtual LoreSoft.Blazor.Controls.Utilities.CssBuilder ComputeClasses(LoreSoft.Blazor.Controls.Utilities.CssBuilder cssBuilder) { }
         public void Dispose() { }
@@ -1550,6 +1550,7 @@ namespace LoreSoft.Blazor.Controls
         [Microsoft.AspNetCore.Components.Parameter]
         public Microsoft.AspNetCore.Components.RenderFragment<TValue>? SelectedTemplate { get; set; }
         protected Microsoft.AspNetCore.Components.RenderFragment<TValue> SelectedValue { get; }
+        protected int TabIndex { get; }
         [Microsoft.AspNetCore.Components.Parameter]
         public TValue Value { get; set; }
         [Microsoft.AspNetCore.Components.Parameter]

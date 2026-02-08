@@ -3,7 +3,7 @@
 <h3>Bind to different Type from search result Type</h3>
 
 <Typeahead TItem="Person"
-           TValue="int?"
+           TValue="int"
            ItemLoader="LoadPeople"
            SearchMethod="SearchPeople"
            ConvertMethod="ConvertPerson"
@@ -15,7 +15,7 @@
 <p>Bound Value: @PersonId</p>
 
 @code {
-    public int? PersonId { get; set; } = 50;
+    public int PersonId { get; set; } = 0;
 
     public async Task<IEnumerable<Person>> SearchPeople(string searchText)
     {
@@ -28,12 +28,12 @@
         return await Task.FromResult(result);
     }
 
-    public int? ConvertPerson(Person? person)
+    public int ConvertPerson(Person? person)
     {
-        return person?.Id;
+        return person?.Id ?? 0;
     }
 
-    public async Task<Person?> LookupPerson(int? id)
+    public async Task<Person?> LookupPerson(int id)
     {
         await Task.Delay(TimeSpan.FromSeconds(1)); // Simulate async delay
 

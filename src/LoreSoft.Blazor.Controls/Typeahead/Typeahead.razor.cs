@@ -211,6 +211,8 @@ public partial class Typeahead<TItem, TValue> : StandardComponent
     /// </summary>
     protected bool PreventKey { get; set; }
 
+    protected int TabIndex => Disabled ? -1 : 0;
+
     /// <summary>
     /// Gets the list of current items. Either from Items parameter or loaded via ItemLoader.
     /// </summary>
