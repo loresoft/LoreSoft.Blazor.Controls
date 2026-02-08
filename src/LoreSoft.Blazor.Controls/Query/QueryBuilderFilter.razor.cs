@@ -51,7 +51,7 @@ public partial class QueryBuilderFilter<TItem>
     /// </summary>
     protected void FieldChanged()
     {
-        Field = Fields.FirstOrDefault(f => f.Column == Filter.Field);
+        Field = Fields.FirstOrDefault(f => f.CurrentName == Filter.Field);
         QueryBuilder.Refresh();
         StateHasChanged();
     }

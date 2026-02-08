@@ -82,6 +82,12 @@ public class QueryBuilderField<TItem> : ComponentBase
     [Parameter]
     public bool Searchable { get; set; } = true;
 
+    /// <summary>
+    /// Gets or sets the mode used for which field name is used, column name
+    /// or property name for filtering or sorting. Default is <see cref="QueryFieldSelection.Column"/>.
+    /// </summary>
+    [Parameter]
+    public QueryFieldSelection FieldSelection { get; set; } = QueryFieldSelection.Column;
 
     /// <summary>
     /// Gets the name of the field (property name).
@@ -117,6 +123,11 @@ public class QueryBuilderField<TItem> : ComponentBase
     /// Gets the current list of selectable values for the field.
     /// </summary>
     public List<string>? CurrentValues { get; set; }
+
+    /// <summary>
+    /// Gets the current name of the field based on the selected name mode.
+    /// </summary>
+    public string? CurrentName => FieldSelection == QueryFieldSelection.Column ? Column : Name;
 
     /// <inheritdoc />
     protected override void OnInitialized()

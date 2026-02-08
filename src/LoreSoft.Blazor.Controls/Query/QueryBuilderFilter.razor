@@ -18,7 +18,7 @@
         <option value="">- Field -</option>
         @foreach (var field in Fields)
         {
-            <option @key="field" value="@field.Column">@field.CurrentTitle</option>
+            <option @key="field" value="@field.CurrentName">@field.CurrentTitle</option>
         }
     </select>
 
@@ -33,7 +33,7 @@
             <select id="operator-@Filter.Id"
                     name="operator-@Filter.Id"
                     title="Select Filter Operator"
-                    required="true"
+                    required="required"
                     autocomplete="off"
                     @bind="Filter.Operator"
                     @bind:after="@OperatorChanged"
@@ -59,7 +59,7 @@
                     name="value-@Filter.Id"
                     title="Select Filter Value"
                     value="@GetValue()"
-                    required="true"
+                    required="required"
                     autocomplete="off"
                     @onchange="SetValue"
                     class="query-filter-value">

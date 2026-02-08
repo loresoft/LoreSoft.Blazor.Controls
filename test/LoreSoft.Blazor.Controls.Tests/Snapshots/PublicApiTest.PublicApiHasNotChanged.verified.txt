@@ -305,6 +305,7 @@ namespace LoreSoft.Blazor.Controls
         [Microsoft.AspNetCore.Components.Parameter]
         public Microsoft.AspNetCore.Components.EventCallback<LoreSoft.Blazor.Controls.DataComponentBase<TItem>> Initialized { get; set; }
         public bool IsLoading { get; set; }
+        protected bool IsLocalProvider { get; }
         [Microsoft.AspNetCore.Components.Inject]
         public required Microsoft.JSInterop.IJSRuntime JavaScript { get; set; }
         [Microsoft.AspNetCore.Components.Parameter]
@@ -1132,12 +1133,15 @@ namespace LoreSoft.Blazor.Controls
         public QueryBuilderField() { }
         public string? Column { get; set; }
         public string? CurrentInputType { get; set; }
+        public string? CurrentName { get; }
         public System.Collections.Generic.List<string>? CurrentOperators { get; set; }
         public string? CurrentTitle { get; set; }
         public System.Collections.Generic.List<string>? CurrentValues { get; set; }
         [Microsoft.AspNetCore.Components.EditorRequired]
         [Microsoft.AspNetCore.Components.Parameter]
         public required System.Linq.Expressions.Expression<System.Func<TItem, object>> Field { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public LoreSoft.Blazor.Controls.QueryFieldSelection FieldSelection { get; set; }
         [Microsoft.AspNetCore.Components.Parameter]
         public string? Format { get; set; }
         [Microsoft.AspNetCore.Components.Parameter]
@@ -1215,6 +1219,11 @@ namespace LoreSoft.Blazor.Controls
         protected override System.Threading.Tasks.Task OnAfterRenderAsync(bool firstRender) { }
         protected override void OnParametersSet() { }
         public void Refresh() { }
+    }
+    public enum QueryFieldSelection
+    {
+        Column = 0,
+        Property = 1,
     }
     public class QueryFilter : LoreSoft.Blazor.Controls.QueryRule, System.IEquatable<LoreSoft.Blazor.Controls.QueryFilter?>
     {

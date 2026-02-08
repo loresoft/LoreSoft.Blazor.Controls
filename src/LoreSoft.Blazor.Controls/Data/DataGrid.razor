@@ -27,13 +27,10 @@
                 <div class="data-grid__header"
                      role="row">
 
-
                     @if (DetailTemplate != null || HasGrouping)
                     {
                         <div class="data-grid__header-cell data-grid__cell--expand"
-                             role="columnheader">
-
-                        </div>
+                             role="columnheader"></div>
                     }
                     @if (Selectable)
                     {
@@ -70,6 +67,7 @@
                                             @foreach (var column in Columns.Where(c => c.Filterable))
                                             {
                                                 <QueryBuilderField @key="column"
+                                                                   FieldSelection="@(IsLocalProvider ? QueryFieldSelection.Property : QueryFieldSelection.Column)"
                                                                    Field="column.Property"
                                                                    Title="@column.HeaderName"
                                                                    Values="@column.FilterValues"

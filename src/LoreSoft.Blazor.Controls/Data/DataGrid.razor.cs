@@ -205,7 +205,7 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
             {
                 var filter = new QueryFilter
                 {
-                    Field = column.ColumnName,
+                    Field = IsLocalProvider ? column.PropertyName : column.ColumnName,
                     Operator = QueryOperators.Contains,
                     Value = searchText
                 };

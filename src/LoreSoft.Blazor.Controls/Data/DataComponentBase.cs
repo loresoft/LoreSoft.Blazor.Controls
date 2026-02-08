@@ -280,6 +280,11 @@ public abstract class DataComponentBase<TItem> : ComponentBase, IDisposable
     }
 
     /// <summary>
+    /// Gets a value indicating whether the current data provider is the local default provider.
+    /// </summary>
+    protected bool IsLocalProvider { get; private set; }
+
+    /// <summary>
     /// Applies the current filters and refreshes the data display.
     /// This method closes the filter panel and triggers a data refresh with the current filter state.
     /// The pager is reset to the first page to ensure users see the filtered results from the beginning.
@@ -457,18 +462,12 @@ public abstract class DataComponentBase<TItem> : ComponentBase, IDisposable
 
         if (DataProvider != null)
         {
-            if (Data != null || DataLoader != null)
-            {
-                throw new InvalidOperationException(
-                    $"Component can only accept one item source from its parameters. " +
-                    $"Do not supply both '{nameof(Data)}' and '{nameof(DataProvider)}'.");
-            }
-
             CurrentDataProvider = DataProvider;
         }
         else if (Data != null)
         {
             CurrentDataProvider = DefaultProvider;
+            IsLocalProvider = true;
 
             // if Data was replaces, refresh
             if (_data != Data)
@@ -480,6 +479,7 @@ public abstract class DataComponentBase<TItem> : ComponentBase, IDisposable
         else if (DataLoader != null)
         {
             CurrentDataProvider = DefaultProvider;
+            IsLocalProvider = true;
         }
         else
         {
