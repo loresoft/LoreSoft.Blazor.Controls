@@ -39,6 +39,13 @@ public abstract class DataComponentBase<TItem> : ComponentBase, IDisposable
     public required DownloadService DownloadService { get; set; }
 
     /// <summary>
+    /// Gets or sets the service used for storing data. This service provides methods to
+    /// persist and retrieve data from a storage medium, such as local storage or session storage.
+    /// </summary>
+    [Inject]
+    public required StorageService StorageService { get; set; }
+
+    /// <summary>
     /// Gets or sets additional attributes to be applied to the root element.
     /// These attributes will be merged with the component's default attributes and applied to the outermost HTML element.
     /// </summary>
@@ -454,11 +461,7 @@ public abstract class DataComponentBase<TItem> : ComponentBase, IDisposable
     /// <inheritdoc />
     protected override async Task OnParametersSetAsync()
     {
-        if (_initialQuery != Query)
-        {
-            _initialQuery = Query;
-            await ApplyFilter(_initialQuery, Rendered);
-        }
+        await ResetQueryAsync();
 
         if (DataProvider != null)
         {
@@ -731,6 +734,24 @@ public abstract class DataComponentBase<TItem> : ComponentBase, IDisposable
                 InvokeAsync(() => RefreshAsync());
                 break;
         }
+    }
+
+    /// <summary>
+    /// Resets the current query to its initial state and reapplies the associated filter asynchronously.
+    /// </summary>
+    /// <remarks>
+    /// This method performs no action if the current query is already in its initial state. Use this
+    /// method to revert any changes to the query and ensure the filter is reapplied based on the current rendered
+    /// state.
+    /// </remarks>
+    /// <returns>A task that represents the asynchronous reset operation.</returns>
+    protected async Task ResetQueryAsync()
+    {
+        if (_initialQuery == Query)
+            return;
+
+        _initialQuery = Query;
+        await ApplyFilter(_initialQuery, Rendered);
     }
 }
 

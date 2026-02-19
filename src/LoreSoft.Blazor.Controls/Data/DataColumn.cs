@@ -1,5 +1,7 @@
 // Ignore Spelling: Groupable
 
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Globalization;
 using System.Linq.Expressions;
@@ -21,6 +23,7 @@ namespace LoreSoft.Blazor.Controls;
 public class DataColumn<TItem> : ComponentBase
 {
     private Func<TItem, object>? _propertyAccessor;
+    private Expression<Func<TItem, object>>? _previousProperty;
 
     /// <summary>
     /// Gets or sets the parent <see cref="DataGrid{TItem}"/> component.
@@ -90,6 +93,9 @@ public class DataColumn<TItem> : ComponentBase
     /// </summary>
     [Parameter]
     public string? Format { get; set; }
+
+    [Parameter]
+    public Func<object?, string?>? FormatValue { get; set; }
 
     /// <summary>
     /// Gets or sets the CSS class for the cell.
@@ -437,9 +443,16 @@ public class DataColumn<TItem> : ComponentBase
         if (value == null)
             return string.Empty;
 
-        return string.IsNullOrEmpty(Format)
-            ? value.ToString() ?? string.Empty
-            : string.Format(CultureInfo.CurrentCulture, $"{{0:{Format}}}", value);
+        // function takes precedence over format string, allowing for custom formatting logic beyond standard .NET formats
+        if (FormatValue != null)
+            return FormatValue.Invoke(value) ?? string.Empty;
+
+        // apply standard .NET formatting if a format string is provided
+        if (!string.IsNullOrEmpty(Format))
+            return string.Format(CultureInfo.CurrentUICulture, $"{{0:{Format}}}", value);
+
+        // default to simple string conversion if no formatting is specified
+        return value.ToString() ?? string.Empty;
     }
 
     /// <summary>
@@ -471,6 +484,12 @@ public class DataColumn<TItem> : ComponentBase
     /// </summary>
     private void UpdateProperty()
     {
+        // Only update if the Property expression has changed
+        if (ReferenceEquals(_previousProperty, Property))
+            return;
+
+        _previousProperty = Property;
+
         MemberInfo? memberInfo = null;
 
         if (Property?.Body is MemberExpression memberExpression)
@@ -497,13 +516,79 @@ public class DataColumn<TItem> : ComponentBase
             PropertyType = typeof(object);
         }
 
+        ExportName = string.IsNullOrEmpty(ExportHeader) ? PropertyName : ExportHeader;
+
         var columnAttribute = memberInfo.GetCustomAttribute<ColumnAttribute>(true);
         ColumnName = columnAttribute?.Name ?? PropertyName;
 
-        // allow empty header, only default if null
-        HeaderName = Title ?? PropertyName.ToTitle();
+        UpdateHeaderName(memberInfo);
+        UpdateFormat(memberInfo);
+    }
 
-        ExportName = string.IsNullOrEmpty(ExportHeader) ? PropertyName : ExportHeader;
+    /// <summary>
+    /// Updates the format string for the member based on the associated DisplayFormatAttribute,
+    /// if a format has not already been set.
+    /// </summary>
+    /// <param name="memberInfo">
+    /// The MemberInfo instance representing the member whose display format is to be updated. This parameter is used to
+    /// retrieve any DisplayFormatAttribute applied to the member.
+    /// </param>
+    /// <remarks>
+    /// This method does not modify the format if either the Format or FormatValue properties are
+    /// already set, or if the member does not have a DisplayFormatAttribute with a valid DataFormatString.
+    /// </remarks>
+    private void UpdateFormat(MemberInfo memberInfo)
+    {
+        if (Format != null || FormatValue != null)
+            return;
+
+        var displayFormatAttribute = memberInfo.GetCustomAttribute<DisplayFormatAttribute>(true);
+        if (displayFormatAttribute == null || string.IsNullOrEmpty(displayFormatAttribute.DataFormatString))
+            return;
+
+        Format = displayFormatAttribute.DataFormatString;
+    }
+
+    /// <summary>
+    /// Updates the header name for the column based on the specified member's metadata, prioritizing user-defined
+    /// titles and display attributes.
+    /// </summary>
+    /// <remarks>If a custom title is set, it is used as the header name. Otherwise, the method checks for a
+    /// localized display name via the <see cref="DisplayAttribute"/>, then for a simple display name via the <see
+    /// cref="DisplayNameAttribute"/>. If neither attribute is present, the property name is used and formatted in title
+    /// case. This approach ensures that the header name reflects user intent, localization, or a sensible
+    /// default.</remarks>
+    /// <param name="memberInfo">The member whose metadata is used to determine the header name. This parameter is typically a property or field
+    /// that represents a data column.</param>
+    private void UpdateHeaderName(MemberInfo memberInfo)
+    {
+        // allow empty header, only default if null
+        if (Title != null)
+        {
+            // allow empty header, only default if null
+            HeaderName = Title;
+            return;
+        }
+
+        // Check for DisplayAttribute first, supports localization
+        var displayAttribute = memberInfo.GetCustomAttribute<DisplayAttribute>(true);
+        if (displayAttribute != null)
+        {
+            var name = displayAttribute.GetName();
+            if (name is not null)
+            {
+                HeaderName = name;
+                return;
+            }
+        }
+
+        // Check for DisplayNameAttribute, supports simple display names
+        var displayNameAttribute = memberInfo.GetCustomAttribute<DisplayNameAttribute>(true);
+        if (displayNameAttribute != null)
+            HeaderName = displayNameAttribute.DisplayName;
+
+        // fallback to property name with title case formatting
+        HeaderName = PropertyName.ToTitle();
     }
 
     /// <summary>

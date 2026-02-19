@@ -89,6 +89,15 @@ public class LinqExpressionBuilder
         return queryFilter.Field.HasValue();
     }
 
+    /// <summary>
+    /// Gets the object pool used to manage reusable instances of the LinqExpressionBuilder class.
+    /// </summary>
+    /// <remarks>The pool enables efficient reuse of LinqExpressionBuilder instances to reduce memory
+    /// allocations and improve performance. Instances obtained from the pool should be returned after use to maintain
+    /// optimal resource management.</remarks>
+    public static ObjectPool<LinqExpressionBuilder> Pool { get; }
+        = new(static () => new LinqExpressionBuilder(), static builder => builder.Clear());
+
     private readonly StringBuilder _expression = new();
     private readonly List<object?> _values = [];
 
@@ -117,6 +126,23 @@ public class LinqExpressionBuilder
             return;
 
         Visit(queryRule);
+    }
+
+    /// <summary>
+    /// Clears all stored values and resets the internal expression capacity to a
+    /// default size if it exceeds a specified threshold.
+    /// </summary>
+    /// <remarks>Call this method before reusing the instance to ensure that any previously stored values are
+    /// removed and memory usage is optimized. This is particularly useful when the instance is used repeatedly in
+    /// scenarios where the number of stored expressions can vary significantly.</remarks>
+    public void Clear()
+    {
+        _values.Clear();
+        _expression.Clear();
+
+        // Reset capacity if it has grown too large to prevent memory bloat
+        if (_expression.Capacity > 1024)
+            _expression.Capacity = 256;
     }
 
     /// <summary>

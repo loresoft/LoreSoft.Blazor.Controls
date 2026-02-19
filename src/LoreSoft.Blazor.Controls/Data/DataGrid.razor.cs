@@ -121,6 +121,21 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
     public EventCallback<TItem> RowDoubleClick { get; set; }
 
     /// <summary>
+    /// Gets or sets the key used to persist the grid's state.
+    /// This key is used to store and retrieve the grid's state from a storage service,
+    /// enabling state persistence across page reloads or navigation.
+    /// </summary>
+    [Parameter]
+    public string? StateKey { get; set; }
+
+    /// <summary>
+    /// Gets or sets the storage type used to persist the grid's state. This property determines
+    /// whether the state is stored in local storage or session storage. Default is local storage.
+    /// </summary>
+    [Parameter]
+    public StoreType StateStore { get; set; } = StoreType.Local;
+
+    /// <summary>
     /// Provides access to the current breakpoint information.
     /// </summary>
     [CascadingParameter]
@@ -231,6 +246,10 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
         SetSelectedItems([]);
 
         await base.RefreshAsync(resetPager, forceReload);
+
+        // resetPager=true = user-initiated change
+        if (StateKey != null && resetPager)
+            await SaveStateAsync();
     }
 
     /// <summary>
@@ -343,6 +362,10 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
     {
         if (firstRender && (Columns == null || Columns.Count == 0)) // verify columns added
             throw new InvalidOperationException("DataGrid requires at least one DataColumn child component.");
+
+        // restore state first
+        if (firstRender && StateKey != null)
+            await LoadStateAsync();
 
         await base.OnAfterRenderAsync(firstRender);
     }
@@ -518,12 +541,14 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
     /// Only columns with <see cref="DataColumn{TItem}.Hideable"/> set to true should use this method.
     /// </summary>
     /// <param name="column">The column whose visibility should be toggled.</param>
-    protected void ToggleVisible(DataColumn<TItem> column)
+    protected async Task ToggleVisible(DataColumn<TItem> column)
     {
         var value = !column.CurrentVisible;
         column.UpdateVisible(value);
 
         StateHasChanged();
+
+        await SaveStateAsync();
     }
 
     /// <summary>
@@ -730,5 +755,78 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
         _hasFooter = (count, hasFooter);
 
         return hasFooter;
+    }
+
+    private async Task ResetStateAsync(
+        bool resetFilter = true,
+        bool resetVisible = true,
+        bool resetSort = true)
+    {
+        if (!string.IsNullOrWhiteSpace(StateKey))
+            await StorageService.RemoveItemAsync(StateKey, StateStore);
+
+        if (!resetVisible && !resetSort && !resetFilter)
+            return;
+
+        // reset filters to defaults
+        if (resetFilter)
+            await ResetQueryAsync();
+
+        // reset column sort + visibility to defaults
+        foreach (var column in Columns)
+        {
+            if (resetSort)
+                column.UpdateSort(column.SortIndex, column.SortDescending);
+
+            if (resetVisible)
+                column.UpdateVisible(column.Visible);
+        }
+
+        StateHasChanged();
+    }
+
+    private async Task LoadStateAsync()
+    {
+        if (string.IsNullOrWhiteSpace(StateKey))
+            return;
+
+        var state = await StorageService.GetItemAsync<DataGridState>(StateKey, StateStore);
+        if (state is null)
+            return;
+
+        // restore filters
+        if (state.Query?.Filters.Count > 0)
+        {
+            RootQuery.Filters.Clear();
+            RootQuery.Filters.AddRange(state.Query.Filters);
+        }
+
+        if (state.Columns is not { Length: > 0 })
+            return;
+
+        // restore column sort + visibility
+        foreach (var cs in state.Columns)
+        {
+            var col = Columns.Find(c => c.PropertyName == cs.PropertyName);
+            if (col is null)
+                continue;
+
+            col.UpdateSort(cs.SortIndex, cs.SortDescending);
+            col.UpdateVisible(cs.Visible);
+        }
+    }
+
+    private async Task SaveStateAsync()
+    {
+        if (string.IsNullOrWhiteSpace(StateKey))
+            return;
+
+        var columns = Columns
+            .Select(c => new DataColumnState(c.PropertyName, c.CurrentSortIndex, c.CurrentSortDescending, c.CurrentVisible))
+            .ToArray();
+
+        var state = new DataGridState(RootQuery, columns);
+
+        await StorageService.SetItemAsync(StateKey, state, StateStore);
     }
 }

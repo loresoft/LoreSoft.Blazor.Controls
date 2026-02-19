@@ -7,6 +7,14 @@ namespace LoreSoft.Blazor.Controls;
 public record DataResult<TItem>
 {
     /// <summary>
+    /// Represents an empty result with no items and a count of zero.
+    /// </summary>
+    /// <remarks>Use this field as a default or placeholder value when no data is available. This can be
+    /// useful for initializing variables or returning a non-null result in cases where an empty data set is
+    /// required.</remarks>
+    public static readonly DataResult<TItem> Empty = new(0, []);
+
+    /// <summary>
     /// Initializes a new instance of the <see cref="DataResult{TItem}"/> class.
     /// </summary>
     /// <param name="total">The total number of items available in the data source.</param>

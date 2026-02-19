@@ -40,20 +40,22 @@ public static class QueryExtensions
         ArgumentNullException.ThrowIfNull(query);
 
         // Create ordering expression e.g. Field1 asc, Field2 desc
-        var builder = new StringBuilder();
-        foreach (var sort in sorts)
+        return StringBuilder.Pool.Use(builder =>
         {
-            if (builder.Length > 0)
-                builder.Append(",");
+            foreach (var sort in sorts)
+            {
+                if (builder.Length > 0)
+                    builder.Append(',');
 
-            builder.Append(sort.Property).Append(" ");
+                builder.Append(sort.Property).Append(' ');
 
-            var isDescending = sort.Descending;
+                var isDescending = sort.Descending;
 
-            builder.Append(isDescending ? "desc" : "asc");
-        }
+                builder.Append(isDescending ? "desc" : "asc");
+            }
 
-        return query.OrderBy(builder.ToString());
+            return query.OrderBy(builder.ToString());
+        });
     }
 
     /// <summary>
@@ -70,17 +72,19 @@ public static class QueryExtensions
 
         ArgumentNullException.ThrowIfNull(query);
 
-        var builder = new LinqExpressionBuilder();
-        builder.Build(filter);
+        return LinqExpressionBuilder.Pool.Use(builder =>
+        {
+            builder.Build(filter);
 
-        var predicate = builder.Expression;
-        var parameters = builder.Parameters.ToArray();
+            var predicate = builder.Expression;
+            var parameters = builder.Parameters.ToArray();
 
-        // nothing to filter
-        if (string.IsNullOrWhiteSpace(predicate))
-            return query;
+            // nothing to filter
+            if (string.IsNullOrWhiteSpace(predicate))
+                return query;
 
-        return query.Where(predicate, parameters);
+            return query.Where(predicate, parameters);
+        });
     }
 
     /// <summary>
@@ -100,7 +104,7 @@ public static class QueryExtensions
         var total = filterQuery.Count();
 
         if (total == 0)
-            return new DataResult<T>([], total);
+            return DataResult<T>.Empty;
 
         var sortedQuery = filterQuery.Sort(request.Sorts);
 
