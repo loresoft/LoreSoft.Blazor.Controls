@@ -157,12 +157,66 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
     protected bool ColumnPickerOpen { get; set; }
 
     /// <summary>
+    /// Gets or sets the active tab in the column picker panel.
+    /// Valid values are <c>"columns"</c> (column visibility) and <c>"sort"</c> (sort configuration).
+    /// </summary>
+    protected string ColumnPickerTab { get; set; } = "columns";
+
+    /// <summary>
+    /// Gets the list of sort entries currently configured in the column picker sort tab.
+    /// Each entry represents one sort column and direction in priority order (index 0 = highest priority).
+    /// </summary>
+    protected List<DataSortState> SortEntries { get; private set; } = [];
+
+    /// <summary>
+    /// Adds a new empty sort entry to the column picker sort list.
+    /// </summary>
+    protected void AddSortEntry()
+    {
+        SortEntries.Add(new DataSortState());
+    }
+
+    /// <summary>
+    /// Removes the specified sort entry and applies the updated sort configuration to the grid.
+    /// </summary>
+    /// <param name="entry">The sort entry to remove.</param>
+    protected Task RemoveSortEntryAsync(DataSortState entry)
+    {
+        SortEntries.Remove(entry);
+        return ApplySortEntriesAsync();
+    }
+
+    /// <summary>
+    /// Applies all current sort entries to the grid columns and refreshes the data.
+    /// Entries with no column selected are skipped. List order determines sort priority.
+    /// </summary>
+    protected Task ApplySortEntriesAsync()
+    {
+        Columns.ForEach(c => c.UpdateSort(-1, false));
+
+        var index = 0;
+        foreach (var entry in SortEntries.Where(e => !string.IsNullOrEmpty(e.ColumnName)))
+        {
+            var col = Columns.Find(c => c.ColumnName == entry.ColumnName);
+            if (col == null || !col.Sortable)
+                continue;
+
+            col.UpdateSort(index++, entry.Direction == "desc");
+        }
+
+        return RefreshAsync();
+    }
+
+    /// <summary>
     /// Shows the column picker panel.
     /// Opens the interface that allows users to toggle the visibility of hideable columns.
     /// This method triggers a UI update to display the column picker interface.
     /// </summary>
     public void ShowColumnPicker()
     {
+        ColumnPickerTab = "columns";
+        UpdateSortPickerState();
+
         ColumnPickerOpen = true;
         StateHasChanged();
     }
@@ -185,9 +239,13 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
     /// </summary>
     public void ToggleColumnPicker()
     {
+        if (!ColumnPickerOpen)
+            UpdateSortPickerState();
+
         ColumnPickerOpen = !ColumnPickerOpen;
         StateHasChanged();
     }
+
 
     /// <summary>
     /// Performs a quick search on all filterable string columns.
@@ -757,6 +815,18 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
         return hasFooter;
     }
 
+    private void UpdateSortPickerState()
+    {
+        SortEntries = Columns
+            .Where(c => c.CurrentSortIndex >= 0)
+            .OrderBy(c => c.CurrentSortIndex)
+            .Select(c => new DataSortState { ColumnName = c.ColumnName, Direction = c.CurrentSortDescending ? "desc" : "asc" })
+            .ToList();
+
+        if (SortEntries.Count == 0)
+            SortEntries.Add(new DataSortState());
+    }
+
     private async Task ResetStateAsync(
         bool resetFilter = true,
         bool resetVisible = true,
@@ -781,6 +851,9 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
             if (resetVisible)
                 column.UpdateVisible(column.Visible);
         }
+
+        // refresh sort picker state if needed
+        UpdateSortPickerState();
 
         StateHasChanged();
     }
@@ -829,4 +902,6 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
 
         await StorageService.SetItemAsync(StateKey, state, StateStore);
     }
+
+    
 }

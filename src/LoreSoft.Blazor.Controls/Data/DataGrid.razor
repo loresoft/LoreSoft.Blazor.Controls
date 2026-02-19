@@ -67,7 +67,7 @@
                                             @foreach (var column in Columns.Where(c => c.Filterable))
                                             {
                                                 <QueryBuilderField @key="column"
-                                                                   FieldSelection="@(IsLocalProvider ? QueryFieldSelection.Property : QueryFieldSelection.Column)"
+                                                                   FieldSelection="@(IsLocalProvider? QueryFieldSelection.Property: QueryFieldSelection.Column)"
                                                                    Field="column.Property"
                                                                    Title="@column.HeaderName"
                                                                    Values="@column.FilterValues"
@@ -106,24 +106,91 @@
                                  @onclick="CloseColumnPicker"></div>
 
                             <div class="column-picker-container">
-                                <div class="column-picker-list">
-                                    @foreach (var column in Columns)
-                                    {
-                                        <label @key="column"
-                                               title="Toggle '@column.HeaderName' Visibility"
-                                               class="column-picker-label">
-                                            <input type="checkbox"
-                                                   name="column-@column.PropertyName"
-                                                   class="column-picker-checkbox"
-                                                   disabled="@(!column.Hideable)"
-                                                   checked="@column.CurrentVisible"
-                                                   aria-label="Toggle '@column.HeaderName' Visibility"
-                                                   @onchange="() => ToggleVisible(column)" />
-                                            <span class="column-picker-text">
-                                                @column.HeaderName
-                                            </span>
-                                        </label>
-                                    }
+                                <div class="column-picker-tabs">
+                                    <button type="button"
+                                            class="column-picker-tab @(ColumnPickerTab == "columns" ? "column-picker-tab--active" : "")"
+                                            aria-label="Columns Tab"
+                                            @onclick='() => ColumnPickerTab = "columns"'>
+                                        Columns
+                                    </button>
+                                    <button type="button"
+                                            class="column-picker-tab @(ColumnPickerTab == "sort" ? "column-picker-tab--active" : "")"
+                                            aria-label="Sort Tab"
+                                            @onclick='() => ColumnPickerTab = "sort"'>
+                                        Sort
+                                    </button>
+                                </div>
+
+                                @if (ColumnPickerTab == "columns")
+                                {
+                                    <div class="column-picker-list">
+                                        @foreach (var column in Columns)
+                                        {
+                                            <label @key="column"
+                                                   title="Toggle '@column.HeaderName' Visibility"
+                                                   class="column-picker-label">
+                                                <input type="checkbox"
+                                                       name="column-@column.PropertyName"
+                                                       class="column-picker-checkbox"
+                                                       disabled="@(!column.Hideable)"
+                                                       checked="@column.CurrentVisible"
+                                                       aria-label="Toggle '@column.HeaderName' Visibility"
+                                                       @onchange="() => ToggleVisible(column)" />
+                                                <span class="column-picker-text">
+                                                    @column.HeaderName
+                                                </span>
+                                            </label>
+                                        }
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="column-picker-list">
+                                        @foreach (var entry in SortEntries)
+                                        {
+                                            <div @key="entry"
+                                                 class="sort-entry">
+                                                <select @bind="entry.ColumnName"
+                                                        @bind:after="ApplySortEntriesAsync"
+                                                        aria-label="Sort Field">
+                                                    <option value="">- select -</option>
+                                                    @foreach (var column in Columns.Where(c => c.Sortable).DistinctBy(c => c.ColumnName))
+                                                    {
+                                                        <option @key="column" value="@column.ColumnName">
+                                                            @column.HeaderName
+                                                        </option>
+                                                    }
+                                                </select>
+                                                <select @bind="entry.Direction"
+                                                        @bind:after="ApplySortEntriesAsync"
+                                                        aria-label="Sort Direction">
+                                                    <option value="asc">Asc</option>
+                                                    <option value="desc">Desc</option>
+                                                </select>
+                                                <button type="button"
+                                                        class="column-picker-sort-remove"
+                                                        aria-label="Remove sort"
+                                                        @onclick="() => RemoveSortEntryAsync(entry)">
+                                                    &#x2715;
+                                                </button>
+                                            </div>
+                                        }
+                                        <button type="button"
+                                                class="query-button column-picker-sort-add"
+                                                aria-label="Add sort"
+                                                @onclick="AddSortEntry">
+                                            + Add Sort
+                                        </button>
+                                    </div>
+                                }
+
+                                <div class="column-picker-footer">
+                                    <button type="button"
+                                            class="query-button"
+                                            aria-label="Reset to default"
+                                            @onclick="() => ResetStateAsync(resetFilter: false)">
+                                        Reset
+                                    </button>
                                 </div>
                             </div>
                         </div>
