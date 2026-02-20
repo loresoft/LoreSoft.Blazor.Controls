@@ -94,6 +94,16 @@ public class DataColumn<TItem> : ComponentBase
     [Parameter]
     public string? Format { get; set; }
 
+    /// <summary>
+    /// Gets or sets a custom formatting function for cell values.
+    /// When specified, takes precedence over <see cref="Format"/>. The function
+    /// receives the raw cell value and returns the formatted string, or <see langword="null"/>
+    /// to render an empty cell.
+    /// </summary>
+    /// <remarks>
+    /// This function is applied consistently in both grid rendering and CSV export via
+    /// <see cref="DataGrid{TItem}.ExportAsync"/>, so the exported values match what is displayed.
+    /// </remarks>
     [Parameter]
     public Func<object?, string?>? FormatValue { get; set; }
 
@@ -366,13 +376,13 @@ public class DataColumn<TItem> : ComponentBase
 
 
     /// <summary>
-    /// Gets or sets the current sort index for the column.
+    /// Gets the current sort index for the column.
     /// This represents the actual sort index applied to the column, which may differ from the parameter value.
     /// </summary>
     internal int CurrentSortIndex { get; private set; } = -1;
 
     /// <summary>
-    /// Gets or sets a value indicating whether the column is currently sorted in descending order.
+    /// Gets a value indicating whether the column is currently sorted in descending order.
     /// This represents the actual sort direction applied to the column.
     /// </summary>
     internal bool CurrentSortDescending { get; private set; }

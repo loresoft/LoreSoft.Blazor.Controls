@@ -7,6 +7,7 @@
           Sortable="false"
           Selectable="true"
           Borders="Borders.All"
+          StateKey="LogEventGrid"
           TItem="LogEvent"
           @ref="Grid">
     <DataToolbar>
@@ -18,7 +19,8 @@
 
         <DataColumn Property="p => p.Timestamp"
                     Title="Timestamp"
-                    Width="160px">
+                    Width="160px"
+                    FormatValue="FormatDate">
             <Template>
                 <LocalTime Value="@context.Timestamp" />
             </Template>
@@ -40,6 +42,14 @@
     public required LogEventService LogEventService { get; set; }
 
     private DataGrid<LogEvent>? Grid { get; set; }
+
+    private string? FormatDate(object value)
+    {
+        if (value is DateTimeOffset dt)
+            return dt.ToString("yyyy-MM-dd HH:mm:ss");
+
+        return null;
+    }
 
     public ValueTask<DataResult<LogEvent>> LoadData(DataRequest request)
     {

@@ -1,5 +1,6 @@
 using System.Text.Json;
 
+using LoreSoft.Blazor.Controls.Extensions;
 using LoreSoft.Blazor.Controls.Utilities;
 
 using Microsoft.Extensions.Logging;
@@ -59,7 +60,6 @@ public class StorageService
         _logger = logger;
     }
 
-
     /// <summary>
     /// Retrieves a string value from browser storage.
     /// </summary>
@@ -82,7 +82,17 @@ public class StorageService
         var module = storeType == StoreType.Local ? LocalStorage : SessionStorage;
         var method = $"{module}.getItem";
 
-        var value = await _javaScript.InvokeAsync<string?>(method, key);
+        string? value;
+
+        try
+        {
+            value = await _javaScript.InvokeAsync<string?>(method, key);
+        }
+        catch (Exception ex) when (ex is JSDisconnectedException or InvalidOperationException or TaskCanceledException)
+        {
+            _logger.LogDebug(ex, "JavaScript runtime unavailable when getting storage item {Key}", key);
+            return null;
+        }
 
         if (string.IsNullOrEmpty(value) || string.IsNullOrEmpty(protectionKey))
             return value;
@@ -144,11 +154,18 @@ public class StorageService
         var module = storeType == StoreType.Local ? LocalStorage : SessionStorage;
         var method = $"{module}.setItem";
 
-        if (string.IsNullOrEmpty(value) || string.IsNullOrEmpty(protectionKey))
-            await _javaScript.InvokeVoidAsync(method, key, value);
+        try
+        {
+            var encrypted = value;
+            if (protectionKey.HasValue())
+                encrypted = encrypted.Encrypt(protectionKey!);
 
-        var encrypted = value.Encrypt(protectionKey!);
-        await _javaScript.InvokeVoidAsync(method, key, encrypted);
+            await _javaScript.InvokeVoidAsync(method, key, encrypted);
+        }
+        catch (Exception ex) when (ex is JSDisconnectedException or InvalidOperationException or TaskCanceledException)
+        {
+            _logger.LogDebug(ex, "JavaScript runtime unavailable when setting storage item {Key}", key);
+        }
     }
 
     /// <summary>
@@ -195,7 +212,14 @@ public class StorageService
         var module = storeType == StoreType.Local ? LocalStorage : SessionStorage;
         var method = $"{module}.removeItem";
 
-        await _javaScript.InvokeVoidAsync(method, key);
+        try
+        {
+            await _javaScript.InvokeVoidAsync(method, key);
+        }
+        catch (Exception ex) when (ex is JSDisconnectedException or InvalidOperationException or TaskCanceledException)
+        {
+            _logger.LogDebug(ex, "JavaScript runtime unavailable when removing storage item {Key}", key);
+        }
     }
 
     /// <summary>
@@ -208,7 +232,14 @@ public class StorageService
         var module = storeType == StoreType.Local ? LocalStorage : SessionStorage;
         var method = $"{module}.clear";
 
-        await _javaScript.InvokeVoidAsync(method);
+        try
+        {
+            await _javaScript.InvokeVoidAsync(method);
+        }
+        catch (Exception ex) when (ex is JSDisconnectedException or InvalidOperationException or TaskCanceledException)
+        {
+            _logger.LogDebug(ex, "JavaScript runtime unavailable when clearing {StoreType} storage", storeType);
+        }
     }
 }
 

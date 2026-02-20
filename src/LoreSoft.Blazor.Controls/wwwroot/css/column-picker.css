@@ -18,6 +18,11 @@
   --cp-width: 250px;
   --cp-height-min: 150px;
   --cp-height-max: 300px;
+  --cp-select-font-weight: 400;
+  --cp-select-padding-y: 0.125rem;
+  --cp-select-padding-x: 0.25rem;
+  --cp-select-margin: 0;
+  --cp-select-font-size: 0.875rem;
 }
 
   .column-picker .column-picker-background {
@@ -110,6 +115,17 @@
       padding: 0.4rem 0.5rem;
     }
 
+      .column-picker .column-picker-container .column-picker-footer .column-picker-reset {
+        background-color: var(--cp-bg-color);
+        border: none;
+        padding: 0 .75em;
+        opacity: 0.75;
+      }
+
+        .column-picker .column-picker-container .column-picker-footer .column-picker-reset:hover {
+          opacity: 1;
+        }
+
     .column-picker .column-picker-container .column-picker-list .sort-entry {
       display: flex;
       align-items: center;
@@ -120,11 +136,19 @@
       .column-picker .column-picker-container .column-picker-list .sort-entry select {
         flex: 1;
         min-width: 0;
+        cursor: pointer;
+        background-color: var(--cp-bg-color);
+        border: var(--cp-border-width) solid var(--cp-border-color);
+        border-radius: var(--cp-border-radius);
+        font-weight: var(--cp-select-font-weight);
+        padding: var(--cp-select-padding-y) var(--cp-select-padding-x);
+        margin: var(--cp-select-margin);
+        font-size: var(--cp-select-font-size);
       }
 
         .column-picker .column-picker-container .column-picker-list .sort-entry select:last-of-type {
           flex: 0 0 auto;
-          width: 65px;
+          width: 60px;
         }
 
     .column-picker .column-picker-container .column-picker-list .column-picker-sort-remove {
@@ -143,6 +167,15 @@
       }
 
     .column-picker .column-picker-container .column-picker-list .column-picker-sort-add {
-      margin-top: 0.25rem;
       width: 100%;
+      opacity: 0.75;
+      background-color: var(--cp-bg-color);
+      border: none;
+      font-weight: 400;
+      margin-top: 0.25rem;
+      font-size: var(--cp-font-size);
     }
+
+      .column-picker .column-picker-container .column-picker-list .column-picker-sort-add:hover {
+        opacity: 1;
+      }

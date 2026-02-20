@@ -185,6 +185,15 @@ namespace LoreSoft.Blazor.Controls
         public ConfirmModal() { }
         protected override void BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder @__builder) { }
     }
+    public class DataColumnState : System.IEquatable<LoreSoft.Blazor.Controls.DataColumnState>
+    {
+        [System.Text.Json.Serialization.JsonConstructor]
+        public DataColumnState(string propertyName, int sortIndex, bool sortDescending, bool visible) { }
+        public string PropertyName { get; }
+        public bool SortDescending { get; }
+        public int SortIndex { get; }
+        public bool Visible { get; }
+    }
     [Microsoft.AspNetCore.Components.CascadingTypeParameter("TItem")]
     public class DataColumn<TItem> : Microsoft.AspNetCore.Components.ComponentBase
     {
@@ -225,6 +234,8 @@ namespace LoreSoft.Blazor.Controls
         public Microsoft.AspNetCore.Components.RenderFragment<System.Collections.Generic.ICollection<TItem>?>? FooterTemplate { get; set; }
         [Microsoft.AspNetCore.Components.Parameter]
         public string? Format { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public System.Func<object?, string?>? FormatValue { get; set; }
         [Microsoft.AspNetCore.Components.CascadingParameter(Name="Grid")]
         protected LoreSoft.Blazor.Controls.DataGrid<TItem>? Grid { get; set; }
         [Microsoft.AspNetCore.Components.Parameter]
@@ -317,6 +328,8 @@ namespace LoreSoft.Blazor.Controls
         public LoreSoft.Blazor.Controls.QueryGroup RootQuery { get; }
         [Microsoft.AspNetCore.Components.Parameter]
         public bool Sortable { get; set; }
+        [Microsoft.AspNetCore.Components.Inject]
+        public required LoreSoft.Blazor.Controls.StorageService StorageService { get; set; }
         protected System.Collections.Generic.ICollection<TItem>? View { get; }
         [Microsoft.AspNetCore.Components.Parameter]
         public float VirtualItemSize { get; set; }
@@ -342,6 +355,7 @@ namespace LoreSoft.Blazor.Controls
         protected virtual System.Threading.Tasks.ValueTask RefreshCoreAsync() { }
         public System.Threading.Tasks.Task RemoveFilter(string id, bool refresh = true) { }
         public System.Threading.Tasks.Task RemoveFilters(System.Predicate<LoreSoft.Blazor.Controls.QueryRule> match, bool refresh = true) { }
+        protected System.Threading.Tasks.Task ResetQueryAsync() { }
         public void ShowFilter() { }
         public virtual void SortBy(string columnName, bool? descending = default) { }
         public virtual System.Threading.Tasks.Task SortByAsync(string columnName, bool? descending = default) { }
@@ -377,8 +391,16 @@ namespace LoreSoft.Blazor.Controls
         public void NextPage() { }
         protected override void OnInitialized() { }
     }
+    public class DataGridState : System.IEquatable<LoreSoft.Blazor.Controls.DataGridState>
+    {
+        [System.Text.Json.Serialization.JsonConstructor]
+        public DataGridState(LoreSoft.Blazor.Controls.QueryGroup? query, LoreSoft.Blazor.Controls.DataColumnState[]? columns, System.Collections.Generic.Dictionary<string, string?>? extensions = null) { }
+        public LoreSoft.Blazor.Controls.DataColumnState[]? Columns { get; }
+        public System.Collections.Generic.Dictionary<string, string?> Extensions { get; }
+        public LoreSoft.Blazor.Controls.QueryGroup? Query { get; }
+    }
     [Microsoft.AspNetCore.Components.CascadingTypeParameter("TItem")]
-    public class DataGridToolbar<TItem> : Microsoft.AspNetCore.Components.ComponentBase
+    public class DataGridToolbar<TItem> : Microsoft.AspNetCore.Components.ComponentBase, System.IDisposable
         where TItem :  class
     {
         public DataGridToolbar() { }
@@ -411,6 +433,7 @@ namespace LoreSoft.Blazor.Controls
         [Microsoft.AspNetCore.Components.Parameter]
         public Microsoft.AspNetCore.Components.RenderFragment<LoreSoft.Blazor.Controls.DataGrid<TItem>>? TitleTemplate { get; set; }
         protected override void BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder @__builder) { }
+        public void Dispose() { }
         protected System.Threading.Tasks.Task HandelExport() { }
         protected System.Threading.Tasks.Task HandelRefresh() { }
         protected void HandleSearch(string? searchText) { }
@@ -426,6 +449,7 @@ namespace LoreSoft.Blazor.Controls
         public LoreSoft.Blazor.Controls.Borders Borders { get; set; }
         protected int CellCount { get; }
         protected bool ColumnPickerOpen { get; set; }
+        protected string ColumnPickerTab { get; set; }
         public System.Collections.Generic.List<LoreSoft.Blazor.Controls.DataColumn<TItem>> Columns { get; }
         [Microsoft.AspNetCore.Components.Parameter]
         public Microsoft.AspNetCore.Components.RenderFragment? DataColumns { get; set; }
@@ -439,6 +463,8 @@ namespace LoreSoft.Blazor.Controls
         protected bool HasGrouping { get; }
         protected Microsoft.AspNetCore.Components.RenderFragment<LoreSoft.Blazor.Controls.DataColumn<TItem>> HeaderFragment { get; }
         protected Microsoft.AspNetCore.Components.RenderFragment<LoreSoft.Blazor.Controls.DataColumn<TItem>> HeaderValue { get; }
+        [Microsoft.AspNetCore.Components.Inject]
+        public required Microsoft.AspNetCore.Components.NavigationManager NavigationManager { get; set; }
         [Microsoft.AspNetCore.Components.Parameter]
         public System.Func<TItem, System.Collections.Generic.Dictionary<string, object>>? RowAttributes { get; set; }
         [Microsoft.AspNetCore.Components.Parameter]
@@ -454,7 +480,17 @@ namespace LoreSoft.Blazor.Controls
         public System.Collections.Generic.IEnumerable<TItem> SelectedItems { get; set; }
         [Microsoft.AspNetCore.Components.Parameter]
         public Microsoft.AspNetCore.Components.EventCallback<System.Collections.Generic.IEnumerable<TItem>> SelectedItemsChanged { get; set; }
+        protected System.Collections.Generic.List<LoreSoft.Blazor.Controls.DataSortState> SortEntries { get; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public string? StateKey { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public LoreSoft.Blazor.Controls.StoreType StateStore { get; set; }
         protected System.Collections.Generic.List<LoreSoft.Blazor.Controls.DataColumn<TItem>> VisibleColumns { get; }
+        public event System.Func<LoreSoft.Blazor.Controls.DataGridState, System.Threading.Tasks.Task>? StateLoaded;
+        public event System.Func<System.Threading.Tasks.Task>? StateResetting;
+        public event System.Func<LoreSoft.Blazor.Controls.DataGridState, System.Threading.Tasks.Task>? StateSaving;
+        protected void AddSortEntry() { }
+        protected System.Threading.Tasks.Task ApplySortEntriesAsync() { }
         protected override void BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder @__builder) { }
         public void CloseColumnPicker() { }
         public override LoreSoft.Blazor.Controls.DataRequest CreateDataRequest(System.Threading.CancellationToken cancellationToken = default) { }
@@ -468,8 +504,10 @@ namespace LoreSoft.Blazor.Controls
         protected bool IsRowSelected(TItem item) { }
         protected override System.Threading.Tasks.Task OnAfterRenderAsync(bool firstRender) { }
         protected override void OnInitialized() { }
+        protected override void OnParametersSet() { }
         public System.Threading.Tasks.Task QuickSearch(string? searchText, bool clearFilter = false) { }
         public override System.Threading.Tasks.Task RefreshAsync(bool resetPager = false, bool forceReload = false) { }
+        protected System.Threading.Tasks.Task RemoveSortEntryAsync(LoreSoft.Blazor.Controls.DataSortState entry) { }
         protected void SelectAll() { }
         protected void SetSelectedItems(System.Collections.Generic.IEnumerable<TItem> items) { }
         public void ShowColumnPicker() { }
@@ -481,7 +519,7 @@ namespace LoreSoft.Blazor.Controls
         protected void ToggleGroupRow(string key) { }
         protected void ToggleSelectAll() { }
         protected void ToggleSelectRow(TItem item) { }
-        protected void ToggleVisible(LoreSoft.Blazor.Controls.DataColumn<TItem> column) { }
+        protected System.Threading.Tasks.Task ToggleVisible(LoreSoft.Blazor.Controls.DataColumn<TItem> column) { }
     }
     [Microsoft.AspNetCore.Components.CascadingTypeParameter("TItem")]
     public class DataListToolbar<TItem> : Microsoft.AspNetCore.Components.ComponentBase
@@ -637,6 +675,7 @@ namespace LoreSoft.Blazor.Controls
     }
     public class DataResult<TItem> : System.IEquatable<LoreSoft.Blazor.Controls.DataResult<TItem>>
     {
+        public static readonly LoreSoft.Blazor.Controls.DataResult<TItem> Empty;
         public DataResult(int? total, System.Collections.Generic.IEnumerable<TItem> items) { }
         public DataResult(System.Collections.Generic.IEnumerable<TItem> items, int? total = default, string? continuationToken = null) { }
         public string? ContinuationToken { get; }
@@ -667,6 +706,12 @@ namespace LoreSoft.Blazor.Controls
         public DataSort(string Property, bool Descending) { }
         public bool Descending { get; init; }
         public string Property { get; init; }
+    }
+    public sealed class DataSortState
+    {
+        public DataSortState() { }
+        public string ColumnName { get; set; }
+        public string Direction { get; set; }
     }
     public class DatePickerCell
     {
@@ -765,6 +810,7 @@ namespace LoreSoft.Blazor.Controls
         public System.Action<T?> Action { get; }
         public System.TimeSpan Delay { get; }
         public T Value { get; set; }
+        public void Update(T? value) { }
     }
     public struct DisposableAction : System.IDisposable
     {
@@ -1232,6 +1278,7 @@ namespace LoreSoft.Blazor.Controls
         public string? Field { get; set; }
         [System.Text.Json.Serialization.JsonPropertyName("operator")]
         public string? Operator { get; set; }
+        [System.Text.Json.Serialization.JsonConverter(typeof(LoreSoft.Blazor.Controls.Converters.JsonObjectConverter?))]
         [System.Text.Json.Serialization.JsonPropertyName("value")]
         public object? Value { get; set; }
         public bool Equals(LoreSoft.Blazor.Controls.QueryFilter? other) { }
@@ -1271,12 +1318,11 @@ namespace LoreSoft.Blazor.Controls
         public const string NotStartsWith = "not starts with";
         public const string StartsWith = "starts with";
     }
-    [System.Text.Json.Serialization.JsonDerivedType(typeof(LoreSoft.Blazor.Controls.QueryFilter))]
-    [System.Text.Json.Serialization.JsonDerivedType(typeof(LoreSoft.Blazor.Controls.QueryGroup))]
+    [System.Text.Json.Serialization.JsonDerivedType(typeof(LoreSoft.Blazor.Controls.QueryFilter), "QueryFilter")]
+    [System.Text.Json.Serialization.JsonDerivedType(typeof(LoreSoft.Blazor.Controls.QueryGroup), "QueryGroup")]
     public abstract class QueryRule
     {
         protected QueryRule() { }
-        [System.Text.Json.Serialization.JsonIgnore]
         public string Id { get; set; }
     }
     public static class QueryRuleBuilder
@@ -1670,6 +1716,10 @@ namespace LoreSoft.Blazor.Controls.Extensions
         public static System.DateTime ToTimeZone(this System.DateTime dateTime, System.TimeZoneInfo timeZoneInfo) { }
         public static System.DateTimeOffset ToTimeZone(this System.DateTimeOffset dateTimeOffset, System.TimeZoneInfo timeZoneInfo) { }
     }
+    public static class NavigationManagerExtensions
+    {
+        public static string GetPathHash(this Microsoft.AspNetCore.Components.NavigationManager navigationManager, bool includeQuery = false, bool includeFragment = false) { }
+    }
     public static class ObjectPoolExtensions
     {
         extension(System.Text.StringBuilder)
@@ -1708,6 +1758,7 @@ namespace LoreSoft.Blazor.Controls.Extensions
     public static class TypeExtensions
     {
         public static object? Default(this System.Type type) { }
+        public static string GetPortableName(this System.Type type) { }
         public static System.Type GetUnderlyingType(this System.Type type) { }
         public static bool IsNullable(this System.Type type) { }
     }
@@ -1787,7 +1838,9 @@ namespace LoreSoft.Blazor.Controls.Utilities
         public LinqExpressionBuilder() { }
         public string Expression { get; }
         public System.Collections.Generic.IReadOnlyList<object?> Parameters { get; }
+        public static LoreSoft.Blazor.Controls.Utilities.ObjectPool<LoreSoft.Blazor.Controls.Utilities.LinqExpressionBuilder> Pool { get; }
         public void Build(LoreSoft.Blazor.Controls.QueryRule? queryRule) { }
+        public void Clear() { }
         public static bool IsValid(LoreSoft.Blazor.Controls.QueryFilter? queryFilter) { }
         public static bool IsValid(LoreSoft.Blazor.Controls.QueryGroup? queryGroup) { }
         public static bool IsValid(LoreSoft.Blazor.Controls.QueryRule? queryRule) { }

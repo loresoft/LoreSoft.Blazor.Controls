@@ -1,5 +1,7 @@
 using System.Text.Json.Serialization;
 
+using LoreSoft.Blazor.Controls.Converters;
+
 namespace LoreSoft.Blazor.Controls;
 
 /// <summary>
@@ -25,6 +27,7 @@ public class QueryFilter : QueryRule, IEquatable<QueryFilter?>
     /// Gets or sets the value to compare against the field using the specified operator.
     /// </summary>
     [JsonPropertyName("value")]
+    [JsonConverter(typeof(JsonObjectConverter))]
     public object? Value { get; set; }
 
     /// <inheritdoc/>

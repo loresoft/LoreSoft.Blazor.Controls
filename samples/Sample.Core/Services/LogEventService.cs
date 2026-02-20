@@ -16,6 +16,9 @@ public class LogEventService
             .AsQueryable()
             .Filter(dataRequest.Query);
 
+        if (dataRequest.PageSize <= 0)
+            return new DataResult<LogEvent>([.. queryable]);
+
         // apply continuation token for paging
         if (int.TryParse(dataRequest.ContinuationToken, out var lastId) && lastId > 0)
             queryable = queryable.Where(l => l.Id > lastId);

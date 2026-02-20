@@ -66,4 +66,15 @@ public class DebounceValue<T>
     /// Gets the delay used for debouncing value changes.
     /// </summary>
     public TimeSpan Delay { get; }
+
+    /// <summary>
+    /// Updates the underlying value without scheduling the debounced action.
+    /// Use this to restore a previously saved value (e.g., during state load) when the
+    /// corresponding side effect has already been applied by other means.
+    /// </summary>
+    /// <param name="value">The value to set silently.</param>
+    public void Update(T? value)
+    {
+        _value = value;
+    }
 }

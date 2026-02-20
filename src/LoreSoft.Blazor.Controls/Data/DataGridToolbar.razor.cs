@@ -11,9 +11,14 @@ namespace LoreSoft.Blazor.Controls;
 /// </summary>
 /// <typeparam name="TItem">The type of the data item displayed in the associated DataGrid.
 /// Must be a reference type to ensure proper equality comparisons and state management.</typeparam>
-public partial class DataGridToolbar<TItem> : ComponentBase
+public partial class DataGridToolbar<TItem> : ComponentBase, IDisposable
     where TItem : class
 {
+    /// <summary>
+    /// The key used to store the current search text inside <see cref="DataGridState.Extensions"/>
+    /// when persisting toolbar state alongside the grid state.
+    /// </summary>
+    private const string SearchTextKey = "toolbar-search";
     /// <summary>
     /// Initializes a new instance of the <see cref="DataGridToolbar{TItem}"/> class.
     /// Sets up the debounced search functionality with default timing to provide
@@ -33,7 +38,7 @@ public partial class DataGridToolbar<TItem> : ComponentBase
     public required IJSRuntime JavaScript { get; set; }
 
     /// <summary>
-    /// Gets or sets the parent <see cref="DataGrid{TItem}"/> component from the cascading parameter. 
+    /// Gets or sets the parent <see cref="DataGrid{TItem}"/> component from the cascading parameter.
     /// Mutually exclusive with <see cref="DataGrid"/>.
     /// This parameter is automatically populated when the toolbar is placed within a DataGrid's template,
     /// enabling automatic integration without explicit configuration.
@@ -42,7 +47,7 @@ public partial class DataGridToolbar<TItem> : ComponentBase
     protected DataGrid<TItem>? ParentGrid { get; set; }
 
     /// <summary>
-    /// Gets or sets the <see cref="DataGrid{TItem}"/> instance to operate on. 
+    /// Gets or sets the <see cref="DataGrid{TItem}"/> instance to operate on.
     /// Mutually exclusive with <see cref="ParentGrid"/>.
     /// Use this parameter when the toolbar is used outside of a DataGrid template
     /// or when you need to explicitly specify which grid instance to control.
@@ -138,7 +143,7 @@ public partial class DataGridToolbar<TItem> : ComponentBase
 
     /// <summary>
     /// Gets the current <see cref="DataGrid{TItem}"/> instance in use by the toolbar.
-    /// This property is derived from either the <see cref="DataGrid"/> parameter or the 
+    /// This property is derived from either the <see cref="DataGrid"/> parameter or the
     /// cascading <see cref="ParentGrid"/> parameter, providing a unified way to access
     /// the associated grid regardless of how the toolbar was configured.
     /// </summary>
@@ -149,7 +154,45 @@ public partial class DataGridToolbar<TItem> : ComponentBase
     {
         base.OnParametersSet();
 
+        // snapshot the grid reference from the previous render so we can detect a change
+        var previousGrid = CurrentGrid;
+
+        // explicit DataGrid parameter takes priority over the cascading parent
         CurrentGrid = DataGrid ?? ParentGrid;
+
+        // rewire state events only when the grid instance actually changed; avoids
+        // redundant subscribe/unsubscribe on every parameter update cycle
+        if (previousGrid == CurrentGrid)
+            return;
+
+        // unsubscribe from the old grid to prevent memory leaks and stale callbacks
+        if (previousGrid != null)
+        {
+            previousGrid.StateSaving -= HandleStateSaving;
+            previousGrid.StateLoaded -= HandleStateLoaded;
+            previousGrid.StateResetting -= HandleStateResetting;
+        }
+
+        // subscribe to the new grid so the toolbar can persist and restore its own state
+        if (CurrentGrid != null)
+        {
+            CurrentGrid.StateSaving += HandleStateSaving;
+            CurrentGrid.StateLoaded += HandleStateLoaded;
+            CurrentGrid.StateResetting += HandleStateResetting;
+        }
+    }
+
+    /// <inheritdoc />
+    public void Dispose()
+    {
+        if (CurrentGrid != null)
+        {
+            CurrentGrid.StateSaving -= HandleStateSaving;
+            CurrentGrid.StateLoaded -= HandleStateLoaded;
+            CurrentGrid.StateResetting -= HandleStateResetting;
+        }
+
+        GC.SuppressFinalize(this);
     }
 
     /// <summary>
@@ -166,7 +209,7 @@ public partial class DataGridToolbar<TItem> : ComponentBase
     /// configured delay period. It performs a contains-based search across all
     /// filterable string columns using OR logic.
     /// </summary>
-    /// <param name="searchText">The search text entered by the user. 
+    /// <param name="searchText">The search text entered by the user.
     /// If null or empty, any existing quick search filters are removed.</param>
     protected void HandleSearch(string? searchText)
     {
@@ -234,5 +277,41 @@ public partial class DataGridToolbar<TItem> : ComponentBase
             return;
 
         CurrentGrid.ToggleColumnPicker();
+    }
+
+    /// <summary>
+    /// Handles the <see cref="DataGrid{TItem}.StateSaving"/> event by writing the current
+    /// search text into <see cref="DataGridState.Extensions"/> so it is persisted with the grid state.
+    /// </summary>
+    /// <param name="state">The grid state being saved.</param>
+    private Task HandleStateSaving(DataGridState state)
+    {
+        state.Extensions[SearchTextKey] = SearchText.Value;
+        return Task.CompletedTask;
+    }
+
+    /// <summary>
+    /// Handles the <see cref="DataGrid{TItem}.StateLoaded"/> event by restoring the search text
+    /// from <see cref="DataGridState.Extensions"/>. The search filter itself is already restored
+    /// by the grid, so only the text box value is updated here.
+    /// </summary>
+    /// <param name="state">The grid state that was loaded.</param>
+    private Task HandleStateLoaded(DataGridState state)
+    {
+        // silently update the text box; the filter is already restored by the grid
+        if (state.Extensions.TryGetValue(SearchTextKey, out var text))
+            SearchText.Update(text);
+
+        return Task.CompletedTask;
+    }
+
+    /// <summary>
+    /// Handles the <see cref="DataGrid{TItem}.StateResetting"/> event by clearing the search
+    /// text box so it reflects the reset grid state.
+    /// </summary>
+    private Task HandleStateResetting()
+    {
+        SearchText.Update(null);
+        return Task.CompletedTask;
     }
 }

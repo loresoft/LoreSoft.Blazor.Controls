@@ -20,10 +20,66 @@ namespace LoreSoft.Blazor.Controls;
 [CascadingTypeParameter(nameof(TItem))]
 public partial class DataGrid<TItem> : DataComponentBase<TItem>
 {
+    /// <summary>
+    /// Tracks which data items currently have their detail rows expanded.
+    /// </summary>
     private readonly HashSet<TItem> _expandedItems = [];
+
+    /// <summary>
+    /// Tracks which group keys are currently expanded.
+    /// </summary>
     private readonly HashSet<string> _expandedGroups = [];
 
+    /// <summary>
+    /// The resolved <see cref="BreakpointProvider"/> from the cascading parameter,
+    /// used to subscribe to and unsubscribe from breakpoint-change notifications.
+    /// </summary>
     private BreakpointProvider? _breakpointProvider;
+
+    private string? _lastStateKey;
+    private string? _resolvedStateKey;
+
+    /// <summary>
+    /// Raised during state save, before the state is persisted to storage.
+    /// Subscribe to this event to include additional state alongside the built-in grid state.
+    /// </summary>
+    /// <remarks>
+    /// The <see cref="DataGridState"/> passed to each subscriber has its
+    /// <see cref="DataGridState.Extensions"/> dictionary available for storing custom key/value pairs.
+    /// Subscribers are invoked sequentially and individually awaited, so changes written to
+    /// <see cref="DataGridState.Extensions"/> by an earlier subscriber are visible to later ones.
+    /// This event is only raised when <see cref="StateKey"/> is set.
+    /// </remarks>
+    public event Func<DataGridState, Task>? StateSaving;
+
+    /// <summary>
+    /// Raised after state is loaded from storage and the built-in grid state
+    /// (filters, column sort order, and column visibility) has been restored.
+    /// Subscribe to this event to restore additional state from <see cref="DataGridState.Extensions"/>.
+    /// </summary>
+    /// <remarks>
+    /// The <see cref="DataGridState"/> passed to each subscriber contains the
+    /// <see cref="DataGridState.Extensions"/> entries that were saved by <see cref="StateSaving"/> subscribers.
+    /// This event is only raised when <see cref="StateKey"/> is set and a previously saved state exists in storage.
+    /// Subscribers are invoked sequentially and individually awaited.
+    /// </remarks>
+    public event Func<DataGridState, Task>? StateLoaded;
+
+    /// <summary>
+    /// Raised during state reset, after the built-in grid state (filters, column sort order,
+    /// and column visibility) has been restored to its defaults and the stored entry removed from storage.
+    /// Subscribe to this event to reset any additional state that was saved via <see cref="StateSaving"/>.
+    /// </summary>
+    /// <remarks>
+    /// Subscribers are invoked sequentially and individually awaited.
+    /// </remarks>
+    public event Func<Task>? StateResetting;
+
+    /// <summary>
+    /// Gets or sets the navigation manager used to handle navigation and URI manipulation within the application.
+    /// </summary>
+    [Inject]
+    public required NavigationManager NavigationManager { get; set; } = null!;
 
     /// <summary>
     /// Gets or sets the template for defining data columns.
@@ -329,7 +385,7 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
 
         column.UpdateSort(0, descending ?? false);
 
-        await RefreshAsync();
+        await RefreshAsync(resetPager: true);
     }
 
     /// <summary>
@@ -438,6 +494,18 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
             return;
 
         _breakpointProvider.Subscribe(OnBreakpointChanged);
+    }
+
+    /// <inheritdoc />
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+
+        if (_lastStateKey == StateKey)
+            return;
+
+        _lastStateKey = StateKey;
+        _resolvedStateKey = StateKey.IsNullOrWhiteSpace() ? null : $"{NavigationManager.GetPathHash()}:{StateKey}";
     }
 
     /// <summary>
@@ -577,7 +645,7 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
     /// </summary>
     protected void DeselectAll()
     {
-        SetSelectedItems(new List<TItem>());
+        SetSelectedItems([]);
         StateHasChanged();
     }
 
@@ -799,6 +867,10 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
         GC.SuppressFinalize(this);
     }
 
+    /// <summary>
+    /// Cached footer-presence check as <c>(columnCount, hasFooter)</c>.
+    /// Invalidated automatically when <see cref="Columns"/> count changes.
+    /// </summary>
     private (int, bool)? _hasFooter;
 
     private bool HasFooter()
@@ -815,6 +887,11 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
         return hasFooter;
     }
 
+    /// <summary>
+    /// Populates <see cref="SortEntries"/> from the currently sorted columns
+    /// so the sort picker UI reflects the active sort configuration.
+    /// Ensures at least one empty entry is present when no columns are sorted.
+    /// </summary>
     private void UpdateSortPickerState()
     {
         SortEntries = Columns
@@ -827,16 +904,32 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
             SortEntries.Add(new DataSortState());
     }
 
+    /// <summary>
+    /// Resets the grid state to its defaults and removes any persisted state from storage.
+    /// </summary>
+    /// <param name="resetFilter">When <see langword="true"/>, resets all active filters.</param>
+    /// <param name="resetVisible">When <see langword="true"/>, restores column visibility to its initial values.</param>
+    /// <param name="resetSort">When <see langword="true"/>, restores column sort order to its initial values.</param>
     private async Task ResetStateAsync(
         bool resetFilter = true,
         bool resetVisible = true,
         bool resetSort = true)
     {
-        if (!string.IsNullOrWhiteSpace(StateKey))
-            await StorageService.RemoveItemAsync(StateKey, StateStore);
-
         if (!resetVisible && !resetSort && !resetFilter)
             return;
+
+        // remove persisted state if all aspects of the state are being reset
+        if (!string.IsNullOrWhiteSpace(StateKey) && resetFilter && resetVisible && resetSort)
+        {
+            try
+            {
+                await StorageService.RemoveItemAsync(_resolvedStateKey!, StateStore);
+            }
+            catch
+            {
+                // state removal is best-effort; grid reset continues regardless
+            }
+        }
 
         // reset filters to defaults
         if (resetFilter)
@@ -852,18 +945,43 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
                 column.UpdateVisible(column.Visible);
         }
 
+        // notify subscribers to reset their own state
+        if (StateResetting != null)
+        {
+            // GetInvocationList lets us await each subscriber individually;
+            // a plain Invoke() only returns the last subscriber's Task, silently discarding the others.
+            foreach (var handler in StateResetting.GetInvocationList().Cast<Func<Task>>())
+                await handler();
+        }
+
         // refresh sort picker state if needed
         UpdateSortPickerState();
 
         StateHasChanged();
     }
 
+    /// <summary>
+    /// Loads the persisted grid state from storage identified by <see cref="StateKey"/> and
+    /// restores filters, column sort order, and column visibility. Also notifies
+    /// <see cref="StateLoaded"/> subscribers to restore any additional state.
+    /// </summary>
     private async Task LoadStateAsync()
     {
+        // only load state if we have a key
         if (string.IsNullOrWhiteSpace(StateKey))
             return;
 
-        var state = await StorageService.GetItemAsync<DataGridState>(StateKey, StateStore);
+        DataGridState? state;
+        try
+        {
+            state = await StorageService.GetItemAsync<DataGridState>(_resolvedStateKey!, StateStore);
+        }
+        catch
+        {
+            // state load is best-effort; grid renders with defaults if storage is unavailable or data is corrupt
+            return;
+        }
+
         if (state is null)
             return;
 
@@ -874,34 +992,63 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
             RootQuery.Filters.AddRange(state.Query.Filters);
         }
 
-        if (state.Columns is not { Length: > 0 })
-            return;
-
-        // restore column sort + visibility
-        foreach (var cs in state.Columns)
+        if (state.Columns is { Length: > 0 })
         {
-            var col = Columns.Find(c => c.PropertyName == cs.PropertyName);
-            if (col is null)
-                continue;
+            // restore column sort + visibility
+            foreach (var cs in state.Columns)
+            {
+                var col = Columns.Find(c => c.PropertyName == cs.PropertyName);
+                if (col is null)
+                    continue;
 
-            col.UpdateSort(cs.SortIndex, cs.SortDescending);
-            col.UpdateVisible(cs.Visible);
+                col.UpdateSort(cs.SortIndex, cs.SortDescending);
+                col.UpdateVisible(cs.Visible);
+            }
+        }
+
+        // notify subscribers to restore their own state
+        if (StateLoaded != null)
+        {
+            // GetInvocationList lets us await each subscriber individually;
+            // a plain Invoke() only returns the last subscriber's Task, silently discarding the others.
+            foreach (var handler in StateLoaded.GetInvocationList().Cast<Func<DataGridState, Task>>())
+                await handler(state);
         }
     }
 
+    /// <summary>
+    /// Saves the current grid state (filters, column sort order, and column visibility) to
+    /// storage under <see cref="StateKey"/>. Also notifies <see cref="StateSaving"/> subscribers
+    /// so they can persist additional state via <see cref="DataGridState.Extensions"/>.
+    /// </summary>
     private async Task SaveStateAsync()
     {
-        if (string.IsNullOrWhiteSpace(StateKey))
+        // only save state if we have a key and have rendered at least once
+        if (string.IsNullOrWhiteSpace(StateKey) || !Rendered)
             return;
 
-        var columns = Columns
-            .Select(c => new DataColumnState(c.PropertyName, c.CurrentSortIndex, c.CurrentSortDescending, c.CurrentVisible))
-            .ToArray();
+        try
+        {
+            var columns = Columns
+                .Select(c => new DataColumnState(c.PropertyName, c.CurrentSortIndex, c.CurrentSortDescending, c.CurrentVisible))
+                .ToArray();
 
-        var state = new DataGridState(RootQuery, columns);
+            var state = new DataGridState(RootQuery, columns);
 
-        await StorageService.SetItemAsync(StateKey, state, StateStore);
+            // allow subscribers to add their own state to the extensions bag
+            if (StateSaving != null)
+            {
+                // GetInvocationList lets us await each subscriber individually;
+                // a plain Invoke() only returns the last subscriber's Task, silently discarding the others.
+                foreach (var handler in StateSaving.GetInvocationList().Cast<Func<DataGridState, Task>>())
+                    await handler(state);
+            }
+
+            await StorageService.SetItemAsync(_resolvedStateKey!, state, StateStore);
+        }
+        catch
+        {
+            // state save is best-effort; grid continues to function regardless
+        }
     }
-
-    
 }

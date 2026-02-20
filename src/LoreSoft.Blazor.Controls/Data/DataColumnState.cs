@@ -1,24 +1,48 @@
+using System.Text.Json.Serialization;
+
 namespace LoreSoft.Blazor.Controls;
 
+/// <summary>
+/// Represents the persisted state of a single <see cref="DataColumn{TItem}"/> within a <see cref="DataGrid{TItem}"/>.
+/// Instances are serialized to storage when state is saved and used to restore sort order
+/// and visibility when state is loaded.
+/// </summary>
 public record DataColumnState
 {
+    [JsonConstructor]
     public DataColumnState(
-        string columnName,
+        string propertyName,
         int sortIndex,
         bool sortDescending,
         bool visible)
     {
-        PropertyName = columnName;
+        PropertyName = propertyName;
         SortIndex = sortIndex;
         SortDescending = sortDescending;
         Visible = visible;
     }
 
-    public string PropertyName { get; init; }
+    /// <summary>
+    /// Gets the property name of the column.
+    /// This value is matched against <c>DataColumn.PropertyName</c> to identify the target column
+    /// when restoring persisted state.
+    /// </summary>
+    public string PropertyName { get; }
 
-    public int SortIndex { get; init; }
 
-    public bool SortDescending { get; init; }
+    /// <summary>
+    /// Gets the zero-based sort priority of the column, or <c>-1</c> if the column is not sorted.
+    /// When multiple columns are sorted, lower index values indicate higher sort priority.
+    /// </summary>
+    public int SortIndex { get; }
 
-    public bool Visible { get; init; }
+    /// <summary>
+    /// Gets a value indicating whether the column is sorted in descending order.
+    /// </summary>
+    public bool SortDescending { get; }
+
+    /// <summary>
+    /// Gets a value indicating whether the column is visible.
+    /// </summary>
+    public bool Visible { get; }
 }
