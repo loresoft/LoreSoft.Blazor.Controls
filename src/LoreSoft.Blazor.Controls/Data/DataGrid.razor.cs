@@ -260,7 +260,7 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
             col.UpdateSort(index++, entry.Direction == "desc");
         }
 
-        return RefreshAsync();
+        return RefreshAsync(resetPager: true);
     }
 
     /// <summary>
