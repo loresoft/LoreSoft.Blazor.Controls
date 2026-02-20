@@ -199,8 +199,8 @@ public class DataPagerState : INotifyPropertyChanged
     /// </summary>
     internal void Reset()
     {
-        _page = 1;
-        _continuationToken = null;
+        Page = 1;
+        ContinuationToken = null;
     }
 
     /// <summary>

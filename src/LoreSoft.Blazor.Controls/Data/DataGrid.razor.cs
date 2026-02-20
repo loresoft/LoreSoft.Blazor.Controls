@@ -246,11 +246,12 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
     /// Applies all current sort entries to the grid columns and refreshes the data.
     /// Entries with no column selected are skipped. List order determines sort priority.
     /// </summary>
-    protected Task ApplySortEntriesAsync()
+    protected async Task ApplySortEntriesAsync()
     {
         Columns.ForEach(c => c.UpdateSort(-1, false));
 
         var index = 0;
+
         foreach (var entry in SortEntries.Where(e => !string.IsNullOrEmpty(e.ColumnName)))
         {
             var col = Columns.Find(c => c.ColumnName == entry.ColumnName);
@@ -260,7 +261,7 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
             col.UpdateSort(index++, entry.Direction == "desc");
         }
 
-        return RefreshAsync(resetPager: true);
+        await RefreshAsync(resetPager: true);
     }
 
     /// <summary>
@@ -957,7 +958,7 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
         // refresh sort picker state if needed
         UpdateSortPickerState();
 
-        StateHasChanged();
+        await RefreshAsync(resetPager: true);
     }
 
     /// <summary>

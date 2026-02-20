@@ -330,11 +330,13 @@ public class DataPagerStateTests
     }
 
     [Fact]
-    public void Reset_ShouldSetPageToOneWithoutTriggeringEvents()
+    public void Reset_ShouldSetPageToOneAndTriggerEvents()
     {
         // Arrange
         var pagerState = new DataPagerState();
         pagerState.Page = 5;
+        pagerState.ContinuationToken = "default";
+
         var propertyChangedEvents = new List<string>();
         pagerState.PropertyChanged += (sender, e) => propertyChangedEvents.Add(e.PropertyName!);
 
@@ -346,7 +348,10 @@ public class DataPagerStateTests
 
         // Assert
         Assert.Equal(1, pagerState.Page);
-        Assert.Empty(propertyChangedEvents);
+        Assert.Null(pagerState.ContinuationToken);
+        Assert.Contains("Page", propertyChangedEvents);
+        Assert.Contains("ContinuationToken", propertyChangedEvents);
+        Assert.Equal(2, propertyChangedEvents.Count);
     }
 
     [Fact]
@@ -382,12 +387,35 @@ public class DataPagerStateTests
         // Act
         pagerState.Total = 100;
         pagerState.Page = 2;
-        pagerState.PageSize = 10;
 
         // Assert
         Assert.Contains("Total", propertyChangedEvents);
         Assert.Contains("Page", propertyChangedEvents);
+        Assert.Equal(2, propertyChangedEvents.Count);
+    }
+
+    [Fact]
+    public void PageSize_ShouldSetPageToOneAndTriggerEvents()
+    {
+        // Arrange
+        var pagerState = new DataPagerState();
+        pagerState.PageSize = 10;
+        pagerState.Page = 5;
+        pagerState.ContinuationToken = "default";
+
+        var propertyChangedEvents = new List<string>();
+        pagerState.PropertyChanged += (sender, e) => propertyChangedEvents.Add(e.PropertyName!);
+
+        // Act
+        pagerState.PageSize = 20;
+
+        // Assert
+        Assert.Equal(20, pagerState.PageSize);
+        Assert.Equal(1, pagerState.Page);
+        Assert.Null(pagerState.ContinuationToken);
         Assert.Contains("PageSize", propertyChangedEvents);
+        Assert.Contains("Page", propertyChangedEvents);
+        Assert.Contains("ContinuationToken", propertyChangedEvents);
         Assert.Equal(3, propertyChangedEvents.Count);
     }
 
