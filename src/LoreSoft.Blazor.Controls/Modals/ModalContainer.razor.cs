@@ -47,22 +47,32 @@ public partial class ModalContainer : ComponentBase, IDisposable
     }
 
     /// <summary>
-    /// Handles the <see cref="ModalClose"/> message by removing a modal from the active collection.
+    /// Handles the <see cref="ModalClose"/> message by scheduling removal of a modal from the active collection.
     /// </summary>
     /// <param name="message">The modal close message containing the modal reference to remove.</param>
     /// <returns>A task that represents the asynchronous operation.</returns>
     /// <remarks>
-    /// Includes a 250ms delay to allow closing animations to complete before removing the modal from the DOM.
+    /// Schedules a 250ms delayed removal to allow closing animations to complete before removing the modal from the DOM.
+    /// The caller is not blocked by the delay.
     /// </remarks>
-    private async ValueTask HandleModalClose(ModalClose message)
+    private ValueTask HandleModalClose(ModalClose message)
     {
         if (message is null || message.Modal is null)
-            return;
+            return ValueTask.CompletedTask;
 
+        // Schedule modal removal after a delay to allow closing animations to complete
+        _ = RemoveModalAsync(message.Modal);
+
+        // Return immediately to avoid blocking the caller with the delay
+        return ValueTask.CompletedTask;
+    }
+
+    private async Task RemoveModalAsync(ModalReference modal)
+    {
         // Allow time for closing animations
         await Task.Delay(250);
 
-        Modals.Remove(message.Modal);
+        Modals.Remove(modal);
         await InvokeAsync(StateHasChanged);
     }
 

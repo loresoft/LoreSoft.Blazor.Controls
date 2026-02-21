@@ -20,6 +20,8 @@ namespace LoreSoft.Blazor.Controls;
 [CascadingTypeParameter(nameof(TItem))]
 public partial class DataGrid<TItem> : DataComponentBase<TItem>
 {
+    private readonly DebounceAction _refreshDebounce = new();
+
     /// <summary>
     /// Tracks which data items currently have their detail rows expanded.
     /// </summary>
@@ -366,6 +368,25 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
         if (StateKey != null && resetPager)
             await SaveStateAsync();
     }
+
+    /// <summary>
+    /// Refreshes the data asynchronously after a debounce delay, optionally resetting pagination or forcing a reload.
+    /// Multiple rapid calls within the debounce window are coalesced; only the last call executes.
+    /// </summary>
+    /// <param name="debounce">The debounce delay. If less than or equal to <see cref="TimeSpan.Zero"/>, the refresh occurs immediately with no debouncing.</param>
+    /// <param name="resetPager">When <see langword="true"/>, resets the pager to the first page before refreshing. Defaults to <see langword="false"/>.</param>
+    /// <param name="forceReload">When <see langword="true"/>, bypasses any cached data and reloads from the source. Defaults to <see langword="false"/>.</param>
+    /// <returns>A task that represents the asynchronous refresh operation.</returns>
+    public Task RefreshAsync(TimeSpan debounce, bool resetPager = false, bool forceReload = false)
+    {
+        if (debounce <= TimeSpan.Zero)
+            return RefreshAsync(resetPager, forceReload);
+
+        return _refreshDebounce.Debounce(
+            action: () => RefreshAsync(resetPager, forceReload),
+            delay: debounce);
+    }
+
 
     /// <summary>
     /// Sorts the grid by the specified column.

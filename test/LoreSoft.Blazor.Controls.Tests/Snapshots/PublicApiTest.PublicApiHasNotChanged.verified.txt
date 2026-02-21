@@ -507,6 +507,7 @@ namespace LoreSoft.Blazor.Controls
         protected override void OnParametersSet() { }
         public System.Threading.Tasks.Task QuickSearch(string? searchText, bool clearFilter = false) { }
         public override System.Threading.Tasks.Task RefreshAsync(bool resetPager = false, bool forceReload = false) { }
+        public System.Threading.Tasks.Task RefreshAsync(System.TimeSpan debounce, bool resetPager = false, bool forceReload = false) { }
         protected System.Threading.Tasks.Task RemoveSortEntryAsync(LoreSoft.Blazor.Controls.DataSortState entry) { }
         protected void SelectAll() { }
         protected void SetSelectedItems(System.Collections.Generic.IEnumerable<TItem> items) { }
