@@ -486,9 +486,9 @@ namespace LoreSoft.Blazor.Controls
         [Microsoft.AspNetCore.Components.Parameter]
         public LoreSoft.Blazor.Controls.StoreType StateStore { get; set; }
         protected System.Collections.Generic.List<LoreSoft.Blazor.Controls.DataColumn<TItem>> VisibleColumns { get; }
-        public event System.Func<LoreSoft.Blazor.Controls.DataGridState, System.Threading.Tasks.Task>? StateLoaded;
-        public event System.Func<System.Threading.Tasks.Task>? StateResetting;
-        public event System.Func<LoreSoft.Blazor.Controls.DataGridState, System.Threading.Tasks.Task>? StateSaving;
+        public event System.Action<LoreSoft.Blazor.Controls.DataGridState>? StateLoaded;
+        public event System.Action? StateResetting;
+        public event System.Action<LoreSoft.Blazor.Controls.DataGridState>? StateSaving;
         protected void AddSortEntry() { }
         protected System.Threading.Tasks.Task ApplySortEntriesAsync() { }
         protected override void BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder @__builder) { }
