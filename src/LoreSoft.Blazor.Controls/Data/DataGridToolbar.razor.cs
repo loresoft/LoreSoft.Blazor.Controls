@@ -19,6 +19,7 @@ public partial class DataGridToolbar<TItem> : ComponentBase, IDisposable
     /// when persisting toolbar state alongside the grid state.
     /// </summary>
     private const string SearchTextKey = "toolbar-search";
+
     /// <summary>
     /// Initializes a new instance of the <see cref="DataGridToolbar{TItem}"/> class.
     /// Sets up the debounced search functionality with default timing to provide
@@ -284,10 +285,9 @@ public partial class DataGridToolbar<TItem> : ComponentBase, IDisposable
     /// search text into <see cref="DataGridState.Extensions"/> so it is persisted with the grid state.
     /// </summary>
     /// <param name="state">The grid state being saved.</param>
-    private Task HandleStateSaving(DataGridState state)
+    private void HandleStateSaving(DataGridState state)
     {
         state.Extensions[SearchTextKey] = SearchText.Value;
-        return Task.CompletedTask;
     }
 
     /// <summary>
@@ -296,22 +296,19 @@ public partial class DataGridToolbar<TItem> : ComponentBase, IDisposable
     /// by the grid, so only the text box value is updated here.
     /// </summary>
     /// <param name="state">The grid state that was loaded.</param>
-    private Task HandleStateLoaded(DataGridState state)
+    private void HandleStateLoaded(DataGridState state)
     {
         // silently update the text box; the filter is already restored by the grid
         if (state.Extensions.TryGetValue(SearchTextKey, out var text))
             SearchText.Update(text);
-
-        return Task.CompletedTask;
     }
 
     /// <summary>
     /// Handles the <see cref="DataGrid{TItem}.StateResetting"/> event by clearing the search
     /// text box so it reflects the reset grid state.
     /// </summary>
-    private Task HandleStateResetting()
+    private void HandleStateResetting()
     {
         SearchText.Update(null);
-        return Task.CompletedTask;
     }
 }

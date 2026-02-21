@@ -48,11 +48,9 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
     /// <remarks>
     /// The <see cref="DataGridState"/> passed to each subscriber has its
     /// <see cref="DataGridState.Extensions"/> dictionary available for storing custom key/value pairs.
-    /// Subscribers are invoked sequentially and individually awaited, so changes written to
-    /// <see cref="DataGridState.Extensions"/> by an earlier subscriber are visible to later ones.
     /// This event is only raised when <see cref="StateKey"/> is set.
     /// </remarks>
-    public event Func<DataGridState, Task>? StateSaving;
+    public event Action<DataGridState>? StateSaving;
 
     /// <summary>
     /// Raised after state is loaded from storage and the built-in grid state
@@ -63,19 +61,15 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
     /// The <see cref="DataGridState"/> passed to each subscriber contains the
     /// <see cref="DataGridState.Extensions"/> entries that were saved by <see cref="StateSaving"/> subscribers.
     /// This event is only raised when <see cref="StateKey"/> is set and a previously saved state exists in storage.
-    /// Subscribers are invoked sequentially and individually awaited.
     /// </remarks>
-    public event Func<DataGridState, Task>? StateLoaded;
+    public event Action<DataGridState>? StateLoaded;
 
     /// <summary>
     /// Raised during state reset, after the built-in grid state (filters, column sort order,
     /// and column visibility) has been restored to its defaults and the stored entry removed from storage.
     /// Subscribe to this event to reset any additional state that was saved via <see cref="StateSaving"/>.
     /// </summary>
-    /// <remarks>
-    /// Subscribers are invoked sequentially and individually awaited.
-    /// </remarks>
-    public event Func<Task>? StateResetting;
+    public event Action? StateResetting;
 
     /// <summary>
     /// Gets or sets the navigation manager used to handle navigation and URI manipulation within the application.
@@ -968,13 +962,7 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
         }
 
         // notify subscribers to reset their own state
-        if (StateResetting != null)
-        {
-            // GetInvocationList lets us await each subscriber individually;
-            // a plain Invoke() only returns the last subscriber's Task, silently discarding the others.
-            foreach (var handler in StateResetting.GetInvocationList().Cast<Func<Task>>())
-                await handler();
-        }
+        StateResetting?.Invoke();
 
         // refresh sort picker state if needed
         UpdateSortPickerState();
@@ -1029,13 +1017,7 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
         }
 
         // notify subscribers to restore their own state
-        if (StateLoaded != null)
-        {
-            // GetInvocationList lets us await each subscriber individually;
-            // a plain Invoke() only returns the last subscriber's Task, silently discarding the others.
-            foreach (var handler in StateLoaded.GetInvocationList().Cast<Func<DataGridState, Task>>())
-                await handler(state);
-        }
+        StateLoaded?.Invoke(state);
     }
 
     /// <summary>
@@ -1058,13 +1040,7 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
             var state = new DataGridState(RootQuery, columns);
 
             // allow subscribers to add their own state to the extensions bag
-            if (StateSaving != null)
-            {
-                // GetInvocationList lets us await each subscriber individually;
-                // a plain Invoke() only returns the last subscriber's Task, silently discarding the others.
-                foreach (var handler in StateSaving.GetInvocationList().Cast<Func<DataGridState, Task>>())
-                    await handler(state);
-            }
+            StateSaving?.Invoke(state);
 
             await StorageService.SetItemAsync(_resolvedStateKey!, state, StateStore);
         }
