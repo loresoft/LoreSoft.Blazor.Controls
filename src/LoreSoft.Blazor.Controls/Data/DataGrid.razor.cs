@@ -988,13 +988,15 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
     private async Task LoadStateAsync()
     {
         // only load state if we have a key
-        if (string.IsNullOrWhiteSpace(StateKey))
+        if (string.IsNullOrWhiteSpace(StateKey) || string.IsNullOrWhiteSpace(_resolvedStateKey))
             return;
 
         DataGridState? state;
         try
         {
-            state = await StorageService.GetItemAsync<DataGridState>(_resolvedStateKey!, StateStore);
+            state = await StorageService.GetItemAsync<DataGridState>(
+                key: _resolvedStateKey,
+                storeType: StateStore);
         }
         catch
         {
@@ -1046,48 +1048,55 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
     private async Task SaveStateAsync()
     {
         // only save state if we have a key and have rendered at least once
-        if (string.IsNullOrWhiteSpace(StateKey) || !Rendered)
+        if (string.IsNullOrWhiteSpace(StateKey)
+            || string.IsNullOrWhiteSpace(_resolvedStateKey)
+            || !Rendered)
+        {
             return;
+        }
+
+        var columns = new List<DataColumnState>();
+        for (int i = 0; i < Columns.Count; i++)
+        {
+            var c = Columns[i];
+
+            // ignore columns that aren't hideable or sortable
+            if (!c.Hideable && !c.Sortable)
+                continue;
+
+            // to reduce size, skip columns that are in their default state
+            if (c.SortIndex == c.CurrentSortIndex
+                && c.SortDescending == c.CurrentSortDescending
+                && c.Visible == c.CurrentVisible)
+            {
+                continue;
+            }
+
+            // capture index for restoration since property name may not be unique
+            var cs = new DataColumnState(
+                propertyName: c.PropertyName,
+                sortIndex: c.CurrentSortIndex,
+                sortDescending: c.CurrentSortDescending,
+                visible: c.CurrentVisible,
+                index: i);
+
+            columns.Add(cs);
+        }
+
+        // copy RootQuery, stripping transient filters, so the live state is not modified
+        var query = CopyQuery(RootQuery);
+
+        var state = new DataGridState(query, columns);
+
+        // allow subscribers to add their own state to the extensions bag
+        StateSaving?.Invoke(state);
 
         try
         {
-            var columns = new List<DataColumnState>();
-            for (int i = 0; i < Columns.Count; i++)
-            {
-                var c = Columns[i];
-
-                // ignore columns that aren't hideable or sortable
-                if (!c.Hideable && !c.Sortable)
-                    continue;
-
-                // to reduce size, skip columns that are in their default state
-                if (c.SortIndex == c.CurrentSortIndex
-                    && c.SortDescending == c.CurrentSortDescending
-                    && c.Visible == c.CurrentVisible)
-                {
-                    continue;
-                }
-
-                // capture index for restoration since property name may not be unique
-                var cs = new DataColumnState(
-                    propertyName: c.PropertyName,
-                    sortIndex: c.CurrentSortIndex,
-                    sortDescending: c.CurrentSortDescending,
-                    visible: c.CurrentVisible,
-                    index: i);
-
-                columns.Add(cs);
-            }
-
-            // copy RootQuery, stripping transient filters, so the live state is not modified
-            var query = CopyQuery(RootQuery);
-
-            var state = new DataGridState(query, columns);
-
-            // allow subscribers to add their own state to the extensions bag
-            StateSaving?.Invoke(state);
-
-            await StorageService.SetItemAsync(_resolvedStateKey!, state, StateStore);
+            await StorageService.SetItemAsync(
+                key: _resolvedStateKey,
+                value: state,
+                storeType: StateStore);
         }
         catch
         {

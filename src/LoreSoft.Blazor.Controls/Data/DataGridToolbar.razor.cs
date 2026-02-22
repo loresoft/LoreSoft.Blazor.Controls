@@ -18,7 +18,7 @@ public partial class DataGridToolbar<TItem> : ComponentBase, IDisposable
     /// The key used to store the current search text inside <see cref="DataGridState.Extensions"/>
     /// when persisting toolbar state alongside the grid state.
     /// </summary>
-    private const string SearchTextKey = "toolbar-search";
+    private const string SearchTextKey = "QuickSearch";
 
     /// <summary>
     /// Initializes a new instance of the <see cref="DataGridToolbar{TItem}"/> class.

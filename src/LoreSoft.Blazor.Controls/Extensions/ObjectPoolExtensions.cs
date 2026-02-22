@@ -41,8 +41,8 @@ public static class ObjectPoolExtensions
         public static ObjectPool<StringBuilder> Pool => _stringBuilderPool.Value;
     }
 
-    private static readonly Lazy<ObjectPool<StringBuilder>> _stringBuilderPool = new(()
-        => new(objectFactory: static () => new(256), resetAction: ResetAction));
+    private static readonly Lazy<ObjectPool<StringBuilder>> _stringBuilderPool
+        = new(valueFactory: static () => new(objectFactory: static () => new(256), resetAction: ResetAction));
 
     private static void ResetAction(StringBuilder sb)
     {

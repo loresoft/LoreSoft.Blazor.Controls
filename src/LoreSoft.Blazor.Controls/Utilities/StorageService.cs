@@ -1,4 +1,5 @@
 using System.Text.Json;
+using System.Text.Json.Serialization.Metadata;
 
 using LoreSoft.Blazor.Controls.Extensions;
 using LoreSoft.Blazor.Controls.Utilities;
@@ -28,7 +29,7 @@ namespace LoreSoft.Blazor.Controls;
 /// encryption or store data server-side.
 /// </para>
 /// </remarks>
-public class StorageService
+public partial class StorageService
 {
     /// <summary>
     /// The JavaScript module name for local storage.
@@ -90,7 +91,7 @@ public class StorageService
         }
         catch (Exception ex) when (ex is JSDisconnectedException or InvalidOperationException or TaskCanceledException)
         {
-            _logger.LogDebug(ex, "JavaScript runtime unavailable when getting storage item {Key}", key);
+            LogGetItemUnavailable(_logger, ex, key);
             return null;
         }
 
@@ -124,9 +125,42 @@ public class StorageService
         if (string.IsNullOrWhiteSpace(json))
             return default;
 
-        _logger.LogInformation("Retrieved {StoreType} storage item {Key} with value {Value}", storeType, key, json);
+        LogGetItem(_logger, storeType, key, json);
 
         return JsonSerializer.Deserialize<T>(json, _options);
+    }
+
+    /// <summary>
+    /// Retrieves and deserializes a typed value from browser storage using the specified <see cref="JsonTypeInfo{T}"/>.
+    /// </summary>
+    /// <typeparam name="T">The type to deserialize the stored JSON value to.</typeparam>
+    /// <param name="key">The storage key.</param>
+    /// <param name="jsonTypeInfo">The JSON type information used for deserialization.</param>
+    /// <param name="storeType">The type of storage to use (local or session).</param>
+    /// <param name="protectionKey">
+    /// Optional encryption key to decrypt the stored value.
+    /// NOTE: Uses XOR encryption which is NOT cryptographically secure and should only
+    /// be used for obfuscation, not for protecting sensitive data.
+    /// </param>
+    /// <returns>A task that represents the asynchronous operation. The task result contains the deserialized value, or default if not found.</returns>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="key"/> is null or empty.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="jsonTypeInfo"/> is null.</exception>
+    public async ValueTask<T?> GetItemAsync<T>(
+        string key,
+        JsonTypeInfo<T> jsonTypeInfo,
+        StoreType storeType = StoreType.Session,
+        string? protectionKey = null)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(key);
+        ArgumentNullException.ThrowIfNull(jsonTypeInfo);
+
+        var json = await GetItemAsync(key, storeType, protectionKey);
+        if (string.IsNullOrWhiteSpace(json))
+            return default;
+
+        LogGetItem(_logger, storeType, key, json);
+
+        return JsonSerializer.Deserialize(json, jsonTypeInfo);
     }
 
 
@@ -137,7 +171,7 @@ public class StorageService
     /// <param name="value">The string value to store.</param>
     /// <param name="storeType">The type of storage to use (local or session).</param>
     /// <param name="protectionKey">
-    /// Optional encryption key to decrypt the stored value.
+    /// Optional encryption key to encrypt the stored value.
     /// NOTE: Uses XOR encryption which is NOT cryptographically secure and should only
     /// be used for obfuscation, not for protecting sensitive data.
     /// </param>
@@ -164,7 +198,7 @@ public class StorageService
         }
         catch (Exception ex) when (ex is JSDisconnectedException or InvalidOperationException or TaskCanceledException)
         {
-            _logger.LogDebug(ex, "JavaScript runtime unavailable when setting storage item {Key}", key);
+            LogSetItemUnavailable(_logger, ex, key);
         }
     }
 
@@ -176,7 +210,7 @@ public class StorageService
     /// <param name="value">The value to serialize and store.</param>
     /// <param name="storeType">The type of storage to use (local or session).</param>
     /// <param name="protectionKey">
-    /// Optional encryption key to decrypt the stored value.
+    /// Optional encryption key to encrypt the stored value.
     /// NOTE: Uses XOR encryption which is NOT cryptographically secure and should only
     /// be used for obfuscation, not for protecting sensitive data.
     /// </param>
@@ -192,7 +226,40 @@ public class StorageService
 
         var json = value is null ? string.Empty : JsonSerializer.Serialize(value, _options);
 
-        _logger.LogInformation("Setting {StoreType} storage item {Key} to {Value}", storeType, key, value);
+        LogSetItem(_logger, storeType, key, json);
+
+        await SetItemAsync(key, json, storeType, protectionKey);
+    }
+
+    /// <summary>
+    /// Serializes and stores a typed value in browser storage using the specified <see cref="JsonTypeInfo{T}"/>.
+    /// </summary>
+    /// <typeparam name="T">The type of value to serialize and store.</typeparam>
+    /// <param name="key">The storage key.</param>
+    /// <param name="value">The value to serialize and store.</param>
+    /// <param name="jsonTypeInfo">The JSON type information used for serialization.</param>
+    /// <param name="storeType">The type of storage to use (local or session).</param>
+    /// <param name="protectionKey">
+    /// Optional encryption key to encrypt the stored value.
+    /// NOTE: Uses XOR encryption which is NOT cryptographically secure and should only
+    /// be used for obfuscation, not for protecting sensitive data.
+    /// </param>
+    /// <returns>A task that represents the asynchronous operation.</returns>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="key"/> is null or empty.</exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="jsonTypeInfo"/> is null.</exception>
+    public async ValueTask SetItemAsync<T>(
+        string key,
+        T value,
+        JsonTypeInfo<T> jsonTypeInfo,
+        StoreType storeType = StoreType.Session,
+        string? protectionKey = null)
+    {
+        ArgumentException.ThrowIfNullOrEmpty(key);
+        ArgumentNullException.ThrowIfNull(jsonTypeInfo);
+
+        var json = value is null ? string.Empty : JsonSerializer.Serialize(value, jsonTypeInfo);
+
+        LogSetItem(_logger, storeType, key, json);
 
         await SetItemAsync(key, json, storeType, protectionKey);
     }
@@ -218,7 +285,7 @@ public class StorageService
         }
         catch (Exception ex) when (ex is JSDisconnectedException or InvalidOperationException or TaskCanceledException)
         {
-            _logger.LogDebug(ex, "JavaScript runtime unavailable when removing storage item {Key}", key);
+            LogRemoveItemUnavailable(_logger, ex, key);
         }
     }
 
@@ -238,9 +305,28 @@ public class StorageService
         }
         catch (Exception ex) when (ex is JSDisconnectedException or InvalidOperationException or TaskCanceledException)
         {
-            _logger.LogDebug(ex, "JavaScript runtime unavailable when clearing {StoreType} storage", storeType);
+            LogClearUnavailable(_logger, ex, storeType);
         }
     }
+
+
+    [LoggerMessage(Level = LogLevel.Debug, Message = "JavaScript runtime unavailable when getting storage item {Key}")]
+    static partial void LogGetItemUnavailable(ILogger logger, Exception ex, string key);
+
+    [LoggerMessage(Level = LogLevel.Information, Message = "Retrieved {StoreType} storage item {Key} with value {Value}")]
+    static partial void LogGetItem(ILogger logger, StoreType storeType, string key, string? value);
+
+    [LoggerMessage(Level = LogLevel.Debug, Message = "JavaScript runtime unavailable when setting storage item {Key}")]
+    static partial void LogSetItemUnavailable(ILogger logger, Exception ex, string key);
+
+    [LoggerMessage(Level = LogLevel.Information, Message = "Setting {StoreType} storage item {Key} to {Value}")]
+    static partial void LogSetItem(ILogger logger, StoreType storeType, string key, string? value);
+
+    [LoggerMessage(Level = LogLevel.Debug, Message = "JavaScript runtime unavailable when removing storage item {Key}")]
+    static partial void LogRemoveItemUnavailable(ILogger logger, Exception ex, string key);
+
+    [LoggerMessage(Level = LogLevel.Debug, Message = "JavaScript runtime unavailable when clearing {StoreType} storage")]
+    static partial void LogClearUnavailable(ILogger logger, Exception ex, StoreType storeType);
 }
 
 /// <summary>

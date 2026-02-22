@@ -14,6 +14,7 @@ public abstract class QueryRule
     /// Gets or sets the unique identifier for this query rule instance.
     /// Used for UI tracking and internal logic.
     /// </summary>
+    [JsonPropertyName("id")]
     public string Id { get; set; } = Identifier.Random();
 
     /// <summary>

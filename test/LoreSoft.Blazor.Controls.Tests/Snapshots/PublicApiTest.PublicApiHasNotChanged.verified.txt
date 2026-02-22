@@ -189,10 +189,15 @@ namespace LoreSoft.Blazor.Controls
     {
         [System.Text.Json.Serialization.JsonConstructor]
         public DataColumnState(string propertyName, int sortIndex, bool sortDescending, bool visible, int index) { }
+        [System.Text.Json.Serialization.JsonPropertyName("index")]
         public int Index { get; }
+        [System.Text.Json.Serialization.JsonPropertyName("propertyName")]
         public string PropertyName { get; }
+        [System.Text.Json.Serialization.JsonPropertyName("sortDescending")]
         public bool SortDescending { get; }
+        [System.Text.Json.Serialization.JsonPropertyName("sortIndex")]
         public int SortIndex { get; }
+        [System.Text.Json.Serialization.JsonPropertyName("visible")]
         public bool Visible { get; }
     }
     [Microsoft.AspNetCore.Components.CascadingTypeParameter("TItem")]
@@ -396,8 +401,11 @@ namespace LoreSoft.Blazor.Controls
     {
         [System.Text.Json.Serialization.JsonConstructor]
         public DataGridState(LoreSoft.Blazor.Controls.QueryGroup? query, System.Collections.Generic.List<LoreSoft.Blazor.Controls.DataColumnState>? columns, System.Collections.Generic.Dictionary<string, string?>? extensions = null) { }
+        [System.Text.Json.Serialization.JsonPropertyName("columns")]
         public System.Collections.Generic.List<LoreSoft.Blazor.Controls.DataColumnState>? Columns { get; }
+        [System.Text.Json.Serialization.JsonPropertyName("extensions")]
         public System.Collections.Generic.Dictionary<string, string?> Extensions { get; }
+        [System.Text.Json.Serialization.JsonPropertyName("query")]
         public LoreSoft.Blazor.Controls.QueryGroup? Query { get; }
     }
     [Microsoft.AspNetCore.Components.CascadingTypeParameter("TItem")]
@@ -916,6 +924,32 @@ namespace LoreSoft.Blazor.Controls
         public System.Threading.Tasks.ValueTask<T> InvokeAsync<T>(string identifier, params object?[]? args) { }
         public System.Threading.Tasks.ValueTask InvokeVoidAsync(string identifier, params object?[]? args) { }
     }
+    [System.Text.Json.Serialization.JsonSerializable(typeof(LoreSoft.Blazor.Controls.DataColumnState))]
+    [System.Text.Json.Serialization.JsonSerializable(typeof(LoreSoft.Blazor.Controls.DataColumnState))]
+    [System.Text.Json.Serialization.JsonSerializable(typeof(LoreSoft.Blazor.Controls.DataGridState))]
+    [System.Text.Json.Serialization.JsonSerializable(typeof(LoreSoft.Blazor.Controls.QueryFilter))]
+    [System.Text.Json.Serialization.JsonSerializable(typeof(LoreSoft.Blazor.Controls.QueryGroup))]
+    [System.Text.Json.Serialization.JsonSerializable(typeof(LoreSoft.Blazor.Controls.QueryRule))]
+    public class JsonContext : System.Text.Json.Serialization.JsonSerializerContext, System.Text.Json.Serialization.Metadata.IJsonTypeInfoResolver
+    {
+        public JsonContext() { }
+        public JsonContext(System.Text.Json.JsonSerializerOptions options) { }
+        public System.Text.Json.Serialization.Metadata.JsonTypeInfo<bool> Boolean { get; }
+        public System.Text.Json.Serialization.Metadata.JsonTypeInfo<LoreSoft.Blazor.Controls.DataColumnState> DataColumnState { get; }
+        public System.Text.Json.Serialization.Metadata.JsonTypeInfo<LoreSoft.Blazor.Controls.DataGridState> DataGridState { get; }
+        public System.Text.Json.Serialization.Metadata.JsonTypeInfo<System.Collections.Generic.Dictionary<string, string>> DictionaryStringString { get; }
+        protected override System.Text.Json.JsonSerializerOptions? GeneratedSerializerOptions { get; }
+        public System.Text.Json.Serialization.Metadata.JsonTypeInfo<int> Int32 { get; }
+        public System.Text.Json.Serialization.Metadata.JsonTypeInfo<System.Collections.Generic.List<LoreSoft.Blazor.Controls.DataColumnState>> ListDataColumnState { get; }
+        public System.Text.Json.Serialization.Metadata.JsonTypeInfo<System.Collections.Generic.List<LoreSoft.Blazor.Controls.QueryRule>> ListQueryRule { get; }
+        public System.Text.Json.Serialization.Metadata.JsonTypeInfo<object> Object { get; }
+        public System.Text.Json.Serialization.Metadata.JsonTypeInfo<LoreSoft.Blazor.Controls.QueryFilter> QueryFilter { get; }
+        public System.Text.Json.Serialization.Metadata.JsonTypeInfo<LoreSoft.Blazor.Controls.QueryGroup> QueryGroup { get; }
+        public System.Text.Json.Serialization.Metadata.JsonTypeInfo<LoreSoft.Blazor.Controls.QueryRule> QueryRule { get; }
+        public System.Text.Json.Serialization.Metadata.JsonTypeInfo<string> String { get; }
+        public static LoreSoft.Blazor.Controls.JsonContext Default { get; }
+        public override System.Text.Json.Serialization.Metadata.JsonTypeInfo? GetTypeInfo(System.Type type) { }
+    }
     public class JsonDisplay : Microsoft.AspNetCore.Components.ComponentBase
     {
         public JsonDisplay() { }
@@ -1325,6 +1359,7 @@ namespace LoreSoft.Blazor.Controls
     public abstract class QueryRule
     {
         protected QueryRule() { }
+        [System.Text.Json.Serialization.JsonPropertyName("id")]
         public string Id { get; set; }
         [System.Text.Json.Serialization.JsonIgnore]
         public bool IsTransient { get; set; }
@@ -1392,9 +1427,11 @@ namespace LoreSoft.Blazor.Controls
         public System.Threading.Tasks.ValueTask ClearAsync(LoreSoft.Blazor.Controls.StoreType storeType = 1) { }
         public System.Threading.Tasks.ValueTask<string?> GetItemAsync(string key, LoreSoft.Blazor.Controls.StoreType storeType = 1, string? protectionKey = null) { }
         public System.Threading.Tasks.ValueTask<T?> GetItemAsync<T>(string key, LoreSoft.Blazor.Controls.StoreType storeType = 1, string? protectionKey = null) { }
+        public System.Threading.Tasks.ValueTask<T?> GetItemAsync<T>(string key, System.Text.Json.Serialization.Metadata.JsonTypeInfo<T> jsonTypeInfo, LoreSoft.Blazor.Controls.StoreType storeType = 1, string? protectionKey = null) { }
         public System.Threading.Tasks.ValueTask RemoveItemAsync(string key, LoreSoft.Blazor.Controls.StoreType storeType = 1) { }
         public System.Threading.Tasks.ValueTask SetItemAsync(string key, string value, LoreSoft.Blazor.Controls.StoreType storeType = 1, string? protectionKey = null) { }
         public System.Threading.Tasks.ValueTask SetItemAsync<T>(string key, T value, LoreSoft.Blazor.Controls.StoreType storeType = 1, string? protectionKey = null) { }
+        public System.Threading.Tasks.ValueTask SetItemAsync<T>(string key, T value, System.Text.Json.Serialization.Metadata.JsonTypeInfo<T> jsonTypeInfo, LoreSoft.Blazor.Controls.StoreType storeType = 1, string? protectionKey = null) { }
     }
     public enum StoreType
     {

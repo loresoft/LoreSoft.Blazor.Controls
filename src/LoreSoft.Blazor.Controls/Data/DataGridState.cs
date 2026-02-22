@@ -33,6 +33,7 @@ public record DataGridState
     /// Gets the filter query that was active when the state was saved.
     /// Restored to the grid's root query on load. <see langword="null"/> when no filters were active.
     /// </summary>
+    [JsonPropertyName("query")]
     public QueryGroup? Query { get; }
 
     /// <summary>
@@ -40,6 +41,7 @@ public record DataGridState
     /// Each entry stores a column's property name, sort index, sort direction, and visibility.
     /// <see langword="null"/> when no column state was captured.
     /// </summary>
+    [JsonPropertyName("columns")]
     public List<DataColumnState>? Columns { get; }
 
     /// <summary>
@@ -47,5 +49,6 @@ public record DataGridState
     /// and read back by <see cref="DataGrid{TItem}.StateLoaded"/> subscribers.
     /// Keys and values are strings to ensure reliable JSON serialization across storage providers.
     /// </summary>
+    [JsonPropertyName("extensions")]
     public Dictionary<string, string?> Extensions { get; }
 }
