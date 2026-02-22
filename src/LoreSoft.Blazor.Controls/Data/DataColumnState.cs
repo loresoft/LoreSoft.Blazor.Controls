@@ -14,12 +14,14 @@ public record DataColumnState
         string propertyName,
         int sortIndex,
         bool sortDescending,
-        bool visible)
+        bool visible,
+        int index)
     {
         PropertyName = propertyName;
         SortIndex = sortIndex;
         SortDescending = sortDescending;
         Visible = visible;
+        Index = index;
     }
 
     /// <summary>
@@ -45,4 +47,9 @@ public record DataColumnState
     /// Gets a value indicating whether the column is visible.
     /// </summary>
     public bool Visible { get; }
+
+    /// <summary>
+    /// Gets the zero-based index of the column within the grid.
+    /// </summary>
+    public int Index { get; }
 }

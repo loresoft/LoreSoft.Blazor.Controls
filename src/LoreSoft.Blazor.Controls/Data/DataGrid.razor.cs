@@ -21,6 +21,7 @@ namespace LoreSoft.Blazor.Controls;
 public partial class DataGrid<TItem> : DataComponentBase<TItem>
 {
     private readonly DebounceAction _refreshDebounce = new();
+    private bool _isResetting;
 
     /// <summary>
     /// Tracks which data items currently have their detail rows expanded.
@@ -358,8 +359,9 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
 
         await base.RefreshAsync(resetPager, forceReload);
 
-        // resetPager=true = user-initiated change
-        if (StateKey != null && resetPager)
+        // resetPager=true = user-initiated change; skip save during a reset so the
+        // removed state is not immediately re-written to storage
+        if (!_isResetting && StateKey != null && resetPager)
             await SaveStateAsync();
     }
 
@@ -967,7 +969,15 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
         // refresh sort picker state if needed
         UpdateSortPickerState();
 
-        await RefreshAsync(resetPager: true);
+        _isResetting = true;
+        try
+        {
+            await RefreshAsync(resetPager: true);
+        }
+        finally
+        {
+            _isResetting = false;
+        }
     }
 
     /// <summary>
@@ -1000,15 +1010,23 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
         {
             RootQuery.Filters.Clear();
             RootQuery.Filters.AddRange(state.Query.Filters);
+
+            RootQuery.Logic = state.Query.Logic;
         }
 
-        if (state.Columns is { Length: > 0 })
+        if (state.Columns is { Count: > 0 })
         {
             // restore column sort + visibility
             foreach (var cs in state.Columns)
             {
-                var col = Columns.Find(c => c.PropertyName == cs.PropertyName);
-                if (col is null)
+                if (cs.Index < 0 || cs.Index >= Columns.Count)
+                    continue;
+
+                // using index to restore sort + visibility since property name may not be unique
+                var col = Columns[cs.Index];
+
+                // skip if the column layout has changed since the state was saved
+                if (col.PropertyName != cs.PropertyName)
                     continue;
 
                 col.UpdateSort(cs.SortIndex, cs.SortDescending);
@@ -1033,11 +1051,38 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
 
         try
         {
-            var columns = Columns
-                .Select(c => new DataColumnState(c.PropertyName, c.CurrentSortIndex, c.CurrentSortDescending, c.CurrentVisible))
-                .ToArray();
+            var columns = new List<DataColumnState>();
+            for (int i = 0; i < Columns.Count; i++)
+            {
+                var c = Columns[i];
 
-            var state = new DataGridState(RootQuery, columns);
+                // ignore columns that aren't hideable or sortable
+                if (!c.Hideable && !c.Sortable)
+                    continue;
+
+                // to reduce size, skip columns that are in their default state
+                if (c.SortIndex == c.CurrentSortIndex
+                    && c.SortDescending == c.CurrentSortDescending
+                    && c.Visible == c.CurrentVisible)
+                {
+                    continue;
+                }
+
+                // capture index for restoration since property name may not be unique
+                var cs = new DataColumnState(
+                    propertyName: c.PropertyName,
+                    sortIndex: c.CurrentSortIndex,
+                    sortDescending: c.CurrentSortDescending,
+                    visible: c.CurrentVisible,
+                    index: i);
+
+                columns.Add(cs);
+            }
+
+            // copy RootQuery, stripping transient filters, so the live state is not modified
+            var query = CopyQuery(RootQuery);
+
+            var state = new DataGridState(query, columns);
 
             // allow subscribers to add their own state to the extensions bag
             StateSaving?.Invoke(state);
@@ -1048,5 +1093,42 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
         {
             // state save is best-effort; grid continues to function regardless
         }
+    }
+
+    /// <summary>
+    /// Returns a deep copy of <paramref name="source"/> with all <see cref="QueryRule.IsTransient"/> rules removed.
+    /// Uses an explicit stack to traverse nested <see cref="QueryGroup"/> instances without recursion.
+    /// </summary>
+    private static QueryGroup CopyQuery(QueryGroup source)
+    {
+        var root = new QueryGroup { Id = source.Id, Logic = source.Logic };
+
+        var stack = new Stack<(QueryGroup Source, QueryGroup Target)>();
+        stack.Push((source, root));
+
+        while (stack.Count > 0)
+        {
+            var (src, tgt) = stack.Pop();
+
+            foreach (var rule in src.Filters)
+            {
+                if (rule.IsTransient)
+                    continue;
+
+                if (rule is QueryGroup srcGroup)
+                {
+                    var tgtGroup = new QueryGroup { Id = srcGroup.Id, Logic = srcGroup.Logic };
+                    tgt.Filters.Add(tgtGroup);
+
+                    stack.Push((srcGroup, tgtGroup));
+                }
+                else
+                {
+                    tgt.Filters.Add(rule);
+                }
+            }
+        }
+
+        return root;
     }
 }

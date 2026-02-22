@@ -13,7 +13,7 @@ public class DataGridStateTests
     [Fact]
     public void DataColumnState_WhenSerializedAndDeserialized_RoundTrips()
     {
-        var state = new DataColumnState("Name", sortIndex: 0, sortDescending: false, visible: true);
+        var state = new DataColumnState("Name", sortIndex: 0, sortDescending: false, visible: true, index: 0);
 
         var json = JsonSerializer.Serialize(state);
         var result = JsonSerializer.Deserialize<DataColumnState>(json);
@@ -28,7 +28,7 @@ public class DataGridStateTests
     [Fact]
     public void DataColumnState_WhenSortDescendingAndHidden_RoundTrips()
     {
-        var state = new DataColumnState("Age", sortIndex: 1, sortDescending: true, visible: false);
+        var state = new DataColumnState("Age", sortIndex: 1, sortDescending: true, visible: false, index: 1);
 
         var json = JsonSerializer.Serialize(state);
         var result = JsonSerializer.Deserialize<DataColumnState>(json);
@@ -43,7 +43,7 @@ public class DataGridStateTests
     [Fact]
     public void DataColumnState_WhenNotSorted_SortIndexIsNegativeOne()
     {
-        var state = new DataColumnState("Status", sortIndex: -1, sortDescending: false, visible: true);
+        var state = new DataColumnState("Status", sortIndex: -1, sortDescending: false, visible: true, index: 0);
 
         var json = JsonSerializer.Serialize(state);
         var result = JsonSerializer.Deserialize<DataColumnState>(json);
@@ -71,10 +71,10 @@ public class DataGridStateTests
     [Fact]
     public void DataGridState_WithColumns_RoundTrips()
     {
-        DataColumnState[] columns =
+        List<DataColumnState> columns =
         [
-            new("Name", sortIndex: 0, sortDescending: false, visible: true),
-            new("Age",  sortIndex: 1, sortDescending: true,  visible: false),
+            new("Name", sortIndex: 0, sortDescending: false, visible: true, index: 0),
+            new("Age",  sortIndex: 1, sortDescending: true,  visible: false, index: 1),
         ];
         var state = new DataGridState(query: null, columns: columns);
 
@@ -83,7 +83,7 @@ public class DataGridStateTests
 
         Assert.NotNull(result);
         Assert.NotNull(result.Columns);
-        Assert.Equal(2, result.Columns.Length);
+        Assert.Equal(2, result.Columns.Count);
         Assert.Equal("Name", result.Columns[0].PropertyName);
         Assert.Equal(0,      result.Columns[0].SortIndex);
         Assert.False(result.Columns[0].SortDescending);
@@ -166,7 +166,7 @@ public class DataGridStateTests
     [Fact]
     public void DataGridState_FullState_RoundTrips()
     {
-        DataColumnState[] columns = [new("Name", sortIndex: 0, sortDescending: false, visible: true)];
+        List<DataColumnState> columns = [new("Name", sortIndex: 0, sortDescending: false, visible: true, index: 0)];
         var query = new QueryGroup
         {
             Logic = QueryLogic.And,

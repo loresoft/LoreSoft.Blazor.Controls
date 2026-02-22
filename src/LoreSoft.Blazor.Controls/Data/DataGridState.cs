@@ -21,7 +21,7 @@ public record DataGridState
     [JsonConstructor]
     public DataGridState(
         QueryGroup? query,
-        DataColumnState[]? columns,
+        List<DataColumnState>? columns,
         Dictionary<string, string?>? extensions = null)
     {
         Query = query;
@@ -40,7 +40,7 @@ public record DataGridState
     /// Each entry stores a column's property name, sort index, sort direction, and visibility.
     /// <see langword="null"/> when no column state was captured.
     /// </summary>
-    public DataColumnState[]? Columns { get; }
+    public List<DataColumnState>? Columns { get; }
 
     /// <summary>
     /// Gets a dictionary of additional state entries written by <see cref="DataGrid{TItem}.StateSaving"/> subscribers

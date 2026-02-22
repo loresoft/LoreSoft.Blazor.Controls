@@ -15,4 +15,10 @@ public abstract class QueryRule
     /// Used for UI tracking and internal logic.
     /// </summary>
     public string Id { get; set; } = Identifier.Random();
+
+    /// <summary>
+    /// Gets or sets a value indicating whether the object is not persisted.
+    /// </summary>
+    [JsonIgnore]
+    public bool IsTransient { get; set; }
 }
