@@ -188,7 +188,8 @@ namespace LoreSoft.Blazor.Controls
     public class DataColumnState : System.IEquatable<LoreSoft.Blazor.Controls.DataColumnState>
     {
         [System.Text.Json.Serialization.JsonConstructor]
-        public DataColumnState(string propertyName, int sortIndex, bool sortDescending, bool visible) { }
+        public DataColumnState(string propertyName, int sortIndex, bool sortDescending, bool visible, int index) { }
+        public int Index { get; }
         public string PropertyName { get; }
         public bool SortDescending { get; }
         public int SortIndex { get; }
@@ -394,8 +395,8 @@ namespace LoreSoft.Blazor.Controls
     public class DataGridState : System.IEquatable<LoreSoft.Blazor.Controls.DataGridState>
     {
         [System.Text.Json.Serialization.JsonConstructor]
-        public DataGridState(LoreSoft.Blazor.Controls.QueryGroup? query, LoreSoft.Blazor.Controls.DataColumnState[]? columns, System.Collections.Generic.Dictionary<string, string?>? extensions = null) { }
-        public LoreSoft.Blazor.Controls.DataColumnState[]? Columns { get; }
+        public DataGridState(LoreSoft.Blazor.Controls.QueryGroup? query, System.Collections.Generic.List<LoreSoft.Blazor.Controls.DataColumnState>? columns, System.Collections.Generic.Dictionary<string, string?>? extensions = null) { }
+        public System.Collections.Generic.List<LoreSoft.Blazor.Controls.DataColumnState>? Columns { get; }
         public System.Collections.Generic.Dictionary<string, string?> Extensions { get; }
         public LoreSoft.Blazor.Controls.QueryGroup? Query { get; }
     }
@@ -1325,6 +1326,8 @@ namespace LoreSoft.Blazor.Controls
     {
         protected QueryRule() { }
         public string Id { get; set; }
+        [System.Text.Json.Serialization.JsonIgnore]
+        public bool IsTransient { get; set; }
     }
     public static class QueryRuleBuilder
     {
