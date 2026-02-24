@@ -233,7 +233,7 @@
                 font-size: inherit;
                 width: 100%;
                 user-select: none;
-                -webkit-tap-highlight-color: #000 0;
+                -webkit-tap-highlight-color: #000;
                 box-sizing: border-box;
                 padding: 8px 12px;
             }

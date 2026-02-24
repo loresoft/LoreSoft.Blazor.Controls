@@ -180,18 +180,11 @@ public partial class Typeahead<TItem, TValue> : StandardComponent
     public FieldIdentifier FieldIdentifier { get; set; }
 
     /// <summary>
-    /// Gets or sets the explicit width of the dropdown menu. When not set, the menu matches the control width.
-    /// Accepts any valid CSS width value (e.g., <c>"300px"</c>, <c>"20rem"</c>).
+    /// Gets or sets the explicit style of the dropdown menu. When not set, the menu matches the control width.
+    /// Accepts any valid CSS style value (e.g., <c>"width: 300px;"</c>, <c>"width: 20rem;"</c>).
     /// </summary>
     [Parameter]
-    public string? MenuWidth { get; set; }
-
-    /// <summary>
-    /// Gets or sets the anchor edge from which the dropdown menu is aligned.
-    /// Defaults to <see cref="MenuAnchor.Left"/>.
-    /// </summary>
-    [Parameter]
-    public MenuAnchor MenuAnchor { get; set; } = MenuAnchor.Left;
+    public string? MenuStyle { get; set; }
 
     /// <summary>
     /// Gets a value indicating whether the control is currently loading search results.
@@ -235,7 +228,7 @@ public partial class Typeahead<TItem, TValue> : StandardComponent
     protected List<TItem> CurrentItems { get; set; } = [];
 
     /// <summary>
-    /// Gets the computed inline style applied to the dropdown menu, derived from <see cref="MenuWidth"/> and <see cref="MenuAnchor"/>.
+    /// Gets the computed inline style applied to the dropdown menu, derived from <see cref="MenuStyle"/>.
     /// </summary>
     protected string? CurrentMenuStyle { get; private set; }
 
@@ -260,9 +253,7 @@ public partial class Typeahead<TItem, TValue> : StandardComponent
         CurrentMenuStyle = StyleBuilder.Pool.Use(builder =>
         {
             return builder
-                .AddStyle("width", MenuWidth, (v) => v.HasValue())
-                .AddStyle("left", "0", MenuAnchor is MenuAnchor.Left)
-                .AddStyle("right", "0", MenuAnchor is MenuAnchor.Right)
+                .AddStyle(MenuStyle)
                 .ToString();
         });
     }
@@ -599,15 +590,4 @@ public partial class Typeahead<TItem, TValue> : StandardComponent
 
         throw new InvalidOperationException($"Typeahead component requires a {nameof(ConvertMethod)} parameter.");
     }
-}
-
-/// <summary>
-/// Specifies the edge of the typeahead control to which the dropdown menu is anchored.
-/// </summary>
-public enum MenuAnchor
-{
-    /// <summary>The menu aligns to the left edge of the control.</summary>
-    Left,
-    /// <summary>The menu aligns to the right edge of the control.</summary>
-    Right
 }
