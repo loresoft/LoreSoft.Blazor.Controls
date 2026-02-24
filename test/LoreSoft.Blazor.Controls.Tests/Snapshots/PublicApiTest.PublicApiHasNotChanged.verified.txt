@@ -1027,6 +1027,11 @@ namespace LoreSoft.Blazor.Controls
         protected override void BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder builder) { }
         protected override System.Threading.Tasks.Task OnAfterRenderAsync(bool firstRender) { }
     }
+    public enum MenuAnchor
+    {
+        Left = 0,
+        Right = 1,
+    }
     public class ModalClose : System.IEquatable<LoreSoft.Blazor.Controls.ModalClose>
     {
         public ModalClose(LoreSoft.Blazor.Controls.ModalReference Modal) { }
@@ -1606,6 +1611,7 @@ namespace LoreSoft.Blazor.Controls
         [Microsoft.AspNetCore.Components.Parameter]
         public System.Func<TItem?, TValue?>? ConvertMethod { get; set; }
         protected System.Collections.Generic.List<TItem> CurrentItems { get; set; }
+        protected string? CurrentMenuStyle { get; }
         [Microsoft.AspNetCore.Components.Parameter]
         public int Debounce { get; set; }
         [Microsoft.AspNetCore.Components.Parameter]
@@ -1625,6 +1631,10 @@ namespace LoreSoft.Blazor.Controls
         public Microsoft.AspNetCore.Components.RenderFragment? LoadingTemplate { get; set; }
         [Microsoft.AspNetCore.Components.Parameter]
         public System.Func<TValue?, System.Threading.Tasks.Task<TItem?>>? LookupMethod { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public LoreSoft.Blazor.Controls.MenuAnchor MenuAnchor { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public string? MenuWidth { get; set; }
         [Microsoft.AspNetCore.Components.Parameter]
         public int MinimumLength { get; set; }
         [Microsoft.AspNetCore.Components.Parameter]

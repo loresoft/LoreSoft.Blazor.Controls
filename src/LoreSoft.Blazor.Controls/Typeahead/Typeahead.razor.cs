@@ -179,6 +179,19 @@ public partial class Typeahead<TItem, TValue> : StandardComponent
     [Parameter]
     public FieldIdentifier FieldIdentifier { get; set; }
 
+    /// <summary>
+    /// Gets or sets the explicit width of the dropdown menu. When not set, the menu matches the control width.
+    /// Accepts any valid CSS width value (e.g., <c>"300px"</c>, <c>"20rem"</c>).
+    /// </summary>
+    [Parameter]
+    public string? MenuWidth { get; set; }
+
+    /// <summary>
+    /// Gets or sets the anchor edge from which the dropdown menu is aligned.
+    /// Defaults to <see cref="MenuAnchor.Left"/>.
+    /// </summary>
+    [Parameter]
+    public MenuAnchor MenuAnchor { get; set; } = MenuAnchor.Left;
 
     /// <summary>
     /// Gets a value indicating whether the control is currently loading search results.
@@ -211,12 +224,20 @@ public partial class Typeahead<TItem, TValue> : StandardComponent
     /// </summary>
     protected bool PreventKey { get; set; }
 
+    /// <summary>
+    /// Gets the tab index for the control. Returns <c>-1</c> when the control is disabled to remove it from the tab order.
+    /// </summary>
     protected int TabIndex => Disabled ? -1 : 0;
 
     /// <summary>
     /// Gets the list of current items. Either from Items parameter or loaded via ItemLoader.
     /// </summary>
     protected List<TItem> CurrentItems { get; set; } = [];
+
+    /// <summary>
+    /// Gets the computed inline style applied to the dropdown menu, derived from <see cref="MenuWidth"/> and <see cref="MenuAnchor"/>.
+    /// </summary>
+    protected string? CurrentMenuStyle { get; private set; }
 
     /// <inheritdoc />
     protected override void OnParametersSet()
@@ -235,6 +256,15 @@ public partial class Typeahead<TItem, TValue> : StandardComponent
             else if (ValueExpression != null)
                 FieldIdentifier = FieldIdentifier.Create(ValueExpression);
         }
+
+        CurrentMenuStyle = StyleBuilder.Pool.Use(builder =>
+        {
+            return builder
+                .AddStyle("width", MenuWidth, (v) => v.HasValue())
+                .AddStyle("left", "0", MenuAnchor is MenuAnchor.Left)
+                .AddStyle("right", "0", MenuAnchor is MenuAnchor.Right)
+                .ToString();
+        });
     }
 
     /// <inheritdoc />
@@ -568,4 +598,15 @@ public partial class Typeahead<TItem, TValue> : StandardComponent
 
         throw new InvalidOperationException($"Typeahead component requires a {nameof(ConvertMethod)} parameter.");
     }
+}
+
+/// <summary>
+/// Specifies the edge of the typeahead control to which the dropdown menu is anchored.
+/// </summary>
+public enum MenuAnchor
+{
+    /// <summary>The menu aligns to the left edge of the control.</summary>
+    Left,
+    /// <summary>The menu aligns to the right edge of the control.</summary>
+    Right
 }

@@ -91,7 +91,7 @@
         <div class="typeahead-background"
              @onclick="CloseMenu"></div>
 
-        <div class="typeahead-menu">
+        <div class="typeahead-menu" style="@CurrentMenuStyle">
             <div class="typeahead-search-container">
                 <input @ref="Element"
                        @bind-value="SearchText"
