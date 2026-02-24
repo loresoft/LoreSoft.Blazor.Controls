@@ -536,6 +536,7 @@ public partial class Typeahead<TItem, TValue> : StandardComponent
                 .AddClass("typeahead-active", SearchMode)
                 .AddClass("typeahead-disabled", Disabled)
                 .AddClass(validationClass, validationClass.HasValue())
+                .AddClass(BoundClass, BoundClass.HasValue())
                 .ToString();
         });
     }
