@@ -72,7 +72,7 @@ public partial class QueryBuilderFilter<TItem>
     /// Gets a value indicating whether the value input should be shown for the current operator.
     /// </summary>
     protected bool ShowValueInput
-        => Filter.Operator is not QueryOperators.IsNull or QueryOperators.IsNotNull;
+        => Filter.Operator is not (QueryOperators.IsNull or QueryOperators.IsNotNull);
 
     /// <summary>
     /// Removes this filter from its parent group and refreshes the query builder.

@@ -181,6 +181,9 @@ public partial class DataGridToolbar<TItem> : ComponentBase, IDisposable
             CurrentGrid.StateLoaded += HandleStateLoaded;
             CurrentGrid.StateResetting += HandleStateResetting;
         }
+
+        if (CurrentGrid?.LastGridState != null)
+            HandleStateLoaded(CurrentGrid.LastGridState);
     }
 
     /// <inheritdoc />

@@ -203,6 +203,11 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
     public List<DataColumn<TItem>> Columns { get; } = [];
 
     /// <summary>
+    /// Gets the most recently saved state of the data grid, if available.
+    /// </summary>
+    public DataGridState? LastGridState { get; private set; }
+
+    /// <summary>
     /// Gets a value indicating whether the column picker panel is open.
     /// The column picker allows users to show/hide columns that have <see cref="DataColumn{TItem}.Hideable"/> set to true.
     /// This property can be used to coordinate column picker state with other UI elements.
@@ -966,6 +971,9 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
         // notify subscribers to reset their own state
         StateResetting?.Invoke();
 
+        // clear cached state
+        LastGridState = null;
+
         // refresh sort picker state if needed
         UpdateSortPickerState();
 
@@ -978,6 +986,7 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
         {
             _isResetting = false;
         }
+
     }
 
     /// <summary>
@@ -1004,8 +1013,11 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
             return;
         }
 
-        if (state is null)
+        if (state is null || state == LastGridState)
             return;
+
+        // cache loaded state to prevent redundant loads and detect changes on subsequent loads
+        LastGridState = state;
 
         // restore filters
         if (state.Query?.Filters.Count > 0)
@@ -1090,6 +1102,9 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
 
         // allow subscribers to add their own state to the extensions bag
         StateSaving?.Invoke(state);
+
+        // cache loaded state to prevent redundant loads and detect changes on subsequent loads
+        LastGridState = state;
 
         try
         {
