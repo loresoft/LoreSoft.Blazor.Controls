@@ -299,8 +299,11 @@ public partial class DataGridToolbar<TItem> : ComponentBase, IDisposable
     private void HandleStateLoaded(DataGridState state)
     {
         // silently update the text box; the filter is already restored by the grid
-        if (state.Extensions.TryGetValue(SearchTextKey, out var text))
-            SearchText.Update(text);
+        if (!state.Extensions.TryGetValue(SearchTextKey, out var text))
+            return;
+
+        SearchText.Update(text);
+        InvokeAsync(StateHasChanged);
     }
 
     /// <summary>
@@ -310,5 +313,6 @@ public partial class DataGridToolbar<TItem> : ComponentBase, IDisposable
     private void HandleStateResetting()
     {
         SearchText.Update(null);
+        InvokeAsync(StateHasChanged);
     }
 }
