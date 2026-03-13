@@ -472,6 +472,7 @@ namespace LoreSoft.Blazor.Controls
         protected bool HasGrouping { get; }
         protected Microsoft.AspNetCore.Components.RenderFragment<LoreSoft.Blazor.Controls.DataColumn<TItem>> HeaderFragment { get; }
         protected Microsoft.AspNetCore.Components.RenderFragment<LoreSoft.Blazor.Controls.DataColumn<TItem>> HeaderValue { get; }
+        public LoreSoft.Blazor.Controls.DataGridState? LastGridState { get; }
         [Microsoft.AspNetCore.Components.Inject]
         public required Microsoft.AspNetCore.Components.NavigationManager NavigationManager { get; set; }
         [Microsoft.AspNetCore.Components.Parameter]
