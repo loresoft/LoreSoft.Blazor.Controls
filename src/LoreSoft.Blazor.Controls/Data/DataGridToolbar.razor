@@ -15,6 +15,12 @@
                 <h5 class="toolbar-title-text">@Title</h5>
             }
         </div>
+        @if (ShowFilterWarning && CurrentGrid.IsFilterActive())
+        {
+            <div class="toolbar-filter-warning" title="Results are filtered. Click the filter icon to clear.">
+                @FilterWarning
+            </div>
+        }
         @if (ShowSearch)
         {
             <div class="toolbar-search-box">

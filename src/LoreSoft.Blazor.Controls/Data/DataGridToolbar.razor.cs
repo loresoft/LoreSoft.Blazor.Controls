@@ -143,6 +143,21 @@ public partial class DataGridToolbar<TItem> : ComponentBase, IDisposable
     public bool ShowColumnPicker { get; set; } = true;
 
     /// <summary>
+    /// Gets or sets a value indicating whether the filter warning indicator is displayed in the toolbar.
+    /// When true, the <see cref="FilterWarning"/> content is shown whenever the DataGrid has an active filter applied.
+    /// </summary>
+    [Parameter]
+    public bool ShowFilterWarning { get; set; } = true;
+
+    /// <summary>
+    /// Gets or sets the content rendered as the active-filter warning indicator.
+    /// Displayed when <see cref="ShowFilterWarning"/> is <c>true</c> and the DataGrid has an active filter.
+    /// Defaults to a <c>"* Filter Applied *"</c> text node.
+    /// </summary>
+    [Parameter]
+    public RenderFragment? FilterWarning { get; set; } = builder => builder.AddContent(0, "* Filter Applied *");
+
+    /// <summary>
     /// Gets the current <see cref="DataGrid{TItem}"/> instance in use by the toolbar.
     /// This property is derived from either the <see cref="DataGrid"/> parameter or the
     /// cascading <see cref="ParentGrid"/> parameter, providing a unified way to access

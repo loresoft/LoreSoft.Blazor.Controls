@@ -31,6 +31,13 @@
   white-space: nowrap;
 }
 
+.data-toolbar .toolbar-filter-warning {
+  font-size: .80rem;
+  font-style: italic;
+  margin: .5rem;
+  opacity: .75;
+}
+
 .data-toolbar select,
 .data-toolbar button,
 .data-toolbar input,
@@ -125,6 +132,7 @@
   .data-toolbar .toolbar-search-box {
     width: 100%;
   }
+
   .data-toolbar .toolbar-control {
     width: 100%;
   }
