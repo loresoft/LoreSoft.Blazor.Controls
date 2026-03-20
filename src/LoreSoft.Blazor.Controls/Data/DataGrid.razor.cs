@@ -528,7 +528,7 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
             return;
 
         _lastStateKey = StateKey;
-        _resolvedStateKey = StateKey.IsNullOrWhiteSpace() ? null : $"{NavigationManager.GetPathHash()}:{StateKey}";
+        _resolvedStateKey = StateKey.IsNullOrWhiteSpace() ? null : $"DataGrid:{StateKey}:{NavigationManager.GetPathHash()}";
     }
 
     /// <summary>
