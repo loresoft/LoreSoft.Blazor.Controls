@@ -422,6 +422,8 @@ namespace LoreSoft.Blazor.Controls
         public string? ExportName { get; set; }
         [Microsoft.AspNetCore.Components.Parameter]
         public Microsoft.AspNetCore.Components.RenderFragment<LoreSoft.Blazor.Controls.DataGrid<TItem>>? FilterTemplate { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public Microsoft.AspNetCore.Components.RenderFragment? FilterWarning { get; set; }
         [Microsoft.AspNetCore.Components.Inject]
         public required Microsoft.JSInterop.IJSRuntime JavaScript { get; set; }
         [Microsoft.AspNetCore.Components.CascadingParameter(Name="Grid")]
@@ -433,6 +435,8 @@ namespace LoreSoft.Blazor.Controls
         public bool ShowExport { get; set; }
         [Microsoft.AspNetCore.Components.Parameter]
         public bool ShowFilter { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public bool ShowFilterWarning { get; set; }
         [Microsoft.AspNetCore.Components.Parameter]
         public bool ShowRefresh { get; set; }
         [Microsoft.AspNetCore.Components.Parameter]
