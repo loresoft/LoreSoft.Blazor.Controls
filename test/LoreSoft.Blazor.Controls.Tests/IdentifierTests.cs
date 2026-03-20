@@ -1,9 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Xunit;
+using static Xunit.TestContext;
 
 namespace LoreSoft.Blazor.Controls.Tests;
 
@@ -102,7 +97,7 @@ public class IdentifierTests
         Assert.NotEqual(id1, id2);
         Assert.NotEqual(id2, id3);
         Assert.NotEqual(id1, id3);
-        
+
         // All should start with the same prefix
         Assert.StartsWith($"{prefix}-", id1);
         Assert.StartsWith($"{prefix}-", id2);
@@ -137,14 +132,14 @@ public class IdentifierTests
         // Assert - all IDs should be unique and use the correct prefix
         Assert.Equal(15, ids.Distinct().Count());
         Assert.All(ids, id => Assert.StartsWith($"{prefix}-", id));
-        
+
         // Verify that they are sequential by extracting and comparing the numeric values
-        var values = ids.Select(id => 
+        var values = ids.Select(id =>
         {
             var hexPart = id.Substring(prefix.Length + 1);
             return Convert.ToInt32(hexPart, 16);
         }).ToList();
-        
+
         // Values should be consecutive
         for (int i = 1; i < values.Count; i++)
         {
@@ -170,7 +165,7 @@ public class IdentifierTests
         Assert.StartsWith($"{prefix1}-", id1b);
         Assert.StartsWith($"{prefix2}-", id2a);
         Assert.StartsWith($"{prefix2}-", id2b);
-        
+
         // The counters should be independent
         Assert.NotEqual(id1a, id1b);
         Assert.NotEqual(id2a, id2b);
@@ -210,7 +205,7 @@ public class IdentifierTests
                 {
                     ids.Add(Identifier.Sequential(prefix));
                 }
-            }));
+            }, Current.CancellationToken));
         }
 
         await Task.WhenAll(tasks);
@@ -230,12 +225,12 @@ public class IdentifierTests
         // Act
         var id = Identifier.Sequential(prefix);
 
-        // Assert - should be in format prefix-hexvalue
+        // Assert - should be in format prefix-hex value
         Assert.StartsWith("hex-", id);
-        
+
         // Extract the hex part after the prefix and dash
         var hexPart = id.Substring(4); // Skip "hex-"
-        
+
         // Verify it's valid hexadecimal
         Assert.Matches("^[0-9a-f]+$", hexPart);
     }
@@ -251,10 +246,10 @@ public class IdentifierTests
 
         // Assert - should be in format prefix-hexvalue
         Assert.StartsWith("rnd-", id);
-        
+
         // Extract the hex part after the prefix and dash
         var hexPart = id.Substring(4); // Skip "rnd-"
-        
+
         // Verify it's valid hexadecimal
         Assert.Matches("^[0-9a-f]+$", hexPart);
     }
@@ -273,12 +268,12 @@ public class IdentifierTests
         Assert.All(ids, id =>
         {
             Assert.StartsWith("id-", id);
-            
+
             // Verify hex format after prefix
             var hexPart = id.Substring(3);
             Assert.Matches("^[0-9a-f]+$", hexPart);
         });
-        
+
         // All should be unique
         Assert.Equal(10, ids.Distinct().Count());
     }

@@ -1,5 +1,7 @@
 using LoreSoft.Blazor.Controls.Events;
 
+using static Xunit.TestContext;
+
 namespace LoreSoft.Blazor.Controls.Tests.Events;
 
 public class WeakDelegateTests
@@ -56,7 +58,7 @@ public class WeakDelegateTests
         var weakDelegate = new WeakDelegate(handler);
 
         // Act
-        await weakDelegate.InvokeAsync();
+        await weakDelegate.InvokeAsync(cancellationToken: Current.CancellationToken);
 
         // Assert
         Assert.Equal(1, _callCount);
@@ -72,7 +74,7 @@ public class WeakDelegateTests
         var weakDelegate = new WeakDelegate(handler);
 
         // Act
-        await weakDelegate.InvokeAsync("test");
+        await weakDelegate.InvokeAsync("test", Current.CancellationToken);
 
         // Assert
         Assert.Equal("test", _lastParameter);
@@ -92,7 +94,7 @@ public class WeakDelegateTests
         var weakDelegate = new WeakDelegate(handler);
 
         // Act
-        await weakDelegate.InvokeAsync();
+        await weakDelegate.InvokeAsync(cancellationToken: Current.CancellationToken);
 
         // Assert
         Assert.Equal(1, _callCount);
@@ -112,7 +114,7 @@ public class WeakDelegateTests
         var weakDelegate = new WeakDelegate(handler);
 
         // Act
-        await weakDelegate.InvokeAsync();
+        await weakDelegate.InvokeAsync(cancellationToken: Current.CancellationToken);
 
         // Assert
         Assert.Equal(1, _callCount);
@@ -191,7 +193,7 @@ public class WeakDelegateTests
         GC.Collect();
 
         // Act
-        await weakDelegate.InvokeAsync();
+        await weakDelegate.InvokeAsync(cancellationToken: Current.CancellationToken);
 
         // Assert - should not throw and return completed task
         Assert.True(weakDelegate.IsAlive == false);
@@ -277,7 +279,7 @@ public class WeakDelegateTests
         var weakDelegate = new WeakDelegate(handler);
 
         // Act
-        await weakDelegate.InvokeAsync();
+        await weakDelegate.InvokeAsync(cancellationToken: Current.CancellationToken);
 
         // Assert
         Assert.Equal(1, target.CallCount);

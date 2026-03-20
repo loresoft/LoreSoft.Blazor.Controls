@@ -1,5 +1,7 @@
 using LoreSoft.Blazor.Controls.Events;
 
+using static Xunit.TestContext;
+
 namespace LoreSoft.Blazor.Controls.Tests.Events;
 
 public class WeakEventTests
@@ -76,7 +78,7 @@ public class WeakEventTests
         weakEvent.Subscribe(handler);
 
         // Act
-        await weakEvent.PublishAsync();
+        await weakEvent.PublishAsync(Current.CancellationToken);
 
         // Assert
         Assert.Equal(1, callCount);
@@ -96,7 +98,7 @@ public class WeakEventTests
         weakEvent.Subscribe(handler2);
 
         // Act
-        await weakEvent.PublishAsync();
+        await weakEvent.PublishAsync(Current.CancellationToken);
 
         // Assert
         Assert.Equal(1, callCount1);
@@ -118,7 +120,7 @@ public class WeakEventTests
         weakEvent.Subscribe(handler);
 
         // Act
-        await weakEvent.PublishAsync();
+        await weakEvent.PublishAsync(Current.CancellationToken);
 
         // Assert
         Assert.True(completed);
@@ -209,7 +211,7 @@ public class WeakEventTests
         weakEvent.Unsubscribe(handler);
 
         // Act
-        await weakEvent.PublishAsync();
+        await weakEvent.PublishAsync(Current.CancellationToken);
 
         // Assert
         Assert.Equal(0, callCount);
@@ -245,7 +247,7 @@ public class WeakEventTests
         GC.Collect();
 
         // Act
-        await weakEvent.PublishAsync();
+        await weakEvent.PublishAsync(Current.CancellationToken);
 
         // Assert
         Assert.Equal(0, weakEvent.SubscriberCount());
@@ -268,7 +270,7 @@ public class WeakEventTests
         GC.Collect();
 
         // Act
-        await weakEvent.PublishAsync();
+        await weakEvent.PublishAsync(Current.CancellationToken);
 
         // Assert
         Assert.Equal(0, callTracker.CallCount); // Handler should not be invoked
@@ -282,12 +284,12 @@ public class WeakEventTests
         var weakEvent = new WeakEvent();
 
         // Act & Assert - should not throw
-        await weakEvent.PublishAsync();
+        await weakEvent.PublishAsync(Current.CancellationToken);
     }
 
     #endregion
 
-    #region WeakEvent<T> (Generic) Tests
+    #region WeakEvent<T>
 
     [Fact]
     public void Subscribe_Generic_WithAction_AddsSubscriber()
@@ -342,7 +344,7 @@ public class WeakEventTests
         weakEvent.Subscribe(handler);
 
         // Act
-        await weakEvent.PublishAsync("test-data");
+        await weakEvent.PublishAsync("test-data", Current.CancellationToken);
 
         // Assert
         Assert.Equal("test-data", receivedData);
@@ -362,7 +364,7 @@ public class WeakEventTests
         weakEvent.Subscribe(handler2);
 
         // Act
-        await weakEvent.PublishAsync(42);
+        await weakEvent.PublishAsync(42, Current.CancellationToken);
 
         // Assert
         Assert.Equal(42, receivedData1);
@@ -384,7 +386,7 @@ public class WeakEventTests
         weakEvent.Subscribe(handler);
 
         // Act
-        await weakEvent.PublishAsync("async-test");
+        await weakEvent.PublishAsync("async-test", Current.CancellationToken);
 
         // Assert
         Assert.Equal("async-test", receivedData);
@@ -478,7 +480,7 @@ public class WeakEventTests
         weakEvent.Unsubscribe(handler);
 
         // Act
-        await weakEvent.PublishAsync("test");
+        await weakEvent.PublishAsync("test", Current.CancellationToken);
 
         // Assert
         Assert.Equal(0, callCount);
@@ -514,7 +516,7 @@ public class WeakEventTests
         GC.Collect();
 
         // Act
-        await weakEvent.PublishAsync("test");
+        await weakEvent.PublishAsync("test", Current.CancellationToken);
 
         // Assert
         Assert.Equal(0, weakEvent.SubscriberCount());
@@ -536,7 +538,7 @@ public class WeakEventTests
         GC.Collect();
 
         // Act
-        await weakEvent.PublishAsync("test-data");
+        await weakEvent.PublishAsync("test-data", Current.CancellationToken);
 
         // Assert
         Assert.Equal(0, callTracker.CallCount); // Handler should not be invoked
@@ -550,7 +552,7 @@ public class WeakEventTests
         var weakEvent = new WeakEvent<string>();
 
         // Act & Assert - should not throw
-        await weakEvent.PublishAsync("test");
+        await weakEvent.PublishAsync("test", Current.CancellationToken);
     }
 
     [Fact]
@@ -565,7 +567,7 @@ public class WeakEventTests
         var eventArgs = new TestEventArgs { Message = "test", Value = 123 };
 
         // Act
-        await weakEvent.PublishAsync(eventArgs);
+        await weakEvent.PublishAsync(eventArgs, Current.CancellationToken);
 
         // Assert
         Assert.NotNull(receivedArgs);

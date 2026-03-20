@@ -6,6 +6,13 @@
     <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="TestResults\**" />
+    <EmbeddedResource Remove="TestResults\**" />
+    <None Remove="TestResults\**" />
+  </ItemGroup>
+
   <ItemGroup>
     <PackageReference Include="bunit" />
     <PackageReference Include="coverlet.collector">
@@ -14,13 +21,14 @@
     </PackageReference>
     <PackageReference Include="Microsoft.NET.Test.Sdk" />
     <PackageReference Include="PublicApiGenerator" />
-    <PackageReference Include="Verify.Xunit" />
-    <PackageReference Include="xunit" />
+    <PackageReference Include="Verify.XunitV3" />
+    <PackageReference Include="xunit.v3" />
     <PackageReference Include="xunit.runner.visualstudio">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
   </ItemGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\..\samples\Sample.Core\Sample.Core.csproj" />
     <ProjectReference Include="..\..\src\LoreSoft.Blazor.Controls\LoreSoft.Blazor.Controls.csproj" />

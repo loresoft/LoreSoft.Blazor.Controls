@@ -1,5 +1,7 @@
 using LoreSoft.Blazor.Controls.Events;
 
+using static Xunit.TestContext;
+
 namespace LoreSoft.Blazor.Controls.Tests.Events;
 
 public class EventBusTests
@@ -78,7 +80,7 @@ public class EventBusTests
         // Act
         var testEvent = new TestEvent { Message = "test" };
 
-        await eventBus.PublishAsync(testEvent);
+        await eventBus.PublishAsync(testEvent, Current.CancellationToken);
 
         // Assert
         Assert.True(handler1Called);
@@ -101,7 +103,7 @@ public class EventBusTests
         eventBus.Subscribe(handler2);
 
         // Act
-        await eventBus.PublishAsync(new TestEvent { Message = "test" });
+        await eventBus.PublishAsync(new TestEvent { Message = "test" }, Current.CancellationToken);
 
         // Assert
         Assert.True(event1Received);
@@ -127,7 +129,7 @@ public class EventBusTests
         var testEvent = new TestEvent { Message = "test message", Value = 42 };
 
         // Act
-        await eventBus.PublishAsync(testEvent);
+        await eventBus.PublishAsync(testEvent, Current.CancellationToken);
 
         // Assert
         Assert.NotNull(receivedEvent);
@@ -176,7 +178,7 @@ public class EventBusTests
         eventBus.Subscribe(handler2);
 
         // Act
-        await eventBus.PublishAsync(new TestEvent { Message = "test" });
+        await eventBus.PublishAsync(new TestEvent { Message = "test" }, Current.CancellationToken);
 
         // Assert
         Assert.Equal(1, handler1Count);
@@ -199,7 +201,7 @@ public class EventBusTests
         eventBus.Subscribe(handler);
 
         // Act
-        await eventBus.PublishAsync(new TestEvent { Message = "test" });
+        await eventBus.PublishAsync(new TestEvent { Message = "test" }, Current.CancellationToken);
 
         // Assert
         Assert.True(completed);
@@ -212,7 +214,7 @@ public class EventBusTests
         var eventBus = new EventBus();
 
         // Act & Assert - should not throw
-        await eventBus.PublishAsync(new TestEvent { Message = "test" });
+        await eventBus.PublishAsync(new TestEvent { Message = "test" }, Current.CancellationToken);
     }
 
     [Fact]
@@ -224,7 +226,7 @@ public class EventBusTests
         TestEvent nullEvent = null!;
 
         // Act & Assert
-        await Assert.ThrowsAsync<ArgumentNullException>(() => eventBus.PublishAsync(nullEvent).AsTask());
+        await Assert.ThrowsAsync<ArgumentNullException>(() => eventBus.PublishAsync(nullEvent, Current.CancellationToken).AsTask());
     }
 
     [Fact]
@@ -239,9 +241,9 @@ public class EventBusTests
         eventBus.Subscribe(handler);
 
         // Act
-        await eventBus.PublishAsync(new TestEvent { Message = "test1" });
-        await eventBus.PublishAsync(new TestEvent { Message = "test2" });
-        await eventBus.PublishAsync(new TestEvent { Message = "test3" });
+        await eventBus.PublishAsync(new TestEvent { Message = "test1" }, Current.CancellationToken);
+        await eventBus.PublishAsync(new TestEvent { Message = "test2" }, Current.CancellationToken);
+        await eventBus.PublishAsync(new TestEvent { Message = "test3" }, Current.CancellationToken);
 
         // Assert
         Assert.Equal(3, callCount);
@@ -265,7 +267,7 @@ public class EventBusTests
         // Act
         eventBus.Unsubscribe(handler);
 
-        await eventBus.PublishAsync(new TestEvent { Message = "test" });
+        await eventBus.PublishAsync(new TestEvent { Message = "test" }, Current.CancellationToken);
 
         // Assert
         Assert.Equal(0, callCount);
@@ -285,7 +287,7 @@ public class EventBusTests
         // Act
         eventBus.Unsubscribe(handler);
 
-        await eventBus.PublishAsync(new TestEvent { Message = "test" });
+        await eventBus.PublishAsync(new TestEvent { Message = "test" }, Current.CancellationToken);
 
         // Assert
         Assert.Equal(0, callCount);
@@ -333,7 +335,7 @@ public class EventBusTests
         // Act
         eventBus.Unsubscribe(handler1);
 
-        await eventBus.PublishAsync(new TestEvent { Message = "test" });
+        await eventBus.PublishAsync(new TestEvent { Message = "test" }, Current.CancellationToken);
 
         // Assert
         Assert.Equal(0, handler1Count);
@@ -354,8 +356,8 @@ public class EventBusTests
         // Act
         eventBus.Unsubscribe(subscriber);
 
-        await eventBus.PublishAsync(new TestEvent { Message = "test" });
-        await eventBus.PublishAsync(new OtherEvent { Data = "test" });
+        await eventBus.PublishAsync(new TestEvent { Message = "test" }, Current.CancellationToken);
+        await eventBus.PublishAsync(new OtherEvent { Data = "test" }, Current.CancellationToken);
 
         // Assert
         Assert.Equal(0, subscriber.TestEventCount);
@@ -406,7 +408,7 @@ public class EventBusTests
         GC.Collect();
 
         // Act
-        await eventBus.PublishAsync(new TestEvent { Message = "test" });
+        await eventBus.PublishAsync(new TestEvent { Message = "test" }, Current.CancellationToken);
 
         // Assert
         Assert.Equal(0, callTracker.CallCount);
@@ -434,7 +436,7 @@ public class EventBusTests
         GC.Collect();
 
         // Act
-        await eventBus.PublishAsync(new TestEvent { Message = "test" });
+        await eventBus.PublishAsync(new TestEvent { Message = "test" }, Current.CancellationToken);
 
         // Assert
         Assert.Equal(1, strongCallTracker.CallCount); // Strong reference handler called
@@ -461,7 +463,7 @@ public class EventBusTests
         GC.Collect();
 
         // Act
-        await eventBus.PublishAsync(new TestEvent { Message = "test" });
+        await eventBus.PublishAsync(new TestEvent { Message = "test" }, Current.CancellationToken);
 
         // Assert
         Assert.Equal(0, callTracker1.CallCount);
@@ -491,7 +493,7 @@ public class EventBusTests
         eventBus.Subscribe<TestEvent>(newSubscriber.HandleEvent);
 
         // Act
-        await eventBus.PublishAsync(new TestEvent { Message = "test" });
+        await eventBus.PublishAsync(new TestEvent { Message = "test" }, Current.CancellationToken);
 
         // Assert
         Assert.Equal(0, weakCallTracker.CallCount);  // Old handler not invoked
@@ -517,8 +519,8 @@ public class EventBusTests
         GC.Collect();
 
         // Act
-        await eventBus.PublishAsync(new TestEvent { Message = "test" });
-        await eventBus.PublishAsync(new OtherEvent { Data = "other" });
+        await eventBus.PublishAsync(new TestEvent { Message = "test" }, Current.CancellationToken);
+        await eventBus.PublishAsync(new OtherEvent { Data = "other" }, Current.CancellationToken);
 
         // Assert
         Assert.Equal(0, testEventTracker.CallCount);
@@ -550,7 +552,7 @@ public class EventBusTests
         GC.Collect();
 
         // Act
-        await eventBus.PublishAsync(new TestEvent { Message = "test" });
+        await eventBus.PublishAsync(new TestEvent { Message = "test" }, Current.CancellationToken);
 
         // Assert
         Assert.Equal(1, strongTracker1.CallCount); // Strong reference invoked
@@ -577,7 +579,7 @@ public class EventBusTests
         GC.Collect();
 
         // Assert - Publishing should complete without error
-        await eventBus.PublishAsync(new TestEvent { Message = "test" });
+        await eventBus.PublishAsync(new TestEvent { Message = "test" }, Current.CancellationToken);
 
         Assert.Equal(0, subscriber._tracker.CallCount);
     }
@@ -625,8 +627,8 @@ public class EventBusTests
         eventBus.Subscribe(otherHandler);
 
         // Act
-        await eventBus.PublishAsync(new TestEvent { Message = "test" });
-        await eventBus.PublishAsync(new OtherEvent { Data = "other" });
+        await eventBus.PublishAsync(new TestEvent { Message = "test" }, Current.CancellationToken);
+        await eventBus.PublishAsync(new OtherEvent { Data = "other" }, Current.CancellationToken);
 
         // Assert
         Assert.Equal(1, testEventCount);
@@ -651,8 +653,8 @@ public class EventBusTests
         // Act
         eventBus.Unsubscribe(testHandler);
 
-        await eventBus.PublishAsync(new TestEvent { Message = "test" });
-        await eventBus.PublishAsync(new OtherEvent { Data = "other" });
+        await eventBus.PublishAsync(new TestEvent { Message = "test" }, Current.CancellationToken);
+        await eventBus.PublishAsync(new OtherEvent { Data = "other" }, Current.CancellationToken);
 
         // Assert
         Assert.Equal(0, testEventCount);

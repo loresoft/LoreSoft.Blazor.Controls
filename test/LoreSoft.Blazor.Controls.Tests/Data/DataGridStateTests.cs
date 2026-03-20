@@ -1,9 +1,5 @@
 using System.Text.Json;
 
-using LoreSoft.Blazor.Controls;
-
-using Xunit;
-
 namespace LoreSoft.Blazor.Controls.Tests.Data;
 
 public class DataGridStateTests
@@ -85,11 +81,11 @@ public class DataGridStateTests
         Assert.NotNull(result.Columns);
         Assert.Equal(2, result.Columns.Count);
         Assert.Equal("Name", result.Columns[0].PropertyName);
-        Assert.Equal(0,      result.Columns[0].SortIndex);
+        Assert.Equal(0, result.Columns[0].SortIndex);
         Assert.False(result.Columns[0].SortDescending);
         Assert.True(result.Columns[0].Visible);
         Assert.Equal("Age", result.Columns[1].PropertyName);
-        Assert.Equal(1,     result.Columns[1].SortIndex);
+        Assert.Equal(1, result.Columns[1].SortIndex);
         Assert.True(result.Columns[1].SortDescending);
         Assert.False(result.Columns[1].Visible);
     }
@@ -126,7 +122,7 @@ public class DataGridStateTests
         var extensions = new Dictionary<string, string?>
         {
             ["pageSize"] = "25",
-            ["theme"]    = null
+            ["theme"] = null
         };
         var state = new DataGridState(query: null, columns: null, extensions: extensions);
 
