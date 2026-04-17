@@ -708,6 +708,9 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
     /// <param name="column">The column to add to the grid's column collection.</param>
     internal void AddColumn(DataColumn<TItem> column)
     {
+        if (Columns.Contains(column))
+            return;
+
         Columns.Add(column);
     }
 

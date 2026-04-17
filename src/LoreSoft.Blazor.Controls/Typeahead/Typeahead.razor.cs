@@ -187,6 +187,18 @@ public partial class Typeahead<TItem, TValue> : StandardComponent
     public string? MenuStyle { get; set; }
 
     /// <summary>
+    /// Gets or sets the callback invoked when an item is added to the selection.
+    /// </summary>
+    [Parameter]
+    public EventCallback<TItem> SelectionAdded { get; set; }
+
+    /// <summary>
+    /// Gets or sets the callback invoked when an item is removed from the selection.
+    /// </summary>
+    [Parameter]
+    public EventCallback<TValue> SelectionRemoved { get; set; }
+
+    /// <summary>
     /// Gets a value indicating whether the control is currently loading search results.
     /// </summary>
     protected bool Loading => _loadingState.IsLoading;
@@ -338,13 +350,21 @@ public partial class Typeahead<TItem, TValue> : StandardComponent
         {
             var valueList = Values ?? [];
             if (!valueList.Remove(value))
+            {
                 valueList.Add(value);
-
-            await ValuesChanged.InvokeAsync(valueList);
+                await ValuesChanged.InvokeAsync(valueList);
+                await SelectionAdded.InvokeAsync(item);
+            }
+            else
+            {
+                await ValuesChanged.InvokeAsync(valueList);
+                await SelectionRemoved.InvokeAsync(value);
+            }
         }
         else
         {
             await ValueChanged.InvokeAsync(value);
+            await SelectionAdded.InvokeAsync(item);
         }
 
         EditContext?.NotifyFieldChanged(FieldIdentifier);
@@ -361,6 +381,7 @@ public partial class Typeahead<TItem, TValue> : StandardComponent
         valueList.Remove(item);
 
         await ValuesChanged.InvokeAsync(valueList);
+        await SelectionRemoved.InvokeAsync(item);
         EditContext?.NotifyFieldChanged(FieldIdentifier);
     }
 
@@ -370,9 +391,20 @@ public partial class Typeahead<TItem, TValue> : StandardComponent
     public async Task Clear()
     {
         if (IsMultiselect())
+        {
+            var valueList = Values ?? [];
+            foreach (var value in valueList)
+                await SelectionRemoved.InvokeAsync(value);
+
             await ValuesChanged.InvokeAsync([]);
+        }
         else
+        {
+            if (Value is not null)
+                await SelectionRemoved.InvokeAsync(Value);
+
             await ValueChanged.InvokeAsync(default);
+        }
 
         EditContext?.NotifyFieldChanged(FieldIdentifier);
         CloseMenu();
