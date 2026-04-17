@@ -1654,6 +1654,10 @@ namespace LoreSoft.Blazor.Controls
         [Microsoft.AspNetCore.Components.Parameter]
         public Microsoft.AspNetCore.Components.RenderFragment<TValue>? SelectedTemplate { get; set; }
         protected Microsoft.AspNetCore.Components.RenderFragment<TValue> SelectedValue { get; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public Microsoft.AspNetCore.Components.EventCallback<TItem> SelectionAdded { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public Microsoft.AspNetCore.Components.EventCallback<TValue> SelectionRemoved { get; set; }
         protected int TabIndex { get; }
         [Microsoft.AspNetCore.Components.Parameter]
         public TValue Value { get; set; }
