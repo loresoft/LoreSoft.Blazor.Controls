@@ -47,6 +47,7 @@ jobs:
 
       - name: Report Coverage
         if: success()
+        continue-on-error: true
         uses: coverallsapp/github-action@v2
         with:
           file: "${{github.workspace}}/test/*/TestResults/*/coverage.info"
