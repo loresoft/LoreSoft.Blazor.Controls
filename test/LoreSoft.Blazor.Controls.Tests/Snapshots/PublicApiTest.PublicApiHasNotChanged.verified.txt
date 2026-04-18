@@ -985,6 +985,8 @@ namespace LoreSoft.Blazor.Controls
         [Microsoft.AspNetCore.Components.Parameter]
         public string? LoadingText { get; set; }
         public TValue Value { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public Microsoft.AspNetCore.Components.EventCallback<TValue?> ValueLoaded { get; set; }
         protected override void BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder builder) { }
         protected override System.Threading.Tasks.Task OnParametersSetAsync() { }
     }
@@ -1674,7 +1676,6 @@ namespace LoreSoft.Blazor.Controls
         protected override void BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder @__builder) { }
         public System.Threading.Tasks.Task Clear() { }
         public void CloseMenu() { }
-        protected override System.Threading.Tasks.Task OnInitializedAsync() { }
         protected override void OnParametersSet() { }
         public System.Threading.Tasks.Task RemoveValue(TValue item) { }
         public System.Threading.Tasks.Task Search(string? searchText) { }

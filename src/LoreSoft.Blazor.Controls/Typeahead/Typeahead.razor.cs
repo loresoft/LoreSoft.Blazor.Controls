@@ -24,6 +24,8 @@ public partial class Typeahead<TItem, TValue> : StandardComponent
 {
     private readonly DebounceAction<string?> _debouncer = new();
     private readonly LoadingState _loadingState = new();
+    private bool _suppressValueLoadedEvent;
+    private bool _previousDisabled = true;
 
     /// <summary>
     /// Gets or sets the cascading <see cref="EditContext"/> for form validation.
@@ -268,18 +270,15 @@ public partial class Typeahead<TItem, TValue> : StandardComponent
                 .AddStyle(MenuStyle)
                 .ToString();
         });
-    }
 
-    /// <inheritdoc />
-    protected override async Task OnInitializedAsync()
-    {
-        await base.OnInitializedAsync();
-
-        // load items if an item loader is provided
-        // will overwrite Items parameter if both are set
-        if (!Disabled && ItemLoader != null)
+        // load items when component transitions from disabled to enabled
+        if (_previousDisabled && !Disabled && ItemLoader != null && CurrentItems.Count == 0)
             ExecuteAfterRender(LoadItems);
+
+        _previousDisabled = Disabled;
     }
+
+
 
 
     /// <summary>
@@ -353,6 +352,7 @@ public partial class Typeahead<TItem, TValue> : StandardComponent
             {
                 valueList.Add(value);
                 await ValuesChanged.InvokeAsync(valueList);
+                _suppressValueLoadedEvent = true;
                 await SelectionAdded.InvokeAsync(item);
             }
             else
@@ -364,6 +364,7 @@ public partial class Typeahead<TItem, TValue> : StandardComponent
         else
         {
             await ValueChanged.InvokeAsync(value);
+            _suppressValueLoadedEvent = true;
             await SelectionAdded.InvokeAsync(item);
         }
 
@@ -604,6 +605,24 @@ public partial class Typeahead<TItem, TValue> : StandardComponent
             index = SearchResults.Count - 1;
 
         SelectedIndex = index;
+    }
+
+    /// <summary>
+    /// Handles the <see cref="LazyValue{TKey, TValue}.ValueLoaded"/> callback,
+    /// forwarding to <see cref="SelectionAdded"/> unless the event was already
+    /// raised by <see cref="SelectResult"/>.
+    /// </summary>
+    /// <param name="item">The item resolved by the lazy loader.</param>
+    private async Task OnValueLoaded(TItem? item)
+    {
+        if (_suppressValueLoadedEvent)
+        {
+            _suppressValueLoadedEvent = false;
+            return;
+        }
+
+        if (item is not null)
+            await SelectionAdded.InvokeAsync(item);
     }
 
     /// <summary>

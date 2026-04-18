@@ -460,4 +460,58 @@ public class LazyValueTests : BunitContext
             Assert.NotNull(cut.Instance.Value);
         });
     }
+
+    [Fact]
+    public void Invokes_ValueLoaded_After_Successful_Load()
+    {
+        // arrange
+        var fruit = Fruit.Data().First();
+        var key = fruit.Id;
+        var loadMethod = Fruit.GetByIdAsync;
+        Fruit? loadedValue = null;
+
+        // act
+        var cut = Render<LazyValue<Guid, Fruit>>(parameters => parameters
+            .Add(p => p.LoadMethod, loadMethod)
+            .Add(p => p.Key, key)
+            .Add(p => p.ValueLoaded, value => loadedValue = value)
+        );
+
+        // assert
+        cut.WaitForAssertion(() =>
+        {
+            Assert.NotNull(loadedValue);
+            Assert.Equal(fruit.Id, loadedValue.Id);
+        });
+    }
+
+    [Fact]
+    public void Invokes_ValueLoaded_On_Key_Change()
+    {
+        // arrange
+        var fruits = Fruit.Data().Take(2).ToArray();
+        var loadMethod = Fruit.GetByIdAsync;
+        var loadedValues = new List<Fruit?>();
+
+        // act
+        var cut = Render<LazyValue<Guid, Fruit>>(parameters => parameters
+            .Add(p => p.LoadMethod, loadMethod)
+            .Add(p => p.Key, fruits[0].Id)
+            .Add(p => p.ValueLoaded, value => loadedValues.Add(value))
+        );
+
+        cut.WaitForAssertion(() => Assert.Single(loadedValues));
+
+        // change key
+        cut.Render(parameters => parameters
+            .Add(p => p.Key, fruits[1].Id)
+        );
+
+        // assert both values were loaded
+        cut.WaitForAssertion(() =>
+        {
+            Assert.Equal(2, loadedValues.Count);
+            Assert.Equal(fruits[1].Id, loadedValues[1]!.Id);
+        });
+    }
 }

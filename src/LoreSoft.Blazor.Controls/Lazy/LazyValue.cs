@@ -48,6 +48,12 @@ public class LazyValue<TKey, TValue> : ComponentBase
     public string? LoadingText { get; set; }
 
     /// <summary>
+    /// Gets or sets the callback invoked when the value has been successfully loaded.
+    /// </summary>
+    [Parameter]
+    public EventCallback<TValue?> ValueLoaded { get; set; }
+
+    /// <summary>
     /// Gets or sets the loaded value.
     /// </summary>
     public TValue? Value { get; set; }
@@ -74,6 +80,8 @@ public class LazyValue<TKey, TValue> : ComponentBase
             // load the value async
             Value = await LoadMethod(Key);
             _previousKey = Key;
+
+            await ValueLoaded.InvokeAsync(Value);
         }
         finally
         {
