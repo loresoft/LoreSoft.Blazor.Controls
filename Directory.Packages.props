@@ -8,10 +8,10 @@
     <PackageVersion Include="Bogus" Version="35.6.5" />
     <PackageVersion Include="bunit" Version="2.7.2" />
     <PackageVersion Include="coverlet.collector" Version="10.0.0" />
-    <PackageVersion Include="Microsoft.AspNetCore.Components.Web" Version="10.0.6" />
-    <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly" Version="10.0.7" />
-    <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="10.0.7" />
-    <PackageVersion Include="Microsoft.Extensions.Http" Version="10.0.7" />
+    <PackageVersion Include="Microsoft.AspNetCore.Components.Web" Version="10.0.8" />
+    <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly" Version="10.0.8" />
+    <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="10.0.8" />
+    <PackageVersion Include="Microsoft.Extensions.Http" Version="10.0.8" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="18.5.1" />
     <PackageVersion Include="MinVer" Version="7.0.0" />
     <PackageVersion Include="PublicApiGenerator" Version="11.5.4" />
@@ -23,9 +23,9 @@
   </ItemGroup>
   <!-- TFM-specific overrides -->
   <ItemGroup Condition="'$(TargetFramework)' == 'net9.0'">
-    <PackageVersion Update="Microsoft.AspNetCore.Components.Web" Version="9.0.15" />
+    <PackageVersion Update="Microsoft.AspNetCore.Components.Web" Version="9.0.16" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)' == 'net8.0'">
-    <PackageVersion Update="Microsoft.AspNetCore.Components.Web" Version="8.0.26" />
+    <PackageVersion Update="Microsoft.AspNetCore.Components.Web" Version="8.0.27" />
   </ItemGroup>
 </Project>
