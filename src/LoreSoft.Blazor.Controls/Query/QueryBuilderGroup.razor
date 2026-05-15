@@ -4,14 +4,17 @@
 
 <div class="query-group">
     <div class="query-group-header">
-        <select @bind="Group.Logic"
-                class="query-select"
-                required="required"
-                autocomplete="off"
-                title="Logical Operator">
-            <option value="@QueryLogic.And">AND</option>
-            <option value="@QueryLogic.Or">OR</option>
-        </select>
+        @if (QueryBuilder.ShowLogic)
+        {
+            <select @bind="Group.Logic"
+                    class="query-select"
+                    required="required"
+                    autocomplete="off"
+                    title="Logical Operator">
+                <option value="@QueryLogic.And">AND</option>
+                <option value="@QueryLogic.Or">OR</option>
+            </select>
+        }
 
         <button @onclick="AddFilter"
                 type="button"
@@ -21,13 +24,16 @@
             Filter
         </button>
 
-        <button @onclick="AddGroup"
-                type="button"
-                class="query-button"
-                title="Add Group">
-            <i class="query-button-add"></i>
-            Group
-        </button>
+        @if (QueryBuilder.Groupable)
+        {
+            <button @onclick="AddGroup"
+                    type="button"
+                    class="query-button"
+                    title="Add Group">
+                <i class="query-button-add"></i>
+                Group
+            </button>
+        }
 
         @if (Parent != null)
         {

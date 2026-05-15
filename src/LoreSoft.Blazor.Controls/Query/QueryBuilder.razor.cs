@@ -32,6 +32,18 @@ public partial class QueryBuilder : ComponentBase
     public EventCallback<QueryGroup> QueryChanged { get; set; }
 
     /// <summary>
+    /// Gets or sets a value indicating whether users can add query groups.
+    /// </summary>
+    [Parameter]
+    public bool Groupable { get; set; } = true;
+
+    /// <summary>
+    /// Gets or sets a value indicating whether the logical operator selector is displayed.
+    /// </summary>
+    [Parameter]
+    public bool ShowLogic { get; set; } = true;
+
+    /// <summary>
     /// Gets or sets the template for rendering the footer of the query builder.
     /// </summary>
     [Parameter]
