@@ -587,7 +587,7 @@ namespace LoreSoft.Blazor.Controls
         [Microsoft.AspNetCore.Components.Parameter]
         public Microsoft.AspNetCore.Components.RenderFragment? HeaderTemplate { get; set; }
         protected System.Collections.Generic.IEnumerable<System.Reflection.PropertyInfo> Properties { get; }
-        protected LoreSoft.Blazor.Controls.QueryBuilder<TItem>? QueryBuilder { get; set; }
+        protected LoreSoft.Blazor.Controls.QueryBuilder? QueryBuilder { get; set; }
         [Microsoft.AspNetCore.Components.Parameter]
         public Microsoft.AspNetCore.Components.RenderFragment? QueryFields { get; set; }
         [Microsoft.AspNetCore.Components.EditorRequired]
@@ -1217,71 +1217,60 @@ namespace LoreSoft.Blazor.Controls
         protected override void BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder @__builder) { }
         protected override void OnInitialized() { }
     }
-    public class QueryBuilderField<TItem> : Microsoft.AspNetCore.Components.ComponentBase
+    public class QueryBuilder : Microsoft.AspNetCore.Components.ComponentBase
+    {
+        public QueryBuilder() { }
+        public System.Collections.Generic.List<LoreSoft.Blazor.Controls.QueryBuilderTemplate> Fields { get; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public Microsoft.AspNetCore.Components.RenderFragment? FooterTemplate { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public bool Groupable { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public LoreSoft.Blazor.Controls.QueryGroup? Query { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public Microsoft.AspNetCore.Components.EventCallback<LoreSoft.Blazor.Controls.QueryGroup> QueryChanged { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public Microsoft.AspNetCore.Components.RenderFragment? QueryFields { get; set; }
+        protected LoreSoft.Blazor.Controls.QueryGroup? RootQuery { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public bool ShowLogic { get; set; }
+        protected override void BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder @__builder) { }
+        protected override System.Threading.Tasks.Task OnAfterRenderAsync(bool firstRender) { }
+        protected override void OnParametersSet() { }
+        public void Refresh() { }
+    }
+    [Microsoft.AspNetCore.Components.CascadingTypeParameter("TItem")]
+    public class QueryBuilderField<TItem> : LoreSoft.Blazor.Controls.QueryBuilderTemplate
     {
         public QueryBuilderField() { }
-        public string? Column { get; set; }
-        public string? CurrentInputType { get; set; }
-        public System.Collections.Generic.List<string>? CurrentKeys { get; set; }
-        public string? CurrentName { get; }
-        public System.Collections.Generic.List<string>? CurrentOperators { get; set; }
-        public string? CurrentTitle { get; set; }
-        public System.Collections.Generic.List<string>? CurrentValues { get; set; }
         [Microsoft.AspNetCore.Components.EditorRequired]
         [Microsoft.AspNetCore.Components.Parameter]
         public required System.Linq.Expressions.Expression<System.Func<TItem, object>> Field { get; set; }
-        [Microsoft.AspNetCore.Components.Parameter]
-        public LoreSoft.Blazor.Controls.QueryFieldSelection FieldSelection { get; set; }
-        [Microsoft.AspNetCore.Components.Parameter]
-        public string? Format { get; set; }
-        [Microsoft.AspNetCore.Components.Parameter]
-        public string? InputType { get; set; }
-        [Microsoft.AspNetCore.Components.Parameter]
-        public System.Collections.Generic.List<string>? Keys { get; set; }
-        public string? Name { get; set; }
-        [Microsoft.AspNetCore.Components.Parameter]
-        public Microsoft.AspNetCore.Components.RenderFragment<LoreSoft.Blazor.Controls.QueryFilter>? OperatorTemplate { get; set; }
-        [Microsoft.AspNetCore.Components.Parameter]
-        public System.Collections.Generic.List<string>? Operators { get; set; }
-        [Microsoft.AspNetCore.Components.CascadingParameter(Name="QueryBuilder")]
-        protected LoreSoft.Blazor.Controls.QueryBuilder<TItem> QueryBuilder { get; set; }
-        [Microsoft.AspNetCore.Components.Parameter]
-        public bool Searchable { get; set; }
-        [Microsoft.AspNetCore.Components.Parameter]
-        public bool SupportsKeys { get; set; }
-        [Microsoft.AspNetCore.Components.Parameter]
-        public string? Title { get; set; }
-        public System.Type? Type { get; set; }
-        [Microsoft.AspNetCore.Components.Parameter]
-        public Microsoft.AspNetCore.Components.RenderFragment<LoreSoft.Blazor.Controls.QueryFilter>? ValueTemplate { get; set; }
-        [Microsoft.AspNetCore.Components.Parameter]
-        public System.Collections.Generic.List<string>? Values { get; set; }
-        protected override void OnInitialized() { }
-        protected override void OnParametersSet() { }
+        protected override void UpdateField() { }
     }
-    public class QueryBuilderFilter<TItem> : Microsoft.AspNetCore.Components.ComponentBase
+    public class QueryBuilderFilter : Microsoft.AspNetCore.Components.ComponentBase
     {
         public QueryBuilderFilter() { }
-        protected LoreSoft.Blazor.Controls.QueryBuilderField<TItem>? Field { get; set; }
-        protected System.Collections.Generic.List<LoreSoft.Blazor.Controls.QueryBuilderField<TItem>> Fields { get; }
+        protected LoreSoft.Blazor.Controls.QueryBuilderTemplate? Field { get; set; }
+        protected System.Collections.Generic.List<LoreSoft.Blazor.Controls.QueryBuilderTemplate> Fields { get; }
         [Microsoft.AspNetCore.Components.EditorRequired]
         [Microsoft.AspNetCore.Components.Parameter]
         public LoreSoft.Blazor.Controls.QueryFilter Filter { get; set; }
         [Microsoft.AspNetCore.Components.Parameter]
         public LoreSoft.Blazor.Controls.QueryGroup? Parent { get; set; }
         [Microsoft.AspNetCore.Components.CascadingParameter(Name="QueryBuilder")]
-        public required LoreSoft.Blazor.Controls.QueryBuilder<TItem> QueryBuilder { get; set; }
+        public required LoreSoft.Blazor.Controls.QueryBuilder QueryBuilder { get; set; }
         protected bool ShowValueInput { get; }
         protected override void BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder @__builder) { }
         protected void DeleteFilter() { }
         protected void FieldChanged() { }
+        protected void FilterChanged() { }
         protected string? GetValue() { }
-        protected void KeyChanged() { }
         protected override void OnInitialized() { }
         protected void OperatorChanged() { }
         protected void SetValue(Microsoft.AspNetCore.Components.ChangeEventArgs args) { }
     }
-    public class QueryBuilderGroup<TItem> : Microsoft.AspNetCore.Components.ComponentBase
+    public class QueryBuilderGroup : Microsoft.AspNetCore.Components.ComponentBase
     {
         public QueryBuilderGroup() { }
         [Microsoft.AspNetCore.Components.EditorRequired]
@@ -1290,30 +1279,62 @@ namespace LoreSoft.Blazor.Controls
         [Microsoft.AspNetCore.Components.Parameter]
         public LoreSoft.Blazor.Controls.QueryGroup? Parent { get; set; }
         [Microsoft.AspNetCore.Components.CascadingParameter(Name="QueryBuilder")]
-        public required LoreSoft.Blazor.Controls.QueryBuilder<TItem> QueryBuilder { get; set; }
+        public required LoreSoft.Blazor.Controls.QueryBuilder QueryBuilder { get; set; }
         protected void AddFilter() { }
         protected void AddGroup() { }
         protected override void BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder @__builder) { }
         protected void DeleteGroup() { }
     }
-    [Microsoft.AspNetCore.Components.CascadingTypeParameter("TItem")]
-    public class QueryBuilder<TItem> : Microsoft.AspNetCore.Components.ComponentBase
+    public class QueryBuilderTemplate : Microsoft.AspNetCore.Components.ComponentBase
     {
-        public QueryBuilder() { }
-        public System.Collections.Generic.List<LoreSoft.Blazor.Controls.QueryBuilderField<TItem>> Fields { get; }
+        public QueryBuilderTemplate() { }
         [Microsoft.AspNetCore.Components.Parameter]
-        public Microsoft.AspNetCore.Components.RenderFragment? FooterTemplate { get; set; }
+        public string? Column { get; set; }
+        public string? CurrentInputType { get; set; }
+        public System.Collections.Generic.List<string>? CurrentKeys { get; set; }
+        public string? CurrentName { get; }
+        public System.Collections.Generic.List<string>? CurrentOperators { get; set; }
+        public string? CurrentTitle { get; set; }
+        public System.Collections.Generic.List<string>? CurrentValues { get; set; }
         [Microsoft.AspNetCore.Components.Parameter]
-        public LoreSoft.Blazor.Controls.QueryGroup? Query { get; set; }
+        public LoreSoft.Blazor.Controls.QueryFieldSelection FieldSelection { get; set; }
         [Microsoft.AspNetCore.Components.Parameter]
-        public Microsoft.AspNetCore.Components.EventCallback<LoreSoft.Blazor.Controls.QueryGroup> QueryChanged { get; set; }
+        public string? Format { get; set; }
         [Microsoft.AspNetCore.Components.Parameter]
-        public Microsoft.AspNetCore.Components.RenderFragment? QueryFields { get; set; }
-        protected LoreSoft.Blazor.Controls.QueryGroup? RootQuery { get; set; }
-        protected override void BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder @__builder) { }
-        protected override System.Threading.Tasks.Task OnAfterRenderAsync(bool firstRender) { }
+        public string? InputType { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public System.Collections.Generic.List<string>? Keys { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public string? Name { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public Microsoft.AspNetCore.Components.RenderFragment<LoreSoft.Blazor.Controls.QueryFilter>? OperatorTemplate { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public System.Collections.Generic.List<string>? Operators { get; set; }
+        [Microsoft.AspNetCore.Components.CascadingParameter(Name="QueryBuilder")]
+        protected LoreSoft.Blazor.Controls.QueryBuilder QueryBuilder { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public bool Searchable { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public bool SupportsKeys { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public string? Title { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public System.Type? Type { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public Microsoft.AspNetCore.Components.RenderFragment<LoreSoft.Blazor.Controls.QueryFilter>? ValueTemplate { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public System.Collections.Generic.List<string>? Values { get; set; }
+        protected override void OnInitialized() { }
         protected override void OnParametersSet() { }
-        public void Refresh() { }
+        protected virtual void UpdateField() { }
+    }
+    [Microsoft.AspNetCore.Components.CascadingTypeParameter("TItem")]
+    public class QueryBuilderType<TItem> : Microsoft.AspNetCore.Components.ComponentBase
+    {
+        public QueryBuilderType() { }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public Microsoft.AspNetCore.Components.RenderFragment? ChildContent { get; set; }
+        protected override void BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder @__builder) { }
     }
     public enum QueryFieldSelection
     {
