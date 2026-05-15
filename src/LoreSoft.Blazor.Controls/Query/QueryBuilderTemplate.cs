@@ -59,6 +59,18 @@ public class QueryBuilderTemplate : ComponentBase
     public List<string>? Values { get; set; }
 
     /// <summary>
+    /// Gets or sets a value indicating whether the field supports a string key input.
+    /// </summary>
+    [Parameter]
+    public bool SupportsKeys { get; set; }
+
+    /// <summary>
+    /// Gets or sets the list of selectable keys for the field.
+    /// </summary>
+    [Parameter]
+    public List<string>? Keys { get; set; }
+
+    /// <summary>
     /// Gets or sets the template for rendering the value input for this field.
     /// </summary>
     [Parameter]
@@ -131,6 +143,11 @@ public class QueryBuilderTemplate : ComponentBase
     public List<string>? CurrentValues { get; set; }
 
     /// <summary>
+    /// Gets the current list of selectable keys for the field.
+    /// </summary>
+    public List<string>? CurrentKeys { get; set; }
+
+    /// <summary>
     /// Gets the current field identifier based on <see cref="FieldSelection"/>.
     /// </summary>
     public string? CurrentName => FieldSelection == QueryFieldSelection.Column ? Column : Name;
@@ -154,6 +171,7 @@ public class QueryBuilderTemplate : ComponentBase
         UpdateInputType();
         UpdateTitle();
         UpdateValues();
+        UpdateKeys();
     }
 
     /// <summary>
@@ -225,6 +243,20 @@ public class QueryBuilderTemplate : ComponentBase
         }
 
         CurrentValues = [];
+    }
+
+    /// <summary>
+    /// Updates the list of selectable keys for the field.
+    /// </summary>
+    private void UpdateKeys()
+    {
+        if (Keys?.Count > 0)
+        {
+            CurrentKeys = Keys;
+            return;
+        }
+
+        CurrentKeys = [];
     }
 
     /// <summary>

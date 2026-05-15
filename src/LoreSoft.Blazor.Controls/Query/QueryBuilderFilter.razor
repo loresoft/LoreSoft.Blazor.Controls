@@ -22,6 +22,30 @@
 
     @if (Field != null)
     {
+        if (Field.SupportsKeys)
+        {
+            <input id="key-@Filter.Id"
+                   name="key-@Filter.Id"
+                   type="text"
+                   list="@(Field.CurrentKeys?.Count > 0 ? $"key-list-{Filter.Id}" : null)"
+                   title="Enter Filter Key"
+                   @bind="Filter.Key"
+                   @bind:after="FilterChanged"
+                   required="required"
+                   autocomplete="off"
+                   class="query-filter-key" />
+
+            if (Field.CurrentKeys?.Count > 0)
+            {
+                <datalist id="key-list-@Filter.Id">
+                    @foreach (var key in Field.CurrentKeys)
+                    {
+                        <option @key="key" value="@key"></option>
+                    }
+                </datalist>
+            }
+        }
+
         if (Field.OperatorTemplate != null)
         {
             @Field.OperatorTemplate(Filter)
@@ -74,6 +98,7 @@
                    title="Enter Filter Value"
                    value="@GetValue()"
                    autocomplete="off"
+                   required="required"
                    @onchange="SetValue"
                    type="@Field.CurrentInputType"
                    class="query-filter-value" />

@@ -1,4 +1,4 @@
-﻿[assembly: System.Reflection.AssemblyMetadata("RepositoryUrl", "https://github.com/loresoft/LoreSoft.Blazor.Controls")]
+[assembly: System.Reflection.AssemblyMetadata("RepositoryUrl", "https://github.com/loresoft/LoreSoft.Blazor.Controls")]
 [assembly: System.Resources.NeutralResourcesLanguage("en-US")]
 [assembly: System.Runtime.Versioning.TargetFramework(".NETCoreApp,Version=v10.0", FrameworkDisplayName=".NET 10.0")]
 namespace LoreSoft.Blazor.Controls.Abstracts
@@ -1222,6 +1222,7 @@ namespace LoreSoft.Blazor.Controls
         public QueryBuilderField() { }
         public string? Column { get; set; }
         public string? CurrentInputType { get; set; }
+        public System.Collections.Generic.List<string>? CurrentKeys { get; set; }
         public string? CurrentName { get; }
         public System.Collections.Generic.List<string>? CurrentOperators { get; set; }
         public string? CurrentTitle { get; set; }
@@ -1235,6 +1236,8 @@ namespace LoreSoft.Blazor.Controls
         public string? Format { get; set; }
         [Microsoft.AspNetCore.Components.Parameter]
         public string? InputType { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public System.Collections.Generic.List<string>? Keys { get; set; }
         public string? Name { get; set; }
         [Microsoft.AspNetCore.Components.Parameter]
         public Microsoft.AspNetCore.Components.RenderFragment<LoreSoft.Blazor.Controls.QueryFilter>? OperatorTemplate { get; set; }
@@ -1244,6 +1247,8 @@ namespace LoreSoft.Blazor.Controls
         protected LoreSoft.Blazor.Controls.QueryBuilder<TItem> QueryBuilder { get; set; }
         [Microsoft.AspNetCore.Components.Parameter]
         public bool Searchable { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public bool SupportsKeys { get; set; }
         [Microsoft.AspNetCore.Components.Parameter]
         public string? Title { get; set; }
         public System.Type? Type { get; set; }
@@ -1271,6 +1276,7 @@ namespace LoreSoft.Blazor.Controls
         protected void DeleteFilter() { }
         protected void FieldChanged() { }
         protected string? GetValue() { }
+        protected void KeyChanged() { }
         protected override void OnInitialized() { }
         protected void OperatorChanged() { }
         protected void SetValue(Microsoft.AspNetCore.Components.ChangeEventArgs args) { }
@@ -1319,6 +1325,8 @@ namespace LoreSoft.Blazor.Controls
         public QueryFilter() { }
         [System.Text.Json.Serialization.JsonPropertyName("field")]
         public string? Field { get; set; }
+        [System.Text.Json.Serialization.JsonPropertyName("key")]
+        public string? Key { get; set; }
         [System.Text.Json.Serialization.JsonPropertyName("operator")]
         public string? Operator { get; set; }
         [System.Text.Json.Serialization.JsonConverter(typeof(LoreSoft.Blazor.Controls.Converters.JsonObjectConverter?))]

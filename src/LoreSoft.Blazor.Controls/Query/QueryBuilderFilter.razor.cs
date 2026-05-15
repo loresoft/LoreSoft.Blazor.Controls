@@ -56,6 +56,14 @@ public partial class QueryBuilderFilter
     protected void FieldChanged()
     {
         Field = Fields.FirstOrDefault(f => f.CurrentName == Filter.Field);
+        FilterChanged();
+    }
+
+    /// <summary>
+    /// Handles updates when the filter changes.
+    /// </summary>
+    protected void FilterChanged()
+    {
         QueryBuilder.Refresh();
         StateHasChanged();
     }
@@ -71,8 +79,7 @@ public partial class QueryBuilderFilter
         if (Filter.Operator == QueryOperators.IsNull || Filter.Operator == QueryOperators.IsNotNull)
             Filter.Value = null;
 
-        QueryBuilder.Refresh();
-        StateHasChanged();
+        FilterChanged();
     }
 
     /// <summary>
@@ -91,8 +98,7 @@ public partial class QueryBuilderFilter
 
         Parent.Filters.Remove(Filter);
 
-        QueryBuilder.Refresh();
-        StateHasChanged();
+        FilterChanged();
     }
 
     /// <summary>
@@ -114,7 +120,6 @@ public partial class QueryBuilderFilter
     protected void SetValue(ChangeEventArgs args)
     {
         Filter.Value = Field != null ? Binding.Convert(args.Value, Field.Type ?? typeof(object)) : args.Value;
-        QueryBuilder.Refresh();
-        StateHasChanged();
+        FilterChanged();
     }
 }

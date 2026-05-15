@@ -31,7 +31,7 @@
         <QueryBuilderField TItem="Bank" Field="p => p.IsActive" />
         <QueryBuilderField TItem="Bank" Field="p => p.Created" />
 
-        <QueryBuilderTemplate Name="Properties" />
+        <QueryBuilderTemplate Name="Properties" SupportsKeys="true" Keys="@PropertyKeys" />
     </QueryFields>
 </QueryBuilder>
 
@@ -41,6 +41,8 @@
 
 @code {
     public List<string> RoutingNumbers { get; set; } = ["111920765", "111305115", "051000017", "125200057", "122100024"];
+
+    public List<string> PropertyKeys { get; set; } = ["Region", "Tier", "Manager", "Market", "Channel"];
 
     protected QueryGroup Query { get; set; } = new()
     {
@@ -53,7 +55,8 @@
                         new QueryFilter{ Field = nameof(Bank.AccountNumber), Operator = QueryOperators.Equal, Value = "88888" },
                         new QueryFilter{ Field = nameof(Bank.AccountNumber), Operator = QueryOperators.Equal, Value = "99999" },
                     ]
-                }
+                },
+                new QueryFilter{ Field = "Properties", Key = "Region", Operator = QueryOperators.Equal, Value = "West" }
             ]
     };
 

@@ -17,6 +17,12 @@ public class QueryFilter : QueryRule, IEquatable<QueryFilter?>
     public string? Field { get; set; }
 
     /// <summary>
+    /// Gets or sets the string key to filter on when the field represents keyed data.
+    /// </summary>
+    [JsonPropertyName("key")]
+    public string? Key { get; set; }
+
+    /// <summary>
     /// Gets or sets the operator used for the filter (e.g., equals, contains, greater than).
     /// Defaults to <see cref="QueryOperators.Equal"/>.
     /// </summary>
@@ -41,6 +47,7 @@ public class QueryFilter : QueryRule, IEquatable<QueryFilter?>
     {
         return other is not null &&
                Field == other.Field &&
+               Key == other.Key &&
                Operator == other.Operator &&
                EqualityComparer<object?>.Default.Equals(Value, other.Value);
     }
@@ -48,6 +55,6 @@ public class QueryFilter : QueryRule, IEquatable<QueryFilter?>
     /// <inheritdoc/>
     public override int GetHashCode()
     {
-        return HashCode.Combine(Field, Operator, Value);
+        return HashCode.Combine(Field, Key, Operator, Value);
     }
 }
