@@ -61,13 +61,13 @@
                             <div class="filter-container">
                                 <form name="filter-builder-form"
                                       @onsubmit="ApplyFilters">
-                                    <QueryBuilder TItem="TItem"
-                                                  Query="RootQuery">
+                                    <QueryBuilder Query="RootQuery">
                                         <QueryFields>
                                             @foreach (var column in Columns.Where(c => c.Filterable))
                                             {
                                                 <QueryBuilderField @key="column"
-                                                                   FieldSelection="@(IsLocalProvider? QueryFieldSelection.Property: QueryFieldSelection.Column)"
+                                                                   TItem="TItem"
+                                                                   FieldSelection="@(IsLocalProvider ? QueryFieldSelection.Property : QueryFieldSelection.Column)"
                                                                    Field="column.Property"
                                                                    Title="@column.HeaderName"
                                                                    Values="@column.FilterValues"

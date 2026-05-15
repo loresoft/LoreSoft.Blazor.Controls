@@ -1,19 +1,20 @@
-@using LoreSoft.Blazor.Controls.Utilities
 @using Sample.Core.Models
 @using System.Text.Json
 
 <h3 class="m-2">Basic</h3>
 
-<QueryBuilder TItem="Bank" @bind-Query="Query">
+<QueryBuilder @bind-Query="Query">
     <QueryFields>
-        <QueryBuilderField Field="p => p.Id" />
-        <QueryBuilderField Field="p => p.AccountNumber" />
-        <QueryBuilderField Field="p => p.IBAN" />
-        <QueryBuilderField Field="p => p.BankName" />
-        <QueryBuilderField Field="p => p.RoutingNumber" />
-        <QueryBuilderField Field="p => p.SwiftBIC" />
-        <QueryBuilderField Field="p => p.IsActive" />
-        <QueryBuilderField Field="p => p.Created" />
+        <QueryBuilderType TItem="Bank">
+            <QueryBuilderField Field="p => p.Id" />
+            <QueryBuilderField Field="p => p.AccountNumber" />
+            <QueryBuilderField Field="p => p.IBAN" />
+            <QueryBuilderField Field="p => p.BankName" />
+            <QueryBuilderField Field="p => p.RoutingNumber" />
+            <QueryBuilderField Field="p => p.SwiftBIC" />
+            <QueryBuilderField Field="p => p.IsActive" />
+            <QueryBuilderField Field="p => p.Created" />
+        </QueryBuilderType>
     </QueryFields>
 </QueryBuilder>
 
@@ -23,18 +24,18 @@
 
 @code {
     protected QueryGroup Query { get; set; } = new()
-        {
-            Filters = new List<QueryRule>
-            {
-                new QueryFilter{ Field = nameof(Bank.BankName), Operator = QueryOperators.Contains, Value = "Wells Fargo" },
-                new QueryFilter{ Field = nameof(Bank.IsActive), Operator = QueryOperators.Equal, Value = true },
-            }
-        };
+    {
+        Filters = [
+            new QueryFilter{ Field = nameof(Bank.BankName), Operator = QueryOperators.Contains, Value = "Wells Fargo" },
+            new QueryFilter{ Field = nameof(Bank.IsActive), Operator = QueryOperators.Equal, Value = true },
+        ]
+    };
 
     protected string Serialize(QueryGroup query)
     {
         var options = new JsonSerializerOptions(JsonSerializerDefaults.Web);
         options.WriteIndented = true;
+
         return JsonSerializer.Serialize(query, options);
     }
 

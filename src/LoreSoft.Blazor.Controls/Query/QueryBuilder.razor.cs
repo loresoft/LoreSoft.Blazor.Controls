@@ -3,17 +3,19 @@ using Microsoft.AspNetCore.Components;
 namespace LoreSoft.Blazor.Controls;
 
 /// <summary>
-/// A component for building complex query/filter expressions using a visual interface.
-/// Supports dynamic fields, nested groups, and change notification.
+/// Provides a visual query builder for composing filter expressions.
 /// </summary>
-/// <typeparam name="TItem">The type of the data item being queried.</typeparam>
-[CascadingTypeParameter(nameof(TItem))]
-public partial class QueryBuilder<TItem> : ComponentBase
+/// <remarks>
+/// Supports dynamic fields, nested groups, and change notifications.
+/// </remarks>
+public partial class QueryBuilder : ComponentBase
 {
     /// <summary>
-    /// Gets or sets the template for defining available query fields.
-    /// Should contain one or more <see cref="QueryBuilderField{TItem}"/> child components.
+    /// Gets or sets the content that defines the available query fields.
     /// </summary>
+    /// <remarks>
+    /// The content should include one or more <see cref="QueryBuilderTemplate"/> or <see cref="QueryBuilderField{TItem}"/> child components.
+    /// </remarks>
     [Parameter]
     public RenderFragment? QueryFields { get; set; }
 
@@ -24,7 +26,7 @@ public partial class QueryBuilder<TItem> : ComponentBase
     public QueryGroup? Query { get; set; }
 
     /// <summary>
-    /// Gets or sets the callback invoked when the query changes.
+    /// Gets or sets the callback that is invoked when the query changes.
     /// </summary>
     [Parameter]
     public EventCallback<QueryGroup> QueryChanged { get; set; }
@@ -36,12 +38,12 @@ public partial class QueryBuilder<TItem> : ComponentBase
     public RenderFragment? FooterTemplate { get; set; }
 
     /// <summary>
-    /// Gets the list of fields available for building queries.
+    /// Gets the collection of fields available for building queries.
     /// </summary>
-    public List<QueryBuilderField<TItem>> Fields { get; } = [];
+    public List<QueryBuilderTemplate> Fields { get; } = [];
 
     /// <summary>
-    /// Triggers the <see cref="QueryChanged"/> event and updates the UI.
+    /// Raises <see cref="QueryChanged"/> and requests a UI refresh.
     /// </summary>
     public void Refresh()
     {
@@ -50,9 +52,11 @@ public partial class QueryBuilder<TItem> : ComponentBase
     }
 
     /// <summary>
-    /// Gets or sets the root query group for the builder.
-    /// Setting this property triggers <see cref="QueryChanged"/> if the value changes.
+    /// Gets or sets the root query group used by the builder.
     /// </summary>
+    /// <remarks>
+    /// Setting this property invokes <see cref="QueryChanged"/> when the value changes.
+    /// </remarks>
     protected QueryGroup? RootQuery
     {
         get => Query;
@@ -70,7 +74,7 @@ public partial class QueryBuilder<TItem> : ComponentBase
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender && (Fields == null || Fields.Count == 0)) // verify columns added
-            throw new InvalidOperationException("QueryBuilder requires at least one QueryColumn child component.");
+            throw new InvalidOperationException("QueryBuilder requires at least one query field child component.");
 
         await base.OnAfterRenderAsync(firstRender);
     }
@@ -84,11 +88,11 @@ public partial class QueryBuilder<TItem> : ComponentBase
     }
 
     /// <summary>
-    /// Adds a field to the query builder's field list.
+    /// Adds a field definition to the query builder.
     /// </summary>
-    /// <param name="column">The <see cref="QueryBuilderField{TItem}"/> to add.</param>
-    internal void AddField(QueryBuilderField<TItem> column)
+    /// <param name="field">The <see cref="QueryBuilderTemplate"/> instance to add.</param>
+    internal void AddField(QueryBuilderTemplate field)
     {
-        Fields.Add(column);
+        Fields.Add(field);
     }
 }

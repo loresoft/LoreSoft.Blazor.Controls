@@ -1,16 +1,11 @@
-@typeparam TItem
 @namespace LoreSoft.Blazor.Controls
-
-@using LoreSoft.Blazor.Controls.Extensions
-@using Microsoft.AspNetCore.Components.Web
-@using System.Globalization
 
 <div class="query-filter">
 
     <select id="field-@Filter.Id"
             name="field-@Filter.Id"
             title="Select Filter Field"
-            required="true"
+            required="required"
             autocomplete="off"
             @bind="Filter.Field"
             @bind:after="FieldChanged"
@@ -18,7 +13,10 @@
         <option value="">- Field -</option>
         @foreach (var field in Fields)
         {
-            <option @key="field" value="@field.CurrentName">@field.CurrentTitle</option>
+            <option @key="field"
+                    value="@field.CurrentName">
+                @field.CurrentTitle
+            </option>
         }
     </select>
 

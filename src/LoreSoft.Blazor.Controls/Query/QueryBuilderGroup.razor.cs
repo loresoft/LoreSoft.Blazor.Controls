@@ -3,20 +3,21 @@ using Microsoft.AspNetCore.Components;
 namespace LoreSoft.Blazor.Controls;
 
 /// <summary>
-/// Represents a group of query rules in the <see cref="QueryBuilder{TItem}"/> component.
-/// Allows users to build nested logical groups (AND/OR) of filters and subgroups for complex query expressions.
+/// Represents a group editor within the <see cref="QueryBuilder"/> component.
 /// </summary>
-/// <typeparam name="TItem">The type of the data item being queried.</typeparam>
-public partial class QueryBuilderGroup<TItem>
+/// <remarks>
+/// Supports nested logical groups (AND/OR) composed of filters and subgroups.
+/// </remarks>
+public partial class QueryBuilderGroup
 {
     /// <summary>
-    /// Gets or sets the parent <see cref="QueryBuilder{TItem}"/> component.
+    /// Gets or sets the parent <see cref="QueryBuilder"/> component.
     /// </summary>
     [CascadingParameter(Name = "QueryBuilder")]
-    public required QueryBuilder<TItem> QueryBuilder { get; set; }
+    public required QueryBuilder QueryBuilder { get; set; }
 
     /// <summary>
-    /// Gets or sets the query group represented by this component.
+    /// Gets or sets the query group represented by this editor.
     /// </summary>
     [Parameter, EditorRequired]
     public required QueryGroup Group { get; set; } = new();
@@ -28,8 +29,11 @@ public partial class QueryBuilderGroup<TItem>
     public QueryGroup? Parent { get; set; }
 
     /// <summary>
-    /// Removes this group from its parent group and refreshes the query builder.
+    /// Removes this group from its parent group.
     /// </summary>
+    /// <remarks>
+    /// Refreshes the parent <see cref="QueryBuilder"/> after removal.
+    /// </remarks>
     protected void DeleteGroup()
     {
         if (Parent == null)
@@ -41,8 +45,11 @@ public partial class QueryBuilderGroup<TItem>
     }
 
     /// <summary>
-    /// Adds a new subgroup to this group and refreshes the query builder.
+    /// Adds a new subgroup to this group.
     /// </summary>
+    /// <remarks>
+    /// Refreshes the parent <see cref="QueryBuilder"/> after adding the subgroup.
+    /// </remarks>
     protected void AddGroup()
     {
         if (Group == null)
@@ -55,8 +62,11 @@ public partial class QueryBuilderGroup<TItem>
     }
 
     /// <summary>
-    /// Adds a new filter to this group and refreshes the query builder.
+    /// Adds a new filter to this group.
     /// </summary>
+    /// <remarks>
+    /// Refreshes the parent <see cref="QueryBuilder"/> after adding the filter.
+    /// </remarks>
     protected void AddFilter()
     {
         if (Group == null)

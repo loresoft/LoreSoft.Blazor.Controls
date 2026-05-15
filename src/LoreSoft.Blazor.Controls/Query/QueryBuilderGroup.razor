@@ -1,4 +1,3 @@
-@typeparam TItem
 @namespace LoreSoft.Blazor.Controls
 
 @using Microsoft.AspNetCore.Components.Web
@@ -7,7 +6,7 @@
     <div class="query-group-header">
         <select @bind="Group.Logic"
                 class="query-select"
-                required="true"
+                required="required"
                 autocomplete="off"
                 title="Logical Operator">
             <option value="@QueryLogic.And">AND</option>
@@ -47,11 +46,15 @@
         {
             if (query is QueryGroup queryGroup)
             {
-                <QueryBuilderGroup @key="query.Id" TItem="TItem" Group="queryGroup" Parent="Group" />
+                <QueryBuilderGroup @key="query.Id"
+                                   Group="queryGroup"
+                                   Parent="Group" />
             }
             else if (query is QueryFilter queryFilter)
             {
-                <QueryBuilderFilter @key="query.Id" TItem="TItem" Filter="queryFilter" Parent="Group" />
+                <QueryBuilderFilter @key="query.Id"
+                                    Filter="queryFilter"
+                                    Parent="Group" />
             }
         }
     </div>

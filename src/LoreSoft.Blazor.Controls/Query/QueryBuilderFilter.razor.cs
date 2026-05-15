@@ -5,20 +5,21 @@ using Microsoft.AspNetCore.Components;
 namespace LoreSoft.Blazor.Controls;
 
 /// <summary>
-/// Represents a filter editor for a single field in the <see cref="QueryBuilder{TItem}"/> component.
-/// Allows users to select a field, operator, and value for building query/filter expressions.
+/// Represents the editor for a single filter within a <see cref="QueryBuilder"/>.
 /// </summary>
-/// <typeparam name="TItem">The type of the data item being queried.</typeparam>
-public partial class QueryBuilderFilter<TItem>
+/// <remarks>
+/// Allows users to choose a field, operator, and value when composing query expressions.
+/// </remarks>
+public partial class QueryBuilderFilter
 {
     /// <summary>
-    /// Gets or sets the parent <see cref="QueryBuilder{TItem}"/> component.
+    /// Gets or sets the parent <see cref="QueryBuilder"/> component.
     /// </summary>
     [CascadingParameter(Name = "QueryBuilder")]
-    public required QueryBuilder<TItem> QueryBuilder { get; set; }
+    public required QueryBuilder QueryBuilder { get; set; }
 
     /// <summary>
-    /// Gets or sets the filter being edited.
+    /// Gets or sets the filter currently being edited.
     /// </summary>
     [Parameter, EditorRequired]
     public QueryFilter Filter { get; set; } = new();
@@ -32,12 +33,12 @@ public partial class QueryBuilderFilter<TItem>
     /// <summary>
     /// Gets the field definition for the filter, if available.
     /// </summary>
-    protected QueryBuilderField<TItem>? Field { get; set; }
+    protected QueryBuilderTemplate? Field { get; set; }
 
     /// <summary>
-    /// Gets the list of available fields from the parent <see cref="QueryBuilder{TItem}"/>.
+    /// Gets the list of available fields from the parent <see cref="QueryBuilder"/>.
     /// </summary>
-    protected List<QueryBuilderField<TItem>> Fields => QueryBuilder.Fields;
+    protected List<QueryBuilderTemplate> Fields => QueryBuilder.Fields;
 
     /// <inheritdoc />
     protected override void OnInitialized()
@@ -47,8 +48,11 @@ public partial class QueryBuilderFilter<TItem>
     }
 
     /// <summary>
-    /// Updates the field definition when the filter's field changes and refreshes the query builder.
+    /// Updates the selected field metadata when the filter field changes.
     /// </summary>
+    /// <remarks>
+    /// Refreshes the parent <see cref="QueryBuilder"/> after updating the selected field.
+    /// </remarks>
     protected void FieldChanged()
     {
         Field = Fields.FirstOrDefault(f => f.CurrentName == Filter.Field);
@@ -57,8 +61,11 @@ public partial class QueryBuilderFilter<TItem>
     }
 
     /// <summary>
-    /// Updates the filter value when the operator changes, especially for null-check operators, and refreshes the query builder.
+    /// Handles updates when the selected operator changes.
     /// </summary>
+    /// <remarks>
+    /// Clears <see cref="QueryFilter.Value"/> for null-check operators and refreshes the parent <see cref="QueryBuilder"/>.
+    /// </remarks>
     protected void OperatorChanged()
     {
         if (Filter.Operator == QueryOperators.IsNull || Filter.Operator == QueryOperators.IsNotNull)
@@ -69,7 +76,7 @@ public partial class QueryBuilderFilter<TItem>
     }
 
     /// <summary>
-    /// Gets a value indicating whether the value input should be shown for the current operator.
+    /// Gets a value indicating whether the value input is visible for the current operator.
     /// </summary>
     protected bool ShowValueInput
         => Filter.Operator is not (QueryOperators.IsNull or QueryOperators.IsNotNull);
@@ -98,9 +105,12 @@ public partial class QueryBuilderFilter<TItem>
     }
 
     /// <summary>
-    /// Sets the filter value from the input control and refreshes the query builder.
+    /// Sets the filter value from the input control.
     /// </summary>
     /// <param name="args">The change event arguments containing the new value.</param>
+    /// <remarks>
+    /// Converts the incoming value to the selected field type when available, then refreshes the parent <see cref="QueryBuilder"/>.
+    /// </remarks>
     protected void SetValue(ChangeEventArgs args)
     {
         Filter.Value = Field != null ? Binding.Convert(args.Value, Field.Type ?? typeof(object)) : args.Value;

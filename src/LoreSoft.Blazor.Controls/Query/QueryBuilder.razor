@@ -1,4 +1,3 @@
-@typeparam TItem
 @namespace LoreSoft.Blazor.Controls
 
 @using Microsoft.AspNetCore.Components.Web
@@ -9,7 +8,7 @@
         @QueryFields
     }
     <div class="query-builder">
-        <QueryBuilderGroup TItem="TItem" Group="RootQuery" />
+        <QueryBuilderGroup Group="RootQuery" />
         @if (FooterTemplate != null)
         {
             @FooterTemplate

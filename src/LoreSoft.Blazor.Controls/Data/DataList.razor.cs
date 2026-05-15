@@ -89,7 +89,7 @@ public partial class DataList<TItem> : DataComponentBase<TItem>
     /// This component manages the available query fields and is used for filtering
     /// operations and export field selection. It's populated when <see cref="QueryFields"/> is specified.
     /// </summary>
-    protected QueryBuilder<TItem>? QueryBuilder { get; set; }
+    protected QueryBuilder? QueryBuilder { get; set; }
 
     /// <summary>
     /// Gets or sets the currently selected sort field name.

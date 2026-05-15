@@ -1,0 +1,13 @@
+@typeparam TItem
+@attribute [CascadingTypeParameter(nameof(TItem))]
+@namespace LoreSoft.Blazor.Controls
+
+@ChildContent
+
+@code {
+    /// <summary>
+    /// Gets or sets the child content containing query builder properties.
+    /// </summary>
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+}
