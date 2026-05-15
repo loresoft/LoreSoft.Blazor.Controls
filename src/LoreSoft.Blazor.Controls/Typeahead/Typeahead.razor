@@ -119,7 +119,14 @@
                     <div class="typeahead-option-loading"
                          role="status"
                          aria-live="polite">
-                        @(LoadingTemplate == null ? "Loading ..." : LoadingTemplate)
+                        @if (LoadingTemplate == null)
+                        {
+                            <span>Loading ...</span>
+                        }
+                        else
+                        {
+                            @LoadingTemplate
+                        }
                     </div>
                 }
                 else if (!HasSearchResult())
@@ -127,7 +134,14 @@
                     <div class="typeahead-option-no-records"
                          role="status"
                          aria-live="polite">
-                        @(NoRecordsTemplate == null ? "No records found." : NoRecordsTemplate)
+                        @if (NoRecordsTemplate == null)
+                        {
+                            <span>No records found.</span>
+                        }
+                        else
+                        {
+                            @NoRecordsTemplate
+                        }
                     </div>
                 }
                 else

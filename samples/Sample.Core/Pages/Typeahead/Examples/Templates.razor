@@ -1,0 +1,45 @@
+@using Sample.Core.Models
+@using Sample.Core.Services
+
+<h3>Loading and No Records templates</h3>
+
+<p>Customize the loading and empty-state messages with <code>LoadingTemplate</code> and <code>NoRecordsTemplate</code>.</p>
+
+<Typeahead SearchMethod="SearchState"
+           Items="Data.StateList"
+           @bind-Value="SelectedState"
+           Placeholder="Search states"
+           MinimumLength="2">
+    <LoadingTemplate>
+        <div class="d-flex align-items-center gap-2">
+            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+            <span>Searching states...</span>
+        </div>
+    </LoadingTemplate>
+    <NoRecordsTemplate>
+        <div class="text-muted">No states matched your search.</div>
+    </NoRecordsTemplate>
+    <SelectedTemplate Context="state">
+        @state?.Name
+    </SelectedTemplate>
+    <ResultTemplate Context="state">
+        @state.Name
+    </ResultTemplate>
+</Typeahead>
+
+<p>Bound Value: @SelectedState?.Value</p>
+
+@code {
+    public StateLocation? SelectedState { get; set; }
+
+    public async Task<IEnumerable<StateLocation>> SearchState(string searchText)
+    {
+        await Task.Delay(TimeSpan.FromMilliseconds(700));
+
+        var result = Data.StateList
+            .Where(x => x.Name.IndexOf(searchText, StringComparison.OrdinalIgnoreCase) >= 0)
+            .ToList();
+
+        return result;
+    }
+}
