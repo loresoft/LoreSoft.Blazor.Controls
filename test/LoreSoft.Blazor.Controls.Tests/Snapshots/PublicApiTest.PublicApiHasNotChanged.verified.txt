@@ -964,7 +964,15 @@ namespace LoreSoft.Blazor.Controls
         public string? Json { get; set; }
         [Microsoft.AspNetCore.Components.Parameter]
         public System.Text.Json.JsonElement? JsonElement { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public Microsoft.AspNetCore.Components.RenderFragment<LoreSoft.Blazor.Controls.JsonValueContext>? ValueTemplate { get; set; }
         protected override void BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder builder) { }
+    }
+    public readonly struct JsonValueContext : System.IEquatable<LoreSoft.Blazor.Controls.JsonValueContext>
+    {
+        public JsonValueContext(System.Text.Json.JsonElement Element, string? Path) { }
+        public System.Text.Json.JsonElement Element { get; init; }
+        public string? Path { get; init; }
     }
     [Microsoft.AspNetCore.Components.CascadingTypeParameter("TKey")]
     [Microsoft.AspNetCore.Components.CascadingTypeParameter("TValue")]
