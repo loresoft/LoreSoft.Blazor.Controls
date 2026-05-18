@@ -12,8 +12,8 @@ namespace LoreSoft.Blazor.Controls.Events;
 /// </para>
 /// <para>
 /// Events are dispatched based on their type, and all handlers for a given event type are invoked
-/// concurrently when the event is published. Empty subscriptions (with no remaining handlers) are
-/// automatically removed from the event bus.
+/// concurrently when the event is published. Event-type buckets may remain cached after all handlers
+/// are removed; individual handler entries are weakly held and pruned by the underlying event store.
 /// </para>
 /// <para>
 /// All operations are thread-safe and use concurrent collections internally.
@@ -39,8 +39,8 @@ public class EventBus
 
         var messageType = typeof(TEvent);
 
-        var subscription = _subscriptions.GetOrAdd(messageType, _ => new WeakEvent<TEvent>()) as WeakEvent<TEvent>;
-        subscription?.Subscribe(handler);
+        if (_subscriptions.GetOrAdd(messageType, _ => new WeakEvent<TEvent>()) is WeakEvent<TEvent> subscription)
+            subscription.Subscribe(handler);
     }
 
     /// <summary>
@@ -60,8 +60,8 @@ public class EventBus
 
         var messageType = typeof(TEvent);
 
-        var subscription = _subscriptions.GetOrAdd(messageType, _ => new WeakEvent<TEvent>()) as WeakEvent<TEvent>;
-        subscription?.Subscribe(handler);
+        if (_subscriptions.GetOrAdd(messageType, _ => new WeakEvent<TEvent>()) is WeakEvent<TEvent> subscription)
+            subscription.Subscribe(handler);
     }
 
     /// <summary>
@@ -71,21 +71,18 @@ public class EventBus
     /// <param name="handler">The asynchronous function to unsubscribe. Cannot be <see langword="null"/>.</param>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="handler"/> is <see langword="null"/>.</exception>
     /// <remarks>
-    /// If this was the last handler for the event type, the subscription is removed from the event bus.
+    /// Removing the last handler clears the underlying event store, but the event-type bucket may remain cached.
     /// </remarks>
     public void Unsubscribe<TEvent>(Func<TEvent, ValueTask> handler)
     {
         ArgumentNullException.ThrowIfNull(handler);
 
         var messageType = typeof(TEvent);
-        if (_subscriptions.GetOrAdd(messageType, _ => new WeakEvent<TEvent>()) is not WeakEvent<TEvent> subscription)
+
+        if (!_subscriptions.TryGetValue(messageType, out var weakEvent) || weakEvent is not WeakEvent<TEvent> subscription)
             return;
 
-        var remaining = subscription.Unsubscribe(handler);
-        if (remaining > 0)
-            return;
-
-        _subscriptions.TryRemove(messageType, out _);
+        subscription.Unsubscribe(handler);
     }
 
     /// <summary>
@@ -95,21 +92,18 @@ public class EventBus
     /// <param name="handler">The asynchronous function that accepts a <see cref="CancellationToken"/> to unsubscribe. Cannot be <see langword="null"/>.</param>
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="handler"/> is <see langword="null"/>.</exception>
     /// <remarks>
-    /// If this was the last handler for the event type, the subscription is removed from the event bus.
+    /// Removing the last handler clears the underlying event store, but the event-type bucket may remain cached.
     /// </remarks>
     public void Unsubscribe<TEvent>(Func<TEvent, CancellationToken, ValueTask> handler)
     {
         ArgumentNullException.ThrowIfNull(handler);
 
         var messageType = typeof(TEvent);
-        if (_subscriptions.GetOrAdd(messageType, _ => new WeakEvent<TEvent>()) is not WeakEvent<TEvent> subscription)
+
+        if (!_subscriptions.TryGetValue(messageType, out var weakEvent) || weakEvent is not WeakEvent<TEvent> subscription)
             return;
 
-        var remaining = subscription.Unsubscribe(handler);
-        if (remaining > 0)
-            return;
-
-        _subscriptions.TryRemove(messageType, out _);
+        subscription.Unsubscribe(handler);
     }
 
     /// <summary>
@@ -119,31 +113,18 @@ public class EventBus
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="subscriber"/> is <see langword="null"/>.</exception>
     /// <remarks>
     /// This method removes all handlers across all event types that belong to the specified subscriber.
-    /// Empty subscriptions (with no remaining handlers) are automatically removed from the event bus.
+    /// Event-type buckets may remain cached after all matching handlers are removed.
     /// </remarks>
     public void Unsubscribe(object subscriber)
     {
         ArgumentNullException.ThrowIfNull(subscriber);
 
-        List<Type>? emptySubscriptions = null;
         foreach (var pair in _subscriptions)
         {
-            var subscriberType = pair.Key;
             var subscription = pair.Value;
 
-            var remaining = subscription.Unsubscribe(subscriber);
-            if (remaining > 0)
-                continue;
-
-            emptySubscriptions ??= [];
-            emptySubscriptions.Add(subscriberType);
+            subscription.Unsubscribe(subscriber);
         }
-
-        if (emptySubscriptions == null || emptySubscriptions.Count == 0)
-            return;
-
-        foreach (var type in emptySubscriptions)
-            _subscriptions.TryRemove(type, out _);
     }
 
     /// <summary>
@@ -162,7 +143,7 @@ public class EventBus
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="eventData"/> is <see langword="null"/>.</exception>
     /// <remarks>
     /// <para>
-    /// Dead handlers (whose targets have been garbage collected) are automatically removed before invocation.
+    /// Dead handlers (whose targets have been garbage collected) are skipped during invocation and may be pruned asynchronously.
     /// </para>
     /// <para>
     /// All handlers are invoked concurrently, and this method awaits all of them to complete.
