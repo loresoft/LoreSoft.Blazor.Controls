@@ -152,7 +152,7 @@ public class EventBus
     /// <typeparam name="TEvent">The type of event being published.</typeparam>
     /// <param name="eventData">The event data to pass to all handlers. Cannot be <see langword="null"/>.</param>
     /// <param name="cancellationToken">
-    /// A cancellation token that can be used to cancel the operation. 
+    /// A cancellation token that can be used to cancel the operation.
     /// This token is passed to handlers that support cancellation.
     /// </param>
     /// <returns>

@@ -388,6 +388,111 @@ public class EventBusTests
         eventBus.Unsubscribe(handler);
     }
 
+    [Fact]
+    public async Task Subscribe_WithConcurrentUnsubscribe_DoesNotLoseLiveHandlers()
+    {
+        // Arrange
+        var eventBus = new EventBus();
+        var liveHandlers = new List<Func<TestEvent, ValueTask>>();
+        var liveHandlerCount = 96;
+        var unsubscribeWorkerCount = 4;
+        var unsubscribeIterations = 2_000;
+        var publishCount = 0;
+
+        Func<TestEvent, ValueTask> transientHandler = _ => ValueTask.CompletedTask;
+        eventBus.Subscribe(transientHandler);
+
+        using var start = new ManualResetEventSlim();
+
+        var subscribeTasks = Enumerable.Range(0, liveHandlerCount)
+            .Select(_ => Task.Run(() =>
+            {
+                start.Wait(Current.CancellationToken);
+
+                Func<TestEvent, ValueTask> handler = _ =>
+                {
+                    Interlocked.Increment(ref publishCount);
+                    return ValueTask.CompletedTask;
+                };
+
+                lock (liveHandlers)
+                    liveHandlers.Add(handler);
+
+                eventBus.Subscribe(handler);
+            }, Current.CancellationToken));
+
+        var unsubscribeTasks = Enumerable.Range(0, unsubscribeWorkerCount)
+            .Select(_ => Task.Run(() =>
+            {
+                start.Wait(Current.CancellationToken);
+
+                for (int i = 0; i < unsubscribeIterations; i++)
+                    eventBus.Unsubscribe(transientHandler);
+            }, Current.CancellationToken));
+
+        var tasks = subscribeTasks.Concat(unsubscribeTasks).ToArray();
+
+        // Act
+        start.Set();
+        await Task.WhenAll(tasks);
+        await eventBus.PublishAsync(new TestEvent { Message = "stress" }, Current.CancellationToken);
+
+        // Assert
+        Assert.Equal(liveHandlerCount, Volatile.Read(ref publishCount));
+    }
+
+    [Fact]
+    public async Task Subscribe_WithModalLikeConcurrentLifecycle_DoesNotLoseContainerSubscription()
+    {
+        // Arrange
+        var eventBus = new EventBus();
+        var container = new ModalEventSubscriber();
+        var dialogs = new List<ModalEventSubscriber>();
+        var dialogCount = 96;
+        var transientContainer = new ModalEventSubscriber();
+
+        eventBus.Subscribe<ModalShow>(container.HandleModalShow);
+        eventBus.Subscribe<ModalShow>(transientContainer.HandleModalShow);
+
+        var modalReference = new ModalReference(
+            eventBus,
+            typeof(TestModalComponent),
+            ModalService.CreateParameters("stress"));
+
+        using var start = new ManualResetEventSlim();
+
+        var subscribeTasks = Enumerable.Range(0, dialogCount)
+            .Select(_ => Task.Run(() =>
+            {
+                start.Wait(Current.CancellationToken);
+
+                var dialog = new ModalEventSubscriber();
+
+                lock (dialogs)
+                    dialogs.Add(dialog);
+
+                eventBus.Subscribe<ModalClose>(dialog.HandleModalClose);
+            }, Current.CancellationToken));
+
+        var unsubscribeTask = Task.Run(() =>
+        {
+            start.Wait(Current.CancellationToken);
+            eventBus.Unsubscribe<ModalShow>(transientContainer.HandleModalShow);
+        }, Current.CancellationToken);
+
+        var tasks = subscribeTasks.Append(unsubscribeTask).ToArray();
+
+        // Act
+        start.Set();
+        await Task.WhenAll(tasks);
+        await eventBus.PublishAsync(new ModalShow(modalReference), Current.CancellationToken);
+        await eventBus.PublishAsync(new ModalClose(modalReference), Current.CancellationToken);
+
+        // Assert
+        Assert.Equal(1, container.ModalShowCount);
+        Assert.All(dialogs, dialog => Assert.Equal(1, dialog.ModalCloseCount));
+    }
+
     #endregion
 
     #region Garbage Collection Tests
@@ -755,6 +860,30 @@ public class EventBusTests
             return ValueTask.CompletedTask;
         }
     }
+
+    private sealed class ModalEventSubscriber
+    {
+        private int _modalShowCount;
+        private int _modalCloseCount;
+
+        public int ModalShowCount => Volatile.Read(ref _modalShowCount);
+
+        public int ModalCloseCount => Volatile.Read(ref _modalCloseCount);
+
+        public ValueTask HandleModalShow(ModalShow message)
+        {
+            Interlocked.Increment(ref _modalShowCount);
+            return ValueTask.CompletedTask;
+        }
+
+        public ValueTask HandleModalClose(ModalClose message)
+        {
+            Interlocked.Increment(ref _modalCloseCount);
+            return ValueTask.CompletedTask;
+        }
+    }
+
+    private sealed class TestModalComponent : ModalComponentBase;
 
     private class TestEvent
     {

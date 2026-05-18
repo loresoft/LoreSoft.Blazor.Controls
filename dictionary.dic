@@ -10,6 +10,7 @@ deserialize
 deserialized
 deserializer
 deserializing
+fallback
 inline
 interop
 json
@@ -25,6 +26,9 @@ serializer
 serializing
 sql
 timestamp
+unsubscribe
+unsubscribes
+unsubscribing
 upsert
 validator
 validators

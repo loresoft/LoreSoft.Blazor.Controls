@@ -17,7 +17,7 @@ namespace LoreSoft.Blazor.Controls;
 /// <remarks>
 /// Provides configuration for field selection, operators, input type, selectable values, and editor templates.
 /// </remarks>
-public class QueryBuilderTemplate : ComponentBase
+public class QueryBuilderTemplate : ComponentBase, IDisposable
 {
     private Func<object, object?>? _propertyAccessor;
     private Type? _dataType;
@@ -159,6 +159,13 @@ public class QueryBuilderTemplate : ComponentBase
             throw new InvalidOperationException("QueryBuilderTemplate must be child of QueryBuilder");
 
         QueryBuilder.AddField(this);
+    }
+
+    /// <inheritdoc />
+    public void Dispose()
+    {
+        QueryBuilder?.RemoveField(this);
+        GC.SuppressFinalize(this);
     }
 
     /// <inheritdoc />

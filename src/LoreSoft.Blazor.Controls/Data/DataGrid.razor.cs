@@ -701,17 +701,28 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
     }
 
     /// <summary>
-    /// Adds a column to the grid.
-    /// This method is called internally by <see cref="DataColumn{TItem}"/> components during initialization
-    /// to register themselves with their parent grid. It should not be called directly by user code.
+    /// Registers a data column with the grid.
+    /// This method is called by child <see cref="DataColumn{TItem}"/> components during initialization
+    /// and ignores duplicate registrations for the same column instance.
     /// </summary>
-    /// <param name="column">The column to add to the grid's column collection.</param>
+    /// <param name="column">The column to register with the grid.</param>
     internal void AddColumn(DataColumn<TItem> column)
     {
         if (Columns.Contains(column))
             return;
 
         Columns.Add(column);
+    }
+
+    /// <summary>
+    /// Unregisters a data column from the grid.
+    /// This method is called by child <see cref="DataColumn{TItem}"/> components when they are disposed
+    /// so the grid no longer tracks columns that are not rendered.
+    /// </summary>
+    /// <param name="column">The column to unregister from the grid.</param>
+    internal void RemoveColumn(DataColumn<TItem> column)
+    {
+        Columns.Remove(column);
     }
 
     /// <summary>

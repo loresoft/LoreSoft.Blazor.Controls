@@ -105,6 +105,18 @@ public partial class QueryBuilder : ComponentBase
     /// <param name="field">The <see cref="QueryBuilderTemplate"/> instance to add.</param>
     internal void AddField(QueryBuilderTemplate field)
     {
+        if (Fields.Contains(field))
+            return;
+
         Fields.Add(field);
+    }
+
+    /// <summary>
+    /// Removes a field definition from the query builder.
+    /// </summary>
+    /// <param name="field">The <see cref="QueryBuilderTemplate"/> instance to remove.</param>
+    internal void RemoveField(QueryBuilderTemplate field)
+    {
+        Fields.Remove(field);
     }
 }

@@ -201,7 +201,7 @@ namespace LoreSoft.Blazor.Controls
         public bool Visible { get; }
     }
     [Microsoft.AspNetCore.Components.CascadingTypeParameter("TItem")]
-    public class DataColumn<TItem> : Microsoft.AspNetCore.Components.ComponentBase
+    public class DataColumn<TItem> : Microsoft.AspNetCore.Components.ComponentBase, System.IDisposable
     {
         public DataColumn() { }
         [Microsoft.AspNetCore.Components.Parameter(CaptureUnmatchedValues=true)]
@@ -290,6 +290,7 @@ namespace LoreSoft.Blazor.Controls
         public bool Visible { get; set; }
         [Microsoft.AspNetCore.Components.Parameter]
         public string? Width { get; set; }
+        public void Dispose() { }
         protected override void OnInitialized() { }
         protected override void OnParametersSet() { }
     }
@@ -1293,7 +1294,7 @@ namespace LoreSoft.Blazor.Controls
         protected override void BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder @__builder) { }
         protected void DeleteGroup() { }
     }
-    public class QueryBuilderTemplate : Microsoft.AspNetCore.Components.ComponentBase
+    public class QueryBuilderTemplate : Microsoft.AspNetCore.Components.ComponentBase, System.IDisposable
     {
         public QueryBuilderTemplate() { }
         [Microsoft.AspNetCore.Components.Parameter]
@@ -1332,6 +1333,7 @@ namespace LoreSoft.Blazor.Controls
         public Microsoft.AspNetCore.Components.RenderFragment<LoreSoft.Blazor.Controls.QueryFilter>? ValueTemplate { get; set; }
         [Microsoft.AspNetCore.Components.Parameter]
         public System.Collections.Generic.List<string>? Values { get; set; }
+        public void Dispose() { }
         protected override void OnInitialized() { }
         protected override void OnParametersSet() { }
         protected virtual void UpdateField() { }
@@ -1737,14 +1739,6 @@ namespace LoreSoft.Blazor.Controls.Events
         public void Unsubscribe(object subscriber) { }
         public void Unsubscribe<TEvent>(System.Func<TEvent, System.Threading.Tasks.ValueTask> handler) { }
         public void Unsubscribe<TEvent>(System.Func<TEvent, System.Threading.CancellationToken, System.Threading.Tasks.ValueTask> handler) { }
-    }
-    public readonly struct WeakDelegate
-    {
-        public WeakDelegate(System.Delegate handler) { }
-        public bool IsAlive { get; }
-        public System.Threading.Tasks.ValueTask InvokeAsync(object? parameter = null, System.Threading.CancellationToken cancellationToken = default) { }
-        public bool IsDelegateMatch(System.Delegate handler) { }
-        public bool IsTargetMatch(object target) { }
     }
     public sealed class WeakEvent : LoreSoft.Blazor.Controls.Events.WeakEventBase
     {

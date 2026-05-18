@@ -20,7 +20,7 @@ namespace LoreSoft.Blazor.Controls;
 /// </summary>
 /// <typeparam name="TItem">The type of the data item.</typeparam>
 [CascadingTypeParameter(nameof(TItem))]
-public class DataColumn<TItem> : ComponentBase
+public class DataColumn<TItem> : ComponentBase, IDisposable
 {
     private Func<TItem, object>? _propertyAccessor;
     private Expression<Func<TItem, object>>? _previousProperty;
@@ -486,6 +486,13 @@ public class DataColumn<TItem> : ComponentBase
     internal void UpdateVisible(bool value)
     {
         CurrentVisible = value;
+    }
+
+    /// <inheritdoc />
+    public void Dispose()
+    {
+        Grid?.RemoveColumn(this);
+        GC.SuppressFinalize(this);
     }
 
     /// <summary>

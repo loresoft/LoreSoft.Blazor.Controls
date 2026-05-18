@@ -68,6 +68,16 @@ public class WeakEventTests
     }
 
     [Fact]
+    public void Unsubscribe_ByNullSubscriber_ThrowsArgumentNullException()
+    {
+        // Arrange
+        var weakEvent = new WeakEvent();
+
+        // Act & Assert
+        Assert.Throws<ArgumentNullException>("subscriber", () => ((WeakEventBase)weakEvent).Unsubscribe(null!));
+    }
+
+    [Fact]
     public async Task PublishAsync_WithAction_ExecutesHandler()
     {
         // Arrange
@@ -114,6 +124,27 @@ public class WeakEventTests
         Func<ValueTask> handler = async () =>
         {
             await Task.Delay(10);
+            completed = true;
+        };
+
+        weakEvent.Subscribe(handler);
+
+        // Act
+        await weakEvent.PublishAsync(Current.CancellationToken);
+
+        // Assert
+        Assert.True(completed);
+    }
+
+    [Fact]
+    public async Task PublishAsync_WithTaskReturningHandler_AwaitsCompletion()
+    {
+        // Arrange
+        var weakEvent = new TestWeakEvent();
+        var completed = false;
+        Func<Task> handler = async () =>
+        {
+            await Task.Delay(10, Current.CancellationToken);
             completed = true;
         };
 
@@ -275,6 +306,44 @@ public class WeakEventTests
         // Assert
         Assert.Equal(0, callTracker.CallCount); // Handler should not be invoked
         Assert.Equal(0, weakEvent.SubscriberCount()); // Dead handler should be removed
+    }
+
+    [Fact]
+    public async Task PublishAsync_WithManyCollectedSubscribers_ReportsOnlyLiveSubscribers()
+    {
+        // Arrange
+        var weakEvent = new WeakEvent();
+        for (int i = 0; i < 8; i++)
+            SubscribeWeakHandler(weakEvent);
+
+        var subscriber = new EventSubscriber();
+        weakEvent.Subscribe(subscriber.Handler1);
+
+        GC.Collect();
+        GC.WaitForPendingFinalizers();
+        GC.Collect();
+
+        // Act
+        await weakEvent.PublishAsync(Current.CancellationToken);
+
+        // Assert
+        Assert.Equal(1, subscriber.CallCount1);
+        Assert.Equal(1, weakEvent.SubscriberCount());
+    }
+
+    [Fact]
+    public async Task PublishAsync_WithStaticHandler_ExecutesHandler()
+    {
+        // Arrange
+        StaticCallCount = 0;
+        var weakEvent = new WeakEvent();
+        weakEvent.Subscribe(StaticHandler);
+
+        // Act
+        await weakEvent.PublishAsync(Current.CancellationToken);
+
+        // Assert
+        Assert.Equal(1, StaticCallCount);
     }
 
     [Fact]
@@ -579,6 +648,10 @@ public class WeakEventTests
 
     #region Helper Methods and Classes
 
+    private static int StaticCallCount { get; set; }
+
+    private static void StaticHandler() => StaticCallCount++;
+
     private static void SubscribeWeakHandler(WeakEvent weakEvent)
     {
         var subscriber = new EventSubscriber();
@@ -601,6 +674,14 @@ public class WeakEventTests
     {
         var subscriber = new GenericEventSubscriberWithTracker(tracker);
         weakEvent.Subscribe(subscriber.Handler);
+    }
+
+    private sealed class TestWeakEvent : WeakEventBase
+    {
+        public void Subscribe(Func<Task> handler) => SubscribeCore(handler);
+
+        public ValueTask PublishAsync(CancellationToken cancellationToken = default)
+            => PublishCoreAsync(null, cancellationToken);
     }
 
     private class CallTracker
