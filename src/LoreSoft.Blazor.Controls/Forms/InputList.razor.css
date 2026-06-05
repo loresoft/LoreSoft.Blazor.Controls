@@ -1,0 +1,25 @@
+.input-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.input-list.invalid,
+.input-list.valid.modified {
+    outline: none;
+}
+
+.input-list-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.input-list-input {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.input-list-add {
+    align-self: flex-start;
+}

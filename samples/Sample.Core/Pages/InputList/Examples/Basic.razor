@@ -1,0 +1,17 @@
+<h3>Basic</h3>
+
+<p>Basic example of binding to a string list.</p>
+
+<InputList @bind-Value="Tags" />
+
+<p>Bound Value: @string.Join(", ", Tags)</p>
+
+<pre><code class="language-markup">&lt;InputList @@bind-Value=&quot;Tags&quot; /&gt;</code></pre>
+
+<pre><code class="language-csharp">@@code {
+    public IList&lt;string&gt; Tags { get; set; } = new List&lt;string&gt; { &quot;Blazor&quot;, &quot;Components&quot; };
+}</code></pre>
+
+@code {
+    public IList<string> Tags { get; set; } = new List<string> { "Blazor", "Components" };
+}

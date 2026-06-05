@@ -922,6 +922,66 @@ namespace LoreSoft.Blazor.Controls
         protected override void OnParametersSet() { }
         protected override bool TryParseValueFromString(string? value, [System.Diagnostics.CodeAnalysis.MaybeNullWhen(false)] out string result, [System.Diagnostics.CodeAnalysis.NotNullWhen(false)] out string? validationErrorMessage) { }
     }
+    public class InputList<TValue> : Microsoft.AspNetCore.Components.ComponentBase, System.IDisposable
+    {
+        public InputList() { }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public string? AddClass { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public Microsoft.AspNetCore.Components.RenderFragment? AddContent { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public string AddText { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public string AddTitle { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter(CaptureUnmatchedValues=true)]
+        public System.Collections.Generic.Dictionary<string, object>? AdditionalAttributes { get; set; }
+        protected System.Collections.Generic.IReadOnlyDictionary<string, object>? ContainerAttributes { get; }
+        protected System.Collections.Generic.IList<TValue> CurrentValue { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public bool Disabled { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public string? DisplayName { get; set; }
+        [Microsoft.AspNetCore.Components.CascadingParameter]
+        public Microsoft.AspNetCore.Components.Forms.EditContext? EditContext { get; set; }
+        protected string EffectiveInputType { get; }
+        protected Microsoft.AspNetCore.Components.Forms.FieldIdentifier FieldIdentifier { get; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public string? InputClass { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public string? InputType { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public System.Func<TValue>? NewItemFactory { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public TValue NewItemValue { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public string? RemoveClass { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public Microsoft.AspNetCore.Components.RenderFragment? RemoveContent { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public string RemoveText { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public string RemoveTitle { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public bool UpdateOnInput { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public System.Collections.Generic.IList<TValue>? Value { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public Microsoft.AspNetCore.Components.EventCallback<System.Collections.Generic.IList<TValue>> ValueChanged { get; set; }
+        [Microsoft.AspNetCore.Components.Parameter]
+        public System.Linq.Expressions.Expression<System.Func<System.Collections.Generic.IList<TValue>>>? ValueExpression { get; set; }
+        protected string? AddButtonClass() { }
+        protected System.Threading.Tasks.Task AddItem() { }
+        protected override void BuildRenderTree(Microsoft.AspNetCore.Components.Rendering.RenderTreeBuilder @__builder) { }
+        protected string? ContainerClass() { }
+        public void Dispose() { }
+        protected string? FormatValue(TValue? value) { }
+        protected System.Threading.Tasks.Task HandleChange(int index, Microsoft.AspNetCore.Components.ChangeEventArgs args) { }
+        protected System.Threading.Tasks.Task HandleInput(int index, Microsoft.AspNetCore.Components.ChangeEventArgs args) { }
+        protected string? ItemInputClass() { }
+        protected override void OnParametersSet() { }
+        protected string? RemoveButtonClass() { }
+        protected System.Threading.Tasks.Task RemoveItem(int index) { }
+    }
     public class JavaScriptModule : System.IAsyncDisposable
     {
         public JavaScriptModule(Microsoft.JSInterop.IJSRuntime javaScript, string moduleUrl) { }
@@ -1889,6 +1949,7 @@ namespace LoreSoft.Blazor.Controls.Utilities
         public override string? ToString() { }
         public static LoreSoft.Blazor.Controls.Utilities.CssBuilder Default(string? value = null) { }
         public static LoreSoft.Blazor.Controls.Utilities.CssBuilder Empty() { }
+        public static string? op_Implicit(LoreSoft.Blazor.Controls.Utilities.CssBuilder? builder) { }
     }
     public static class CsvWriter
     {

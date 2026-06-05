@@ -1,0 +1,37 @@
+<h3>Default New Item</h3>
+
+<p>Use <code>NewItemValue</code> or <code>NewItemFactory</code> to configure the value added by the add button.</p>
+
+<InputList TValue="string"
+           @bind-Value="Emails"
+           InputType="email"
+           NewItemValue="@NewEmailValue"
+           InputClass="form-control"
+           AddClass="btn btn-outline-primary"
+           RemoveClass="btn btn-outline-danger"
+           RemoveTitle="Remove email">
+    <RemoveContent>
+        <i class="bi bi-trash" aria-hidden="true"></i>
+    </RemoveContent>
+</InputList>
+
+<p>Emails: @string.Join(", ", Emails)</p>
+
+<pre><code class="language-markup">&lt;InputList @@bind-Value=&quot;Emails&quot;
+           InputType=&quot;email&quot;
+            NewItemValue=&quot;new.user@example.com&quot;
+            RemoveTitle=&quot;Remove email&quot;&gt;
+    &lt;RemoveContent&gt;
+        &lt;i class=&quot;bi bi-trash&quot; aria-hidden=&quot;true&quot;&gt;&lt;/i&gt;
+    &lt;/RemoveContent&gt;
+&lt;/InputList&gt;</code></pre>
+
+@code {
+    public string NewEmailValue { get; set; } = "new.user@example.com";
+
+    public IList<string> Emails { get; set; } = new List<string>
+    {
+        "support@example.com",
+        "sales@example.com"
+    };
+}

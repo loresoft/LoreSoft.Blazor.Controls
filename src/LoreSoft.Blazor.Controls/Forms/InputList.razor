@@ -1,0 +1,49 @@
+@namespace LoreSoft.Blazor.Controls
+@typeparam TValue
+
+<div @attributes="ContainerAttributes" class="@ContainerClass()">
+    @for (var index = 0; index < CurrentValue.Count; index++)
+    {
+        var itemIndex = index;
+        var item = CurrentValue[itemIndex];
+
+        <div class="input-list-item">
+            <input type="@EffectiveInputType"
+                   class="@ItemInputClass()"
+                   value="@FormatValue(item)"
+                   disabled="@Disabled"
+                   @oninput="args => HandleInput(itemIndex, args)"
+                   @onchange="args => HandleChange(itemIndex, args)" />
+
+            <button type="button"
+                    class="@RemoveButtonClass()"
+                    title="@RemoveTitle"
+                    disabled="@Disabled"
+                    @onclick="() => RemoveItem(itemIndex)">
+                @if (RemoveContent is not null)
+                {
+                    @RemoveContent
+                }
+                else
+                {
+                    @RemoveText
+                }
+            </button>
+        </div>
+    }
+
+    <button type="button"
+            class="@AddButtonClass()"
+            title="@AddTitle"
+            disabled="@Disabled"
+            @onclick="AddItem">
+        @if (AddContent is not null)
+        {
+            @AddContent
+        }
+        else
+        {
+            @AddText
+        }
+    </button>
+</div>

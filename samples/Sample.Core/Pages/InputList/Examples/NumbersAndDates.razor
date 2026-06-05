@@ -1,0 +1,40 @@
+<h3>Numbers and Dates</h3>
+
+<p>InputList infers HTML input types from the item type.</p>
+
+<div class="row">
+    <div class="col-md-6">
+        <h4>Numbers</h4>
+        <InputList @bind-Value="Scores"
+                   InputClass="form-control"
+                   AddClass="btn btn-outline-primary"
+                   RemoveClass="btn btn-outline-danger"
+                   NewItemValue="100" />
+        <p>Scores: @string.Join(", ", Scores)</p>
+    </div>
+    <div class="col-md-6">
+        <h4>Dates</h4>
+        <InputList @bind-Value="Milestones"
+                   InputClass="form-control"
+                   AddClass="btn btn-outline-primary"
+                   RemoveClass="btn btn-outline-danger"
+                   NewItemFactory="CreateMilestone" />
+        <p>Milestones: @string.Join(", ", Milestones.Select(d => d.ToShortDateString()))</p>
+    </div>
+</div>
+
+<pre><code class="language-markup">&lt;InputList @@bind-Value=&quot;Scores&quot; NewItemValue=&quot;100&quot; /&gt;
+&lt;InputList @@bind-Value=&quot;Milestones&quot; NewItemFactory=&quot;CreateMilestone&quot; /&gt;</code></pre>
+
+@code {
+    public IList<int> Scores { get; set; } = new List<int> { 85, 92, 100 };
+
+    public IList<DateOnly> Milestones { get; set; } = new List<DateOnly>
+    {
+        DateOnly.FromDateTime(DateTime.Today),
+        DateOnly.FromDateTime(DateTime.Today.AddDays(7))
+    };
+
+    public DateOnly CreateMilestone()
+        => DateOnly.FromDateTime(DateTime.Today);
+}

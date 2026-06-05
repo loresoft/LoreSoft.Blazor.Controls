@@ -198,4 +198,12 @@ public class CssBuilder()
         var result = _buffer.ToString().Trim();
         return string.IsNullOrEmpty(result) ? null : result;
     }
+
+    /// <summary>
+    /// Implicitly converts a <see cref="CssBuilder"/> to its CSS class string representation.
+    /// </summary>
+    /// <param name="builder">The <see cref="CssBuilder"/> instance to convert.</param>
+    /// <returns>The CSS class string, or <c>null</c> if no classes were added.</returns>
+    public static implicit operator string?(CssBuilder? builder)
+        => builder?.ToString();
 }

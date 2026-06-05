@@ -1,0 +1,17 @@
+<h3>Update On Input</h3>
+
+<p>Set <code>UpdateOnInput</code> to update the bound list while typing.</p>
+
+<InputList @bind-Value="Items"
+           UpdateOnInput="true"
+           InputClass="form-control"
+           AddClass="btn btn-outline-primary"
+           RemoveClass="btn btn-outline-danger" />
+
+<p>Bound Value: @string.Join(", ", Items)</p>
+
+<pre><code class="language-markup">&lt;InputList @@bind-Value=&quot;Items&quot; UpdateOnInput=&quot;true&quot; /&gt;</code></pre>
+
+@code {
+    public IList<string> Items { get; set; } = new List<string> { "Alpha", "Beta" };
+}
