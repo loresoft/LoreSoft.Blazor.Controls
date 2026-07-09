@@ -1,5 +1,6 @@
 using System.Linq.Dynamic.Core;
 
+using LoreSoft.Blazor.Controls.Extensions;
 using LoreSoft.Blazor.Controls.Tests.Models;
 using LoreSoft.Blazor.Controls.Utilities;
 
@@ -420,6 +421,90 @@ public class LinqExpressionBuilderTests
         var results = query.Where(predicate, parameters).ToList();
         Assert.NotEmpty(results);
         Assert.Equal(7, results.Count);
+    }
+
+    [Theory]
+    [InlineData(QueryOperators.Contains, "Name != NULL && Name.Contains(@0)")]
+    [InlineData(QueryOperators.NotContains, "Name != NULL && !Name.Contains(@0)")]
+    [InlineData(QueryOperators.StartsWith, "Name != NULL && Name.StartsWith(@0)")]
+    [InlineData(QueryOperators.NotStartsWith, "Name != NULL && !Name.StartsWith(@0)")]
+    [InlineData(QueryOperators.EndsWith, "Name != NULL && Name.EndsWith(@0)")]
+    [InlineData(QueryOperators.NotEndsWith, "Name != NULL && !Name.EndsWith(@0)")]
+    public void FilterStringWithoutStringComparison(string queryOperator, string expectedExpression)
+    {
+        var queryFilter = new QueryFilter
+        {
+            Field = "Name",
+            Operator = queryOperator,
+            Value = "berry"
+        };
+        var options = new LinqExpressionOptions { StringComparison = null };
+
+        var builder = new LinqExpressionBuilder();
+        builder.Build(queryFilter, options);
+
+        Assert.NotEmpty(builder.Expression);
+        Assert.Equal(expectedExpression, builder.Expression);
+
+        Assert.Single(builder.Parameters);
+        Assert.Equal("berry", builder.Parameters[0]);
+    }
+
+    [Fact]
+    public void LinqExpressionOptionsDefaultUsesOrdinalIgnoreCase()
+    {
+        var options = LinqExpressionOptions.Default;
+
+        Assert.Equal(StringComparison.OrdinalIgnoreCase, options.StringComparison);
+    }
+
+    [Fact]
+    public void LinqExpressionOptionsEmptyHasNoStringComparison()
+    {
+        var options = LinqExpressionOptions.Empty;
+
+        Assert.Null(options.StringComparison);
+    }
+
+    [Fact]
+    public void QueryExtensionsFilterUsesStringComparisonOptions()
+    {
+        var queryFilter = new QueryFilter
+        {
+            Field = "Name",
+            Operator = QueryOperators.Contains,
+            Value = "BERRY"
+        };
+        var options = new LinqExpressionOptions { StringComparison = null };
+        var query = Fruit.Data().AsQueryable();
+
+        var defaultResults = query.Filter(queryFilter).ToList();
+        var providerCompatibleResults = query.Filter(queryFilter, options).ToList();
+
+        Assert.Equal(3, defaultResults.Count);
+        Assert.Empty(providerCompatibleResults);
+    }
+
+    [Fact]
+    public void QueryExtensionsDataQueryUsesStringComparisonOptions()
+    {
+        var request = new DataRequest
+        {
+            Query = new QueryFilter
+            {
+                Field = "Name",
+                Operator = QueryOperators.Contains,
+                Value = "BERRY"
+            }.AsGroup()
+        };
+        var options = new LinqExpressionOptions { StringComparison = null };
+        var query = Fruit.Data().AsQueryable();
+
+        var defaultResult = query.DataQuery(request);
+        var providerCompatibleResult = query.DataQuery(request, options);
+
+        Assert.Equal(3, defaultResult.Total);
+        Assert.Equal(0, providerCompatibleResult.Total);
     }
 
     [Fact]

@@ -64,8 +64,9 @@ public static class QueryExtensions
     /// <typeparam name="T">The type of the elements in the query.</typeparam>
     /// <param name="query">The source query.</param>
     /// <param name="filter">The filter rule to apply.</param>
+    /// <param name="options">The options to use when building the filter expression.</param>
     /// <returns>The filtered query, or the original query if <paramref name="filter"/> is <c>null</c> or empty.</returns>
-    public static IQueryable<T> Filter<T>(this IQueryable<T> query, QueryRule? filter)
+    public static IQueryable<T> Filter<T>(this IQueryable<T> query, QueryRule? filter, LinqExpressionOptions? options = null)
     {
         if (filter is null)
             return query;
@@ -74,7 +75,7 @@ public static class QueryExtensions
 
         return LinqExpressionBuilder.Pool.Use(builder =>
         {
-            builder.Build(filter);
+            builder.Build(filter, options);
 
             var predicate = builder.Expression;
             var parameters = builder.Parameters.ToArray();
@@ -93,13 +94,14 @@ public static class QueryExtensions
     /// <typeparam name="T">The type of the elements in the query.</typeparam>
     /// <param name="query">The source query.</param>
     /// <param name="request">The data request containing filter, sort, and paging information.</param>
+    /// <param name="options">The options to use when building the filter expression.</param>
     /// <returns>A <see cref="DataResult{T}"/> containing the total count and the paged, sorted, and filtered results.</returns>
-    public static DataResult<T> DataQuery<T>(this IQueryable<T> query, DataRequest request)
+    public static DataResult<T> DataQuery<T>(this IQueryable<T> query, DataRequest request, LinqExpressionOptions? options = null)
     {
         ArgumentNullException.ThrowIfNull(query);
         ArgumentNullException.ThrowIfNull(request);
 
-        var filterQuery = query.Filter(request.Query);
+        var filterQuery = query.Filter(request.Query, options);
 
         var total = filterQuery.Count();
 

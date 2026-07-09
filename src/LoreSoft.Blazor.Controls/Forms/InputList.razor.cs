@@ -378,7 +378,7 @@ public partial class InputList<TValue> : ComponentBase, IDisposable
         if (index >= list.Count)
             return;
 
-        list[index] = parsedValue;
+        list[index] = parsedValue!;
 
         ClearParsingError();
         await NotifyValueChanged(list).ConfigureAwait(false);
