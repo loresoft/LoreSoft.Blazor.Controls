@@ -6,16 +6,13 @@
   --ts-checked-bg-color: var(--bs-primary, #0d6efd);
   --ts-checked-text-color: #e6e6e6;
   --ts-checked-content: "YES";
-
   --ts-width: 70px;
   --ts-height: 30px;
   --ts-margin: 0;
-
   --ts-border-radius: 4px;
   --ts-knob-height: 22px;
   --ts-knob-width: 26px;
   --ts-knob-border-radius: 2px;
-
   --ts-knob-spacing: 4px;
   --ts-content-spacing: 6px;
   --ts-translate-distance: 36px;
@@ -30,72 +27,72 @@
   margin: var(--ts-margin);
 }
 
-.toggle-switch input {
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
+  .toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
 
-.toggle-switch .toggle-slider {
-  position: absolute;
-  cursor: pointer;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: var(--ts-track-bg-color);
-  -webkit-transition: 0.4s;
-  transition: 0.4s;
-  border-radius: var(--ts-border-radius);
-}
+  .toggle-switch .toggle-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--ts-track-bg-color);
+    -webkit-transition: 0.4s;
+    transition: 0.4s;
+    border-radius: var(--ts-border-radius);
+  }
 
-.toggle-switch .toggle-slider:before {
-  position: absolute;
-  content: "";
-  height: var(--ts-knob-height);
-  width: var(--ts-knob-width);
-  left: var(--ts-knob-spacing);
-  bottom: var(--ts-knob-spacing);
-  background-color: var(--ts-knob-bg-color);
-  -webkit-transition: 0.4s;
-  transition: 0.4s;
-  border-radius: var(--ts-knob-border-radius);
-}
+    .toggle-switch .toggle-slider:before {
+      position: absolute;
+      content: "";
+      height: var(--ts-knob-height);
+      width: var(--ts-knob-width);
+      left: var(--ts-knob-spacing);
+      bottom: var(--ts-knob-spacing);
+      background-color: var(--ts-knob-bg-color);
+      -webkit-transition: 0.4s;
+      transition: 0.4s;
+      border-radius: var(--ts-knob-border-radius);
+    }
 
-.toggle-switch .toggle-slider:after {
-  position: absolute;
-  content: var(--ts-unchecked-content);
-  height: var(--ts-knob-height);
-  width: var(--ts-knob-width);
-  right: var(--ts-content-spacing);
-  top: var(--ts-content-spacing);
-  color: var(--ts-text-color);
-  font-size: var(--ts-font-size);
-}
+    .toggle-switch .toggle-slider:after {
+      position: absolute;
+      content: var(--ts-unchecked-content);
+      height: var(--ts-knob-height);
+      width: var(--ts-knob-width);
+      right: var(--ts-content-spacing);
+      top: var(--ts-content-spacing);
+      color: var(--ts-text-color);
+      font-size: var(--ts-font-size);
+    }
 
-.toggle-switch input:checked+.toggle-slider {
-  background-color: var(--ts-checked-bg-color);
-}
+  .toggle-switch input:checked + .toggle-slider {
+    background-color: var(--ts-checked-bg-color);
+  }
 
-.toggle-switch input:focus+.toggle-slider {
-  outline: 0;
-  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
-}
+  .toggle-switch input:focus + .toggle-slider {
+    outline: 0;
+    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+  }
 
-.toggle-switch input:disabled+.toggle-slider {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
+  .toggle-switch input:disabled + .toggle-slider {
+    opacity: 0.65;
+    cursor: not-allowed;
+  }
 
-.toggle-switch input:checked+.toggle-slider:before {
-  -webkit-transform: translateX(var(--ts-translate-distance));
-  -ms-transform: translateX(var(--ts-translate-distance));
-  transform: translateX(var(--ts-translate-distance));
-}
+  .toggle-switch input:checked + .toggle-slider:before {
+    -webkit-transform: translateX(var(--ts-translate-distance));
+    -ms-transform: translateX(var(--ts-translate-distance));
+    transform: translateX(var(--ts-translate-distance));
+  }
 
-.toggle-switch input:checked+.toggle-slider:after {
-  content: var(--ts-checked-content);
-  left: var(--ts-content-spacing);
-  top: var(--ts-content-spacing);
-  color: var(--ts-checked-text-color);
-}
+  .toggle-switch input:checked + .toggle-slider:after {
+    content: var(--ts-checked-content);
+    left: var(--ts-content-spacing);
+    top: var(--ts-content-spacing);
+    color: var(--ts-checked-text-color);
+  }
