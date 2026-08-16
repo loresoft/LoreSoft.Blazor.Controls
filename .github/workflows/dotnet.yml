@@ -45,16 +45,21 @@ jobs:
         run: dotnet build --no-restore --configuration Release
 
       - name: Run Test
-        run: dotnet test --no-build --configuration Release --collect:"XPlat Code Coverage" --settings coverlet.runsettings
+        run: dotnet test --no-build --configuration Release --coverlet --coverlet-output-format lcov
+
+      - name: Collect Coverage
+        if: success()
+        id: coverage
+        run: |
+          FILES=$(find ${{github.workspace}} -name 'coverage.*.info' -print | tr '\n' ' ')
+          echo "files=$FILES" >> $GITHUB_OUTPUT
 
       - name: Report Coverage
-        if: success() && github.event_name != 'pull_request'
-        continue-on-error: true
+        if: success() && steps.coverage.outputs.files != ''
         uses: coverallsapp/github-action@v2
-        env:
-          COVERALLS_REPO_TOKEN: ${{ secrets.COVERALLS_REPO_TOKEN }}
+        continue-on-error: true
         with:
-          file: "${{github.workspace}}/test/*/TestResults/*/coverage.info"
+          files: ${{ steps.coverage.outputs.files }}
           format: lcov
 
       - name: Create Packages
