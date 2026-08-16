@@ -264,4 +264,89 @@ public static class ModalServiceExtensions
 
         return result.Data as string;
     }
+
+    /// <summary>
+    /// Shows a verification modal dialog that requires the user to type a confirmation value before proceeding.
+    /// </summary>
+    /// <param name="modalService">The modal service instance.</param>
+    /// <param name="message">The message text to display in the verification dialog.</param>
+    /// <param name="title">The title of the dialog. Defaults to "Verify".</param>
+    /// <param name="verifyValue">The text the user must type to enable the primary action. Defaults to "APPROVE".</param>
+    /// <param name="type">The visual variant of the dialog. Defaults to <see cref="ModalVariant.Danger"/>.</param>
+    /// <param name="primaryAction">The text for the primary action button. Defaults to "OK".</param>
+    /// <param name="secondaryAction">The text for the secondary action button. Defaults to "Cancel".</param>
+    /// <returns>
+    /// A task that returns an <see cref="IModalReference"/> which can be used to interact with the modal and await its result.
+    /// </returns>
+    /// <remarks>
+    /// This method displays a <see cref="VerifyModal"/> component with the specified parameters,
+    /// including the value the user must type to confirm the action.
+    /// </remarks>
+    public static async Task<IModalReference> VerifyModal(
+        this ModalService modalService,
+        string message,
+        string title = "Verify",
+        string verifyValue = "APPROVE",
+        ModalVariant type = ModalVariant.Danger,
+        string primaryAction = "OK",
+        string secondaryAction = "Cancel")
+    {
+        var parameters = ModalService.CreateParameters(
+            message: message,
+            title: title,
+            type: type,
+            primaryAction: primaryAction,
+            secondaryAction: secondaryAction);
+
+        parameters[nameof(Controls.VerifyModal.VerifyValue)] = verifyValue;
+
+        return await modalService.Show<VerifyModal>(parameters);
+    }
+
+    /// <summary>
+    /// Shows a verification modal dialog and returns whether the user completed the verification.
+    /// </summary>
+    /// <param name="modalService">The modal service instance.</param>
+    /// <param name="message">The message text to display in the verification dialog.</param>
+    /// <param name="title">The title of the dialog. Defaults to "Verify".</param>
+    /// <param name="verifyValue">The text the user must type to enable the primary action. Defaults to "APPROVE".</param>
+    /// <param name="type">The visual variant of the dialog. Defaults to <see cref="ModalVariant.Danger"/>.</param>
+    /// <param name="primaryAction">The text for the primary action button. Defaults to "OK".</param>
+    /// <param name="secondaryAction">The text for the secondary action button. Defaults to "Cancel".</param>
+    /// <returns>
+    /// A task that returns <c>true</c> if the user verified and confirmed the action; otherwise, <c>false</c> if cancelled.
+    /// </returns>
+    /// <remarks>
+    /// This is a convenience method that shows a verification dialog and automatically awaits the result,
+    /// returning a boolean indicating whether the dialog was confirmed or cancelled.
+    /// </remarks>
+    /// <example>
+    /// <code>
+    /// if (await modalService.Verify("Are you sure you want to delete all records?"))
+    /// {
+    ///     // User verified, proceed with the destructive action
+    /// }
+    /// </code>
+    /// </example>
+    public static async Task<bool> Verify(
+        this ModalService modalService,
+        string message,
+        string title = "Verify",
+        string verifyValue = "APPROVE",
+        ModalVariant type = ModalVariant.Danger,
+        string primaryAction = "OK",
+        string secondaryAction = "Cancel")
+    {
+        var modal = await modalService.VerifyModal(
+            message: message,
+            title: title,
+            verifyValue: verifyValue,
+            type: type,
+            primaryAction: primaryAction,
+            secondaryAction: secondaryAction
+        );
+
+        var result = await modal.Result;
+        return !result.Cancelled;
+    }
 }

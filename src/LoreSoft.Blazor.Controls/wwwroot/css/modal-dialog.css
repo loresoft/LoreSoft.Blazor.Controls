@@ -75,6 +75,8 @@
     /* Primary button variables */
     --md-primary-button-color: white;
     --md-button-min-width: 4rem;
+    /* Disabled variables */
+    --md-disabled-opacity: 0.6;
 }
 
 .dialog-container {
@@ -277,6 +279,13 @@
     .dialog-secondary-button:hover {
         background-color: var(--md-button-secondary-hover);
     }
+
+/* Disabled States */
+.dialog-primary-button:disabled,
+.dialog-secondary-button:disabled {
+    cursor: not-allowed;
+    opacity: var(--md-disabled-opacity);
+}
 
 /* Dialog Open/Close Animations */
 dialog {

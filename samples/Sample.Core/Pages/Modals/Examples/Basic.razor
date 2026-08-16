@@ -38,13 +38,23 @@
         Delete Item
     </button>
 </div>
-
 <div>
     Result: @_deleteConfirm
 </div>
 
-<h4 class="my-3">Prompt Dialog with Custom Buttons</h4>
+<h4 class="my-3">Verify Dialog</h4>
+<div>
+    <button type="button"
+            class="btn btn-secondary"
+            @onclick="ShowDeleteVerify">
+        Delete All
+    </button>
+</div>
+<div>
+    Result: @_deleteVerify
+</div>
 
+<h4 class="my-3">Prompt Dialog with Custom Buttons</h4>
 <div>
     <button type="button"
             class="btn btn-secondary"
@@ -52,7 +62,6 @@
         Enter Name
     </button>
 </div>
-
 <div>
     Result: @_promptResult
 </div>
@@ -62,6 +71,7 @@
     public required ModalService ModalService { get; set; }
 
     private bool? _deleteConfirm;
+    private bool? _deleteVerify;
     private string? _promptResult;
 
     private async Task ShowPrimaryAlert()
@@ -113,6 +123,19 @@
         _deleteConfirm = await ModalService.Confirm(
             "Are you sure you want to delete this item? This action cannot be undone.",
             "Confirm Delete",
+            ModalVariant.Danger,
+            primaryAction: "Delete"
+        );
+
+        StateHasChanged();
+    }
+
+    private async Task ShowDeleteVerify()
+    {
+        _deleteVerify = await ModalService.Verify(
+            "Are you sure you want to delete this item? This action cannot be undone.",
+            "Confirm Delete",
+            "DELETE",
             ModalVariant.Danger,
             primaryAction: "Delete"
         );
