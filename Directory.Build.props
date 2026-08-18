@@ -24,7 +24,7 @@
     <DefaultLanguage>en-US</DefaultLanguage>
     <LangVersion>latest</LangVersion>
     <ImplicitUsings>enable</ImplicitUsings>
-    <NoWarn>1591</NoWarn>
+    <NoWarn>$(NoWarn);IL2026;IL2091;IL2104;IL2110;IL2111;1591</NoWarn>
   </PropertyGroup>
 
   <PropertyGroup>
