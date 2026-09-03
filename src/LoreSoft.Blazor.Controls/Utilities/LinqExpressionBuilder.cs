@@ -194,6 +194,11 @@ public class LinqExpressionBuilder
         _expression.Append('(');
         foreach (var filter in filters)
         {
+            // skip incomplete rules, ex. a placeholder filter added by the filter UI,
+            // otherwise a dangling logic operator would produce an invalid expression
+            if (!IsValid(filter))
+                continue;
+
             if (wroteFirst)
                 _expression.Append(' ').Append(logic).Append(' ');
 
@@ -201,6 +206,10 @@ public class LinqExpressionBuilder
             wroteFirst = true;
         }
         _expression.Append(')');
+
+        // nothing was written, remove the empty group
+        if (!wroteFirst)
+            _expression.Length -= 2;
     }
 
     /// <summary>

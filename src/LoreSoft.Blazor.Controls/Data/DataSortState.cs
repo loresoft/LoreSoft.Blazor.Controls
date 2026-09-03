@@ -7,7 +7,7 @@ public sealed class DataSortState
 {
     /// <summary>
     /// Gets or sets the column name to sort by.
-    /// Matches <see cref="DataColumn{TItem}.ColumnName"/>.
+    /// Matches <see cref="DataField{T}.ColumnName"/>.
     /// </summary>
     public string ColumnName { get; set; } = string.Empty;
 

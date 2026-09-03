@@ -5,19 +5,21 @@
 <button class="btn btn-secondary" @onclick="@(() => SetPage(5))">Go to page 5</button>
 <button class="btn btn-secondary" @onclick="@(() => SetPageSize(25))">Page Size 25</button>
 
-<DataList Data="People" @ref="DataList" class="mt-2 list-group" SortField="LastName">
+<DataList Data="People" @ref="DataList" class="mt-2 list-group">
     <DataToolbar>
         <DataListToolbar Title="Sample Grid" />
     </DataToolbar>
-    <QueryFields>
-        <QueryBuilderField Field="p => p.Id" />
-        <QueryBuilderField Field="p => p.FirstName" />
-        <QueryBuilderField Field="p => p.LastName" />
-        <QueryBuilderField Field="p => p.FullName" />
-        <QueryBuilderField Field="p => p.Score" />
-        <QueryBuilderField Field="p => p.Location" />
-        <QueryBuilderField Field="p => p.Birthday" />
-    </QueryFields>
+    <DataFields>
+        <DataField Property="p => p.Id" />
+        <DataField Property="p => p.FirstName"
+                   SortIndex="1" />
+        <DataField Property="p => p.LastName"
+                   SortIndex="0" />
+        <DataField Property="p => p.FullName" />
+        <DataField Property="p => p.Score" />
+        <DataField Property="p => p.Location" />
+        <DataField Property="p => p.Birthday" />
+    </DataFields>
     <RowTemplate Context="item">
         <a @key="item" href="#" class="list-group-item list-group-item-action">
             <div class="d-flex w-100 justify-content-between">

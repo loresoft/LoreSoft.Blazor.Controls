@@ -187,14 +187,16 @@ public partial class DataGridToolbar<TItem> : ComponentBase, IDisposable
             previousGrid.StateSaving -= HandleStateSaving;
             previousGrid.StateLoaded -= HandleStateLoaded;
             previousGrid.StateResetting -= HandleStateResetting;
+            previousGrid.DataRefreshed -= HandleDataRefreshed;
         }
 
-        // subscribe to the new grid so the toolbar can persist and restore its own state
+        // subscribe to the new grid
         if (CurrentGrid != null)
         {
             CurrentGrid.StateSaving += HandleStateSaving;
             CurrentGrid.StateLoaded += HandleStateLoaded;
             CurrentGrid.StateResetting += HandleStateResetting;
+            CurrentGrid.DataRefreshed += HandleDataRefreshed;
         }
 
         if (CurrentGrid?.LastGridState != null)
@@ -209,10 +211,16 @@ public partial class DataGridToolbar<TItem> : ComponentBase, IDisposable
             CurrentGrid.StateSaving -= HandleStateSaving;
             CurrentGrid.StateLoaded -= HandleStateLoaded;
             CurrentGrid.StateResetting -= HandleStateResetting;
+            CurrentGrid.DataRefreshed -= HandleDataRefreshed;
         }
 
         GC.SuppressFinalize(this);
     }
+
+    // the toolbar renders state owned by the grid, such as the active filter icon,
+    // so it must re-render whenever the grid reloads its data
+    private void HandleDataRefreshed()
+        => InvokeAsync(StateHasChanged);
 
     /// <summary>
     /// Gets the debounced value wrapper for the search text input.

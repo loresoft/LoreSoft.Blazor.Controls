@@ -251,7 +251,7 @@
 
                     <div class="data-grid__body"
                          role="rowgroup">
-                        @foreach (var group in View.GroupBy(groupColumn.CellValue))
+                        @foreach (var group in View.GroupBy(groupColumn.FormattedValue))
                         {
                             @GroupFragment((groupColumn, group))
                         }
@@ -440,7 +440,7 @@
                     }
                     else
                     {
-                        @column.CellValue(item)
+                        @column.FormattedValue(item)
                     }
                 </div>
             }

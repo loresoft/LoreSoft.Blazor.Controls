@@ -18,8 +18,6 @@ namespace LoreSoft.Blazor.Controls;
 [CascadingTypeParameter(nameof(TItem))]
 public partial class DataList<TItem> : DataComponentBase<TItem>
 {
-    private readonly Lazy<PropertyInfo[]> _properties = new(() => typeof(TItem).GetProperties().OrderBy(p => p.Name).ToArray());
-
     /// <summary>
     /// Gets or sets the template used to render each row in the data list.
     /// This template defines how individual data items are displayed and receives
@@ -45,30 +43,12 @@ public partial class DataList<TItem> : DataComponentBase<TItem>
     public RenderFragment? FooterTemplate { get; set; }
 
     /// <summary>
-    /// Gets or sets the template for defining available query fields.
-    /// Should contain one or more <see cref="QueryBuilderField{TItem}"/> child components
-    /// that define the fields available for filtering and searching operations.
-    /// These fields are used by the quick search functionality and export operations.
+    /// Gets or sets the template for defining the fields of the data list.
+    /// Should contain one or more <see cref="DataField{TItem}"/> child components
+    /// that define the fields available for sorting, filtering, searching, and exporting.
     /// </summary>
     [Parameter]
-    public RenderFragment? QueryFields { get; set; }
-
-    /// <summary>
-    /// Gets or sets the initial field name to sort by.
-    /// This field name should correspond to a property name on the <typeparamref name="TItem"/> type.
-    /// If not specified, no initial sorting is applied to the data.
-    /// </summary>
-    [Parameter]
-    public string SortField { get; set; } = string.Empty;
-
-    /// <summary>
-    /// Gets or sets the initial sort direction.
-    /// When true, the initial sort is applied in descending order.
-    /// When false, the initial sort is applied in ascending order.
-    /// This setting only applies if <see cref="SortField"/> is specified.
-    /// </summary>
-    [Parameter]
-    public bool SortDescending { get; set; }
+    public RenderFragment? DataFields { get; set; }
 
     /// <summary>
     /// Gets or sets a value indicating whether the sort picker panel is currently open.
@@ -85,52 +65,14 @@ public partial class DataList<TItem> : DataComponentBase<TItem>
     protected string? ClassName { get; set; }
 
     /// <summary>
-    /// Gets or sets the query builder component instance.
-    /// This component manages the available query fields and is used for filtering
-    /// operations and export field selection. It's populated when <see cref="QueryFields"/> is specified.
-    /// </summary>
-    protected QueryBuilder? QueryBuilder { get; set; }
-
-    /// <summary>
-    /// Gets the collection of query fields defined by <see cref="QueryFields"/>.
-    /// The fields are registered as soon as the component renders, so quick search and export
+    /// Gets the collection of fields registered by the <see cref="DataFields"/> template.
+    /// The fields register as soon as the component renders, so sorting, quick search, and export
     /// work without requiring the filter panel to be opened first.
     /// </summary>
-    protected QueryFieldCollection QueryFieldCollection { get; } = new();
+    public List<DataField<TItem>> Fields { get; } = [];
 
-    /// <summary>
-    /// Gets or sets the currently selected sort field name.
-    /// This property tracks the active sort field and is updated when users change
-    /// the sort selection through the sort picker interface.
-    /// </summary>
-    protected string CurrentSortField { get; set; } = string.Empty;
-
-    /// <summary>
-    /// Gets or sets the current sort direction as a string.
-    /// Valid values are "asc" for ascending and "desc" for descending.
-    /// This property is synchronized with the sort picker UI controls.
-    /// </summary>
-    protected string CurrentSortDirection { get; set; } = "asc";
-
-    /// <summary>
-    /// Gets the collection of properties available on the data item type.
-    /// This collection is lazily initialized and cached, providing access to
-    /// all public properties of <typeparamref name="TItem"/> sorted by name.
-    /// Used for reflection-based operations and dynamic field access.
-    /// </summary>
-    protected IEnumerable<PropertyInfo> Properties => _properties.Value;
-
-    /// <summary>
-    /// Handles changes to the sort configuration from the sort picker UI.
-    /// This method is called when users modify the sort field or direction
-    /// through the sort picker interface, triggering an immediate sort and refresh.
-    /// </summary>
-    /// <returns>A task representing the asynchronous sort operation.</returns>
-    protected Task HandleSortChanged()
-    {
-        var descending = CurrentSortDirection == "desc";
-        return SortByAsync(CurrentSortField, descending);
-    }
+    /// <inheritdoc />
+    protected override IReadOnlyList<DataField<TItem>> SortFields => Fields;
 
     /// <inheritdoc />
     protected override void OnParametersSet()
@@ -141,21 +83,18 @@ public partial class DataList<TItem> : DataComponentBase<TItem>
             .ToString()
         );
 
-        CurrentSortField = SortField;
-        CurrentSortDirection = SortDescending ? "desc" : "asc";
-
-        SortBy(SortField, SortDescending);
-
         base.OnParametersSet();
     }
 
     /// <summary>
     /// Shows the sort picker panel.
-    /// Opens the interface that allows users to select the sort field and direction.
+    /// Opens the interface that allows users to select the sort fields and directions.
     /// This method triggers a UI update to display the sort picker interface.
     /// </summary>
     public void ShowSortPicker()
     {
+        UpdateSortPickerState();
+
         SortPickerOpen = true;
         StateHasChanged();
     }
@@ -178,17 +117,19 @@ public partial class DataList<TItem> : DataComponentBase<TItem>
     /// </summary>
     public void ToggleSortPicker()
     {
+        if (!SortPickerOpen)
+            UpdateSortPickerState();
+
         SortPickerOpen = !SortPickerOpen;
         StateHasChanged();
     }
 
     /// <summary>
-    /// Performs a quick search across all filterable string fields defined in the query builder.
-    /// This method creates a logical OR filter across all string-type fields that have been
-    /// configured in the <see cref="QueryFields"/> template, allowing users to quickly
+    /// Performs a quick search across all searchable string fields defined in <see cref="DataFields"/>.
+    /// This method creates a logical OR filter across all string-type fields, allowing users to quickly
     /// find items containing the search text in any searchable field.
     /// </summary>
-    /// <param name="searchText">The text to search for across all filterable string fields.
+    /// <param name="searchText">The text to search for across all searchable string fields.
     /// If null or empty, any existing quick search filters are removed.</param>
     /// <param name="clearFilter">When true, clears all existing filters before applying the search.
     /// When false, only removes previous quick search filters while preserving other filters.</param>
@@ -200,24 +141,23 @@ public partial class DataList<TItem> : DataComponentBase<TItem>
         else
             RootQuery.Filters.RemoveAll(f => f.Id == nameof(QuickSearch));
 
-        var fields = QueryFieldCollection.Fields;
-        if (fields.Count == 0)
+        if (Fields.Count == 0)
             return;
 
         if (!string.IsNullOrWhiteSpace(searchText))
         {
             var quickSearch = new QueryGroup { Id = nameof(QuickSearch), Logic = QueryLogic.Or };
 
-            // all filterable string columns
-            foreach (var column in fields.Where(c => c.Searchable && c.CurrentType == typeof(string)))
-            {
-                var fieldName = column.CurrentName;
-                if (string.IsNullOrWhiteSpace(fieldName))
-                    continue;
+            // all filterable string fields
+            var fields = Fields
+                .Where(f => f.Filterable && f.Searchable && f.PropertyType == typeof(string))
+                .DistinctBy(f => f.ColumnName);
 
+            foreach (var field in fields)
+            {
                 var filter = new QueryFilter
                 {
-                    Field = fieldName,
+                    Field = FieldName(field),
                     Operator = QueryOperators.Contains,
                     Value = searchText
                 };
@@ -233,8 +173,8 @@ public partial class DataList<TItem> : DataComponentBase<TItem>
     /// <summary>
     /// Exports the list data to a CSV file.
     /// This method exports all data that matches the current filter criteria, bypassing pagination
-    /// to include the complete filtered dataset. The export uses the fields defined in the
-    /// <see cref="QueryFields"/> template to determine which columns to include and their headers.
+    /// to include the complete filtered dataset. The export uses the exportable fields defined in the
+    /// <see cref="DataFields"/> template to determine which columns to include and their headers.
     /// </summary>
     /// <param name="fileName">The name of the file to download. If null, generates a timestamped filename.</param>
     /// <param name="cancellationToken">A cancellation token to cancel the export operation.</param>
@@ -245,7 +185,7 @@ public partial class DataList<TItem> : DataComponentBase<TItem>
         if (CurrentDataProvider == null)
             throw new InvalidOperationException("Invalid Data Provider");
 
-        var fields = QueryFieldCollection.Fields;
+        var fields = Fields.Where(f => f.Exportable).ToList();
         if (fields.Count == 0)
             return;
 
@@ -260,9 +200,9 @@ public partial class DataList<TItem> : DataComponentBase<TItem>
 
         await CsvWriter.WriteAsync(
             stream: memoryStream,
-            headers: fields.Select(p => p.CurrentName ?? p.CurrentFieldName ?? string.Empty),
+            headers: fields.Select(f => f.ExportName),
             rows: result.Items,
-            selector: item => fields.Select(f => f.FieldValue(item)),
+            selector: item => fields.Select(f => f.FormattedValue(item)),
             encoding: Encoding.UTF8,
             cancellationToken: cancellationToken);
 
@@ -275,20 +215,36 @@ public partial class DataList<TItem> : DataComponentBase<TItem>
     }
 
     /// <summary>
-    /// Sorts the data by the specified column name and refreshes the display.
-    /// This override updates the internal sort tracking properties to maintain
-    /// synchronization with the sort picker UI controls, then delegates to the base implementation.
+    /// Registers a data field with the list.
+    /// This method is called by child <see cref="DataField{TItem}"/> components during initialization
+    /// and ignores duplicate registrations for the same field instance.
     /// </summary>
-    /// <param name="columnName">The name of the column to sort by.
-    /// This should match a property name in the data item type.</param>
-    /// <param name="descending">The sort direction. If null, toggles the current direction
-    /// or defaults to ascending for new sorts.</param>
-    /// <returns>A task representing the asynchronous sort operation and data refresh.</returns>
-    public override Task SortByAsync(string columnName, bool? descending = null)
+    /// <param name="field">The field to register with the list.</param>
+    internal void AddField(DataField<TItem> field)
     {
-        CurrentSortField = columnName;
-        CurrentSortDirection = descending == true ? "desc" : "asc";
+        if (Fields.Contains(field))
+            return;
 
-        return base.SortByAsync(columnName, descending);
+        Fields.Add(field);
     }
+
+    /// <summary>
+    /// Unregisters a data field from the list.
+    /// This method is called by child <see cref="DataField{TItem}"/> components when they are disposed
+    /// so the list no longer tracks fields that are not rendered.
+    /// </summary>
+    /// <param name="field">The field to unregister from the list.</param>
+    internal void RemoveField(DataField<TItem> field)
+    {
+        Fields.Remove(field);
+    }
+
+    /// <summary>
+    /// Gets the identifier used for filtering and sorting the specified field.
+    /// Local data providers use the property name while remote providers use the column name.
+    /// </summary>
+    /// <param name="field">The field to resolve the name for.</param>
+    /// <returns>The property name for local providers; otherwise the column name.</returns>
+    internal string FieldName(DataField<TItem> field)
+        => IsLocalProvider ? field.PropertyName : field.ColumnName;
 }

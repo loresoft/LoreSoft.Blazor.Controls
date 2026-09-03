@@ -58,6 +58,42 @@ public class LinqExpressionBuilderTests
     }
 
     [Fact]
+    public void FilterGroupSkipsIncompleteFilter()
+    {
+        var queryFilter = new QueryGroup
+        {
+            Filters =
+            [
+                new QueryFilter(),
+                new QueryGroup
+                {
+                    Logic = QueryLogic.Or,
+                    Filters = [new QueryFilter { Field = "Name", Operator = QueryOperators.Contains, Value = "Apple" }]
+                }
+            ]
+        };
+
+        var builder = new LinqExpressionBuilder();
+        builder.Build(queryFilter);
+
+        Assert.Equal("((Name != NULL && Name.Contains(@0, StringComparison.OrdinalIgnoreCase)))", builder.Expression);
+    }
+
+    [Fact]
+    public void FilterGroupOnlyIncompleteFilterIsEmpty()
+    {
+        var queryFilter = new QueryGroup
+        {
+            Filters = [new QueryFilter()]
+        };
+
+        var builder = new LinqExpressionBuilder();
+        builder.Build(queryFilter);
+
+        Assert.Empty(builder.Expression);
+    }
+
+    [Fact]
     public void FilterLogicalOr()
     {
         var queryFilter = new QueryGroup

@@ -220,51 +220,8 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
     /// </summary>
     protected string ColumnPickerTab { get; set; } = "columns";
 
-    /// <summary>
-    /// Gets the list of sort entries currently configured in the column picker sort tab.
-    /// Each entry represents one sort column and direction in priority order (index 0 = highest priority).
-    /// </summary>
-    protected List<DataSortState> SortEntries { get; private set; } = [];
-
-    /// <summary>
-    /// Adds a new empty sort entry to the column picker sort list.
-    /// </summary>
-    protected void AddSortEntry()
-    {
-        SortEntries.Add(new DataSortState());
-    }
-
-    /// <summary>
-    /// Removes the specified sort entry and applies the updated sort configuration to the grid.
-    /// </summary>
-    /// <param name="entry">The sort entry to remove.</param>
-    protected Task RemoveSortEntryAsync(DataSortState entry)
-    {
-        SortEntries.Remove(entry);
-        return ApplySortEntriesAsync();
-    }
-
-    /// <summary>
-    /// Applies all current sort entries to the grid columns and refreshes the data.
-    /// Entries with no column selected are skipped. List order determines sort priority.
-    /// </summary>
-    protected async Task ApplySortEntriesAsync()
-    {
-        Columns.ForEach(c => c.UpdateSort(-1, false));
-
-        var index = 0;
-
-        foreach (var entry in SortEntries.Where(e => !string.IsNullOrEmpty(e.ColumnName)))
-        {
-            var col = Columns.Find(c => c.ColumnName == entry.ColumnName);
-            if (col == null || !col.Sortable)
-                continue;
-
-            col.UpdateSort(index++, entry.Direction == "desc");
-        }
-
-        await RefreshAsync(resetPager: true);
-    }
+    /// <inheritdoc />
+    protected override IReadOnlyList<DataField<TItem>> SortFields => Columns;
 
     /// <summary>
     /// Shows the column picker panel.
@@ -309,7 +266,7 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
     /// <summary>
     /// Performs a quick search on all filterable string columns.
     /// This method creates a logical OR filter across all string columns that have
-    /// <see cref="DataColumn{TItem}.Filterable"/> set to true, allowing users to quickly
+    /// <see cref="DataField{TItem}.Filterable"/> set to true, allowing users to quickly
     /// find rows containing the search text in any searchable column.
     /// </summary>
     /// <param name="searchText">The text to search for across all filterable string columns.
@@ -402,11 +359,7 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
         if (column == null || !Sortable || !column.Sortable)
             return;
 
-        descending ??= column.CurrentSortIndex >= 0 && !column.CurrentSortDescending;
-
-        Columns.ForEach(c => c.UpdateSort(-1, false));
-
-        column.UpdateSort(0, descending ?? false);
+        SortBy(column.ColumnName, descending);
 
         await RefreshAsync(resetPager: true);
     }
@@ -416,7 +369,7 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
     /// This override provides column name-based sorting by finding the matching column
     /// and delegating to the column-based sort method.
     /// </summary>
-    /// <param name="columnName">The name of the column to sort by. Should match <see cref="DataColumn{TItem}.ColumnName"/>.</param>
+    /// <param name="columnName">The name of the column to sort by. Should match <see cref="DataField{TItem}.ColumnName"/>.</param>
     /// <param name="descending">The sort direction. If null, toggles the current direction or defaults to ascending.</param>
     /// <returns>A task representing the asynchronous sort operation and grid refresh.</returns>
     public override async Task SortByAsync(string columnName, bool? descending = null)
@@ -434,7 +387,7 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
     /// <summary>
     /// Exports the grid data to a CSV file.
     /// This method exports all data that matches the current filter criteria, bypassing pagination
-    /// to include the complete filtered dataset. Only columns with <see cref="DataColumn{TItem}.Exportable"/>
+    /// to include the complete filtered dataset. Only columns with <see cref="DataField{TItem}.Exportable"/>
     /// set to true are included in the export.
     /// </summary>
     /// <param name="fileName">The name of the file to download. If null, generates a timestamped filename.</param>
@@ -459,7 +412,7 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
             stream: memoryStream,
             headers: Columns.Where(c => c.Exportable).Select(c => c.ExportName),
             rows: result.Items,
-            selector: item => Columns.Where(c => c.Exportable).Select(c => c.CellValue(item)),
+            selector: item => Columns.Where(c => c.Exportable).Select(c => c.FormattedValue(item)),
             encoding: Encoding.UTF8,
             cancellationToken: cancellationToken);
 
@@ -726,32 +679,6 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
     }
 
     /// <summary>
-    /// Creates a data request for loading, sorting, and filtering data.
-    /// This override includes multi-column sorting support by collecting sort information
-    /// from all columns with active sort indices and creating appropriate <see cref="DataSort"/> objects.
-    /// </summary>
-    /// <param name="cancellationToken">A cancellation token to cancel the data request operation.</param>
-    /// <returns>A <see cref="DataRequest"/> containing current paging, multi-column sorting, and filtering parameters.</returns>
-    public override DataRequest CreateDataRequest(CancellationToken cancellationToken = default)
-    {
-        var sorts = Columns
-            .Where(c => c.CurrentSortIndex >= 0)
-            .OrderBy(c => c.CurrentSortIndex)
-            .Select(c => new DataSort(c.ColumnName, c.CurrentSortDescending))
-            .ToArray();
-
-        return new DataRequest
-        {
-            Page = Pager.Page,
-            PageSize = Pager.PageSize,
-            ContinuationToken = Pager.ContinuationToken,
-            Sorts = sorts,
-            Query = RootQuery,
-            CancellationToken = cancellationToken
-        };
-    }
-
-    /// <summary>
     /// Applies filtering to the data source based on the current query.
     /// This method delegates to the base implementation but provides grid-specific context
     /// for filtering operations, ensuring that grid-specific filter logic is properly applied.
@@ -765,48 +692,6 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
             return queryable;
 
         return queryable.Filter(request.Query);
-    }
-
-    /// <summary>
-    /// Applies sorting to the data source based on the current sort settings.
-    /// This override provides column-aware sorting that uses the actual column property expressions
-    /// rather than string-based property names, ensuring type safety and supporting complex property paths.
-    /// </summary>
-    /// <param name="queryable">The queryable data source to sort.</param>
-    /// <param name="request">The data request containing sort specifications.</param>
-    /// <returns>The sorted queryable data source with the requested sort order applied.</returns>
-    protected override IQueryable<TItem> SortData(IQueryable<TItem> queryable, DataRequest request)
-    {
-        if (!Sortable || request.Sorts == null || request.Sorts.Length == 0)
-            return queryable;
-
-        var columns = request.Sorts.Select(s => s.Property);
-
-        var sorted = Columns
-            .Where(c => columns.Contains(c.ColumnName))
-            .OrderBy(c => c.CurrentSortIndex)
-            .ToList();
-
-        if (sorted.Count == 0)
-            return queryable;
-
-        var queue = new Queue<DataColumn<TItem>>(sorted);
-        var column = queue.Dequeue();
-
-        var orderedQueryable = column.CurrentSortDescending
-            ? queryable.OrderByDescending(column.Property)
-            : queryable.OrderBy(column.Property);
-
-        while (queue.Count > 0)
-        {
-            column = queue.Dequeue();
-
-            orderedQueryable = column.CurrentSortDescending
-                ? orderedQueryable.ThenByDescending(column.Property)
-                : orderedQueryable.ThenBy(column.Property);
-        }
-
-        return orderedQueryable;
     }
 
     /// <summary>
@@ -922,23 +807,6 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
         _hasFooter = (count, hasFooter);
 
         return hasFooter;
-    }
-
-    /// <summary>
-    /// Populates <see cref="SortEntries"/> from the currently sorted columns
-    /// so the sort picker UI reflects the active sort configuration.
-    /// Ensures at least one empty entry is present when no columns are sorted.
-    /// </summary>
-    private void UpdateSortPickerState()
-    {
-        SortEntries = Columns
-            .Where(c => c.CurrentSortIndex >= 0)
-            .OrderBy(c => c.CurrentSortIndex)
-            .Select(c => new DataSortState { ColumnName = c.ColumnName, Direction = c.CurrentSortDescending ? "desc" : "asc" })
-            .ToList();
-
-        if (SortEntries.Count == 0)
-            SortEntries.Add(new DataSortState());
     }
 
     /// <summary>

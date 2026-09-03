@@ -10,7 +10,7 @@ namespace LoreSoft.Blazor.Controls;
 /// </summary>
 /// <typeparam name="TItem">The type of the data item displayed in the associated DataList.
 /// Must be a reference type to ensure proper equality comparisons and state management.</typeparam>
-public partial class DataListToolbar<TItem> : ComponentBase
+public partial class DataListToolbar<TItem> : ComponentBase, IDisposable
     where TItem : class
 {
     /// <summary>
@@ -29,7 +29,7 @@ public partial class DataListToolbar<TItem> : ComponentBase
     /// This parameter is automatically populated when the toolbar is placed within a DataList's template,
     /// enabling automatic integration without explicit configuration.
     /// </summary>
-    [CascadingParameter(Name = "Grid")]
+    [CascadingParameter(Name = "List")]
     protected DataList<TItem>? ParentList { get; set; }
 
     /// <summary>
@@ -140,8 +140,36 @@ public partial class DataListToolbar<TItem> : ComponentBase
     {
         base.OnParametersSet();
 
+        // snapshot the list reference from the previous render so we can detect a change
+        var previousList = CurrentList;
+
         CurrentList = DataList ?? ParentList;
+
+        // rewire only when the list instance actually changed; avoids redundant
+        // subscribe/unsubscribe on every parameter update cycle
+        if (previousList == CurrentList)
+            return;
+
+        if (previousList != null)
+            previousList.DataRefreshed -= HandleDataRefreshed;
+
+        if (CurrentList != null)
+            CurrentList.DataRefreshed += HandleDataRefreshed;
     }
+
+    /// <inheritdoc />
+    public void Dispose()
+    {
+        if (CurrentList != null)
+            CurrentList.DataRefreshed -= HandleDataRefreshed;
+
+        GC.SuppressFinalize(this);
+    }
+
+    // the toolbar renders state owned by the list, such as the active filter icon,
+    // so it must re-render whenever the list reloads its data
+    private void HandleDataRefreshed()
+        => InvokeAsync(StateHasChanged);
 
     /// <summary>
     /// Gets the debounced value wrapper for the search text input.

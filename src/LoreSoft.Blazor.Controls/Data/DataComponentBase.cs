@@ -172,6 +172,13 @@ public abstract class DataComponentBase<TItem> : ComponentBase, IDisposable
     public EventCallback<DataComponentBase<TItem>> Initialized { get; set; }
 
     /// <summary>
+    /// Occurs after the component finishes refreshing its data.
+    /// External components, such as toolbars, subscribe to this event to re-render
+    /// state that depends on the component, for example the active filter indicator.
+    /// </summary>
+    public event Action? DataRefreshed;
+
+    /// <summary>
     /// Gets the root query group for filtering and searching.
     /// This is the primary filter container that holds all active filters and query groups.
     /// It's automatically managed by the component's filter operations but can be accessed for advanced scenarios.
@@ -236,6 +243,7 @@ public abstract class DataComponentBase<TItem> : ComponentBase, IDisposable
     /// </summary>
     protected bool Rendered { get; private set; }
 
+
     /// <summary>
     /// Shows the filter panel.
     /// If no filters exist, a default empty filter is added to provide a starting point for user input.
@@ -243,8 +251,7 @@ public abstract class DataComponentBase<TItem> : ComponentBase, IDisposable
     /// </summary>
     public void ShowFilter()
     {
-        if (RootQuery.Filters.Count == 0)
-            RootQuery.Filters.Add(new QueryFilter());
+        AddPlaceholderFilter();
 
         FilterOpen = true;
         StateHasChanged();
@@ -257,6 +264,8 @@ public abstract class DataComponentBase<TItem> : ComponentBase, IDisposable
     /// </summary>
     public void CloseFilter()
     {
+        RemovePlaceholderFilter();
+
         FilterOpen = false;
         StateHasChanged();
     }
@@ -268,8 +277,10 @@ public abstract class DataComponentBase<TItem> : ComponentBase, IDisposable
     /// </summary>
     public void ToggleFilter()
     {
-        if (!FilterOpen && RootQuery.Filters.Count == 0)
-            RootQuery.Filters.Add(new QueryFilter());
+        if (FilterOpen)
+            RemovePlaceholderFilter();
+        else
+            AddPlaceholderFilter();
 
         FilterOpen = !FilterOpen;
         StateHasChanged();
@@ -298,6 +309,8 @@ public abstract class DataComponentBase<TItem> : ComponentBase, IDisposable
     /// </summary>
     protected async Task ApplyFilters()
     {
+        RemovePlaceholderFilter();
+
         FilterOpen = false;
         await RefreshAsync(true);
     }
@@ -569,6 +582,8 @@ public abstract class DataComponentBase<TItem> : ComponentBase, IDisposable
         {
             IsLoading = false;
             StateHasChanged();
+
+            DataRefreshed?.Invoke();
         }
     }
 
@@ -593,6 +608,106 @@ public abstract class DataComponentBase<TItem> : ComponentBase, IDisposable
     }
 
     /// <summary>
+    /// Gets the fields that provide the sort state for this component.
+    /// Derived components return their registered field or column collection so
+    /// multi-field sorting is shared across all data components.
+    /// </summary>
+    protected virtual IReadOnlyList<DataField<TItem>> SortFields => [];
+
+    /// <summary>
+    /// Gets the list of sort entries currently configured in the sort picker.
+    /// Each entry represents one sort field and direction in priority order (index 0 = highest priority).
+    /// </summary>
+    protected List<DataSortState> SortEntries { get; } = [];
+
+    /// <summary>
+    /// Adds a new empty sort entry to the sort picker list.
+    /// </summary>
+    protected void AddSortEntry()
+    {
+        SortEntries.Add(new DataSortState());
+    }
+
+    /// <summary>
+    /// Removes the specified sort entry and applies the updated sort configuration.
+    /// </summary>
+    /// <param name="entry">The sort entry to remove.</param>
+    /// <returns>A task representing the asynchronous sort and refresh operation.</returns>
+    protected Task RemoveSortEntryAsync(DataSortState entry)
+    {
+        SortEntries.Remove(entry);
+        return ApplySortEntriesAsync();
+    }
+
+    /// <summary>
+    /// Applies all current sort entries to the sort fields and refreshes the data.
+    /// Entries with no field selected are skipped. List order determines sort priority.
+    /// </summary>
+    /// <returns>A task representing the asynchronous sort and refresh operation.</returns>
+    protected async Task ApplySortEntriesAsync()
+    {
+        ClearSortFields();
+
+        var index = 0;
+
+        foreach (var entry in SortEntries.Where(e => !string.IsNullOrEmpty(e.ColumnName)))
+        {
+            var field = FindSortField(entry.ColumnName);
+            if (field == null || !field.Sortable)
+                continue;
+
+            field.UpdateSort(index++, entry.Direction == "desc");
+        }
+
+        await RefreshAsync(resetPager: true);
+    }
+
+    /// <summary>
+    /// Rebuilds the sort picker entries from the current sort state of the sort fields.
+    /// Ensures at least one empty entry is present when nothing is sorted.
+    /// </summary>
+    protected void UpdateSortPickerState()
+    {
+        var entries = SortFields
+            .Where(f => f.CurrentSortIndex >= 0)
+            .OrderBy(f => f.CurrentSortIndex)
+            .Select(f => new DataSortState { ColumnName = f.ColumnName, Direction = f.CurrentSortDescending ? "desc" : "asc" });
+
+        SortEntries.Clear();
+        SortEntries.AddRange(entries);
+
+        if (SortEntries.Count == 0)
+            SortEntries.Add(new DataSortState());
+    }
+
+    /// <summary>
+    /// Clears the sort state from all sort fields.
+    /// </summary>
+    protected void ClearSortFields()
+    {
+        foreach (var field in SortFields)
+            field.UpdateSort(-1, false);
+    }
+
+    /// <summary>
+    /// Finds the sort field matching the specified name.
+    /// The name is matched against <see cref="DataField{TItem}.ColumnName"/> first,
+    /// then <see cref="DataField{TItem}.PropertyName"/>.
+    /// </summary>
+    /// <param name="name">The column or property name to find.</param>
+    /// <returns>The matching field; otherwise, <see langword="null"/>.</returns>
+    protected DataField<TItem>? FindSortField(string name)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+            return null;
+
+        var fields = SortFields;
+
+        return fields.FirstOrDefault(f => f.ColumnName == name)
+            ?? fields.FirstOrDefault(f => f.PropertyName == name);
+    }
+
+    /// <summary>
     /// Sorts the data by the column with the specified name without refreshing the display.
     /// This method updates the internal sort state but does not trigger a data refresh.
     /// Call RefreshAsync() after configuring sorts to apply the changes.
@@ -606,6 +721,27 @@ public abstract class DataComponentBase<TItem> : ComponentBase, IDisposable
     {
         if (!Sortable)
             return;
+
+        if (SortFields.Count > 0)
+        {
+            if (string.IsNullOrWhiteSpace(columnName))
+            {
+                ClearSortFields();
+                return;
+            }
+
+            var field = FindSortField(columnName);
+            if (field == null || !field.Sortable)
+                return;
+
+            // toggle when already the active sort field
+            descending ??= field.CurrentSortIndex >= 0 && !field.CurrentSortDescending;
+
+            ClearSortFields();
+            field.UpdateSort(0, descending.Value);
+
+            return;
+        }
 
         if (string.IsNullOrWhiteSpace(columnName))
             _currentSort = null;
@@ -625,7 +761,8 @@ public abstract class DataComponentBase<TItem> : ComponentBase, IDisposable
     /// <returns>A new <see cref="DataRequest"/> instance containing current paging, sorting, and filtering parameters.</returns>
     public virtual DataRequest CreateDataRequest(CancellationToken cancellationToken = default)
     {
-        DataSort[] sorts = _currentSort != null ? [_currentSort] : [];
+        var sorts = CreateDataSorts();
+
         return new DataRequest
         {
             Page = Pager.Page,
@@ -635,6 +772,23 @@ public abstract class DataComponentBase<TItem> : ComponentBase, IDisposable
             Query = RootQuery,
             CancellationToken = cancellationToken
         };
+    }
+
+    /// <summary>
+    /// Creates the ordered sort specifications for the current sort state.
+    /// Sorts are taken from the registered <see cref="SortFields"/> in sort index order,
+    /// falling back to the single sort state when no fields are registered.
+    /// </summary>
+    /// <returns>The ordered array of <see cref="DataSort"/> instances.</returns>
+    protected DataSort[] CreateDataSorts()
+    {
+        if (SortFields.Count == 0)
+            return _currentSort != null ? [_currentSort] : [];
+
+        return [.. SortFields
+            .Where(f => f.CurrentSortIndex >= 0)
+            .OrderBy(f => f.CurrentSortIndex)
+            .Select(f => new DataSort(f.ColumnName, f.CurrentSortDescending))];
     }
 
     /// <summary>
@@ -698,7 +852,34 @@ public abstract class DataComponentBase<TItem> : ComponentBase, IDisposable
         if (!Sortable || request.Sorts == null || request.Sorts.Length == 0)
             return queryable;
 
-        return queryable.Sort(request.Sorts);
+        if (SortFields.Count == 0)
+            return queryable.Sort(request.Sorts);
+
+        // sort using the field property expressions to support complex property paths
+        var names = request.Sorts.Select(s => s.Property).ToList();
+
+        var sorted = SortFields
+            .Where(f => f.CurrentSortIndex >= 0 && names.Contains(f.ColumnName))
+            .OrderBy(f => f.CurrentSortIndex)
+            .ToList();
+
+        if (sorted.Count == 0)
+            return queryable.Sort(request.Sorts);
+
+        var first = sorted[0];
+
+        var orderedQueryable = first.CurrentSortDescending
+            ? queryable.OrderByDescending(first.Property)
+            : queryable.OrderBy(first.Property);
+
+        foreach (var field in sorted.Skip(1))
+        {
+            orderedQueryable = field.CurrentSortDescending
+                ? orderedQueryable.ThenByDescending(field.Property)
+                : orderedQueryable.ThenBy(field.Property);
+        }
+
+        return orderedQueryable;
     }
 
     /// <summary>
@@ -753,5 +934,30 @@ public abstract class DataComponentBase<TItem> : ComponentBase, IDisposable
         _initialQuery = Query;
         await ApplyFilter(_initialQuery, Rendered);
     }
+
+
+    /// <summary>
+    /// The identifier assigned to the placeholder filter automatically added when the filter panel is opened.
+    /// The placeholder is removed when the panel closes if the user never completed it.
+    /// </summary>
+    private const string PlaceholderFilterId = "PlaceholderFilter";
+
+    /// <summary>
+    /// Adds the placeholder filter when the filter panel has nothing to edit,
+    /// giving the user a starting point for input.
+    /// </summary>
+    private void AddPlaceholderFilter()
+    {
+        if (RootQuery.Filters.Count == 0)
+            RootQuery.Filters.Add(new QueryFilter { Id = PlaceholderFilterId });
+    }
+
+    /// <summary>
+    /// Removes the placeholder filter when it was never completed by the user.
+    /// Leaving an incomplete filter in <see cref="RootQuery"/> would corrupt later
+    /// query expressions, such as those built by quick search.
+    /// </summary>
+    private void RemovePlaceholderFilter()
+        => RootQuery.Filters.RemoveAll(f => f.Id == PlaceholderFilterId && !LinqExpressionBuilder.IsValid(f));
 }
 
