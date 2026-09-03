@@ -75,7 +75,7 @@
         {
             @Field.ValueTemplate(Filter)
         }
-        else if (ShowValueInput && Field.Type == typeof(bool))
+        else if (ShowValueInput && Field.CurrentType == typeof(bool))
         {
             <select id="value-@Filter.Id"
                     name="value-@Filter.Id"

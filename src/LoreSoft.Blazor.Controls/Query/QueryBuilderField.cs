@@ -50,22 +50,22 @@ public class QueryBuilderField<TItem> : QueryBuilderTemplate
 
         if (memberInfo is PropertyInfo propertyInfo)
         {
-            Name = propertyInfo.Name;
-            Type = propertyInfo.PropertyType;
+            CurrentFieldName = propertyInfo.Name;
+            CurrentType = propertyInfo.PropertyType;
         }
         else if (memberInfo is FieldInfo fieldInfo)
         {
-            Name = fieldInfo.Name;
-            Type = fieldInfo.FieldType;
+            CurrentFieldName = fieldInfo.Name;
+            CurrentType = fieldInfo.FieldType;
         }
         else
         {
-            Name = memberInfo?.Name;
-            Type = typeof(object);
+            CurrentFieldName = memberInfo?.Name;
+            CurrentType = typeof(object);
         }
 
         var columnAttribute = memberInfo?.GetCustomAttribute<ColumnAttribute>(true);
-        Column = columnAttribute != null ? columnAttribute.Name : Name;
+        CurrentColumn = Column ?? columnAttribute?.Name ?? CurrentFieldName;
     }
 
     /// <summary>

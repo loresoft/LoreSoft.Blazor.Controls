@@ -119,7 +119,7 @@ public partial class QueryBuilderFilter
     /// </remarks>
     protected void SetValue(ChangeEventArgs args)
     {
-        Filter.Value = Field != null ? Binding.Convert(args.Value, Field.Type ?? typeof(object)) : args.Value;
+        Filter.Value = Field != null ? Binding.Convert(args.Value, Field.CurrentType) : args.Value;
         FilterChanged();
     }
 }

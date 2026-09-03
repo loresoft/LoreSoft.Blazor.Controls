@@ -148,9 +148,24 @@ public class QueryBuilderTemplate : ComponentBase, IDisposable
     public List<string>? CurrentKeys { get; set; }
 
     /// <summary>
+    /// Gets the current name of the field.
+    /// </summary>
+    public string? CurrentFieldName { get; protected set; }
+
+    /// <summary>
+    /// Gets the current column name of the field.
+    /// </summary>
+    public string? CurrentColumn { get; protected set; }
+
+    /// <summary>
+    /// Gets the current type of the field.
+    /// </summary>
+    public Type CurrentType { get; protected set; } = typeof(string);
+
+    /// <summary>
     /// Gets the current field identifier based on <see cref="FieldSelection"/>.
     /// </summary>
-    public string? CurrentName => FieldSelection == QueryFieldSelection.Column ? Column : Name;
+    public string? CurrentName => FieldSelection == QueryFieldSelection.Column ? CurrentColumn : CurrentFieldName;
 
     /// <inheritdoc />
     protected override void OnInitialized()
@@ -192,8 +207,9 @@ public class QueryBuilderTemplate : ComponentBase, IDisposable
         if (Name.IsNullOrWhiteSpace())
             throw new InvalidOperationException("QueryBuilderTemplate Name parameter is required");
 
-        Type ??= typeof(string);
-        Column ??= Name;
+        CurrentFieldName = Name;
+        CurrentType = Type ?? typeof(string);
+        CurrentColumn = Column ?? Name;
     }
 
     /// <summary>
@@ -203,17 +219,17 @@ public class QueryBuilderTemplate : ComponentBase, IDisposable
     /// <returns>The formatted field value, or an empty string when no value is available.</returns>
     internal virtual string FieldValue(object? data)
     {
-        if (data == null || Name.IsNullOrWhiteSpace())
+        if (data == null || CurrentFieldName.IsNullOrWhiteSpace())
             return string.Empty;
 
         var dataType = data.GetType();
 
         // Cache the value accessor for performance, but rebuild if the data type or field name changes
-        if (_propertyAccessor == null || _dataType != dataType || _proertyName != Name)
+        if (_propertyAccessor == null || _dataType != dataType || _proertyName != CurrentFieldName)
         {
-            _propertyAccessor = BuildValueAccessor(dataType, Name);
+            _propertyAccessor = BuildValueAccessor(dataType, CurrentFieldName);
             _dataType = dataType;
-            _proertyName = Name;
+            _proertyName = CurrentFieldName;
         }
 
         if (_propertyAccessor == null)
@@ -277,7 +293,7 @@ public class QueryBuilderTemplate : ComponentBase, IDisposable
             return;
         }
 
-        CurrentTitle = Name.ToTitle();
+        CurrentTitle = CurrentFieldName.ToTitle();
     }
 
     /// <summary>
@@ -291,7 +307,7 @@ public class QueryBuilderTemplate : ComponentBase, IDisposable
             return;
         }
 
-        CurrentInputType = GetInputType(Type);
+        CurrentInputType = GetInputType(CurrentType);
     }
 
     /// <summary>
@@ -310,7 +326,7 @@ public class QueryBuilderTemplate : ComponentBase, IDisposable
 
         CurrentOperators = [QueryOperators.Equal, QueryOperators.NotEqual];
 
-        if (Type == typeof(string))
+        if (CurrentType == typeof(string))
         {
             CurrentOperators.Add(QueryOperators.Contains);
             CurrentOperators.Add(QueryOperators.NotContains);
@@ -318,7 +334,7 @@ public class QueryBuilderTemplate : ComponentBase, IDisposable
             CurrentOperators.Add(QueryOperators.StartsWith);
             CurrentOperators.Add(QueryOperators.EndsWith);
         }
-        else if (IsComparableType(Type))
+        else if (IsComparableType(CurrentType))
         {
             CurrentOperators.Add(QueryOperators.GreaterThan);
             CurrentOperators.Add(QueryOperators.GreaterThanOrEqual);

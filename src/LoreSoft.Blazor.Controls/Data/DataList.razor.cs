@@ -260,7 +260,7 @@ public partial class DataList<TItem> : DataComponentBase<TItem>
 
         await CsvWriter.WriteAsync(
             stream: memoryStream,
-            headers: fields.Select(p => p.CurrentName ?? p.Name ?? string.Empty),
+            headers: fields.Select(p => p.CurrentName ?? p.CurrentFieldName ?? string.Empty),
             rows: result.Items,
             selector: item => fields.Select(f => f.FieldValue(item)),
             encoding: Encoding.UTF8,
