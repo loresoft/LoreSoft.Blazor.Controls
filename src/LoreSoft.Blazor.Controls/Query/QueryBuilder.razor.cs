@@ -50,24 +50,9 @@ public partial class QueryBuilder : ComponentBase
     public RenderFragment? FooterTemplate { get; set; }
 
     /// <summary>
-    /// Gets or sets an externally owned collection of query fields.
-    /// </summary>
-    /// <remarks>
-    /// When supplied, the host component is responsible for rendering <see cref="QueryFields"/> so the
-    /// field definitions are available even when the query builder is not rendered.
-    /// </remarks>
-    [Parameter]
-    public QueryFieldCollection? FieldCollection { get; set; }
-
-    /// <summary>
-    /// Gets the field collection in use, either <see cref="FieldCollection"/> or an internally owned one.
-    /// </summary>
-    public QueryFieldCollection CurrentFieldCollection { get; private set; } = new();
-
-    /// <summary>
     /// Gets the collection of fields available for building queries.
     /// </summary>
-    public List<QueryBuilderTemplate> Fields => CurrentFieldCollection.Fields;
+    public List<QueryBuilderTemplate> Fields { get; } = [];
 
     /// <summary>
     /// Raises <see cref="QueryChanged"/> and requests a UI refresh.
@@ -111,10 +96,6 @@ public partial class QueryBuilder : ComponentBase
     {
         base.OnParametersSet();
 
-        // copy FieldCollection to CurrentFieldCollection if set
-        if (FieldCollection != null)
-            CurrentFieldCollection = FieldCollection;
-
         RootQuery ??= new QueryGroup();
     }
 
@@ -123,12 +104,23 @@ public partial class QueryBuilder : ComponentBase
     /// </summary>
     /// <param name="field">The <see cref="QueryBuilderTemplate"/> instance to add.</param>
     internal void AddField(QueryBuilderTemplate field)
-        => CurrentFieldCollection.Add(field);
+    {
+        ArgumentNullException.ThrowIfNull(field);
+
+        if (Fields.Contains(field))
+            return;
+
+        Fields.Add(field);
+    }
 
     /// <summary>
     /// Removes a field definition from the query builder.
     /// </summary>
     /// <param name="field">The <see cref="QueryBuilderTemplate"/> instance to remove.</param>
     internal void RemoveField(QueryBuilderTemplate field)
-        => CurrentFieldCollection.Remove(field);
+    {
+        ArgumentNullException.ThrowIfNull(field);
+
+        Fields.Remove(field);
+    }
 }

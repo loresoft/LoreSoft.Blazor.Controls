@@ -24,10 +24,10 @@ public class QueryBuilderTemplate : ComponentBase, IDisposable
     private string? _proertyName;
 
     /// <summary>
-    /// Gets or sets the collection this field registers itself with.
+    /// Gets or sets the parent <see cref="QueryBuilder"/> this field registers itself with.
     /// </summary>
-    [CascadingParameter(Name = "QueryFieldCollection")]
-    protected QueryFieldCollection FieldCollection { get; set; } = null!;
+    [CascadingParameter(Name = "QueryBuilder")]
+    protected QueryBuilder QueryBuilder { get; set; } = null!;
 
     /// <summary>
     /// Gets or sets the list of supported operators for this field.
@@ -170,16 +170,16 @@ public class QueryBuilderTemplate : ComponentBase, IDisposable
     /// <inheritdoc />
     protected override void OnInitialized()
     {
-        if (FieldCollection == null)
+        if (QueryBuilder == null)
             throw new InvalidOperationException("QueryBuilderTemplate must be child of QueryBuilder");
 
-        FieldCollection.Add(this);
+        QueryBuilder.AddField(this);
     }
 
     /// <inheritdoc />
     public void Dispose()
     {
-        FieldCollection?.Remove(this);
+        QueryBuilder?.RemoveField(this);
         GC.SuppressFinalize(this);
     }
 
