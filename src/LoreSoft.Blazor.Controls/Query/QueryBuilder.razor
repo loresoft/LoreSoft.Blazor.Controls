@@ -3,15 +3,17 @@
 @using Microsoft.AspNetCore.Components.Web
 
 <CascadingValue IsFixed="true" Value="this" Name="QueryBuilder">
-    @if (QueryFields != null)
-    {
-        @QueryFields
-    }
-    <div class="query-builder">
-        <QueryBuilderGroup Group="RootQuery" />
-        @if (FooterTemplate != null)
+    <CascadingValue IsFixed="true" Value="CurrentFieldCollection" Name="QueryFieldCollection">
+        @if (QueryFields != null)
         {
-            @FooterTemplate
+            @QueryFields
         }
-    </div>
+        <div class="query-builder">
+            <QueryBuilderGroup Group="RootQuery" />
+            @if (FooterTemplate != null)
+            {
+                @FooterTemplate
+            }
+        </div>
+    </CascadingValue>
 </CascadingValue>

@@ -92,6 +92,13 @@ public partial class DataList<TItem> : DataComponentBase<TItem>
     protected QueryBuilder? QueryBuilder { get; set; }
 
     /// <summary>
+    /// Gets the collection of query fields defined by <see cref="QueryFields"/>.
+    /// The fields are registered as soon as the component renders, so quick search and export
+    /// work without requiring the filter panel to be opened first.
+    /// </summary>
+    protected QueryFieldCollection QueryFieldCollection { get; } = new();
+
+    /// <summary>
     /// Gets or sets the currently selected sort field name.
     /// This property tracks the active sort field and is updated when users change
     /// the sort selection through the sort picker interface.
@@ -193,11 +200,8 @@ public partial class DataList<TItem> : DataComponentBase<TItem>
         else
             RootQuery.Filters.RemoveAll(f => f.Id == nameof(QuickSearch));
 
-        if (QueryBuilder == null)
-            return;
-
-        var fields = QueryBuilder.Fields;
-        if (fields == null || fields.Count == 0)
+        var fields = QueryFieldCollection.Fields;
+        if (fields.Count == 0)
             return;
 
         if (!string.IsNullOrWhiteSpace(searchText))
@@ -241,11 +245,8 @@ public partial class DataList<TItem> : DataComponentBase<TItem>
         if (CurrentDataProvider == null)
             throw new InvalidOperationException("Invalid Data Provider");
 
-        if (QueryBuilder == null)
-            return;
-
-        var fields = QueryBuilder.Fields;
-        if (fields == null || fields.Count == 0)
+        var fields = QueryFieldCollection.Fields;
+        if (fields.Count == 0)
             return;
 
         var request = CreateDataRequest(cancellationToken);

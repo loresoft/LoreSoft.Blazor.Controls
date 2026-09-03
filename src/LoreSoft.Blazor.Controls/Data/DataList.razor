@@ -15,6 +15,13 @@
             @DataToolbar(this)
         }
 
+        @* register the query fields up front so quick search and export work before the filter is opened *@
+        <CascadingValue IsFixed="true"
+                        Value="QueryFieldCollection"
+                        Name="QueryFieldCollection">
+            @QueryFields
+        </CascadingValue>
+
         @if (FilterOpen)
         {
             <div class="filter">
@@ -27,7 +34,7 @@
                             <form name="filter-builder-form"
                                   @onsubmit="ApplyFilters">
                                 <QueryBuilder @ref="QueryBuilder"
-                                              QueryFields="QueryFields"
+                                              FieldCollection="QueryFieldCollection"
                                               Query="RootQuery">
                                     <FooterTemplate>
                                         <div class="filter-footer">
