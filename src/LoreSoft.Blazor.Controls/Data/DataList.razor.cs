@@ -209,9 +209,9 @@ public partial class DataList<TItem> : DataComponentBase<TItem>
             var quickSearch = new QueryGroup { Id = nameof(QuickSearch), Logic = QueryLogic.Or };
 
             // all filterable string columns
-            foreach (var column in fields.Where(c => c.Searchable && c.Type == typeof(string)))
+            foreach (var column in fields.Where(c => c.Searchable && c.CurrentType == typeof(string)))
             {
-                var fieldName = column.Name;
+                var fieldName = column.CurrentName;
                 if (string.IsNullOrWhiteSpace(fieldName))
                     continue;
 
