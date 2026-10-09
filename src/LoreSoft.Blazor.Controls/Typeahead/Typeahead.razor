@@ -11,7 +11,7 @@
          aria-haspopup="listbox"
          aria-label="@Placeholder"
          aria-disabled="@Disabled"
-         title="@Placeholder"
+         title="@(HasValue() ? null : Placeholder)"
          style="@BoundStyle"
          @attributes="AdditionalAttributes"
          @onfocus="ShowMenu">
@@ -36,7 +36,7 @@
                     </div>
                 }
             }
-            else if (!IsMultiselect() && Value != null)
+            else if (!IsMultiselect() && !EqualityComparer<TValue>.Default.Equals(Value, default))
             {
                 <div class="typeahead-single-value">
                     @SelectedValue(Value)
@@ -172,30 +172,32 @@
     }
 </div>
 @code {
-    protected RenderFragment<TValue> SelectedValue => value => __builder =>
+    protected RenderFragment<TValue?> SelectedValue => value => __builder =>
     {
         @if (SelectedTemplate == null)
         {
-            @if (LookupMethod != null)
+            @if (value == null || EqualityComparer<TValue>.Default.Equals(value, default))
+            {
+                <span></span>
+            }
+            else if (LookupMethod != null)
             {
                 <LazyValue TKey="TValue"
                            TValue="TItem"
                            Key="@value"
                            LoadingText="Loading..."
                            LoadMethod="@LookupMethod"
-                           ValueLoaded="@OnValueLoaded" />
-            }
-            else if (value == null)
-            {
-                <span></span>
-            }
-            else if (EqualityComparer<TValue>.Default.Equals(value, default))
-            {
-                <span></span>
+                           ValueLoaded="@OnValueLoaded">
+                    @{
+                        var lazyText = context?.ToString() ?? value?.ToString();
+                    }
+                    <span title="@lazyText">@lazyText</span>
+                </LazyValue>
             }
             else
             {
-                <span>@value.ToString()</span>
+                var text = value.ToString();
+                <span title="@text">@text</span>
             }
         }
         else

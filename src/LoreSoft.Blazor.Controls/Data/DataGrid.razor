@@ -361,6 +361,10 @@
         {
             @column.HeaderTemplate
         }
+        else if (!string.IsNullOrWhiteSpace(column.Abbreviation))
+        {
+            <abbr title="@column.HeaderName">@column.Abbreviation</abbr>
+        }
         else
         {
             @column.HeaderName

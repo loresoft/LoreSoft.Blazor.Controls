@@ -1,14 +1,15 @@
 @namespace LoreSoft.Blazor.Controls
 @typeparam TValue
 
-<div @attributes="ContainerAttributes" class="@ContainerClass()">
+<div class="@ContainerClass()">
     @for (var index = 0; index < CurrentValue.Count; index++)
     {
         var itemIndex = index;
         var item = CurrentValue[itemIndex];
 
         <div class="input-list-item">
-            <input type="@EffectiveInputType"
+            <input @attributes="InputAttributes"
+                   type="@EffectiveInputType"
                    class="@ItemInputClass()"
                    value="@FormatValue(item)"
                    disabled="@Disabled"

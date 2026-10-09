@@ -103,6 +103,14 @@ public class DataColumn<TItem> : DataField<TItem>
     public string? HeaderClass { get; set; }
 
     /// <summary>
+    /// Gets or sets an abbreviated header text.
+    /// When specified, the header is rendered as <c>&lt;abbr title="{HeaderName}"&gt;{Abbreviation}&lt;/abbr&gt;</c>.
+    /// Ignored when <see cref="HeaderTemplate"/> is specified.
+    /// </summary>
+    [Parameter]
+    public string? Abbreviation { get; set; }
+
+    /// <summary>
     /// Gets or sets the CSS style for the footer.
     /// Inline styles to be applied to the footer cell.
     /// </summary>

@@ -2,6 +2,7 @@
 
 using System.Buffers;
 using System.Diagnostics.CodeAnalysis;
+using System.Text;
 
 namespace LoreSoft.Blazor.Controls.Extensions;
 
@@ -61,25 +62,25 @@ public static class StringExtensions
     /// <summary>
     /// Determines whether the specified string is <see langword="null"/> or an empty string.
     /// </summary>
-    /// <param name="item">A string reference.</param>
+    /// <param name="value">A string reference.</param>
     /// <returns>
-    /// <see langword="true"/> if <paramref name="item"/> is <see langword="null"/> or empty; otherwise, <see langword="false"/>.
+    /// <see langword="true"/> if <paramref name="value"/> is <see langword="null"/> or empty; otherwise, <see langword="false"/>.
     /// </returns>
-    public static bool IsNullOrEmpty([NotNullWhen(false)] this string? item)
+    public static bool IsNullOrEmpty([NotNullWhen(false)] this string? value)
     {
-        return string.IsNullOrEmpty(item);
+        return string.IsNullOrEmpty(value);
     }
 
     /// <summary>
     /// Determines whether the specified string is <see langword="null"/>, empty, or consists only of white-space characters.
     /// </summary>
-    /// <param name="item">A string reference.</param>
+    /// <param name="value">A string reference.</param>
     /// <returns>
-    /// <see langword="true"/> if <paramref name="item"/> is <see langword="null"/>, empty, or whitespace; otherwise, <see langword="false"/>.
+    /// <see langword="true"/> if <paramref name="value"/> is <see langword="null"/>, empty, or whitespace; otherwise, <see langword="false"/>.
     /// </returns>
-    public static bool IsNullOrWhiteSpace([NotNullWhen(false)] this string? item)
+    public static bool IsNullOrWhiteSpace([NotNullWhen(false)] this string? value)
     {
-        return string.IsNullOrWhiteSpace(item);
+        return string.IsNullOrWhiteSpace(value);
     }
 
     /// <summary>
@@ -250,6 +251,165 @@ public static class StringExtensions
             // Return rented array to the pool to avoid memory leaks
             if (rentedArray != null)
                 ArrayPool<char>.Shared.Return(rentedArray);
+        }
+    }
+
+    /// <summary>
+    /// Masks a string by replacing characters with a specified mask character,
+    /// preserving a certain number of characters at the start and end.
+    /// Optionally, you can specify a fixed number of masked characters in the middle.
+    /// </summary>
+    /// <param name="input">The input string to mask.</param>
+    /// <param name="unmaskedStart">Number of characters to leave unmasked at the start.</param>
+    /// <param name="unmaskedEnd">Number of characters to leave unmasked at the end.</param>
+    /// <param name="maskChar">The character to use for masking. Default is '*'.</param>
+    /// <param name="maskedCount">
+    /// Optional. If specified, the number of mask characters to use in the masked section.
+    /// If not specified, the masked section will fill the space between the unmasked start and end.
+    /// </param>
+    /// <returns>The masked string.</returns>
+    /// <example>
+    /// <code>
+    /// mask credit card number
+    /// string maskedCreditCard = "4111111111111111".Mask(4, 4);
+    /// Assert.Equal("4111********1111", maskedCreditCard);
+    ///
+    /// // mask a social security number
+    /// var maskedSocial = "123-45-6789".Mask(0, 4, '*', 5);
+    /// Assert.Equal("*****6789", maskedSocial);
+    ///
+    /// // mask a password
+    /// var maskedPassword = "P@ssw0rd123".Mask(0, 0, '*', 8);
+    /// Assert.Equal("********", maskedPassword);
+    /// </code>
+    /// </example>
+    [return: NotNullIfNotNull(nameof(input))]
+    public static string? Mask(
+        this string? input,
+        int unmaskedStart,
+        int unmaskedEnd,
+        char maskChar = '*',
+        int? maskedCount = null)
+    {
+        if (input.IsNullOrEmpty())
+            return input;
+
+        int length = input.Length;
+
+        if (unmaskedStart + unmaskedEnd > length)
+            throw new ArgumentOutOfRangeException(nameof(input), "Unmasked prefix and suffix exceed input length.");
+
+        if (length == 0 || (unmaskedStart == 0 && unmaskedEnd == 0 && maskChar == '\0'))
+            return string.Empty;
+
+        int maskedSectionLength = maskedCount ?? (length - unmaskedStart - unmaskedEnd);
+        if (maskedSectionLength < 0)
+            maskedSectionLength = 0;
+
+        int totalLength = unmaskedStart + maskedSectionLength + unmaskedEnd;
+
+        Span<char> buffer = totalLength <= 256
+            ? stackalloc char[totalLength]
+            : ArrayPool<char>.Shared.Rent(totalLength);
+
+        try
+        {
+            int pos = 0;
+
+            // Copy prefix
+            if (unmaskedStart > 0)
+            {
+                input.AsSpan(0, unmaskedStart).CopyTo(buffer.Slice(pos, unmaskedStart));
+                pos += unmaskedStart;
+            }
+
+            // Fill middle with maskChar
+            if (maskedSectionLength > 0)
+            {
+                buffer.Slice(pos, maskedSectionLength).Fill(maskChar);
+                pos += maskedSectionLength;
+            }
+
+            // Copy suffix
+            if (unmaskedEnd > 0)
+            {
+                input.AsSpan(length - unmaskedEnd, unmaskedEnd).CopyTo(buffer.Slice(pos, unmaskedEnd));
+                pos += unmaskedEnd;
+            }
+
+            return new string(buffer[..totalLength]);
+        }
+        finally
+        {
+            if (totalLength > 256)
+                ArrayPool<char>.Shared.Return(buffer.ToArray(), clearArray: true);
+        }
+    }
+
+    /// <summary>
+    /// Converts a string to a <see cref="Uri"/> object. If the string is not a well-formed
+    /// absolute URI, it prepends the specified default scheme (e.g., "https") to the string
+    /// before creating the <see cref="Uri"/>.
+    /// </summary>
+    /// <param name="baseUri">The input string to be converted to a <see cref="Uri"/>.</param>
+    /// <param name="defaultScheme">The default scheme to prepend if the input string is not a well-formed absolute URI. Defaults to "https".</param>
+    /// <returns>A <see cref="Uri"/> object representing the input string, or null if the input string is null or empty.</returns>
+    [return: NotNullIfNotNull(nameof(baseUri))]
+    public static Uri? ToUri(
+        this string? baseUri,
+        string defaultScheme = "https")
+    {
+        if (string.IsNullOrEmpty(baseUri))
+            return null;
+
+        if (Uri.IsWellFormedUriString(baseUri, UriKind.Absolute))
+            return new Uri(baseUri);
+
+        return new Uri(defaultScheme + Uri.SchemeDelimiter + baseUri, UriKind.Absolute);
+    }
+
+    /// <summary>
+    /// Computes the SHA-256 hash of the input string and returns it as a hexadecimal string.
+    /// </summary>
+    /// <param name="value">The input string to hash.</param>
+    /// <returns>
+    /// A hexadecimal string representation of the SHA-256 hash, or an empty string if <paramref name="value"/> is <c>null</c> or empty.
+    /// </returns>
+    [return: NotNullIfNotNull(nameof(value))]
+    public static string? ToSha256(this string? value)
+    {
+        if (value.IsNullOrEmpty())
+            return null;
+
+        // Calculate the max bytes needed for UTF-8 encoding
+        int maxByteCount = Encoding.UTF8.GetMaxByteCount(value.Length);
+
+        // Use stack allocation for small strings, or rent from the pool for larger ones
+        byte[]? rentedByteArray = null;
+
+        Span<byte> bytesBuffer = maxByteCount <= 512
+            ? stackalloc byte[maxByteCount]
+            : (rentedByteArray = ArrayPool<byte>.Shared.Rent(maxByteCount));
+
+        // SHA-256 produces a 32-byte hash
+        Span<byte> hashBuffer = stackalloc byte[32];
+
+        try
+        {
+            // Encode the string to UTF-8 bytes
+            int actualByteCount = Encoding.UTF8.GetBytes(value.AsSpan(), bytesBuffer);
+
+            // Compute the SHA-256 hash
+            System.Security.Cryptography.SHA256.HashData(bytesBuffer[..actualByteCount], hashBuffer);
+
+            // Convert to hex string
+            return Convert.ToHexString(hashBuffer);
+        }
+        finally
+        {
+            // Return rented arrays to the pool to avoid memory leaks
+            if (rentedByteArray != null)
+                ArrayPool<byte>.Shared.Return(rentedByteArray);
         }
     }
 }

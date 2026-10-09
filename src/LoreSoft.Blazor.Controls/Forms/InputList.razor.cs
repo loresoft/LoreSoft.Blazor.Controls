@@ -27,7 +27,7 @@ public partial class InputList<TValue> : ComponentBase, IDisposable
     public EditContext? EditContext { get; set; }
 
     /// <summary>
-    /// Gets or sets additional attributes applied to the input list container.
+    /// Gets or sets additional attributes applied to each generated input.
     /// </summary>
     [Parameter(CaptureUnmatchedValues = true)]
     public Dictionary<string, object>? AdditionalAttributes { get; set; }
@@ -153,9 +153,9 @@ public partial class InputList<TValue> : ComponentBase, IDisposable
     protected IList<TValue> CurrentValue { get; set; } = [];
 
     /// <summary>
-    /// Gets additional attributes for the container with the class attribute removed.
+    /// Gets additional attributes for each generated input with the class attribute removed.
     /// </summary>
-    protected IReadOnlyDictionary<string, object>? ContainerAttributes => RemoveClassAttribute(AdditionalAttributes);
+    protected IReadOnlyDictionary<string, object>? InputAttributes => RemoveClassAttribute(AdditionalAttributes);
 
     /// <summary>
     /// Gets the HTML input type used by item inputs.
@@ -220,6 +220,7 @@ public partial class InputList<TValue> : ComponentBase, IDisposable
         => CssBuilder.Pool.Use(builder => builder
             .AddClass("input-list-input")
             .AddClass(InputClass)
+            .MergeClass(AdditionalAttributes)
             .ToString()
         );
 

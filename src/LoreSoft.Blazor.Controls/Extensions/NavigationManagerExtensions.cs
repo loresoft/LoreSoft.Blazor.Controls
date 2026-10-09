@@ -1,3 +1,5 @@
+using System.Diagnostics.CodeAnalysis;
+
 using Microsoft.AspNetCore.Components;
 
 namespace LoreSoft.Blazor.Controls.Extensions;
@@ -10,6 +12,49 @@ public static class NavigationManagerExtensions
     // FNV-1a 32-bit constants
     private const uint FnvPrime = 16777619;
     private const uint FnvOffsetBasis = 2166136261;
+
+    /// <summary>
+    /// Navigates to the specified <paramref name="url"/> only when it resolves to a location within the
+    /// application; otherwise navigates to <see cref="NavigationManager.BaseUri"/>.
+    /// </summary>
+    /// <param name="navigationManager">The navigation manager used to perform the navigation.</param>
+    /// <param name="url">The relative or absolute URL to navigate to.</param>
+    /// <param name="forceLoad">
+    /// <see langword="true"/> to bypass client-side routing and force the browser to load the new page from the
+    /// server; otherwise <see langword="false"/>.
+    /// </param>
+    /// <exception cref="ArgumentNullException">
+    /// <paramref name="navigationManager"/> or <paramref name="url"/> is <see langword="null"/>.
+    /// </exception>
+    /// <remarks>
+    /// <para>
+    /// This guards against open redirect attacks by rejecting any URL whose scheme, host, port or path falls
+    /// outside <see cref="NavigationManager.BaseUri"/>. Relative URLs are resolved against the base address, and
+    /// URLs that cannot be parsed are treated as external.
+    /// </para>
+    /// <para>
+    /// Use this when the destination originates from untrusted input, such as a <c>returnUrl</c> query string value.
+    /// </para>
+    /// </remarks>
+    public static void NavigateLocalOnly(
+        this NavigationManager navigationManager,
+        [StringSyntax(StringSyntaxAttribute.Uri)] string url,
+        bool forceLoad = false)
+    {
+        ArgumentNullException.ThrowIfNull(navigationManager);
+        ArgumentNullException.ThrowIfNull(url);
+
+        var baseUri = new Uri(navigationManager.BaseUri);
+
+        // resolve relative to the base address; malformed input is treated as external
+        if (!Uri.TryCreate(baseUri, url, out var targetUri) || !baseUri.IsBaseOf(targetUri))
+        {
+            navigationManager.NavigateTo(navigationManager.BaseUri, forceLoad);
+            return;
+        }
+
+        navigationManager.NavigateTo(targetUri.ToString(), forceLoad);
+    }
 
     /// <summary>
     /// Returns an 8-character lowercase hex string that is a stable, case-insensitive FNV-1a hash

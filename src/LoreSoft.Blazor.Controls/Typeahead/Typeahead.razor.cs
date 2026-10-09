@@ -142,7 +142,7 @@ public partial class Typeahead<TItem, TValue> : StandardComponent
     /// Gets or sets the template for displaying the selected value.
     /// </summary>
     [Parameter]
-    public RenderFragment<TValue>? SelectedTemplate { get; set; }
+    public RenderFragment<TValue?>? SelectedTemplate { get; set; }
 
     /// <summary>
     /// Gets or sets the template for the dropdown footer.
@@ -508,7 +508,7 @@ public partial class Typeahead<TItem, TValue> : StandardComponent
     /// <returns><c>true</c> if there is a value; otherwise, <c>false</c>.</returns>
     private bool HasValue()
     {
-        return Value != null || Values?.Count > 0;
+        return !EqualityComparer<TValue>.Default.Equals(Value, default) || Values?.Count > 0;
     }
 
     /// <summary>

@@ -44,7 +44,8 @@
                     Width="90px" />
         <DataColumn TItem="Repository"
                     Property="p => p.StargazersCount"
-                    Title="Stars"
+                    Title="Stargazers"
+                    Abbreviation="Stars"
                     Width="90px" />
         <DataColumn TItem="Repository"
                     Property="p => p.SubscribersCount"
@@ -54,7 +55,7 @@
     <DataPagination Context="grid">
         <DataPager PageSize="10" />
         <DataSizer />
-        <div>@grid.Pager.StartItem - @grid.Pager.EndItem of @grid.Pager.Total</div>
+        <DataSummary />
     </DataPagination>
     <DetailTemplate Context="item">
         <div class="github-repository clearfix">
