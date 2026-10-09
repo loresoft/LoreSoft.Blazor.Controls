@@ -279,8 +279,6 @@ public partial class Typeahead<TItem, TValue> : StandardComponent
     }
 
 
-
-
     /// <summary>
     /// Performs a search using the current search text and updates the search results.
     /// </summary>
@@ -606,6 +604,68 @@ public partial class Typeahead<TItem, TValue> : StandardComponent
 
         SelectedIndex = index;
     }
+
+    /// <summary>
+    /// Renders the selected value using <see cref="SelectedTemplate"/> when provided,
+    /// otherwise renders the value text, resolving it via <see cref="LookupMethod"/> when available.
+    /// </summary>
+    private RenderFragment<TValue?> SelectedValue => value => builder =>
+    {
+        if (SelectedTemplate is not null)
+        {
+            builder.AddContent(0, SelectedTemplate(value));
+            return;
+        }
+
+        if (value is null || EqualityComparer<TValue>.Default.Equals(value, default))
+        {
+            builder.OpenElement(1, "span");
+            builder.CloseElement();
+            return;
+        }
+
+        if (LookupMethod is not null)
+        {
+            builder.OpenComponent<LazyValue<TValue, TItem>>(2);
+            builder.AddComponentParameter(3, nameof(LazyValue<,>.Key), value);
+            builder.AddComponentParameter(4, nameof(LazyValue<,>.LoadingText), "Loading...");
+            builder.AddComponentParameter(5, nameof(LazyValue<,>.LoadMethod), LookupMethod);
+            builder.AddComponentParameter(6, nameof(LazyValue<,>.ValueLoaded), EventCallback.Factory.Create<TItem?>(this, OnValueLoaded));
+            builder.AddComponentParameter(7, nameof(LazyValue<,>.ChildContent), (RenderFragment<TItem?>)(context => childBuilder =>
+            {
+                var lazyText = context?.ToString() ?? value?.ToString();
+                childBuilder.OpenElement(0, "span");
+                childBuilder.AddAttribute(1, "title", lazyText);
+                childBuilder.AddContent(2, lazyText);
+                childBuilder.CloseElement();
+            }));
+            builder.CloseComponent();
+            return;
+        }
+
+        var text = value.ToString();
+        builder.OpenElement(8, "span");
+        builder.AddAttribute(9, "title", text);
+        builder.AddContent(10, text);
+        builder.CloseElement();
+    };
+
+    /// <summary>
+    /// Renders a search result item using <see cref="ResultTemplate"/> when provided,
+    /// otherwise renders the item text.
+    /// </summary>
+    private RenderFragment<TItem> ResultValue => item => builder =>
+    {
+        if (ResultTemplate is not null)
+        {
+            builder.AddContent(0, ResultTemplate(item));
+            return;
+        }
+
+        builder.OpenElement(1, "span");
+        builder.AddContent(2, item?.ToString());
+        builder.CloseElement();
+    };
 
     /// <summary>
     /// Handles the <see cref="LazyValue{TKey, TValue}.ValueLoaded"/> callback,
