@@ -60,7 +60,7 @@ public abstract class ModalComponentBase : ComponentBase
     /// Gets the CSS class name corresponding to the current variant.
     /// </summary>
     /// <value>The variant CSS class name.</value>
-    protected string VariantClass { get; private set; } = "dialog-primary";
+    protected internal string VariantClass { get; private set; } = "dialog-primary";
 
     /// <summary>
     /// Called when component parameters are set. Updates the variant CSS class based on the <see cref="Variant"/> parameter.
@@ -69,15 +69,7 @@ public abstract class ModalComponentBase : ComponentBase
     {
         base.OnParametersSet();
 
-        VariantClass = Variant switch
-        {
-            ModalVariant.Success => "dialog-success",
-            ModalVariant.Information => "dialog-information",
-            ModalVariant.Warning => "dialog-warning",
-            ModalVariant.Danger => "dialog-danger",
-            ModalVariant.Primary => "dialog-primary",
-            _ => "dialog-primary"
-        };
+        VariantClass = GetVariantClass(Variant);
     }
 
     /// <summary>
@@ -102,4 +94,20 @@ public abstract class ModalComponentBase : ComponentBase
     {
         await Modal.CloseAsync(ModalResult.Cancel());
     }
+
+
+    /// <summary>
+    /// Gets the CSS class name for the specified modal variant.
+    /// </summary>
+    /// <param name="variant">The modal variant.</param>
+    /// <returns>The variant CSS class name.</returns>
+    public static string GetVariantClass(ModalVariant variant) => variant switch
+    {
+        ModalVariant.Success => "dialog-success",
+        ModalVariant.Information => "dialog-information",
+        ModalVariant.Warning => "dialog-warning",
+        ModalVariant.Danger => "dialog-danger",
+        ModalVariant.Primary => "dialog-primary",
+        _ => "dialog-primary"
+    };
 }

@@ -52,7 +52,7 @@ public partial class InputImage : InputBase<string>
     /// <summary>
     /// Gets a unique identifier for the input element.
     /// </summary>
-    protected string InputIdentifier { get; } = Identifier.Random();
+    protected string InputIdentifier { get; } = Identifier.Sequential();
 
     /// <summary>
     /// Gets the image URL to display. Returns the placeholder if no image is selected.

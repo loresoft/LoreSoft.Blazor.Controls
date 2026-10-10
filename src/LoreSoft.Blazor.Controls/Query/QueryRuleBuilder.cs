@@ -26,7 +26,7 @@ public static class QueryRuleBuilder
     {
         return new QueryFilter
         {
-            Id = id ?? Identifier.Random(),
+            Id = id ?? Identifier.Sequential("query"),
             Field = field,
             Operator = op ?? QueryOperators.Equal,
             Value = value,
@@ -92,7 +92,7 @@ public static class QueryRuleBuilder
         op ??= QueryOperators.Equal;
         var group = new QueryGroup
         {
-            Id = id ?? Identifier.Random(),
+            Id = id ?? Identifier.Sequential("query"),
             Logic = logic
         };
 
@@ -122,7 +122,7 @@ public static class QueryRuleBuilder
         var result = group.Filters[0];
 
         // ensure filter has correct id
-        result.Id = id ?? Identifier.Random();
+        result.Id = id ?? Identifier.Sequential("query");
 
         return result;
     }

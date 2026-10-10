@@ -1,47 +1,27 @@
 @namespace Sample.Core.Pages.Modals.Examples
-@using LoreSoft.Blazor.Controls
 @inherits ModalComponentBase
+@using LoreSoft.Blazor.Controls
 
-<div class="dialog-content @VariantClass">
-    <div class="dialog-header">
-        <h3 class="dialog-title">Second Modal Level (Nested)</h3>
-        <button type="button"
-                class="dialog-close-button"
-                aria-label="Close"
-                @onclick="CancelAsync" />
-    </div>
-    <div class="dialog-body">
-        <p class="text-success fw-bold">This is the <strong>second (nested)</strong> modal!</p>
-        <p>You can open even more modals if needed. This demonstrates that modals can be stacked.</p>
-        
-        <div class="mb-3">
-            <label for="userInput" class="form-label">Enter some data:</label>
-            <input type="text" 
-                   class="form-control" 
-                   id="userInput" 
-                   @bind="_userInput" 
-                   placeholder="Type something here..." />
-        </div>
+<ModalView Owner="this"
+           Result="_userInput">
+    <p class="text-success fw-bold">This is the <strong>second (nested)</strong> modal!</p>
+    <p>You can open even more modals if needed. This demonstrates that modals can be stacked.</p>
 
-        <button type="button" 
-                class="btn btn-sm dialog-primary-button" 
-                @onclick="OpenThirdModal">
-            Open Another Nested Modal
-        </button>
+    <div class="mb-3">
+        <label for="userInput" class="form-label">Enter some data:</label>
+        <input type="text"
+               class="form-control"
+               id="userInput"
+               @bind="_userInput"
+               placeholder="Type something here..." />
     </div>
-    <div class="dialog-footer">
-        <button type="button"
-                class="dialog-secondary-button"
-                @onclick="CancelAsync">
-            Cancel
-        </button>
-        <button type="button"
-                class="dialog-primary-button"
-                @onclick="SubmitData">
-            Submit Data
-        </button>
-    </div>
-</div>
+
+    <button type="button"
+            class="btn btn-sm dialog-primary-button"
+            @onclick="OpenThirdModal">
+        Open Another Nested Modal
+    </button>
+</ModalView>
 
 @code {
     [Inject]
@@ -49,9 +29,11 @@
 
     private string _userInput = "";
 
-    private async Task SubmitData()
+    protected override void OnInitialized()
     {
-        await CloseAsync(_userInput);
+        Title = "Second Modal Level (Nested)";
+        PrimaryAction = "Submit Data";
+        SecondaryAction = "Cancel";
     }
 
     private async Task OpenThirdModal()

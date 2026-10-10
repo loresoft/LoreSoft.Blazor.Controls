@@ -15,7 +15,7 @@ public abstract class QueryRule
     /// Used for UI tracking and internal logic.
     /// </summary>
     [JsonPropertyName("id")]
-    public string Id { get; set; } = Identifier.Random();
+    public string Id { get; set; } = Identifier.Sequential("query");
 
     /// <summary>
     /// Gets or sets a value indicating whether the object is not persisted.

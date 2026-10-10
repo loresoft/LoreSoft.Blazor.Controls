@@ -82,7 +82,7 @@ public class StandardComponent : ComponentBase, IDisposable, IAsyncDisposable
         if (ElementId != null && ElementId != BoundElementId)
             BoundElementId = ElementId;
 
-        BoundElementId ??= Identifier.Random();
+        BoundElementId ??= Identifier.Sequential();
 
         BoundClass = ComputeClasses();
         BoundStyle = ComputeStyles();

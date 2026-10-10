@@ -1,0 +1,207 @@
+@namespace LoreSoft.Blazor.Controls
+@using LoreSoft.Blazor.Controls.Utilities
+
+<div @attributes="MergedAttributes"
+     class="@ClassName">
+    <form @onsubmit="SubmitAsync">
+        <div class="dialog-header">
+            @if (!string.IsNullOrWhiteSpace(Owner.Title))
+            {
+                <h3 id="@TitleId" class="dialog-title">@Owner.Title</h3>
+            }
+            <button type="button"
+                    class="dialog-close-button"
+                    aria-label="Close"
+                    title="Close"
+                    @onclick="CancelAsync"></button>
+        </div>
+        <div id="@BodyId" class="dialog-body">
+            @ChildContent
+        </div>
+        <div class="dialog-footer">
+            @if (ShowSecondary)
+            {
+                <button type="button"
+                        class="dialog-secondary-button"
+                        @onclick="CancelAsync">
+                    @Owner.SecondaryAction
+                </button>
+            }
+            <button type="submit"
+                    class="dialog-primary-button"
+                    autofocus
+                    disabled="@(PrimaryDisabled || _isSubmitting)">
+                @Owner.PrimaryAction
+            </button>
+        </div>
+    </form>
+</div>
+
+@code
+{
+    private bool _isSubmitting;
+
+
+    /// <summary>
+    /// Gets or sets the modal component that owns this view.
+    /// </summary>
+    /// <value>
+    /// The owning <see cref="ModalComponentBase"/>. The <see cref="ModalComponentBase.Modal"/>, <see cref="ModalComponentBase.Title"/>,
+    /// <see cref="ModalComponentBase.PrimaryAction"/>, <see cref="ModalComponentBase.SecondaryAction"/> and
+    /// <see cref="ModalComponentBase.Variant"/> values are read from the owner.
+    /// </value>
+    /// <example>
+    /// <code>
+    /// &lt;ModalView Owner="this"&gt;...&lt;/ModalView&gt;
+    /// </code>
+    /// </example>
+    [Parameter, EditorRequired]
+    public ModalComponentBase Owner { get; set; } = null!;
+
+    /// <summary>
+    /// Gets or sets additional attributes to be applied to the dialog content element.
+    /// </summary>
+    [Parameter(CaptureUnmatchedValues = true)]
+    public Dictionary<string, object>? AdditionalAttributes { get; set; }
+
+    /// <summary>
+    /// Gets or sets the content rendered in the body of the modal dialog.
+    /// </summary>
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+
+    /// <summary>
+    /// Gets or sets a value indicating whether the secondary action button is shown.
+    /// </summary>
+    [Parameter]
+    public bool ShowSecondary { get; set; } = true;
+
+    /// <summary>
+    /// Gets or sets a value indicating whether the primary action button is disabled.
+    /// </summary>
+    [Parameter]
+    public bool PrimaryDisabled { get; set; }
+
+    /// <summary>
+    /// Gets or sets the result value returned when the modal is submitted and <see cref="OnSubmit"/> is not set.
+    /// </summary>
+    [Parameter]
+    public object? Result { get; set; }
+
+    /// <summary>
+    /// Gets or sets the callback invoked when the modal is submitted. When set, the modal is not closed automatically.
+    /// </summary>
+    [Parameter]
+    public EventCallback OnSubmit { get; set; }
+
+    /// <summary>
+    /// Gets the computed CSS class name for the dialog content element.
+    /// </summary>
+    protected string? ClassName { get; set; }
+
+    /// <summary>
+    /// Gets the element id of the dialog title, referenced by the dialog's aria-labelledby attribute.
+    /// </summary>
+    protected string TitleId => Owner.Modal.TitleId;
+
+    /// <summary>
+    /// Gets the element id of the dialog body, referenced by the dialog's aria-describedby attribute.
+    /// </summary>
+    protected string BodyId => Owner.Modal.BodyId;
+
+    /// <summary>
+    /// Gets the merged attributes from the <see cref="Owner"/> and this view, excluding the "class" attribute.
+    /// </summary>
+    protected Dictionary<string, object>? MergedAttributes { get; set; }
+
+    /// <summary>
+    /// Validates required parameters and computes the CSS class name and merged attributes.
+    /// </summary>
+    /// <exception cref="InvalidOperationException">Thrown when <see cref="Owner"/> or its <see cref="ModalComponentBase.Modal"/> is not set.</exception>
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+
+        if (Owner is null)
+            throw new InvalidOperationException($"{nameof(ModalView)} requires a value for the '{nameof(Owner)}' parameter. Set Owner=\"this\" from the containing modal component.");
+
+        if (Owner.Modal is null)
+            throw new InvalidOperationException($"The '{nameof(ModalComponentBase.Modal)}' parameter of modal component '{Owner.GetType().Name}' is not set. Ensure the modal is shown through the modal service.");
+
+        ClassName = CssBuilder.Pool.Use(builder => builder
+            .AddClass("dialog-content")
+            .AddClass(Owner.VariantClass)
+            .MergeClass(Owner.AdditionalAttributes, false)
+            .MergeClass(AdditionalAttributes, false)
+            .ToString()
+        );
+
+        MergedAttributes = MergeAttributes(Owner.AdditionalAttributes, AdditionalAttributes);
+    }
+
+    /// <summary>
+    /// Handles form submission. Does nothing when <see cref="PrimaryDisabled"/> is <see langword="true"/>;
+    /// invokes <see cref="OnSubmit"/> when set; otherwise closes the owner's modal with <see cref="Result"/>.
+    /// </summary>
+    /// <returns>A task that represents the asynchronous submit operation.</returns>
+    protected virtual async Task SubmitAsync()
+    {
+        if (PrimaryDisabled || _isSubmitting)
+            return;
+
+        _isSubmitting = true;
+        try
+        {
+            if (OnSubmit.HasDelegate)
+            {
+                await OnSubmit.InvokeAsync();
+                return;
+            }
+
+            await Owner.Modal.CloseAsync(ModalResult.Success(Result));
+        }
+        finally
+        {
+            _isSubmitting = false;
+        }
+    }
+
+    /// <summary>
+    /// Closes the owner's modal with a cancelled result.
+    /// </summary>
+    /// <returns>A task that represents the asynchronous cancel operation.</returns>
+    protected virtual async Task CancelAsync()
+    {
+        await Owner.Modal.CloseAsync(ModalResult.Cancel());
+    }
+
+
+    private static Dictionary<string, object>? MergeAttributes(
+        IReadOnlyDictionary<string, object>? ownerAttributes,
+        IReadOnlyDictionary<string, object>? viewAttributes)
+    {
+        if ((ownerAttributes is null || ownerAttributes.Count == 0)
+            && (viewAttributes is null || viewAttributes.Count == 0))
+        {
+            return null;
+        }
+
+        var merged = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
+
+        if (ownerAttributes is not null)
+        {
+            foreach (var (key, value) in ownerAttributes)
+                merged[key] = value;
+        }
+
+        if (viewAttributes is not null)
+        {
+            foreach (var (key, value) in viewAttributes)
+                merged[key] = value;
+        }
+
+        merged.Remove("class");
+
+        return merged;
+    }
+}

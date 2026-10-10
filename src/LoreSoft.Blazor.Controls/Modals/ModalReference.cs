@@ -40,7 +40,9 @@ public class ModalReference : IModalReference
         ComponentType = componentType ?? throw new ArgumentNullException(nameof(componentType));
         Parameters = parameters ?? throw new ArgumentNullException(nameof(parameters));
 
-        ModalId = id ?? Identifier.Random();
+        ModalId = id ?? Identifier.Sequential("modal");
+        TitleId = $"{ModalId}-title";
+        BodyId = $"{ModalId}-body";
 
         _resultCompletion = new(TaskCreationOptions.RunContinuationsAsynchronously);
 
@@ -53,6 +55,12 @@ public class ModalReference : IModalReference
     /// </summary>
     /// <value>The modal identifier string.</value>
     public string ModalId { get; }
+
+    /// <inheritdoc />
+    public string TitleId { get; }
+
+    /// <inheritdoc />
+    public string BodyId { get; }
 
     /// <summary>
     /// Gets the type of the component to render in the modal dialog.

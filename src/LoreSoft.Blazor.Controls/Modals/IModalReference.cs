@@ -12,6 +12,18 @@ public interface IModalReference
     string ModalId { get; }
 
     /// <summary>
+    /// Gets the element id of the modal dialog title, used by the dialog's aria-labelledby attribute.
+    /// </summary>
+    /// <value>The title element identifier.</value>
+    string TitleId { get; }
+
+    /// <summary>
+    /// Gets the element id of the modal dialog body, used by the dialog's aria-describedby attribute.
+    /// </summary>
+    /// <value>The body element identifier.</value>
+    string BodyId { get; }
+
+    /// <summary>
     /// Gets a task that completes when the modal dialog is closed, providing the result of the dialog.
     /// </summary>
     /// <value>A task that returns the <see cref="ModalResult"/> when the modal is closed.</value>

@@ -2,35 +2,22 @@
 @using LoreSoft.Blazor.Controls
 @inherits ModalComponentBase
 
-<div class="dialog-content @VariantClass">
-    <div class="dialog-header">
-        <h3 class="dialog-title">First Modal Level</h3>
-        <button type="button"
-                class="dialog-close-button"
-                aria-label="Close"
-                @onclick="CancelAsync" />
-    </div>
-    <div class="dialog-body">
-        <p>This is the <strong>first modal</strong>. You can open another modal from here.</p>
-        <p class="text-muted">Click the button below to open a nested modal dialog.</p>
-    </div>
-    <div class="dialog-footer">
-        <button type="button"
-                class="dialog-secondary-button"
-                @onclick="CancelAsync">
-            Close
-        </button>
-        <button type="button"
-                class="dialog-primary-button"
-                @onclick="OpenSecondModal">
-            Open Nested Modal
-        </button>
-    </div>
-</div>
+<ModalView Owner="this"
+           OnSubmit="OpenSecondModal">
+    <p>This is the <strong>first modal</strong>. You can open another modal from here.</p>
+    <p class="text-muted">Click the button below to open a nested modal dialog.</p>
+</ModalView>
 
 @code {
     [Inject]
     public required ModalService ModalService { get; set; }
+
+    protected override void OnInitialized()
+    {
+        Title = "First Modal Level";
+        PrimaryAction = "Open Nested Modal";
+        SecondaryAction = "Close";
+    }
 
     private async Task OpenSecondModal()
     {

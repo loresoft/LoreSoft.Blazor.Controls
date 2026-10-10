@@ -1,39 +1,18 @@
 @namespace LoreSoft.Blazor.Controls
 @inherits ModalComponentBase
 
-<div class="dialog-content @VariantClass">
-    <form @onsubmit="SubmitAsync">
-        <div class="dialog-header">
-            <h3 class="dialog-title">@Title</h3>
-            <button type="button"
-                    class="dialog-close-button"
-                    aria-label="Close"
-                    @onclick="CancelAsync" />
-        </div>
-        <div class="dialog-body">
-            <p>@Message</p>
-            <input type="text"
-                   name="prompt-input"
-                   class="dialog-input"
-                   required
-                   autocomplete="off"
-                   autofocus
-                   @bind="InputValue"
-                   @bind:event="oninput" />
-        </div>
-        <div class="dialog-footer">
-            <button type="button"
-                    class="dialog-secondary-button"
-                    @onclick="CancelAsync">
-                @SecondaryAction
-            </button>
-            <button type="submit"
-                    class="dialog-primary-button">
-                @PrimaryAction
-            </button>
-        </div>
-    </form>
-</div>
+<ModalView Owner="this"
+           Result="InputValue">
+    <p>@Message</p>
+    <input type="text"
+           name="prompt-input"
+           class="dialog-input"
+           required
+           autocomplete="off"
+           autofocus
+           @bind="InputValue"
+           @bind:event="oninput" />
+</ModalView>
 
 @code {
     [Parameter]
@@ -44,10 +23,5 @@
     protected override void OnInitialized()
     {
         InputValue = DefaultValue;
-    }
-
-    private async Task SubmitAsync()
-    {
-        await CloseAsync(InputValue);
     }
 }
