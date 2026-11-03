@@ -4,7 +4,6 @@
     <Description>A comprehensive collection of high-quality Blazor components</Description>
     <Copyright>Copyright © $([System.DateTime]::Now.ToString(yyyy)) LoreSoft</Copyright>
     <Authors>LoreSoft</Authors>
-    <NeutralLanguage>en-US</NeutralLanguage>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <PackageTags>Blazor;Typeahead;AutoComplete;Razor Components;Controls;Multiselect;DatePicker</PackageTags>
     <PackageProjectUrl>https://github.com/loresoft/LoreSoft.Blazor.Controls</PackageProjectUrl>
@@ -16,14 +15,24 @@
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
   </PropertyGroup>
 
+  <PropertyGroup Label="Debug">
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <!-- WASM consumers need PDBs beside the assemblies, not only on a symbol server. -->
+    <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
+  </PropertyGroup>
+  
   <PropertyGroup Condition="'$(GITHUB_ACTIONS)' == 'true'">
     <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
   </PropertyGroup>
 
   <PropertyGroup Label="Options">
+    <Language>en-US</Language>
+    <NeutralLanguage>en-US</NeutralLanguage>
     <DefaultLanguage>en-US</DefaultLanguage>
     <LangVersion>latest</LangVersion>
     <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
     <NoWarn>$(NoWarn);IL2026;IL2091;IL2104;IL2110;IL2111;1591</NoWarn>
   </PropertyGroup>
 

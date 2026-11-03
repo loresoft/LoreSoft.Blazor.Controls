@@ -10,6 +10,10 @@
     <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
   </PropertyGroup>
 
+  <PropertyGroup Label="Debug">
+    <CopyDebugSymbolFilesFromPackages>true</CopyDebugSymbolFilesFromPackages>
+  </PropertyGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\Sample.Core\Sample.Core.csproj" />
   </ItemGroup>

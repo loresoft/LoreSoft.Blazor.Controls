@@ -8,7 +8,7 @@
     <PackageVersion Include="Bogus" Version="35.6.5" />
     <PackageVersion Include="bunit" Version="2.13.3" />
     <PackageVersion Include="coverlet.MTP" Version="10.1.0" />
-    <PackageVersion Include="Microsoft.AspNetCore.Components.Web" Version="10.0.13" />
+    <PackageVersion Include="Microsoft.AspNetCore.Components.Web" Version="10.0.14" />
     <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly" Version="10.0.14" />
     <PackageVersion Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="10.0.14" />
     <PackageVersion Include="Microsoft.Extensions.Http" Version="10.0.14" />
@@ -19,9 +19,9 @@
   </ItemGroup>
   <!-- TFM-specific overrides -->
   <ItemGroup Condition="'$(TargetFramework)' == 'net9.0'">
-    <PackageVersion Update="Microsoft.AspNetCore.Components.Web" Version="9.0.21" />
+    <PackageVersion Update="Microsoft.AspNetCore.Components.Web" Version="9.0.22" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)' == 'net8.0'">
-    <PackageVersion Update="Microsoft.AspNetCore.Components.Web" Version="8.0.32" />
+    <PackageVersion Update="Microsoft.AspNetCore.Components.Web" Version="8.0.33" />
   </ItemGroup>
 </Project>
