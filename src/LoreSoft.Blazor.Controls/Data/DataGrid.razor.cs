@@ -245,7 +245,6 @@ public partial class DataGrid<TItem> : DataComponentBase<TItem>
     public void CloseColumnPicker()
     {
         ColumnPickerOpen = false;
-        StateHasChanged();
     }
 
     /// <summary>

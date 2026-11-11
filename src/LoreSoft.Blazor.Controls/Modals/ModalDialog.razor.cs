@@ -123,15 +123,22 @@ public partial class ModalDialog : ComponentBase, IAsyncDisposable
         if (!firstRender)
             return;
 
-        // initialize the dialog only on first render
-        _module = await JavaScript.InvokeAsync<IJSObjectReference>(
-            "import", "./_content/LoreSoft.Blazor.Controls/js/dialog.js");
+        try
+        {
+            // initialize the dialog only on first render
+            _module = await JavaScript.InvokeAsync<IJSObjectReference>(
+                "import", "./_content/LoreSoft.Blazor.Controls/js/dialog.js");
 
-        _instance = DotNetObjectReference.Create(this);
-        _dialog = await _module.InvokeAsync<IJSObjectReference>("createManager", Element, _instance);
+            _instance = DotNetObjectReference.Create(this);
+            _dialog = await _module.InvokeAsync<IJSObjectReference>("createManager", Element, _instance);
 
-        // open the dialog via javascript
-        await _dialog.InvokeVoidAsync("open");
+            // open the dialog via javascript
+            await _dialog.InvokeVoidAsync("open");
+        }
+        catch (JSDisconnectedException)
+        {
+            // the browser disconnected before the dialog could be opened, nothing to show
+        }
     }
 
     /// <summary>
@@ -155,8 +162,15 @@ public partial class ModalDialog : ComponentBase, IAsyncDisposable
         if (close.Modal != Modal)
             return;
 
-        // close with special value to indicate programmatic close
-        await _dialog.InvokeVoidAsync("close", ProgrammaticCloseValue);
+        try
+        {
+            // close with special value to indicate programmatic close
+            await _dialog.InvokeVoidAsync("close", ProgrammaticCloseValue);
+        }
+        catch (JSDisconnectedException)
+        {
+            // the browser disconnected, the dialog no longer exists
+        }
     }
 
     /// <summary>

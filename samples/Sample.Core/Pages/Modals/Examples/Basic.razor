@@ -126,8 +126,6 @@
             ModalVariant.Danger,
             primaryAction: "Delete"
         );
-
-        StateHasChanged();
     }
 
     private async Task ShowDeleteVerify()
@@ -139,8 +137,6 @@
             ModalVariant.Danger,
             primaryAction: "Delete"
         );
-
-        StateHasChanged();
     }
 
     private async Task ShowPrompt()
@@ -156,7 +152,5 @@
 
         var result = await modal.Result;
         _promptResult = result.Data as string;
-
-        StateHasChanged();
     }
 }

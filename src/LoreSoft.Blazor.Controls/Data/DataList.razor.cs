@@ -107,7 +107,6 @@ public partial class DataList<TItem> : DataComponentBase<TItem>
     public void CloseSortPicker()
     {
         SortPickerOpen = false;
-        StateHasChanged();
     }
 
     /// <summary>

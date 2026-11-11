@@ -8,7 +8,8 @@ namespace LoreSoft.Blazor.Controls;
 public class JavaScriptModule : IAsyncDisposable
 {
     private readonly IJSRuntime _javaScript;
-    private readonly Lazy<ValueTask<IJSObjectReference>> _moduleTask;
+    private readonly string _moduleUrl;
+    private Task<IJSObjectReference>? _moduleTask;
     private bool _isDisposed;
 
     /// <summary>
@@ -24,7 +25,7 @@ public class JavaScriptModule : IAsyncDisposable
         ArgumentException.ThrowIfNullOrWhiteSpace(moduleUrl);
 
         _javaScript = javaScript;
-        _moduleTask = new(() => _javaScript.InvokeAsync<IJSObjectReference>("import", moduleUrl));
+        _moduleUrl = moduleUrl;
     }
 
     /// <summary>
@@ -33,10 +34,20 @@ public class JavaScriptModule : IAsyncDisposable
     /// <param name="identifier">The identifier of the JavaScript function to invoke.</param>
     /// <param name="args">Optional arguments to pass to the JavaScript function.</param>
     /// <returns>A <see cref="ValueTask"/> representing the asynchronous operation.</returns>
+    /// <remarks>
+    /// If the JavaScript runtime has disconnected (for example, the client closed the browser), the call is ignored.
+    /// </remarks>
     public async ValueTask InvokeVoidAsync(string identifier, params object?[]? args)
     {
-        var module = await _moduleTask.Value;
-        await module.InvokeVoidAsync(identifier, args);
+        try
+        {
+            var module = await GetModuleAsync();
+            await module.InvokeVoidAsync(identifier, args);
+        }
+        catch (JSDisconnectedException)
+        {
+            // the browser is gone, there is nothing to invoke
+        }
     }
 
     /// <summary>
@@ -45,11 +56,22 @@ public class JavaScriptModule : IAsyncDisposable
     /// <typeparam name="T">The type of the return value.</typeparam>
     /// <param name="identifier">The identifier of the JavaScript function to invoke.</param>
     /// <param name="args">Optional arguments to pass to the JavaScript function.</param>
-    /// <returns>A <see cref="ValueTask{TResult}"/> representing the asynchronous operation, containing the result of the JavaScript function.</returns>
+    /// <returns>
+    /// A <see cref="ValueTask{TResult}"/> representing the asynchronous operation, containing the result of the JavaScript function.
+    /// Returns the default value of <typeparamref name="T"/> if the JavaScript runtime has disconnected.
+    /// </returns>
     public async ValueTask<T> InvokeAsync<T>(string identifier, params object?[]? args)
     {
-        var module = await _moduleTask.Value;
-        return await module.InvokeAsync<T>(identifier, args);
+        try
+        {
+            var module = await GetModuleAsync();
+            return await module.InvokeAsync<T>(identifier, args);
+        }
+        catch (JSDisconnectedException)
+        {
+            // the browser is gone, there is no result to return
+            return default!;
+        }
     }
 
     /// <summary>
@@ -77,18 +99,34 @@ public class JavaScriptModule : IAsyncDisposable
 
         _isDisposed = true;
 
-        if (!_moduleTask.IsValueCreated || _moduleTask.Value.IsFaulted)
+        var moduleTask = _moduleTask;
+        if (moduleTask is null || moduleTask.IsFaulted || moduleTask.IsCanceled)
             return;
 
         try
         {
-            var module = await _moduleTask.Value;
+            var module = await moduleTask;
             await module.DisposeAsync().ConfigureAwait(false);
         }
         catch (Exception ex) when (ex is JSDisconnectedException or OperationCanceledException or InvalidOperationException)
         {
             // The JSRuntime side may routinely be gone already if the reason we're disposing is that
             // the client disconnected. This is not an error.
+        }
+    }
+
+    private async Task<IJSObjectReference> GetModuleAsync()
+    {
+        try
+        {
+            _moduleTask ??= _javaScript.InvokeAsync<IJSObjectReference>("import", _moduleUrl).AsTask();
+            return await _moduleTask;
+        }
+        catch
+        {
+            // don't cache a failed import (e.g. called during prerendering) so the next call can retry
+            _moduleTask = null;
+            throw;
         }
     }
 }

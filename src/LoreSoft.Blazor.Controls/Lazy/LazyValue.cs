@@ -86,7 +86,6 @@ public class LazyValue<TKey, TValue> : ComponentBase
         finally
         {
             Loading = false;
-            StateHasChanged();
         }
     }
 

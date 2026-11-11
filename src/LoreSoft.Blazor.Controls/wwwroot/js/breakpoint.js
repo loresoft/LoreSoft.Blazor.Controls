@@ -25,6 +25,7 @@ class BreakpointMonitor {
     this.debounceDelay = debounceDelay;
     this.currentBreakpoint = this.getCurrentBreakpoint(window.innerWidth);
     this.resizeHandler = null;
+    this.resizeTimeout = null;
     this.isActive = false;
     this.dotnetHelper = null;
   }
@@ -42,13 +43,15 @@ class BreakpointMonitor {
   }
 
   /**
-   * Debounce utility
+   * Debounce utility, pending calls are cancelled when monitoring stops
    */
   debounce(func, delay) {
-    let timeoutId;
-    return function (...args) {
-      clearTimeout(timeoutId);
-      timeoutId = setTimeout(() => func.apply(this, args), delay);
+    return (...args) => {
+      clearTimeout(this.resizeTimeout);
+      this.resizeTimeout = setTimeout(() => {
+        this.resizeTimeout = null;
+        func.apply(this, args);
+      }, delay);
     };
   }
 
@@ -56,6 +59,9 @@ class BreakpointMonitor {
    * Handle resize with breakpoint change detection
    */
   handleResize() {
+    if (!this.isActive)
+      return;
+
     const width = window.innerWidth;
     const newBreakpoint = this.getCurrentBreakpoint(width);
 
@@ -74,7 +80,9 @@ class BreakpointMonitor {
 
     // Call .NET callback if registered
     if (this.dotnetHelper) {
-      this.dotnetHelper.invokeMethodAsync('OnBreakpointChanged', eventData);
+      this.dotnetHelper
+        .invokeMethodAsync('OnBreakpointChanged', eventData)
+        .catch(error => console.error('Error invoking OnBreakpointChanged:', error));
     }
 
   }
@@ -110,6 +118,9 @@ class BreakpointMonitor {
       return;
 
     window.removeEventListener('resize', this.resizeHandler);
+    clearTimeout(this.resizeTimeout);
+    this.resizeTimeout = null;
+    this.resizeHandler = null;
     this.isActive = false;
   }
 
@@ -132,6 +143,7 @@ class BreakpointMonitor {
    */
   dispose() {
     this.stop();
+    this.dotnetHelper = null;
   }
 }
 // Export for ES6 modules

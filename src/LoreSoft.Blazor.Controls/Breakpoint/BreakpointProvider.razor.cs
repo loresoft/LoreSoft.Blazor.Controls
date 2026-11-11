@@ -69,22 +69,46 @@ public partial class BreakpointProvider : IAsyncDisposable
         if (!firstRender)
             return;
 
-        _module = await JavaScript.InvokeAsync<IJSObjectReference>(
-            "import", "./_content/LoreSoft.Blazor.Controls/js/breakpoint.js");
+        IJSObjectReference? module = null;
+        IJSObjectReference? monitor = null;
+        DotNetObjectReference<BreakpointProvider>? instance = null;
 
-        // Pass custom breakpoints to JavaScript or null for defaults
-        var breakpointsToUse = Breakpoints != null ? (object)Breakpoints : null;
+        try
+        {
+            module = await JavaScript.InvokeAsync<IJSObjectReference>(
+                "import", "./_content/LoreSoft.Blazor.Controls/js/breakpoint.js");
 
-        _monitor = await _module.InvokeAsync<IJSObjectReference>(
-            "createMonitor", breakpointsToUse, Debounce);
+            // Pass custom breakpoints to JavaScript or null for defaults
+            var breakpointsToUse = Breakpoints != null ? (object)Breakpoints : null;
 
-        _instance = DotNetObjectReference.Create(this);
-        await _monitor.InvokeVoidAsync("registerDotNetHelper", _instance);
+            monitor = await module.InvokeAsync<IJSObjectReference>(
+                "createMonitor", breakpointsToUse, Debounce);
 
-        var current = await _monitor.InvokeAsync<string>("getCurrent");
-        OnBreakpointChanged(new() { Current = current });
+            instance = DotNetObjectReference.Create(this);
+            await monitor.InvokeVoidAsync("registerDotNetHelper", instance);
 
-        await _monitor.InvokeVoidAsync("start");
+            var current = await monitor.InvokeAsync<string>("getCurrent");
+            OnBreakpointChanged(new() { Current = current });
+
+            await monitor.InvokeVoidAsync("start");
+        }
+        catch (JSDisconnectedException)
+        {
+            // the browser disconnected before monitoring could start, nothing to monitor
+            instance?.Dispose();
+            return;
+        }
+
+        // the component may have been disposed while initialization was awaiting the browser
+        if (_disposed)
+        {
+            await ReleaseAsync(monitor, module, instance);
+            return;
+        }
+
+        _module = module;
+        _monitor = monitor;
+        _instance = instance;
 
         StateHasChanged();
     }
@@ -97,7 +121,7 @@ public partial class BreakpointProvider : IAsyncDisposable
     [JSInvokable]
     public void OnBreakpointChanged(BreakpointChanged data)
     {
-        if (data.Current == Current)
+        if (_disposed || data.Current == Current)
             return;
 
         Current = data.Current;
@@ -139,28 +163,46 @@ public partial class BreakpointProvider : IAsyncDisposable
         if (_disposed)
             return;
 
-        if (_subscribers.Count > 0)
-            _subscribers.Clear();
-
-        if (_monitor != null)
-        {
-            await _monitor.DisposeAsync();
-            _monitor = null;
-        }
-
-        if (_module != null)
-        {
-            await _module.DisposeAsync();
-            _module = null;
-        }
-
-        if (_instance != null)
-        {
-            _instance?.Dispose();
-            _instance = null;
-        }
-
         _disposed = true;
+        _subscribers.Clear();
+
+        var monitor = _monitor;
+        var module = _module;
+        var instance = _instance;
+
+        _monitor = null;
+        _module = null;
+        _instance = null;
+
+        await ReleaseAsync(monitor, module, instance);
+
         GC.SuppressFinalize(this);
+    }
+
+    private static async ValueTask ReleaseAsync(
+        IJSObjectReference? monitor,
+        IJSObjectReference? module,
+        DotNetObjectReference<BreakpointProvider>? instance)
+    {
+        try
+        {
+            if (monitor != null)
+            {
+                // stop listening for resize events before the .NET reference is released
+                await monitor.InvokeVoidAsync("dispose");
+                await monitor.DisposeAsync();
+            }
+
+            if (module != null)
+                await module.DisposeAsync();
+        }
+        catch (JSDisconnectedException)
+        {
+            // the browser is gone, nothing left to clean up on the client
+        }
+        finally
+        {
+            instance?.Dispose();
+        }
     }
 }
